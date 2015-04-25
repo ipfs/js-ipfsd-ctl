@@ -1,0 +1,28 @@
+{
+  "name": "ipfsd-ctl",
+  "version": "0.1.0",
+  "description": "simple controls for an ipfs node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ipfs",
+    "node",
+    "daemon"
+  ],
+  "author": "Juan Benet <juan@benet.ai> (http://juan.benet.ai/)",
+  "license": "MIT",
+  "dependencies": {
+    "comandante": "0.0.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ipfs/node-ipfsd-ctl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ipfs/node-ipfsd-ctl/issues"
+  },
+  "homepage": "https://github.com/ipfs/node-ipfsd-ctl"
+}
