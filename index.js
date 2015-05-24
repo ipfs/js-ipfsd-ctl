@@ -3,12 +3,15 @@ var _ = require('lodash')
 var Q = require('kew')
 var ipfs = require('ipfs-api')
 var waterfall = require('promise-waterfall')
+var freeport = require('freeport')
+var shutdown = require('shutdown-handler')
+var rimraf = require('rimraf')
 
 function configureNode (node, conf, cb) {
   waterfall(_.map(conf, function (value, key) {
     return function () {
       var def = Q.defer()
-      run('ipfs', ['config', key, value])
+      run('ipfs', ['config', key, value], {env: node.env})
         .on('error', function (err) { cb(err) })
         .on('end', function () { def.resolve() })
       return def.promise
@@ -18,55 +21,86 @@ function configureNode (node, conf, cb) {
   })
 }
 
-var ctl = function (path) {
-  var env = process.env
+function tempDir () {
+  return '/tmp/ipfs_' + (Math.random() + '').substr(2)
+}
+
+var Node = function (path, opts, disposable) {
+  var env = _.clone(process.env)
   env.IPFS_PATH = path
   return {
+    clean: true,
+    pid: null,
     path: path,
-    init: function (opts, cb) {
+    opts: opts,
+    env: env,
+    init: function (cb) {
       var t = this
       if (!cb) cb = opts
       var buf = ''
-      run('ipfs', ['init'], {env: env})
+      run('ipfs', ['init'], {env: t.env})
         .on('error', function (err) { cb(err) })
         .on('data', function (data) { buf += data })
         .on('end', function () {
-          configureNode(t, opts, function (err) {
+          configureNode(t, t.opts, function (err) {
             if (err) return cb(err)
-            cb(null, buf)
+            t.clean = false
+            cb(null, t)
           })
+        })
+      shutdown.on('exit', t.shutdown.bind(t))
+    },
+    shutdown: function (e) {
+      var t = this
+
+      if (!t.clean && disposable) {
+        e.preventDefault()
+        rimraf(t.path, function (err) {
+          if (err) throw err
+          process.exit(0)
+        })
+      } else if (t.pid) {
+        e.preventDefault()
+        run('kill', [t.pid], {env: t.env})
+          .on('error', function (err) { throw err })
+          .on('end', function () { process.exit(0) })
+      }
+    },
+    daemon: function (cb) {
+      var t = this
+      var running = run('ipfs', ['daemon'], {env: t.env})
+      t.pid = running.pid
+      running
+        .on('error', function (err) { cb(err) })
+        .on('data', function (data) {
+          var match = (data + '').trim().match(/API server listening on ([^ ]*)/)
+          if (match) {
+            var split = match[1].split('/')
+            var port = split[split.length - 1] || 5001
+            // FIXME: https://github.com/ipfs/go-ipfs/issues/1288
+            setTimeout(function () {
+              cb(null, ipfs('127.0.0.1', port))
+            }, 100)
+          }
         })
     },
     getConf: function (key, cb) {
+      var t = this
       var result = ''
-      run('ipfs', ['config', key])
+      run('ipfs', ['config', key], {env: t.env})
         .on('error', function (err) { cb(err) })
         .on('data', function (data) { result += data })
         .on('end', function () { cb(null, result.trim()) })
     },
-    daemon: function (opts, cb) {
-      if (!cb) cb = opts
-      var t = this
-      var running = run('ipfs', ['daemon'], {env: env})
-
-      running
-        .on('error', function (err) { cb(err) })
-        .on('data', function (data) {
-          if ((data + '').match(/API server listening/)) {
-            t.getConf('Addresses.API', function (err, value) {
-              if (err) throw err
-              var split = value.split('/')
-              t.pid = running.pid
-              cb(null, ipfs('127.0.0.1', split[split.length - 1]), t.pid)
-            })
-          }
-        })
-    },
     stop: function (cb) {
+      var t = this
       if (this.pid) {
         run('kill', [this.pid])
           .on('error', function (err) { cb(err) })
-          .on('end', function () { cb(null) })
+          .on('end', function () {
+            t.pid = null
+            cb(null)
+          })
       } else {
         // not started, no problem
         cb(null)
@@ -75,4 +109,21 @@ var ctl = function (path) {
   }
 }
 
-module.exports = ctl
+module.exports = {
+  node: function (path, opts, cb) {
+    cb(null, new Node(path, opts))
+  },
+  disposable: function (cb) {
+    freeport(function (err, port) {
+      if (err) throw err
+      var node = new Node(tempDir(),
+                          {'Addresses.Gateway': '""',
+                           'Addresses.API': '/ip4/127.0.0.1/tcp/' + port},
+                          true)
+      node.init(function (err, newnode) {
+        if (err) throw err
+        node.daemon(cb)
+      })
+    })
+  }
+}
