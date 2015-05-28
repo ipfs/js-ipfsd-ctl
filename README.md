@@ -21,8 +21,8 @@ IPFS daemons are already easy to start and stop, but this module is here to do i
 
 var ipfsd = require('ipfsd-ctl')
 
-ipfsd.disposable(function (err, api) {
-  api.id(function (err, id) {
+ipfsd.disposableApi(function (err, ipfs) {
+  ipfs.id(function (err, id) {
     console.log(id)
     process.kill()
   })

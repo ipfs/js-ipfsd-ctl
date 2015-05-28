@@ -12,7 +12,7 @@ function configureNode (node, conf, cb) {
     return function () {
       var def = Q.defer()
       run('ipfs', ['config', key, value], {env: node.env})
-        .on('error', function (err) { cb(err) })
+        .on('error', cb)
         .on('end', function () { def.resolve() })
       return def.promise
     }
@@ -39,7 +39,7 @@ var Node = function (path, opts, disposable) {
       if (!cb) cb = opts
       var buf = ''
       run('ipfs', ['init'], {env: t.env})
-        .on('error', function (err) { cb(err) })
+        .on('error', cb)
         .on('data', function (data) { buf += data })
         .on('end', function () {
           configureNode(t, t.opts, function (err) {
@@ -71,15 +71,13 @@ var Node = function (path, opts, disposable) {
       var running = run('ipfs', ['daemon'], {env: t.env})
       t.pid = running.pid
       running
-        .on('error', function (err) { cb(err) })
+        .on('error', cb)
         .on('data', function (data) {
-          var match = (data + '').trim().match(/API server listening on ([^ ]*)/)
+          var match = (data + '').trim().match(/API server listening on/)
           if (match) {
-            var split = match[1].split('/')
-            var port = split[split.length - 1] || 5001
             // FIXME: https://github.com/ipfs/go-ipfs/issues/1288
             setTimeout(function () {
-              cb(null, ipfs('127.0.0.1', port))
+              cb(null)
             }, 100)
           }
         })
@@ -88,7 +86,7 @@ var Node = function (path, opts, disposable) {
       var t = this
       var result = ''
       run('ipfs', ['config', key], {env: t.env})
-        .on('error', function (err) { cb(err) })
+        .on('error', cb)
         .on('data', function (data) { result += data })
         .on('end', function () { cb(null, result.trim()) })
     },
@@ -96,7 +94,7 @@ var Node = function (path, opts, disposable) {
       var t = this
       if (this.pid) {
         run('kill', [this.pid])
-          .on('error', function (err) { cb(err) })
+          .on('error', cb)
           .on('end', function () {
             t.pid = null
             cb(null)
@@ -113,16 +111,25 @@ module.exports = {
   node: function (path, opts, cb) {
     cb(null, new Node(path, opts))
   },
+  disposableApi: function (cb) {
+    this.disposable(function (err, node) {
+      if (err) return cb(err)
+      cb(null, ipfs(node.opts['Addresses.API']))
+    })
+  },
   disposable: function (cb) {
     freeport(function (err, port) {
-      if (err) throw err
+      if (err) return cb(err)
       var node = new Node(tempDir(),
                           {'Addresses.Gateway': '""',
                            'Addresses.API': '/ip4/127.0.0.1/tcp/' + port},
                           true)
       node.init(function (err, newnode) {
         if (err) throw err
-        node.daemon(cb)
+        node.daemon(function (err) {
+          if (err) return cb(err)
+          cb(null, node)
+        })
       })
     })
   }
