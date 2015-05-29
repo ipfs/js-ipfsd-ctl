@@ -1,18 +1,18 @@
 
 var ipfsd = require('../index.js')
 
-ipfsd.disposable(function (err, api) {
+ipfsd.disposableApi(function (err, ipfs) {
   if (err) throw err
-  api.id(function (err, id) {
+  ipfs.id(function (err, id) {
     if (err) throw err
     console.log('alice')
     console.log(id)
   })
 })
 
-ipfsd.disposable(function (err, api) {
+ipfsd.disposableApi(function (err, ipfs) {
   if (err) throw err
-  api.id(function (err, id) {
+  ipfs.id(function (err, id) {
     if (err) throw err
     console.log('bob')
     console.log(id)

@@ -6,6 +6,7 @@ var waterfall = require('promise-waterfall')
 var freeport = require('freeport')
 var shutdown = require('shutdown-handler')
 var rimraf = require('rimraf')
+var fs = require('fs')
 
 function configureNode (node, conf, cb) {
   waterfall(_.map(conf, function (value, key) {
@@ -71,7 +72,14 @@ var Node = function (path, opts, disposable) {
       var running = run('ipfs', ['daemon'], {env: t.env})
       t.pid = running.pid
       running
-        .on('error', cb)
+        .on('error', function (err) {
+          if ((err+'').match('daemon is running')) {
+            // we're good
+            cb(null)
+          } else {
+            cb(err)
+          }
+        })
         .on('data', function (data) {
           var match = (data + '').trim().match(/API server listening on/)
           if (match) {
@@ -107,9 +115,41 @@ var Node = function (path, opts, disposable) {
   }
 }
 
+// cb for consistent error handling
+var parseConfig = function (path, cb) {
+  try {
+    var file = fs.readFileSync(path + '/config')
+    var parsed = JSON.parse(file)
+    cb(null, parsed)
+  } catch (e) {
+    cb(e)
+  }
+}
+
 module.exports = {
-  node: function (path, opts, cb) {
-    cb(null, new Node(path, opts))
+  local: function (cb) {
+    var path = process.env.IPFS_PATH ||
+      (process.env.HOME ||
+       process.env.USERPROFILE) + '/.ipfs'
+
+    parseConfig(path, function (err, conf) {
+      var apiAddr
+      if (err.code !== 'EACCESS') {
+        // could be first run, no problem
+        apiAddr = '/ip4/127.0.0.1/tcp/5001'
+      } else if (err) {
+        return cb(err)
+      }
+      if (!apiAddr) {
+        apiAddr = conf.Addresses.API
+      }
+
+      var node = new Node(path, {})
+      node.daemon(function (err) {
+        if (err) return cb(err)
+        cb(null, ipfs(apiAddr))
+      })
+    })
   },
   disposableApi: function (cb) {
     this.disposable(function (err, node) {
@@ -125,7 +165,7 @@ module.exports = {
                            'Addresses.API': '/ip4/127.0.0.1/tcp/' + port},
                           true)
       node.init(function (err, newnode) {
-        if (err) throw err
+        if (err) return cb(err)
         node.daemon(function (err) {
           if (err) return cb(err)
           cb(null, node)
