@@ -8,11 +8,13 @@ var shutdown = require('shutdown-handler')
 var rimraf = require('rimraf')
 var fs = require('fs')
 
+var IPFS_EXEC = __dirname + '/node_modules/.bin/ipfs'
+
 function configureNode (node, conf, cb) {
   waterfall(_.map(conf, function (value, key) {
     return function () {
       var def = Q.defer()
-      run('ipfs', ['config', key, value], {env: node.env})
+      run(IPFS_EXEC, ['config', key, value], {env: node.env})
         .on('error', cb)
         .on('end', function () { def.resolve() })
       return def.promise
@@ -39,7 +41,7 @@ var Node = function (path, opts, disposable) {
       var t = this
       if (!cb) cb = opts
       var buf = ''
-      run('ipfs', ['init'], {env: t.env})
+      run(IPFS_EXEC, ['init'], {env: t.env})
         .on('error', cb)
         .on('data', function (data) { buf += data })
         .on('end', function () {
@@ -69,7 +71,7 @@ var Node = function (path, opts, disposable) {
     },
     daemon: function (cb) {
       var t = this
-      var running = run('ipfs', ['daemon'], {env: t.env})
+      var running = run(IPFS_EXEC, ['daemon'], {env: t.env})
       t.pid = running.pid
       running
         .on('error', function (err) {
@@ -93,7 +95,7 @@ var Node = function (path, opts, disposable) {
     getConf: function (key, cb) {
       var t = this
       var result = ''
-      run('ipfs', ['config', key], {env: t.env})
+      run(IPFS_EXEC, ['config', key], {env: t.env})
         .on('error', cb)
         .on('data', function (data) { result += data })
         .on('end', function () { cb(null, result.trim()) })

@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "simple controls for an ipfs node",
   "main": "index.js",
   "scripts": {
@@ -21,14 +21,15 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "comandante": "0.0.1",
+    "freeport": "^1.0.5",
+    "go-ipfs": "^0.3.0",
+    "ipfs-api": "1.1.7",
+    "kew": "^0.5.0",
     "lodash": "^3.6.0",
     "promise-waterfall": "0.1.0",
-    "kew": "^0.5.0",
-    "freeport": "^1.0.5",
-    "shutdown-handler": "^1.0.0",
     "rimraf": "2.3.4",
-    "ipfs-api": "1.1.7",
-    "comandante": "0.0.1"
+    "shutdown-handler": "^1.0.0"
   },
   "devDependencies": {
     "mocha": "2.2.5"
