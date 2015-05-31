@@ -14,7 +14,8 @@ function configureNode (node, conf, cb) {
   waterfall(_.map(conf, function (value, key) {
     return function () {
       var def = Q.defer()
-      run(IPFS_EXEC, ['config', key, value], {env: node.env})
+      run(IPFS_EXEC, ['config', key, '--json', JSON.stringify(value)],
+          {env: node.env})
         .on('error', cb)
         .on('end', function () { def.resolve() })
       return def.promise
@@ -71,11 +72,11 @@ var Node = function (path, opts, disposable) {
     },
     daemon: function (cb) {
       var t = this
-      var running = run(IPFS_EXEC, ['daemon'], {env: t.env})
+      var running = run(IPFS_EXEC, ['daemon', '--unrestricted-api'], {env: t.env})
       t.pid = running.pid
       running
         .on('error', function (err) {
-          if ((err+'').match('daemon is running')) {
+          if ((err + '').match('daemon is running')) {
             // we're good
             cb(null)
           } else {
@@ -135,37 +136,61 @@ module.exports = {
        process.env.USERPROFILE) + '/.ipfs'
 
     parseConfig(path, function (err, conf) {
+      var initialize = false
       var apiAddr
-      if (err.code !== 'EACCESS') {
-        // could be first run, no problem
-        apiAddr = '/ip4/127.0.0.1/tcp/5001'
-      } else if (err) {
-        return cb(err)
+      if (err) {
+        if (err.code === 'ENOENT') {
+          // no config found, initialize
+          initialize = true
+          apiAddr = '/ip4/127.0.0.1/tcp/5001'
+        } else {
+          return cb(err)
+        }
       }
+
       if (!apiAddr) {
         apiAddr = conf.Addresses.API
       }
 
       var node = new Node(path, {})
-      node.daemon(function (err) {
-        if (err) return cb(err)
-        cb(null, ipfs(apiAddr))
-      })
+
+      var startDaemon = function () {
+        node.daemon(function (err) {
+          if (err) return cb(err)
+          cb(null, ipfs(apiAddr))
+        })
+      }
+
+      if (initialize) {
+        node.init(function (err) {
+          if (err) return cb(err)
+          startDaemon()
+        })
+      } else {
+        startDaemon()
+      }
     })
   },
-  disposableApi: function (cb) {
-    this.disposable(function (err, node) {
+  disposableApi: function (opts, cb) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = {}
+    }
+    this.disposable(opts, function (err, node) {
       if (err) return cb(err)
       cb(null, ipfs(node.opts['Addresses.API']))
     })
   },
-  disposable: function (cb) {
+  disposable: function (opts, cb) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = {}
+    }
     freeport(function (err, port) {
       if (err) return cb(err)
-      var node = new Node(tempDir(),
-                          {'Addresses.Gateway': '""',
-                           'Addresses.API': '/ip4/127.0.0.1/tcp/' + port},
-                          true)
+      opts['Addresses.Gateway'] = '""'
+      opts['Addresses.API'] = '/ip4/127.0.0.1/tcp/' + port
+      var node = new Node(tempDir(), opts, true)
       node.init(function (err, newnode) {
         if (err) return cb(err)
         node.daemon(function (err) {
