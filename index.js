@@ -52,22 +52,19 @@ var Node = function (path, opts, disposable) {
             cb(null, t)
           })
         })
-      shutdown.on('exit', t.shutdown.bind(t))
+      if (disposable) {
+        shutdown.on('exit', t.shutdown.bind(t))
+      }
     },
+    // cleanup tmp files
     shutdown: function (e) {
       var t = this
-
       if (!t.clean && disposable) {
         e.preventDefault()
         rimraf(t.path, function (err) {
           if (err) throw err
           process.exit(0)
         })
-      } else if (t.pid) {
-        e.preventDefault()
-        run('kill', [t.pid], {env: t.env})
-          .on('error', function (err) { throw err })
-          .on('end', function () { process.exit(0) })
       }
     },
     daemon: function (cb) {
