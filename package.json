@@ -1,22 +1,39 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "simple controls for an ipfs node",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test",
+    "lint": "git diff --name-only --cached --relative | egrep .js$ | xargs --no-run-if-empty standard"
   },
+  "pre-commit": [
+    "test"
+  ],
   "keywords": [
     "ipfs",
     "node",
     "daemon"
   ],
   "author": "Juan Benet <juan@benet.ai> (http://juan.benet.ai/)",
+  "contributors": [
+    "Kristoffer Ström <kristoffer@rymdkoloni.se>"
+  ],
   "license": "MIT",
   "dependencies": {
-    "comandante": "0.0.1"
+    "comandante": "0.0.1",
+    "freeport": "^1.0.5",
+    "go-ipfs": "^0.3.0",
+    "ipfs-api": "1.1.7",
+    "kew": "^0.5.0",
+    "lodash": "^3.6.0",
+    "promise-waterfall": "0.1.0",
+    "rimraf": "2.3.4",
+    "shutdown-handler": "^1.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "2.2.5"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ipfs/node-ipfsd-ctl.git"
