@@ -4,7 +4,7 @@ var Q = require('kew')
 var ipfs = require('ipfs-api')
 var waterfall = require('promise-waterfall')
 var freeport = require('freeport')
-var shutdown = require('shutdown-handler')
+var shutdown = require('shutdown-handler-krlpatch')
 var rimraf = require('rimraf')
 var fs = require('fs')
 
