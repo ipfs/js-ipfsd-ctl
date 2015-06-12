@@ -185,7 +185,7 @@ module.exports = {
     }
     freeport(function (err, port) {
       if (err) return cb(err)
-      opts['Addresses.Gateway'] = '""'
+      opts['Addresses.Gateway'] = ''
       opts['Addresses.API'] = '/ip4/127.0.0.1/tcp/' + port
       var node = new Node(tempDir(), opts, true)
       node.init(function (err, newnode) {
