@@ -69,26 +69,25 @@ var Node = function (path, opts, disposable) {
     },
     daemon: function (cb) {
       var t = this
-      var running = run(IPFS_EXEC, ['daemon', '--unrestricted-api'], {env: t.env})
-      t.pid = running.pid
-      running
-        .on('error', function (err) {
-          if ((err + '').match('daemon is running')) {
-            // we're good
-            cb(null)
-          } else {
-            cb(err)
-          }
-        })
-        .on('data', function (data) {
-          var match = (data + '').trim().match(/API server listening on/)
-          if (match) {
-            // FIXME: https://github.com/ipfs/go-ipfs/issues/1288
-            setTimeout(function () {
-              cb(null)
-            }, 100)
-          }
-        })
+      parseConfig(t.path, function (err, conf) {
+        var running = run(IPFS_EXEC, ['daemon'], {env: t.env})
+        t.pid = running.pid
+        running
+          .on('error', function (err) {
+            if ((err + '').match('daemon is running')) {
+              // we're good
+              cb(null, ipfs(conf.Addresses.API))
+            } else {
+              cb(err)
+            }
+          })
+          .on('data', function (data) {
+            var match = (data + '').trim().match(/API server listening on/)
+            if (match) {
+              cb(null, ipfs(conf.Addresses.API))
+            }
+          })
+      })
     },
     getConf: function (key, cb) {
       var t = this
@@ -132,40 +131,11 @@ module.exports = {
       (process.env.HOME ||
        process.env.USERPROFILE) + '/.ipfs'
 
-    parseConfig(path, function (err, conf) {
-      var initialize = false
-      var apiAddr
-      if (err) {
-        if (err.code === 'ENOENT') {
-          // no config found, initialize
-          initialize = true
-          apiAddr = '/ip4/127.0.0.1/tcp/5001'
-        } else {
-          return cb(err)
-        }
-      }
+    var node = new Node(path, {})
 
-      if (!apiAddr) {
-        apiAddr = conf.Addresses.API
-      }
-
-      var node = new Node(path, {})
-
-      var startDaemon = function () {
-        node.daemon(function (err) {
-          if (err) return cb(err)
-          cb(null, ipfs(apiAddr))
-        })
-      }
-
-      if (initialize) {
-        node.init(function (err) {
-          if (err) return cb(err)
-          startDaemon()
-        })
-      } else {
-        startDaemon()
-      }
+    node.init(function () {
+      // ignore error (already initialized)
+      cb(null, node)
     })
   },
   disposableApi: function (opts, cb) {
