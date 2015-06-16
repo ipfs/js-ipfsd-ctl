@@ -3,8 +3,7 @@ var _ = require('lodash')
 var Q = require('kew')
 var ipfs = require('ipfs-api')
 var waterfall = require('promise-waterfall')
-var freeport = require('freeport')
-var shutdown = require('shutdown-handler-krlpatch')
+var shutdown = require('shutdown-handler')
 var rimraf = require('rimraf')
 var fs = require('fs')
 
@@ -67,9 +66,11 @@ var Node = function (path, opts, disposable) {
         })
       }
     },
-    daemon: function (cb) {
+    startDaemon: function (cb) {
       var t = this
       parseConfig(t.path, function (err, conf) {
+        if (err) return cb(err)
+
         var running = run(IPFS_EXEC, ['daemon'], {env: t.env})
         t.pid = running.pid
         running
@@ -82,12 +83,26 @@ var Node = function (path, opts, disposable) {
             }
           })
           .on('data', function (data) {
-            var match = (data + '').trim().match(/API server listening on/)
+            var match = (data + '').trim().match(/API server listening on (.*)/)
             if (match) {
-              cb(null, ipfs(conf.Addresses.API))
+              t.apiAddr = match[1]
+              cb(null, ipfs(t.apiAddr))
             }
           })
       })
+    },
+    stopDaemon: function (cb) {
+      if (this.pid) {
+        run('kill', [this.pid])
+          .on('error', cb)
+          .on('end', function () { cb(null) })
+      } else {
+        cb(null)
+      }
+      this.pid = null
+    },
+    daemonRunning: function () {
+      return this.pid
     },
     getConf: function (key, cb) {
       var t = this
@@ -96,20 +111,6 @@ var Node = function (path, opts, disposable) {
         .on('error', cb)
         .on('data', function (data) { result += data })
         .on('end', function () { cb(null, result.trim()) })
-    },
-    stop: function (cb) {
-      var t = this
-      if (this.pid) {
-        run('kill', [this.pid])
-          .on('error', cb)
-          .on('end', function () {
-            t.pid = null
-            cb(null)
-          })
-      } else {
-        // not started, no problem
-        cb(null)
-      }
     }
   }
 }
@@ -126,6 +127,13 @@ var parseConfig = function (path, cb) {
 }
 
 module.exports = {
+  version: function (cb) {
+    var buf = ''
+    run(IPFS_EXEC, ['version'])
+      .on('error', cb)
+      .on('data', function (data) { buf += data })
+      .on('end', function () { cb(null, buf) })
+  },
   local: function (cb) {
     var path = process.env.IPFS_PATH ||
       (process.env.HOME ||
@@ -145,7 +153,10 @@ module.exports = {
     }
     this.disposable(opts, function (err, node) {
       if (err) return cb(err)
-      cb(null, ipfs(node.opts['Addresses.API']))
+      node.startDaemon(function (err, api) {
+        if (err) return cb(err)
+        cb(null, api)
+      })
     })
   },
   disposable: function (opts, cb) {
@@ -153,18 +164,13 @@ module.exports = {
       cb = opts
       opts = {}
     }
-    freeport(function (err, port) {
+    opts['Addresses.Swarm'] = ['/ip4/0.0.0.0/tcp/0']
+    opts['Addresses.Gateway'] = ''
+    opts['Addresses.API'] = '/ip4/127.0.0.1/tcp/0'
+    var node = new Node(tempDir(), opts, true)
+    node.init(function (err) {
       if (err) return cb(err)
-      opts['Addresses.Gateway'] = ''
-      opts['Addresses.API'] = '/ip4/127.0.0.1/tcp/' + port
-      var node = new Node(tempDir(), opts, true)
-      node.init(function (err, newnode) {
-        if (err) return cb(err)
-        node.daemon(function (err) {
-          if (err) return cb(err)
-          cb(null, node)
-        })
-      })
+      cb(null, node)
     })
   }
 }

@@ -1,6 +1,7 @@
 var ipfsd = require('../index.js')
 var assert = require('assert')
 var ipfsApi = require('ipfs-api')
+var run = require('comandante')
 
 describe('disposable node with local api', function () {
   this.timeout(20000)
@@ -8,8 +9,11 @@ describe('disposable node with local api', function () {
   before(function (done) {
     ipfsd.disposable(function (err, node) {
       if (err) throw err
-      ipfs = ipfsApi(node.opts['Addresses.API'])
-      done()
+      node.startDaemon(function (err, ignore) {
+        if (err) throw err
+        ipfs = ipfsApi(node.apiAddr)
+        done()
+      })
     })
   })
 
@@ -87,5 +91,59 @@ describe('disposableApi node', function () {
   })
   it('should be able to retrieve objects', function () {
     assert.equal(retrieve, 'blorb')
+  })
+})
+
+describe('starting and stopping', function () {
+  this.timeout(20000)
+  var node
+
+  describe('init', function () {
+    before(function (done) {
+      ipfsd.disposable(function (err, res) {
+        node = res
+        done()
+      })
+    })
+
+    it('should returned a node', function () {
+      assert(node)
+    })
+
+    it('daemon should not be running', function () {
+      assert(!node.daemonRunning())
+    })
+  })
+
+  describe('starting', function () {
+    var ipfs
+    before(function (done) {
+      node.startDaemon(function (err, res) {
+        var pid = node.daemonRunning()
+        ipfs = res
+
+        // actually running?
+        run('kill', ['-0', pid])
+          .on(err, function (err) { throw err })
+          .on('end', function () { done() })
+      })
+    })
+
+    it('should be running', function () {
+      assert(ipfs.id)
+    })
+  })
+
+  describe('stopping', function () {
+    before(function (done) {
+      node.stopDaemon(function (err) {
+        if (err) throw err
+        done()
+      })
+    })
+
+    it('should be stopped', function () {
+      assert(!node.daemonRunning())
+    })
   })
 })
