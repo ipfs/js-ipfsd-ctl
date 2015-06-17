@@ -92,7 +92,7 @@ var Node = function (path, opts, disposable) {
           })
       })
     },
-    stopDaemon: function () {
+    stopDaemon: function (cb) {
       var sp = this.subprocess
       if (!sp) return
 
@@ -100,10 +100,12 @@ var Node = function (path, opts, disposable) {
 
       var timeout = setTimeout(function () {
         sp.kill('SIGKILL')
+        cb && cb(null)
       }, GRACE_PERIOD)
 
       sp.on('close', function () {
         clearTimeout(timeout)
+        cb && cb(null)
       })
 
       this.subprocess = null
