@@ -8,7 +8,7 @@ var rimraf = require('rimraf')
 var fs = require('fs')
 
 var IPFS_EXEC = __dirname + '/node_modules/.bin/ipfs'
-var GRACE_PERIOD = 2000 // amount of ms to wait before sigkill
+var GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 
 function configureNode (node, conf, cb) {
   waterfall(_.map(conf, function (value, key) {
@@ -93,16 +93,20 @@ var Node = function (path, opts, disposable) {
       })
     },
     stopDaemon: function () {
-      var t = this
-      var sp = t.subprocess
+      var sp = this.subprocess
+      if (!sp) return
 
-      if (sp) {
-        sp.kill('SIGHUP')
-        setTimeout(function () {
-          sp.kill('SIGKILL')
-        }, GRACE_PERIOD)
-      }
-      t.subprocess = null
+      sp.kill('SIGTERM')
+
+      var timeout = setTimeout(function () {
+        sp.kill('SIGKILL')
+      }, GRACE_PERIOD)
+
+      sp.on('close', function () {
+        clearTimeout(timeout)
+      })
+
+      this.subprocess = null
     },
     daemonPid: function () {
       return this.subprocess && this.subprocess.pid
