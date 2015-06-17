@@ -95,7 +95,7 @@ describe('disposableApi node', function () {
 })
 
 describe('starting and stopping', function () {
-  this.timeout(20000)
+  this.timeout(10000)
   var node
 
   describe('init', function () {
@@ -111,15 +111,19 @@ describe('starting and stopping', function () {
     })
 
     it('daemon should not be running', function () {
-      assert(!node.daemonRunning())
+      assert(!node.daemonPid())
     })
   })
+
+  var pid
 
   describe('starting', function () {
     var ipfs
     before(function (done) {
       node.startDaemon(function (err, res) {
-        var pid = node.daemonRunning()
+        if (err) throw err
+
+        pid = node.daemonPid()
         ipfs = res
 
         // actually running?
@@ -136,14 +140,19 @@ describe('starting and stopping', function () {
 
   describe('stopping', function () {
     before(function (done) {
-      node.stopDaemon(function (err) {
-        if (err) throw err
-        done()
-      })
+      node.stopDaemon()
+      // make sure it's not still running
+      var poll = setInterval(function () {
+        run('kill', ['-0', pid])
+          .on('error', function () {
+            clearInterval(poll)
+            done()
+          })
+      }, 100)
     })
 
     it('should be stopped', function () {
-      assert(!node.daemonRunning())
+      assert(!node.daemonPid())
     })
   })
 })

@@ -8,6 +8,7 @@ var rimraf = require('rimraf')
 var fs = require('fs')
 
 var IPFS_EXEC = __dirname + '/node_modules/.bin/ipfs'
+var GRACE_PERIOD = 2000 // amount of ms to wait before sigkill
 
 function configureNode (node, conf, cb) {
   waterfall(_.map(conf, function (value, key) {
@@ -32,8 +33,8 @@ var Node = function (path, opts, disposable) {
   var env = _.clone(process.env)
   env.IPFS_PATH = path
   return {
+    subprocess: null,
     clean: true,
-    pid: null,
     path: path,
     opts: opts,
     env: env,
@@ -71,13 +72,13 @@ var Node = function (path, opts, disposable) {
       parseConfig(t.path, function (err, conf) {
         if (err) return cb(err)
 
-        var running = run(IPFS_EXEC, ['daemon'], {env: t.env})
-        t.pid = running.pid
-        running
+        t.subprocess = run(IPFS_EXEC, ['daemon'], {env: t.env})
           .on('error', function (err) {
             if ((err + '').match('daemon is running')) {
               // we're good
               cb(null, ipfs(conf.Addresses.API))
+            } else if ((err + '').match('non-zero exit code')) {
+              // ignore when kill -9'd
             } else {
               cb(err)
             }
@@ -91,18 +92,20 @@ var Node = function (path, opts, disposable) {
           })
       })
     },
-    stopDaemon: function (cb) {
-      if (this.pid) {
-        run('kill', [this.pid])
-          .on('error', cb)
-          .on('end', function () { cb(null) })
-      } else {
-        cb(null)
+    stopDaemon: function () {
+      var t = this
+      var sp = t.subprocess
+
+      if (sp) {
+        sp.kill('SIGHUP')
+        setTimeout(function () {
+          sp.kill('SIGKILL')
+        }, GRACE_PERIOD)
       }
-      this.pid = null
+      t.subprocess = null
     },
-    daemonRunning: function () {
-      return this.pid
+    daemonPid: function () {
+      return this.subprocess && this.subprocess.pid
     },
     getConf: function (key, cb) {
       var t = this
