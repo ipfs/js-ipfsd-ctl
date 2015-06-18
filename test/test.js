@@ -138,9 +138,13 @@ describe('starting and stopping', function () {
     })
   })
 
+  var stopped = false
   describe('stopping', function () {
     before(function (done) {
-      node.stopDaemon()
+      node.stopDaemon(function (err) {
+        if (err) throw err
+        stopped = true;
+      })
       // make sure it's not still running
       var poll = setInterval(function () {
         run('kill', ['-0', pid])
@@ -153,6 +157,7 @@ describe('starting and stopping', function () {
 
     it('should be stopped', function () {
       assert(!node.daemonPid())
+      assert(stopped)
     })
   })
 })
