@@ -34,13 +34,14 @@ var Node = function (path, opts, disposable) {
   env.IPFS_PATH = path
   return {
     subprocess: null,
+    initialized: fs.existsSync(path),
     clean: true,
     path: path,
     opts: opts,
     env: env,
-    init: function (cb) {
+    init: function (initOpts, cb) {
       var t = this
-      if (!cb) cb = opts
+      if (!cb) cb = initOpts
       var buf = ''
       run(IPFS_EXEC, ['init'], {env: t.env})
         .on('error', cb)
@@ -144,16 +145,11 @@ module.exports = {
       .on('end', function () { cb(null, buf) })
   },
   local: function (cb) {
+    // todo, look for other standard paths
     var path = process.env.IPFS_PATH ||
       (process.env.HOME ||
        process.env.USERPROFILE) + '/.ipfs'
-
-    var node = new Node(path, {})
-
-    node.init(function () {
-      // ignore error (already initialized)
-      cb(null, node)
-    })
+    cb(null, new Node(path, {}))
   },
   disposableApi: function (opts, cb) {
     if (typeof opts === 'function') {
