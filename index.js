@@ -144,11 +144,13 @@ module.exports = {
       .on('data', function (data) { buf += data })
       .on('end', function () { cb(null, buf) })
   },
-  local: function (cb) {
-    // todo, look for other standard paths
-    var path = process.env.IPFS_PATH ||
-      (process.env.HOME ||
-       process.env.USERPROFILE) + '/.ipfs'
+  local: function (path, cb) {
+    if (!cb) {
+      cb = path
+      path = process.env.IPFS_PATH ||
+        (process.env.HOME ||
+         process.env.USERPROFILE) + '/.ipfs'
+    }
     cb(null, new Node(path, {}))
   },
   disposableApi: function (opts, cb) {
