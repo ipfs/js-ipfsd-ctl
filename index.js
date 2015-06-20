@@ -11,18 +11,22 @@ var IPFS_EXEC = __dirname + '/node_modules/.bin/ipfs'
 var GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 
 function configureNode (node, conf, cb) {
-  waterfall(_.map(conf, function (value, key) {
-    return function () {
-      var def = Q.defer()
-      run(IPFS_EXEC, ['config', key, '--json', JSON.stringify(value)],
-          {env: node.env})
-        .on('error', cb)
-        .on('end', function () { def.resolve() })
-      return def.promise
-    }
-  })).then(function () {
-    cb(null, true)
-  })
+  if (Object.keys(conf).length) {
+    waterfall(_.map(conf, function (value, key) {
+      return function () {
+        var def = Q.defer()
+        run(IPFS_EXEC, ['config', key, '--json', JSON.stringify(value)],
+            {env: node.env})
+          .on('error', cb)
+          .on('end', function () { def.resolve() })
+        return def.promise
+      }
+    })).then(function () {
+      cb(null)
+    })
+  } else {
+    cb(null)
+  }
 }
 
 function tempDir () {
@@ -41,15 +45,27 @@ var Node = function (path, opts, disposable) {
     env: env,
     init: function (initOpts, cb) {
       var t = this
-      if (!cb) cb = initOpts
+      if (!cb) {
+        cb = initOpts
+        initOps = {}
+      }
       var buf = ''
-      run(IPFS_EXEC, ['init'], {env: t.env})
+
+      var keySize = initOpts.keysize || 2048
+
+      if (initOpts.directory && initOpts.directory !== path) {
+        path = initOpts.directory
+        t.env.IPFS_PATH = path
+      }
+
+      run(IPFS_EXEC, ['init', '-b', keySize], {env: t.env})
         .on('error', cb)
         .on('data', function (data) { buf += data })
         .on('end', function () {
           configureNode(t, t.opts, function (err) {
             if (err) return cb(err)
             t.clean = false
+            t.initialized = true
             cb(null, t)
           })
         })
