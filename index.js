@@ -3,26 +3,30 @@ var _ = require('lodash')
 var Q = require('kew')
 var ipfs = require('ipfs-api')
 var waterfall = require('promise-waterfall')
-var freeport = require('freeport')
-var shutdown = require('shutdown-handler-krlpatch')
+var shutdown = require('shutdown-handler')
 var rimraf = require('rimraf')
 var fs = require('fs')
 
 var IPFS_EXEC = __dirname + '/node_modules/.bin/ipfs'
+var GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 
 function configureNode (node, conf, cb) {
-  waterfall(_.map(conf, function (value, key) {
-    return function () {
-      var def = Q.defer()
-      run(IPFS_EXEC, ['config', key, '--json', JSON.stringify(value)],
-          {env: node.env})
-        .on('error', cb)
-        .on('end', function () { def.resolve() })
-      return def.promise
-    }
-  })).then(function () {
-    cb(null, true)
-  })
+  if (Object.keys(conf).length) {
+    waterfall(_.map(conf, function (value, key) {
+      return function () {
+        var def = Q.defer()
+        run(IPFS_EXEC, ['config', key, '--json', JSON.stringify(value)],
+            {env: node.env})
+          .on('error', cb)
+          .on('end', function () { def.resolve() })
+        return def.promise
+      }
+    })).then(function () {
+      cb(null)
+    })
+  } else {
+    cb(null)
+  }
 }
 
 function tempDir () {
@@ -33,22 +37,35 @@ var Node = function (path, opts, disposable) {
   var env = _.clone(process.env)
   env.IPFS_PATH = path
   return {
+    subprocess: null,
+    initialized: fs.existsSync(path),
     clean: true,
-    pid: null,
     path: path,
     opts: opts,
     env: env,
-    init: function (cb) {
+    init: function (initOpts, cb) {
       var t = this
-      if (!cb) cb = opts
+      if (!cb) {
+        cb = initOpts
+        initOps = {}
+      }
       var buf = ''
-      run(IPFS_EXEC, ['init'], {env: t.env})
+
+      var keySize = initOpts.keysize || 2048
+
+      if (initOpts.directory && initOpts.directory !== path) {
+        path = initOpts.directory
+        t.env.IPFS_PATH = path
+      }
+
+      run(IPFS_EXEC, ['init', '-b', keySize], {env: t.env})
         .on('error', cb)
         .on('data', function (data) { buf += data })
         .on('end', function () {
           configureNode(t, t.opts, function (err) {
             if (err) return cb(err)
             t.clean = false
+            t.initialized = true
             cb(null, t)
           })
         })
@@ -67,27 +84,51 @@ var Node = function (path, opts, disposable) {
         })
       }
     },
-    daemon: function (cb) {
+    startDaemon: function (cb) {
       var t = this
       parseConfig(t.path, function (err, conf) {
-        var running = run(IPFS_EXEC, ['daemon'], {env: t.env})
-        t.pid = running.pid
-        running
+        if (err) return cb(err)
+
+        t.subprocess = run(IPFS_EXEC, ['daemon'], {env: t.env})
           .on('error', function (err) {
             if ((err + '').match('daemon is running')) {
               // we're good
               cb(null, ipfs(conf.Addresses.API))
+            } else if ((err + '').match('non-zero exit code')) {
+              // ignore when kill -9'd
             } else {
               cb(err)
             }
           })
           .on('data', function (data) {
-            var match = (data + '').trim().match(/API server listening on/)
+            var match = (data + '').trim().match(/API server listening on (.*)/)
             if (match) {
-              cb(null, ipfs(conf.Addresses.API))
+              t.apiAddr = match[1]
+              cb(null, ipfs(t.apiAddr))
             }
           })
       })
+    },
+    stopDaemon: function (cb) {
+      var sp = this.subprocess
+      if (!sp) return
+
+      sp.kill('SIGTERM')
+
+      var timeout = setTimeout(function () {
+        sp.kill('SIGKILL')
+        cb && cb(null)
+      }, GRACE_PERIOD)
+
+      sp.on('close', function () {
+        clearTimeout(timeout)
+        cb && cb(null)
+      })
+
+      this.subprocess = null
+    },
+    daemonPid: function () {
+      return this.subprocess && this.subprocess.pid
     },
     getConf: function (key, cb) {
       var t = this
@@ -96,20 +137,6 @@ var Node = function (path, opts, disposable) {
         .on('error', cb)
         .on('data', function (data) { result += data })
         .on('end', function () { cb(null, result.trim()) })
-    },
-    stop: function (cb) {
-      var t = this
-      if (this.pid) {
-        run('kill', [this.pid])
-          .on('error', cb)
-          .on('end', function () {
-            t.pid = null
-            cb(null)
-          })
-      } else {
-        // not started, no problem
-        cb(null)
-      }
     }
   }
 }
@@ -126,17 +153,21 @@ var parseConfig = function (path, cb) {
 }
 
 module.exports = {
-  local: function (cb) {
-    var path = process.env.IPFS_PATH ||
-      (process.env.HOME ||
-       process.env.USERPROFILE) + '/.ipfs'
-
-    var node = new Node(path, {})
-
-    node.init(function () {
-      // ignore error (already initialized)
-      cb(null, node)
-    })
+  version: function (cb) {
+    var buf = ''
+    run(IPFS_EXEC, ['version'])
+      .on('error', cb)
+      .on('data', function (data) { buf += data })
+      .on('end', function () { cb(null, buf) })
+  },
+  local: function (path, cb) {
+    if (!cb) {
+      cb = path
+      path = process.env.IPFS_PATH ||
+        (process.env.HOME ||
+         process.env.USERPROFILE) + '/.ipfs'
+    }
+    cb(null, new Node(path, {}))
   },
   disposableApi: function (opts, cb) {
     if (typeof opts === 'function') {
@@ -145,7 +176,10 @@ module.exports = {
     }
     this.disposable(opts, function (err, node) {
       if (err) return cb(err)
-      cb(null, ipfs(node.opts['Addresses.API']))
+      node.startDaemon(function (err, api) {
+        if (err) return cb(err)
+        cb(null, api)
+      })
     })
   },
   disposable: function (opts, cb) {
@@ -153,18 +187,13 @@ module.exports = {
       cb = opts
       opts = {}
     }
-    freeport(function (err, port) {
+    opts['Addresses.Swarm'] = ['/ip4/0.0.0.0/tcp/0']
+    opts['Addresses.Gateway'] = ''
+    opts['Addresses.API'] = '/ip4/127.0.0.1/tcp/0'
+    var node = new Node(tempDir(), opts, true)
+    node.init(function (err) {
       if (err) return cb(err)
-      opts['Addresses.Gateway'] = ''
-      opts['Addresses.API'] = '/ip4/127.0.0.1/tcp/' + port
-      var node = new Node(tempDir(), opts, true)
-      node.init(function (err, newnode) {
-        if (err) return cb(err)
-        node.daemon(function (err) {
-          if (err) return cb(err)
-          cb(null, node)
-        })
-      })
+      cb(null, node)
     })
   }
 }
