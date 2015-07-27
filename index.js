@@ -35,7 +35,10 @@ function tempDir () {
 
 var Node = function (path, opts, disposable) {
   var env = _.clone(process.env)
+
   env.IPFS_PATH = path
+  if (opts.env) _.assign(env, opts.env)
+
   return {
     subprocess: null,
     initialized: fs.existsSync(path),
