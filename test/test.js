@@ -1,7 +1,7 @@
 var ipfsd = require('../index.js')
 var assert = require('assert')
 var ipfsApi = require('ipfs-api')
-var run = require('comandante')
+var run = require('subcomandante')
 var fs = require('fs')
 var rimraf = require('rimraf')
 
@@ -153,6 +153,7 @@ describe('starting and stopping', function () {
           .on('error', function () {
             clearInterval(poll)
             done()
+            done = function() {} // so it does not get called again
           })
       }, 100)
     })

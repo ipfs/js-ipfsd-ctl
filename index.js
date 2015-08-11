@@ -1,4 +1,4 @@
-var run = require('comandante')
+var run = require('subcomandante')
 var _ = require('lodash')
 var Q = require('kew')
 var ipfs = require('ipfs-api')
