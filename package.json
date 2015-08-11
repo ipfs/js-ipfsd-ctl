@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "simple controls for an ipfs node",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "promise-waterfall": "0.1.0",
     "rimraf": "2.3.4",
     "shutdown-handler": "1.0.1",
-    "subcomandante": "^1.0.2"
+    "subcomandante": "^1.0.3"
   },
   "devDependencies": {
     "mocha": "2.2.5"
