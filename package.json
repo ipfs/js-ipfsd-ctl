@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "simple controls for an ipfs node",
   "main": "index.js",
   "scripts": {
@@ -40,5 +40,9 @@
   "bugs": {
     "url": "https://github.com/ipfs/node-ipfsd-ctl/issues"
   },
-  "homepage": "https://github.com/ipfs/node-ipfsd-ctl"
+  "homepage": "https://github.com/ipfs/node-ipfsd-ctl",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  }
 }
