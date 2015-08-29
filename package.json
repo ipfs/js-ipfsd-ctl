@@ -21,8 +21,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "go-ipfs": "0.3.0",
-    "ipfs-api": "2.0.0",
+    "go-ipfs": "0.3.6",
+    "ipfs-api": "2.2.1",
     "kew": "0.5.0",
     "lodash": "3.6.0",
     "promise-waterfall": "0.1.0",
