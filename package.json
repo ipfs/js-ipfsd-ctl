@@ -26,6 +26,7 @@
     "kew": "0.5.0",
     "lodash": "3.6.0",
     "promise-waterfall": "0.1.0",
+    "require-resolve": "0.0.2",
     "rimraf": "2.3.4",
     "shutdown-handler": "1.0.1",
     "subcomandante": "^1.0.3"
