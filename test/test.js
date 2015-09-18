@@ -66,8 +66,8 @@ describe('disposableApi node', function () {
   it('should have started the daemon and returned an api with host/port', function () {
     assert(ipfs)
     assert(ipfs.id)
-    assert(ipfs.host)
-    assert(ipfs.port)
+    assert(ipfs.apiHost)
+    assert(ipfs.apiPort)
   })
 
   var store, retrieve

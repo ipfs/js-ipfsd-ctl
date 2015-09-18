@@ -112,8 +112,8 @@ var Node = function (path, opts, disposable) {
               t.apiAddr = match[1]
               var addr = multiaddr(t.apiAddr).nodeAddress()
               var api = ipfs(t.apiAddr)
-              api.host = addr.address
-              api.port = addr.port
+              api.apiHost = addr.address
+              api.apiPort = addr.port
               cb(null, api)
             }
           })
