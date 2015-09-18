@@ -3,6 +3,7 @@ var _ = require('lodash')
 var Q = require('kew')
 var ipfs = require('ipfs-api')
 var requireResolve = require('require-resolve')
+var multiaddr = require('multiaddr')
 var waterfall = require('promise-waterfall')
 var shutdown = require('shutdown-handler')
 var rimraf = require('rimraf')
@@ -109,7 +110,11 @@ var Node = function (path, opts, disposable) {
             var match = (data + '').trim().match(/API server listening on (.*)/)
             if (match) {
               t.apiAddr = match[1]
-              cb(null, ipfs(t.apiAddr))
+              var addr = multiaddr(t.apiAddr).nodeAddress()
+              var api = ipfs(t.apiAddr)
+              api.apiHost = addr.address
+              api.apiPort = addr.port
+              cb(null, api)
             }
           })
       })
