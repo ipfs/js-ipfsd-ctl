@@ -9,7 +9,7 @@ var rimraf = require('rimraf')
 var fs = require('fs')
 var path = require('path')
 
-var IPFS_EXEC = path.join(requireResolve('go-ipfs').pkg.root, '/bin/ipfs'))
+var IPFS_EXEC = path.join(requireResolve('go-ipfs').pkg.root, '/bin/ipfs')
 var GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 
 function configureNode (node, conf, cb) {
