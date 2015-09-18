@@ -147,6 +147,14 @@ var Node = function (path, opts, disposable) {
         .on('error', cb)
         .on('data', function (data) { result += data })
         .on('end', function () { cb(null, result.trim()) })
+    },
+    replaceConf: function (file, cb) {
+      var t = this
+      var result = ''
+      run(IPFS_EXEC, ['config', 'replace', file], {env: t.env})
+        .on('error', cb)
+        .on('data', function (data) { result += data })
+        .on('end', function () { cb(null, result.trim()) })
     }
   }
 }
