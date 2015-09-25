@@ -2,7 +2,6 @@ var run = require('subcomandante')
 var _ = require('lodash')
 var Q = require('kew')
 var ipfs = require('ipfs-api')
-var requireResolve = require('require-resolve')
 var multiaddr = require('multiaddr')
 var waterfall = require('promise-waterfall')
 var shutdown = require('shutdown-handler')
@@ -10,7 +9,7 @@ var rimraf = require('rimraf')
 var fs = require('fs')
 var path = require('path')
 
-var IPFS_EXEC = path.join(requireResolve('go-ipfs').pkg.root, '/bin/ipfs')
+var IPFS_EXEC = require("go-ipfs")
 var GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 
 function configureNode (node, conf, cb) {
