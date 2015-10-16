@@ -7,9 +7,8 @@ var waterfall = require('promise-waterfall')
 var shutdown = require('shutdown-handler')
 var rimraf = require('rimraf')
 var fs = require('fs')
-var path = require('path')
 
-var IPFS_EXEC = require("go-ipfs")
+var IPFS_EXEC = require('go-ipfs')
 var GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 
 function configureNode (node, conf, cb) {
@@ -52,7 +51,7 @@ var Node = function (path, opts, disposable) {
       var t = this
       if (!cb) {
         cb = initOpts
-        initOps = {}
+        initOpts = {}
       }
       var buf = ''
 
