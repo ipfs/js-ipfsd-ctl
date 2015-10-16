@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test",
-    "lint": "git diff --name-only --cached --relative | egrep .js$ | xargs --no-run-if-empty standard"
+    "lint": "standard"
   },
   "pre-commit": [
+    "lint",
     "test"
   ],
   "keywords": [
