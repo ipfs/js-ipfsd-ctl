@@ -5,6 +5,9 @@ var run = require('subcomandante')
 var fs = require('fs')
 var rimraf = require('rimraf')
 
+// this comment is used by mocha, do not delete
+/*global describe, before, it*/
+
 describe('disposable node with local api', function () {
   this.timeout(20000)
   var ipfs
@@ -105,6 +108,7 @@ describe('starting and stopping', function () {
   describe('init', function () {
     before(function (done) {
       ipfsd.disposable(function (err, res) {
+        if (err) throw err
         node = res
         done()
       })
@@ -147,7 +151,7 @@ describe('starting and stopping', function () {
     before(function (done) {
       node.stopDaemon(function (err) {
         if (err) throw err
-        stopped = true;
+        stopped = true
       })
       // make sure it's not still running
       var poll = setInterval(function () {
@@ -155,7 +159,7 @@ describe('starting and stopping', function () {
           .on('error', function () {
             clearInterval(poll)
             done()
-            done = function() {} // so it does not get called again
+            done = function () {} // so it does not get called again
           })
       }, 100)
     })
@@ -168,7 +172,6 @@ describe('starting and stopping', function () {
 })
 
 describe('setting up an initializing a local node', function () {
-
   var testpath1 = '/tmp/ipfstestpath1'
 
   describe('cleanup', function () {
@@ -182,7 +185,6 @@ describe('setting up an initializing a local node', function () {
   })
 
   describe('setup', function () {
-
     var node
     before(function (done) {
       ipfsd.local(testpath1, function (err, res) {
