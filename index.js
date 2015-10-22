@@ -138,13 +138,26 @@ var Node = function (path, opts, disposable) {
     daemonPid: function () {
       return this.subprocess && this.subprocess.pid
     },
-    getConf: function (key, cb) {
+    getConfig: function (key, cb) {
+      if (typeof key === 'function') {
+        cb = key
+        key = ''
+      }
       var t = this
       var result = ''
       run(IPFS_EXEC, ['config', key], {env: t.env})
         .on('error', cb)
         .on('data', function (data) { result += data })
-        .on('end', function () { cb(null, result.trim()) })
+        .on('end', function () {
+          cb(null, result.trim())
+        })
+    },
+    setConfig: function (key, value, cb) {
+      var t = this
+      run(IPFS_EXEC, ['config', key, value, '--json'], {env: t.env})
+        .on('error', cb)
+        .on('data', function (data) {})
+        .on('end', function () { cb() })
     },
     replaceConf: function (file, cb) {
       var t = this
