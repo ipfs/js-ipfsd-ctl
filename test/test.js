@@ -226,3 +226,45 @@ describe('setting up an initializing a local node', function () {
     })
   })
 })
+
+describe('change config values of a disposable node', function () {
+  this.timeout(20000)
+
+  var ipfsNode
+
+  before(function (done) {
+    ipfsd.disposable(function (err, node) {
+      if (err) {
+        throw err
+      }
+      ipfsNode = node
+      done()
+    })
+  })
+
+  it('Should return a config value', function (done) {
+    ipfsNode.getConfig('Bootstrap', function (err, config) {
+      if (err) {
+        throw err
+      }
+      assert(config)
+      done()
+    })
+  })
+
+  it('Should set a config value', function (done) {
+    ipfsNode.setConfig('Bootstrap', null, function (err) {
+      if (err) {
+        throw err
+      }
+
+      ipfsNode.getConfig('Bootstrap', function (err, config) {
+        if (err) {
+          throw err
+        }
+        assert.equal(config, 'null')
+        done()
+      })
+    })
+  })
+})
