@@ -43,12 +43,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ipfs/node-ipfsd-ctl.git"
+    "url": "git+https://github.com/ipfs/js-ipfsd-ctl.git"
   },
   "bugs": {
-    "url": "https://github.com/ipfs/node-ipfsd-ctl/issues"
+    "url": "https://github.com/ipfs/js-ipfsd-ctl/issues"
   },
-  "homepage": "https://github.com/ipfs/node-ipfsd-ctl",
+  "homepage": "https://github.com/ipfs/js-ipfsd-ctl",
   "directories": {
     "example": "examples",
     "test": "test"

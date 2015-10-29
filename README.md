@@ -1,6 +1,9 @@
-# ipfsd-ctl - Control an ipfs node daemon
+ipfsd-ctl
+=========
 
-This is a simple module to control an ipfs daemon.
+> Control an ipfs node daemon using Node.js
+
+## Installation
 
 Install:
 ```sh
