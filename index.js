@@ -4,9 +4,9 @@ var Q = require('kew')
 var ipfs = require('ipfs-api')
 var multiaddr = require('multiaddr')
 var waterfall = require('promise-waterfall')
-var shutdown = require('shutdown-handler')
 var rimraf = require('rimraf')
 var fs = require('fs')
+var shutdown = require('shutdown')
 
 var IPFS_EXEC = require('go-ipfs')
 var GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
@@ -74,17 +74,16 @@ var Node = function (path, opts, disposable) {
           })
         })
       if (disposable) {
-        shutdown.on('exit', t.shutdown.bind(t))
+        shutdown.addHandler('disposable', 1, t.shutdown.bind(t))
       }
     },
     // cleanup tmp files
-    shutdown: function (e) {
+    shutdown: function (done) {
       var t = this
       if (!t.clean && disposable) {
-        e.preventDefault()
         rimraf(t.path, function (err) {
           if (err) throw err
-          process.exit(0)
+          done()
         })
       }
     },
