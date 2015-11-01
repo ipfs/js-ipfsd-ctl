@@ -23,7 +23,8 @@
   },
   "author": "Juan Benet <juan@benet.ai> (http://juan.benet.ai/)",
   "contributors": [
-    "Kristoffer Ström <kristoffer@rymdkoloni.se>"
+    "Kristoffer Ström <kristoffer@rymdkoloni.se>",
+    "Friedel Ziegelmayer <dignifiedquire@gmail.com>"
   ],
   "license": "MIT",
   "dependencies": {
