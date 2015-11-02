@@ -23,7 +23,8 @@
   },
   "author": "Juan Benet <juan@benet.ai> (http://juan.benet.ai/)",
   "contributors": [
-    "Kristoffer Ström <kristoffer@rymdkoloni.se>"
+    "Kristoffer Ström <kristoffer@rymdkoloni.se>",
+    "Friedel Ziegelmayer <dignifiedquire@gmail.com>"
   ],
   "license": "MIT",
   "dependencies": {
@@ -34,7 +35,7 @@
     "multiaddr": "^1.0.0",
     "promise-waterfall": "0.1.0",
     "rimraf": "^2.3.4",
-    "shutdown-handler": "^1.0.1",
+    "shutdown": "^0.2.4",
     "subcomandante": "^1.0.3"
   },
   "devDependencies": {
