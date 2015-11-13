@@ -31,3 +31,5 @@ ipfsd.disposableApi(function (err, ipfs) {
   })
 })
 ```
+
+If you need want to use an existing ipfs installation you can set `$IPFS_EXEC=/path/to/ipfs` to ensure it uses that.

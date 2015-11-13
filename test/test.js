@@ -173,7 +173,7 @@ describe('starting and stopping', function () {
   })
 })
 
-describe('setting up an initializing a local node', () => {
+describe('setting up and initializing a local node', () => {
   const testpath1 = '/tmp/ipfstestpath1'
 
   describe('cleanup', () => {
@@ -267,6 +267,31 @@ describe('change config values of a disposable node', function () {
         assert.equal(config, 'null')
         done()
       })
+    })
+  })
+})
+
+describe('external ipfs binaray', () => {
+  it('allows passing via $IPFS_EXEC', done => {
+    process.env.IPFS_EXEC = '/some/path'
+    ipfsd.local((err, node) => {
+      if (err) throw err
+
+      assert.equal(node.exec, '/some/path')
+
+      process.env.IPFS_EXEC = ''
+      done()
+    })
+  })
+})
+
+describe('version', () => {
+  it('prints the version', done => {
+    ipfsd.version((err, version) => {
+      if (err) throw err
+
+      assert(version)
+      done()
     })
   })
 })
