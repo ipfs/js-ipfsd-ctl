@@ -7,6 +7,9 @@
     "test": "node_modules/.bin/mocha test",
     "lint": "node_modules/.bin/standard"
   },
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "pre-commit": [
     "lint",
     "test"
