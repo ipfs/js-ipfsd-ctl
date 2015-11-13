@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/mocha test",
-    "lint": "node_modules/.bin/standard"
+    "lint": "standard"
   },
   "engines": {
     "node": ">=4.0.0"
@@ -28,15 +28,14 @@
   "dependencies": {
     "go-ipfs": "0.3.9",
     "ipfs-api": "^2.2.1",
-    "kew": "0.7.0",
-    "lodash": "^3.6.0",
     "multiaddr": "^1.0.0",
-    "promise-waterfall": "0.1.0",
     "rimraf": "^2.3.4",
     "shutdown": "^0.2.4",
     "subcomandante": "^1.0.3"
   },
   "devDependencies": {
+    "async": "^1.5.0",
+    "estraverse": "^4.1.1",
     "mocha": "^2.3.3",
     "pre-commit": "^1.1.2",
     "standard": "^5.3.1"

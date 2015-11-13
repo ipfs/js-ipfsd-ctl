@@ -1,20 +1,22 @@
-var ipfsd = require('../index.js')
-var assert = require('assert')
-var ipfsApi = require('ipfs-api')
-var run = require('subcomandante')
-var fs = require('fs')
-var rimraf = require('rimraf')
+'use strict'
+
+const ipfsd = require('../index.js')
+const assert = require('assert')
+const ipfsApi = require('ipfs-api')
+const run = require('subcomandante')
+const fs = require('fs')
+const rimraf = require('rimraf')
 
 // this comment is used by mocha, do not delete
 /*global describe, before, it*/
 
 describe('disposable node with local api', function () {
   this.timeout(20000)
-  var ipfs
-  before(function (done) {
-    ipfsd.disposable(function (err, node) {
+  let ipfs
+  before(done => {
+    ipfsd.disposable((err, node) => {
       if (err) throw err
-      node.startDaemon(function (err, ignore) {
+      node.startDaemon((err, ignore) => {
         if (err) throw err
         ipfs = ipfsApi(node.apiAddr)
         done()
@@ -22,113 +24,113 @@ describe('disposable node with local api', function () {
     })
   })
 
-  it('should have started the daemon and returned an api', function () {
+  it('should have started the daemon and returned an api', () => {
     assert(ipfs)
     assert(ipfs.id)
   })
 
-  var store, retrieve
+  let store, retrieve
 
-  before(function (done) {
-    var blorb = Buffer('blorb')
-    ipfs.block.put(blorb, function (err, res) {
+  before(done => {
+    const blorb = Buffer('blorb')
+    ipfs.block.put(blorb, (err, res) => {
       if (err) throw err
       store = res.Key
 
-      ipfs.block.get(res.Key, function (err, res) {
+      ipfs.block.get(res.Key, (err, res) => {
         if (err) throw err
-        var buf = ''
+        let buf = ''
         res
-          .on('data', function (data) { buf += data })
-          .on('end', function () {
+          .on('data', data => buf += data)
+          .on('end', () => {
             retrieve = buf
             done()
           })
       })
     })
   })
-  it('should be able to store objects', function () {
+  it('should be able to store objects', () => {
     assert.equal(store, 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
   })
-  it('should be able to retrieve objects', function () {
+  it('should be able to retrieve objects', () => {
     assert.equal(retrieve, 'blorb')
   })
 })
 
 describe('disposableApi node', function () {
   this.timeout(20000)
-  var ipfs
-  before(function (done) {
-    ipfsd.disposableApi(function (err, api) {
+  let ipfs
+  before(done => {
+    ipfsd.disposableApi((err, api) => {
       if (err) throw err
       ipfs = api
       done()
     })
   })
 
-  it('should have started the daemon and returned an api with host/port', function () {
+  it('should have started the daemon and returned an api with host/port', () => {
     assert(ipfs)
     assert(ipfs.id)
     assert(ipfs.apiHost)
     assert(ipfs.apiPort)
   })
 
-  var store, retrieve
+  let store, retrieve
 
-  before(function (done) {
-    var blorb = Buffer('blorb')
-    ipfs.block.put(blorb, function (err, res) {
+  before(done => {
+    const blorb = Buffer('blorb')
+    ipfs.block.put(blorb, (err, res) => {
       if (err) throw err
       store = res.Key
 
-      ipfs.block.get(res.Key, function (err, res) {
+      ipfs.block.get(res.Key, (err, res) => {
         if (err) throw err
-        var buf = ''
+        let buf = ''
         res
-          .on('data', function (data) { buf += data })
-          .on('end', function () {
+          .on('data', data => buf += data)
+          .on('end', () => {
             retrieve = buf
             done()
           })
       })
     })
   })
-  it('should be able to store objects', function () {
+  it('should be able to store objects', () => {
     assert.equal(store, 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
   })
-  it('should be able to retrieve objects', function () {
+  it('should be able to retrieve objects', () => {
     assert.equal(retrieve, 'blorb')
   })
 })
 
 describe('starting and stopping', function () {
   this.timeout(10000)
-  var node
+  let node
 
-  describe('init', function () {
-    before(function (done) {
-      ipfsd.disposable(function (err, res) {
+  describe('init', () => {
+    before(done => {
+      ipfsd.disposable((err, res) => {
         if (err) throw err
         node = res
         done()
       })
     })
 
-    it('should returned a node', function () {
+    it('should returned a node', () => {
       assert(node)
     })
 
-    it('daemon should not be running', function () {
+    it('daemon should not be running', () => {
       assert(!node.daemonPid())
     })
   })
 
-  var pid
+  let pid
 
-  describe('starting', function () {
-    var ipfs
-    before(function (done) {
-      node.startDaemon(function (err, res) {
+  describe('starting', () => {
+    let ipfs
+    before(done => {
+      node.startDaemon((err, res) => {
         if (err) throw err
 
         pid = node.daemonPid()
@@ -136,91 +138,91 @@ describe('starting and stopping', function () {
 
         // actually running?
         run('kill', ['-0', pid])
-          .on(err, function (err) { throw err })
-          .on('end', function () { done() })
+          .on(err, err => { throw err })
+          .on('end', () => { done() })
       })
     })
 
-    it('should be running', function () {
+    it('should be running', () => {
       assert(ipfs.id)
     })
   })
 
-  var stopped = false
-  describe('stopping', function () {
-    before(function (done) {
-      node.stopDaemon(function (err) {
+  let stopped = false
+  describe('stopping', () => {
+    before(done => {
+      node.stopDaemon(err => {
         if (err) throw err
         stopped = true
       })
       // make sure it's not still running
-      var poll = setInterval(function () {
+      const poll = setInterval(() => {
         run('kill', ['-0', pid])
-          .on('error', function () {
+          .on('error', () => {
             clearInterval(poll)
             done()
-            done = function () {} // so it does not get called again
+            done = () => {} // so it does not get called again
           })
       }, 100)
     })
 
-    it('should be stopped', function () {
+    it('should be stopped', () => {
       assert(!node.daemonPid())
       assert(stopped)
     })
   })
 })
 
-describe('setting up an initializing a local node', function () {
-  var testpath1 = '/tmp/ipfstestpath1'
+describe('setting up an initializing a local node', () => {
+  const testpath1 = '/tmp/ipfstestpath1'
 
-  describe('cleanup', function () {
-    before(function (done) {
+  describe('cleanup', () => {
+    before(done => {
       rimraf(testpath1, done)
     })
 
-    it('should not have a directory', function () {
+    it('should not have a directory', () => {
       assert.equal(fs.existsSync('/tmp/ipfstestpath1'), false)
     })
   })
 
-  describe('setup', function () {
-    var node
-    before(function (done) {
-      ipfsd.local(testpath1, function (err, res) {
+  describe('setup', () => {
+    let node
+    before(done => {
+      ipfsd.local(testpath1, (err, res) => {
         if (err) throw err
         node = res
         done()
       })
     })
 
-    it('should have returned a node', function () {
+    it('should have returned a node', () => {
       assert(node)
     })
 
-    it('should not be initialized', function () {
+    it('should not be initialized', () => {
       assert.equal(node.initialized, false)
     })
 
     describe('initialize', function () {
       this.timeout(10000)
 
-      before(function (done) {
-        node.init(function (err) {
+      before(done => {
+        node.init(err => {
           if (err) throw err
           done()
         })
       })
 
-      it('should have made a directory', function () {
+      it('should have made a directory', () => {
         assert.equal(fs.existsSync(testpath1), true)
       })
 
-      it('should be initialized', function () {
+      it('should be initialized', () => {
         assert.equal(node.initialized, true)
       })
 
-      it('should be initialized', function () {
+      it('should be initialized', () => {
         assert.equal(node.initialized, true)
       })
     })
@@ -230,10 +232,10 @@ describe('setting up an initializing a local node', function () {
 describe('change config values of a disposable node', function () {
   this.timeout(20000)
 
-  var ipfsNode
+  let ipfsNode
 
-  before(function (done) {
-    ipfsd.disposable(function (err, node) {
+  before(done => {
+    ipfsd.disposable((err, node) => {
       if (err) {
         throw err
       }
@@ -242,8 +244,8 @@ describe('change config values of a disposable node', function () {
     })
   })
 
-  it('Should return a config value', function (done) {
-    ipfsNode.getConfig('Bootstrap', function (err, config) {
+  it('Should return a config value', done => {
+    ipfsNode.getConfig('Bootstrap', (err, config) => {
       if (err) {
         throw err
       }
@@ -252,13 +254,13 @@ describe('change config values of a disposable node', function () {
     })
   })
 
-  it('Should set a config value', function (done) {
-    ipfsNode.setConfig('Bootstrap', null, function (err) {
+  it('Should set a config value', done => {
+    ipfsNode.setConfig('Bootstrap', null, err => {
       if (err) {
         throw err
       }
 
-      ipfsNode.getConfig('Bootstrap', function (err, config) {
+      ipfsNode.getConfig('Bootstrap', (err, config) => {
         if (err) {
           throw err
         }
