@@ -16,11 +16,6 @@
     "node",
     "daemon"
   ],
-  "standard": {
-    "ignore": [
-      "/examples/*"
-    ]
-  },
   "author": "Juan Benet <juan@benet.ai> (http://juan.benet.ai/)",
   "contributors": [
     "Kristoffer Ström <kristoffer@rymdkoloni.se>",
