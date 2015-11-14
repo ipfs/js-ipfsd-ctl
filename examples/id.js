@@ -1,4 +1,3 @@
-
 var ipfsd = require('../index.js')
 
 ipfsd.disposableApi(function (err, ipfs) {
