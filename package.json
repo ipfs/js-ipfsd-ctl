@@ -8,7 +8,7 @@
     "lint": "standard"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=4.2.2"
   },
   "pre-commit": [
     "lint",
@@ -26,8 +26,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "go-ipfs": "0.3.9",
-    "ipfs-api": "^2.9.0",
+    "ipfs-api": "^2.9.13",
+    "go-ipfs": "0.3.10",
     "multiaddr": "^1.0.0",
     "rimraf": "^2.3.4",
     "shutdown": "^0.2.4",
