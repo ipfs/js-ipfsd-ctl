@@ -29,7 +29,7 @@
     "ipfs-api": "^2.10.1",
     "go-ipfs": "0.3.10",
     "multiaddr": "^1.1.1",
-    "rimraf": "^2.4.5",
+    "rimraf": "^2.5.0",
     "shutdown": "^0.2.4",
     "subcomandante": "^1.0.5",
     "async": "^1.5.0"
