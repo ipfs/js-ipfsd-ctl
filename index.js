@@ -31,10 +31,7 @@ module.exports = {
     }
     this.disposable(opts, (err, node) => {
       if (err) return done(err)
-      node.startDaemon((err, api) => {
-        if (err) return done(err)
-        done(null, api)
-      })
+      node.startDaemon(done)
     })
   },
   disposable (opts, done) {
@@ -53,10 +50,7 @@ module.exports = {
       })
     } else {
       node.init(err => {
-        if (err) {
-          return done(err)
-        }
-        done(null, node)
+        done(err, node)
       })
     }
   }
