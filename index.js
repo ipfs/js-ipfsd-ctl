@@ -20,7 +20,9 @@ module.exports = {
         join(process.env.HOME ||
              process.env.USERPROFILE, '.ipfs')
     }
-    done(null, new Node(path))
+    process.nextTick(() => {
+      done(null, new Node(path))
+    })
   },
   disposableApi (opts, done) {
     if (typeof opts === 'function') {
@@ -46,7 +48,9 @@ module.exports = {
     const node = new Node(opts.repoPath || tempDir(), opts, true)
 
     if (typeof opts.init === 'boolean' && opts.init === false) {
-      done(null, node)
+      process.nextTick(() => {
+        done(null, node)
+      })
     } else {
       node.init(err => {
         if (err) {
