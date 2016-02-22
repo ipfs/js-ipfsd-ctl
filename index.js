@@ -42,6 +42,11 @@ module.exports = {
     opts['Addresses.Swarm'] = ['/ip4/0.0.0.0/tcp/0']
     opts['Addresses.Gateway'] = ''
     opts['Addresses.API'] = '/ip4/127.0.0.1/tcp/0'
+
+    if (opts.apiAddr) {
+      opts['Addresses.API'] = opts.apiAddr
+    }
+
     const node = new Node(opts.repoPath || tempDir(), opts, true)
 
     if (typeof opts.init === 'boolean' && opts.init === false) {
