@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "simple controls for an ipfs node",
   "main": "index.js",
   "scripts": {
