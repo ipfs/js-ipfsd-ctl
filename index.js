@@ -47,6 +47,10 @@ module.exports = {
       opts['Addresses.API'] = opts.apiAddr
     }
 
+    if (opts.gatewayAddr) {
+      opts['Addresses.Gateway'] = opts.gatewayAddr
+    }
+
     const node = new Node(opts.repoPath || tempDir(), opts, true)
 
     if (typeof opts.init === 'boolean' && opts.init === false) {
