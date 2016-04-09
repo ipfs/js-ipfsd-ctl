@@ -297,7 +297,7 @@ describe('version', () => {
   })
 })
 
-describe('ipfs-api version', function() {
+describe('ipfs-api version', function () {
   this.timeout(20000)
 
   let ipfs
