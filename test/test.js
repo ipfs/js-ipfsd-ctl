@@ -6,6 +6,7 @@ const ipfsApi = require('ipfs-api')
 const run = require('subcomandante')
 const fs = require('fs')
 const rimraf = require('rimraf')
+const path = require('path')
 
 // this comment is used by mocha, do not delete
 /*global describe, before, it*/
@@ -104,7 +105,7 @@ describe('disposableApi node', function () {
 })
 
 describe('starting and stopping', function () {
-  this.timeout(10000)
+  this.timeout(20000)
   let node
 
   describe('init', () => {
@@ -291,6 +292,34 @@ describe('version', () => {
       if (err) throw err
 
       assert(version)
+      done()
+    })
+  })
+})
+
+describe('ipfs-api version', function() {
+  this.timeout(20000)
+
+  let ipfs
+
+  before(done => {
+    ipfsd.disposable((err, node) => {
+      if (err) throw err
+      node.startDaemon((err, ignore) => {
+        if (err) throw err
+        ipfs = ipfsApi(node.apiAddr)
+        done()
+      })
+    })
+  })
+
+  it('uses the correct ipfs-api', done => {
+    ipfs.add(path.join(__dirname, '../lib'), { recursive: true }, (err, res) => {
+      if (err) throw err
+
+      const added = res[res.length - 1]
+      assert(added)
+      assert.equal(added.Hash, 'QmWab9Js2ueyo739mUdLxv45u6YkEgd3LmzXKn4SQjcFuq')
       done()
     })
   })
