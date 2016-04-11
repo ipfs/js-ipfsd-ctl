@@ -10,6 +10,37 @@ const path = require('path')
 
 // this comment is used by mocha, do not delete
 /*global describe, before, it*/
+describe('ipfs executable path', function () {
+  this.timeout(2000)
+  let Node;
+
+  it('has the correct path when used via Electron', done => {
+    process.versions['electron'] = '0.0.0-test'   // Electron sets its version to the array --> we know that we're using Electron
+    process.resourcesPath = '/test/path/one/more' // Path to the Electron app, set by Electron
+
+    // Force reload of the module (pathing is handled globally in ../lib/node.js)
+    delete require.cache[require.resolve('../lib/node.js')]
+    Node = require('../lib/node.js')
+
+    var node = new Node();
+    assert.equal(node.exec, path.join(process.resourcesPath, '/app', 'node_modules/go-ipfs-dep/go-ipfs/ipfs'));
+    done()
+  })
+
+  it('has the correct path when used via Node.js', done => {
+    delete process.versions['electron']
+    delete process.resourcesPath;
+
+    // Force reload of the module (pathing is handled globally in ../lib/node.js)
+    delete require.cache[require.resolve('../lib/node.js')]
+    Node = require('../lib/node.js')
+
+    var node = new Node();
+    assert.equal(node.exec, path.join(process.cwd(), 'node_modules/go-ipfs-dep/go-ipfs/ipfs'));
+    done()
+  })
+
+})
 
 describe('disposable node with local api', function () {
   this.timeout(20000)
@@ -313,13 +344,14 @@ describe('ipfs-api version', function () {
     })
   })
 
+  // NOTE: if you change ../lib/node.js, the hash will need to be changed
   it('uses the correct ipfs-api', done => {
     ipfs.add(path.join(__dirname, '../lib'), { recursive: true }, (err, res) => {
       if (err) throw err
 
       const added = res[res.length - 1]
       assert(added)
-      assert.equal(added.Hash, 'QmWab9Js2ueyo739mUdLxv45u6YkEgd3LmzXKn4SQjcFuq')
+      assert.equal(added.Hash, 'QmbMm9AGVRBh2N4z2dp1BdTdHGifZkVQrJ5SLij7NG6S68')
       done()
     })
   })
