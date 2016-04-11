@@ -10,11 +10,12 @@ const path = require('path')
 
 // this comment is used by mocha, do not delete
 /*global describe, before, it*/
+
 describe('ipfs executable path', function () {
   this.timeout(2000)
   let Node
 
-  it('has the correct path when used via Electron', (done) => {
+  it('has the correct path when used via Electron', () => {
     process.versions['electron'] = '0.0.0-test'   // Electron sets its version to the array --> we know that we're using Electron
     process.resourcesPath = '/test/path/one/more' // Path to the Electron app, set by Electron
 
@@ -24,10 +25,9 @@ describe('ipfs executable path', function () {
 
     var node = new Node()
     assert.equal(node.exec, path.join(process.resourcesPath, '/app', 'node_modules/go-ipfs-dep/go-ipfs/ipfs'))
-    done()
   })
 
-  it('has the correct path when used via Node.js', (done) => {
+  it('has the correct path when used via Node.js', () => {
     delete process.versions['electron']
     delete process.resourcesPath
 
@@ -37,7 +37,6 @@ describe('ipfs executable path', function () {
 
     var node = new Node()
     assert.equal(node.exec, path.join(process.cwd(), 'node_modules/go-ipfs-dep/go-ipfs/ipfs'))
-    done()
   })
 })
 
