@@ -11,10 +11,39 @@ const path = require('path')
 // this comment is used by mocha, do not delete
 /*global describe, before, it*/
 
+describe('ipfs executable path', function () {
+  this.timeout(2000)
+  let Node
+
+  it('has the correct path when used via Electron', () => {
+    process.versions['electron'] = '0.0.0-test'   // Electron sets its version to the array --> we know that we're using Electron
+    process.resourcesPath = '/test/path/one/more' // Path to the Electron app, set by Electron
+
+    // Force reload of the module (pathing is handled globally in ../lib/node.js)
+    delete require.cache[require.resolve('../lib/node.js')]
+    Node = require('../lib/node.js')
+
+    var node = new Node()
+    assert.equal(node.exec, path.join(process.resourcesPath, '/app', 'node_modules/go-ipfs-dep/go-ipfs/ipfs'))
+  })
+
+  it('has the correct path when used via Node.js', () => {
+    delete process.versions['electron']
+    delete process.resourcesPath
+
+    // Force reload of the module (pathing is handled globally in ../lib/node.js)
+    delete require.cache[require.resolve('../lib/node.js')]
+    Node = require('../lib/node.js')
+
+    var node = new Node()
+    assert.equal(node.exec, path.join(process.cwd(), 'node_modules/go-ipfs-dep/go-ipfs/ipfs'))
+  })
+})
+
 describe('disposable node with local api', function () {
   this.timeout(20000)
   let ipfs
-  before(done => {
+  before((done) => {
     ipfsd.disposable((err, node) => {
       if (err) throw err
       node.startDaemon((err, ignore) => {
@@ -32,7 +61,7 @@ describe('disposable node with local api', function () {
 
   let store, retrieve
 
-  before(done => {
+  before((done) => {
     const blorb = Buffer('blorb')
     ipfs.block.put(blorb, (err, res) => {
       if (err) throw err
@@ -42,7 +71,9 @@ describe('disposable node with local api', function () {
         if (err) throw err
         let buf = ''
         res
-          .on('data', data => buf += data)
+          .on('data', (data) => {
+            buf += data
+          })
           .on('end', () => {
             retrieve = buf
             done()
@@ -61,7 +92,7 @@ describe('disposable node with local api', function () {
 describe('disposableApi node', function () {
   this.timeout(20000)
   let ipfs
-  before(done => {
+  before((done) => {
     ipfsd.disposableApi((err, api) => {
       if (err) throw err
       ipfs = api
@@ -78,7 +109,7 @@ describe('disposableApi node', function () {
 
   let store, retrieve
 
-  before(done => {
+  before((done) => {
     const blorb = Buffer('blorb')
     ipfs.block.put(blorb, (err, res) => {
       if (err) throw err
@@ -88,7 +119,9 @@ describe('disposableApi node', function () {
         if (err) throw err
         let buf = ''
         res
-          .on('data', data => buf += data)
+          .on('data', (data) => {
+            buf += data
+          })
           .on('end', () => {
             retrieve = buf
             done()
@@ -109,7 +142,7 @@ describe('starting and stopping', function () {
   let node
 
   describe('init', () => {
-    before(done => {
+    before((done) => {
       ipfsd.disposable((err, res) => {
         if (err) throw err
         node = res
@@ -130,7 +163,7 @@ describe('starting and stopping', function () {
 
   describe('starting', () => {
     let ipfs
-    before(done => {
+    before((done) => {
       node.startDaemon((err, res) => {
         if (err) throw err
 
@@ -139,7 +172,7 @@ describe('starting and stopping', function () {
 
         // actually running?
         run('kill', ['-0', pid])
-          .on(err, err => { throw err })
+          .on(err, (err) => { throw err })
           .on('end', () => { done() })
       })
     })
@@ -151,8 +184,8 @@ describe('starting and stopping', function () {
 
   let stopped = false
   describe('stopping', () => {
-    before(done => {
-      node.stopDaemon(err => {
+    before((done) => {
+      node.stopDaemon((err) => {
         if (err) throw err
         stopped = true
       })
@@ -178,7 +211,7 @@ describe('setting up and initializing a local node', () => {
   const testpath1 = '/tmp/ipfstestpath1'
 
   describe('cleanup', () => {
-    before(done => {
+    before((done) => {
       rimraf(testpath1, done)
     })
 
@@ -189,7 +222,7 @@ describe('setting up and initializing a local node', () => {
 
   describe('setup', () => {
     let node
-    before(done => {
+    before((done) => {
       ipfsd.local(testpath1, (err, res) => {
         if (err) throw err
         node = res
@@ -208,8 +241,8 @@ describe('setting up and initializing a local node', () => {
     describe('initialize', function () {
       this.timeout(10000)
 
-      before(done => {
-        node.init(err => {
+      before((done) => {
+        node.init((err) => {
           if (err) throw err
           done()
         })
@@ -235,7 +268,7 @@ describe('change config values of a disposable node', function () {
 
   let ipfsNode
 
-  before(done => {
+  before((done) => {
     ipfsd.disposable((err, node) => {
       if (err) {
         throw err
@@ -245,7 +278,7 @@ describe('change config values of a disposable node', function () {
     })
   })
 
-  it('Should return a config value', done => {
+  it('Should return a config value', (done) => {
     ipfsNode.getConfig('Bootstrap', (err, config) => {
       if (err) {
         throw err
@@ -255,8 +288,8 @@ describe('change config values of a disposable node', function () {
     })
   })
 
-  it('Should set a config value', done => {
-    ipfsNode.setConfig('Bootstrap', null, err => {
+  it('Should set a config value', (done) => {
+    ipfsNode.setConfig('Bootstrap', null, (err) => {
       if (err) {
         throw err
       }
@@ -273,7 +306,7 @@ describe('change config values of a disposable node', function () {
 })
 
 describe('external ipfs binaray', () => {
-  it('allows passing via $IPFS_EXEC', done => {
+  it('allows passing via $IPFS_EXEC', (done) => {
     process.env.IPFS_EXEC = '/some/path'
     ipfsd.local((err, node) => {
       if (err) throw err
@@ -287,7 +320,7 @@ describe('external ipfs binaray', () => {
 })
 
 describe('version', () => {
-  it('prints the version', done => {
+  it('prints the version', (done) => {
     ipfsd.version((err, version) => {
       if (err) throw err
 
@@ -302,7 +335,7 @@ describe('ipfs-api version', function () {
 
   let ipfs
 
-  before(done => {
+  before((done) => {
     ipfsd.disposable((err, node) => {
       if (err) throw err
       node.startDaemon((err, ignore) => {
@@ -313,13 +346,14 @@ describe('ipfs-api version', function () {
     })
   })
 
-  it('uses the correct ipfs-api', done => {
+  // NOTE: if you change ../lib/node.js, the hash will need to be changed
+  it('uses the correct ipfs-api', (done) => {
     ipfs.add(path.join(__dirname, '../lib'), { recursive: true }, (err, res) => {
       if (err) throw err
 
       const added = res[res.length - 1]
       assert(added)
-      assert.equal(added.Hash, 'QmWab9Js2ueyo739mUdLxv45u6YkEgd3LmzXKn4SQjcFuq')
+      assert.equal(added.Hash, 'QmTioWzyNf4ybt6RDYCxqWBGYBfDqFWCoNwRKF89xgUvgF')
       done()
     })
   })

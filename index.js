@@ -58,7 +58,7 @@ module.exports = {
         done(null, node)
       })
     } else {
-      node.init(err => {
+      node.init((err) => {
         done(err, node)
       })
     }
