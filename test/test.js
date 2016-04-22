@@ -21,7 +21,10 @@ describe('ipfs executable path', function () {
     let npm3Path = '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
 
     mkdirp(npm3Path, (err) => {
-      if (err) console.log(err)
+      if (err) {
+        console.log(err)
+      }
+
       fs.writeFileSync(path.join(npm3Path, 'ipfs'))
       delete require.cache[require.resolve('../lib/node.js')]
       Node = require('../lib/node.js')
@@ -36,7 +39,10 @@ describe('ipfs executable path', function () {
     let npm2Path = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs'
 
     mkdirp(npm2Path, (err) => {
-      if (err) console.log(err)
+      if (err) {
+        console.log(err)
+      }
+
       fs.writeFileSync(path.join(npm2Path, 'ipfs'))
       delete require.cache[require.resolve('../lib/node.js')]
       Node = require('../lib/node.js')
