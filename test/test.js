@@ -6,6 +6,7 @@ const ipfsApi = require('ipfs-api')
 const run = require('subcomandante')
 const fs = require('fs')
 const rimraf = require('rimraf')
+const mkdirp = require('mkdirp')
 const path = require('path')
 
 // this comment is used by mocha, do not delete
@@ -15,28 +16,34 @@ describe('ipfs executable path', function () {
   this.timeout(2000)
   let Node
 
-  it('has the correct path when used via Electron', () => {
-    process.versions['electron'] = '0.0.0-test'   // Electron sets its version to the array --> we know that we're using Electron
-    process.resourcesPath = '/test/path/one/more' // Path to the Electron app, set by Electron
+  it('has the correct path when installed with npm3', (done) => {
+    process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
+    let npm3Path = '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
 
-    // Force reload of the module (pathing is handled globally in ../lib/node.js)
-    delete require.cache[require.resolve('../lib/node.js')]
-    Node = require('../lib/node.js')
-
-    var node = new Node()
-    assert.equal(node.exec, path.join(process.resourcesPath, '/app', 'node_modules/go-ipfs-dep/go-ipfs/ipfs'))
+    mkdirp(npm3Path, (err) => {
+      if (err) console.log(err)
+      fs.writeFileSync(path.join(npm3Path, 'ipfs'))
+      delete require.cache[require.resolve('../lib/node.js')]
+      Node = require('../lib/node.js')
+      var node = new Node()
+      assert.equal(node.exec, '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs')
+      rimraf('/tmp/ipfsd-ctl-test', done)
+    })
   })
 
-  it('has the correct path when used via Node.js', () => {
-    delete process.versions['electron']
-    delete process.resourcesPath
+  it('has the correct path when installed with npm2', (done) => {
+    process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
+    let npm2Path = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs'
 
-    // Force reload of the module (pathing is handled globally in ../lib/node.js)
-    delete require.cache[require.resolve('../lib/node.js')]
-    Node = require('../lib/node.js')
-
-    var node = new Node()
-    assert.equal(node.exec, path.join(process.cwd(), 'node_modules/go-ipfs-dep/go-ipfs/ipfs'))
+    mkdirp(npm2Path, (err) => {
+      if (err) console.log(err)
+      fs.writeFileSync(path.join(npm2Path, 'ipfs'))
+      delete require.cache[require.resolve('../lib/node.js')]
+      Node = require('../lib/node.js')
+      var node = new Node()
+      assert.equal(node.exec, '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/ipfs')
+      rimraf('/tmp/ipfsd-ctl-test', done)
+    })
   })
 })
 
@@ -353,7 +360,7 @@ describe('ipfs-api version', function () {
 
       const added = res[res.length - 1]
       assert(added)
-      assert.equal(added.Hash, 'QmTioWzyNf4ybt6RDYCxqWBGYBfDqFWCoNwRKF89xgUvgF')
+      assert.equal(added.Hash, 'QmdZt3Uiv3HZkHPsjGyWbrX1kMiRjst8cxQYsUjMqbXc7G')
       done()
     })
   })
