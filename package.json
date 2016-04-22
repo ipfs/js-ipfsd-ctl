@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "estraverse": "^4.1.1",
+    "mkdirp": "^0.5.1",
     "mocha": "^2.3.4",
     "pre-commit": "^1.1.2",
     "standard": "^6.0.8"
