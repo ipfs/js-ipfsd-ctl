@@ -26,7 +26,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "ipfs-api": "^3.0.0",
+    "ipfs-api": "^4.0.1",
     "go-ipfs-dep": "0.4.1",
     "multiaddr": "^1.1.1",
     "rimraf": "^2.4.5",
