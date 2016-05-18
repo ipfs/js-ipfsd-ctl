@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const run = require('subcomandante')
-const async = require('async')
+const series = require('run-series')
 const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
@@ -30,17 +30,15 @@ function findIpfsExecutable () {
 }
 
 function configureNode (node, conf, done) {
-  if (Object.keys(conf).length > 0) {
-    async.forEachOfSeries(conf, (value, key, cb) => {
-      const env = {env: node.env}
+  const keys = Object.keys(conf)
+  series(keys.map((key) => (cb) => {
+    const value = conf[key]
+    const env = {env: node.env}
 
-      run(node.exec, ['config', key, '--json', JSON.stringify(value)], env)
-        .on('error', cb)
-        .on('end', cb)
-    }, done)
-  } else {
-    done()
-  }
+    run(node.exec, ['config', key, '--json', JSON.stringify(value)], env)
+      .on('error', cb)
+      .on('end', cb)
+  }), done)
 }
 
 // Consistent error handling
