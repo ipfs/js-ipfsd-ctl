@@ -28,8 +28,18 @@
   ],
   "author": "Juan Benet <juan@benet.ai> (http://juan.benet.ai/)",
   "contributors": [
+    "Bret Comnes <bcomnes@gmail.com>",
+    "David Dias <daviddias.p@gmail.com>",
+    "FrauBienenstich <susanne.dewein@gmail.com>",
+    "Harlan T Wood <harlantwood@users.noreply.github.com>",
+    "Juan Benet <juan@benet.ai>",
     "Kristoffer Ström <kristoffer@rymdkoloni.se>",
-    "Friedel Ziegelmayer <dignifiedquire@gmail.com>"
+    "Lars-Magnus Skog <ralphtheninja@riseup.net>",
+    "Stephen Whitmore <stephen.whitmore@gmail.com>",
+    "dignifiedquire <dignifiedquire@gmail.com>",
+    "greenkeeperio-bot <support@greenkeeper.io>",
+    "haad <haad@headbanggames.com>",
+    "haadcode <haadcode@headbanggames.com>"
   ],
   "license": "MIT",
   "dependencies": {
