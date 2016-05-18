@@ -1,6 +1,7 @@
+/* eslint-env mocha */
 'use strict'
 
-const ipfsd = require('../index.js')
+const ipfsd = require('../src')
 const assert = require('assert')
 const ipfsApi = require('ipfs-api')
 const run = require('subcomandante')
@@ -8,9 +9,6 @@ const fs = require('fs')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
 const path = require('path')
-
-// this comment is used by mocha, do not delete
-/*global describe, before, it*/
 
 describe('ipfs executable path', function () {
   this.timeout(2000)
@@ -22,12 +20,12 @@ describe('ipfs executable path', function () {
 
     mkdirp(npm3Path, (err) => {
       if (err) {
-        console.log(err)
+        throw err
       }
 
       fs.writeFileSync(path.join(npm3Path, 'ipfs'))
-      delete require.cache[require.resolve('../lib/node.js')]
-      Node = require('../lib/node.js')
+      delete require.cache[require.resolve('../src/node.js')]
+      Node = require('../src/node.js')
       var node = new Node()
       assert.equal(node.exec, '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs')
       rimraf('/tmp/ipfsd-ctl-test', done)
@@ -40,12 +38,12 @@ describe('ipfs executable path', function () {
 
     mkdirp(npm2Path, (err) => {
       if (err) {
-        console.log(err)
+        throw err
       }
 
       fs.writeFileSync(path.join(npm2Path, 'ipfs'))
-      delete require.cache[require.resolve('../lib/node.js')]
-      Node = require('../lib/node.js')
+      delete require.cache[require.resolve('../src/node.js')]
+      Node = require('../src/node.js')
       var node = new Node()
       assert.equal(node.exec, '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/ipfs')
       rimraf('/tmp/ipfsd-ctl-test', done)
@@ -359,14 +357,14 @@ describe('ipfs-api version', function () {
     })
   })
 
-  // NOTE: if you change ../lib/node.js, the hash will need to be changed
+  // NOTE: if you change ../src/, the hash will need to be changed
   it('uses the correct ipfs-api', (done) => {
-    ipfs.add(path.join(__dirname, '../lib'), { recursive: true }, (err, res) => {
+    ipfs.add(path.join(__dirname, '../src'), { recursive: true }, (err, res) => {
       if (err) throw err
 
       const added = res[res.length - 1]
       assert(added)
-      assert.equal(added.Hash, 'QmdZt3Uiv3HZkHPsjGyWbrX1kMiRjst8cxQYsUjMqbXc7G')
+      assert.equal(added.Hash, 'Qmafmh1Cw3H1bwdYpaaj5AbCW4LkYyUWaM7Nykpn5NZoYL')
       done()
     })
   })
