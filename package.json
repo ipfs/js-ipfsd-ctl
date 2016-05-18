@@ -2,10 +2,17 @@
   "name": "ipfsd-ctl",
   "version": "0.13.0",
   "description": "simple controls for an ipfs node",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "jsxnext:main": "src/index.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha test",
-    "lint": "standard"
+    "lint": "aegir-lint",
+    "coverage": "aegir-coverage",
+    "test": "aegir-test --env node",
+    "build": "aegir-build --env node",
+    "release": "aegir-release --env node",
+    "release:minor": "aegir-release --type minor --env node",
+    "release:major": "aegir-release --type major --env node",
+    "coverage-publish": "aegir-coverage publish"
   },
   "engines": {
     "node": ">=4.2.2"
@@ -35,11 +42,9 @@
     "async": "^1.5.0"
   },
   "devDependencies": {
-    "estraverse": "^4.1.1",
+    "aegir": "^3.0.4",
     "mkdirp": "^0.5.1",
-    "mocha": "^2.3.4",
-    "pre-commit": "^1.1.2",
-    "standard": "^6.0.8"
+    "pre-commit": "^1.1.2"
   },
   "repository": {
     "type": "git",

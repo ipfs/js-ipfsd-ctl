@@ -3,10 +3,10 @@
 const os = require('os')
 const join = require('path').join
 
-const Node = require('./lib/node')
+const Node = require('./node')
 
 function tempDir () {
-  return join(os.tmpdir(), `ipfs_${(Math.random() + '').substr(2)}`)
+  return join(os.tmpdir(), `ipfs_${String(Math.random()).substr(2)}`)
 }
 
 module.exports = {
