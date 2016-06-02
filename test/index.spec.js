@@ -345,14 +345,13 @@ describe('ipfs-api version', function () {
     })
   })
 
-  // NOTE: if you change ../src/, the hash will need to be changed
   it('uses the correct ipfs-api', (done) => {
-    ipfs.util.addFromFs(path.join(__dirname, '../src'), { recursive: true }, (err, res) => {
+    ipfs.util.addFromFs(path.join(__dirname, 'fixtures'), { recursive: true }, (err, res) => {
       if (err) throw err
 
       const added = res[res.length - 1]
       assert(added)
-      assert.equal(added.hash, 'QmUNYnr4nm9Zfr6utTD9rVdSf9ASRguqHDciwvsc2gsH8y')
+      assert.equal(added.hash, 'QmXkiTdnfRJjiQREtF5dWf2X4V9awNHQSn9YGofwVY4qUU')
       done()
     })
   })
