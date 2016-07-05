@@ -43,13 +43,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "go-ipfs-dep": "0.4.1",
     "ipfs-api": "^4.1.0",
     "multiaddr": "^2.0.0",
     "rimraf": "^2.4.5",
     "run-series": "^1.1.4",
     "shutdown": "^0.2.4",
-    "subcomandante": "^1.0.5"
+    "subcomandante": "^1.0.5",
+    "bin-wrapper": "^3.0.2"
   },
   "devDependencies": {
     "aegir": "^8.0.1",
