@@ -10,6 +10,30 @@ const shutdown = require('shutdown')
 const path = require('path')
 const join = path.join
 
+const BinWrapper = require('bin-wrapper')
+
+// TODO should go to config
+const DIST_BASE = 'https://dist.ipfs.io/go-ipfs/v0.4.2/go-ipfs_v0.4.2_darwin-386.tar.gz'
+const VERSION = 'v0.4.2'
+const PROJECT_BASE = DIST_BASE + '/' + VERSION + '/go-ipfs_' + VERSION + '_'
+const bin = new BinWrapper()
+    .src(PROJECT_BASE + '_darwin-386.tar.gz', 'darwin', '386')
+    .src(PROJECT_BASE + '_darwin-amd64.tar.gz', 'darwin', 'amd64')
+    .src(PROJECT_BASE + '_freebsd-amd64.tar.gz', 'freebsd', 'amd64')
+    .src(PROJECT_BASE + '_linux-386.tar.gz', 'linux', '386')
+    .src(PROJECT_BASE + '_linux-amd64.tar.gz', 'linux', 'amd64')
+    .src(PROJECT_BASE + '_linux-arm.tar.gz', 'linux', 'arm')
+    .src(PROJECT_BASE + '_windows-386.tar.gz', 'win32', '386')
+    .src(PROJECT_BASE + '_windows-amd64.tar.gz', 'win32', 'amd64')
+    // TODO handle dest folder
+    .dest(path.join(__dirname, '..', 'vendor'))
+    .use(process.platform === 'win32' ? 'ipfs.exe' : 'ipfs')
+    // .version('>=1.71');
+
+bin.run(['--version'], err => {
+    console.log('gifsicle is working');
+});
+
 const rootPath = process.env.testpath ? process.env.testpath : __dirname
 
 const ipfsDefaultPath = findIpfsExecutable()
