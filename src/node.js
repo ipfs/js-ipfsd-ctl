@@ -17,7 +17,6 @@ const DIST_BASE = 'https://dist.ipfs.io/go-ipfs'
 const VERSION = 'v0.3.11'
 const PROJECT_BASE = DIST_BASE + '/' + VERSION + '/go-ipfs_' + VERSION + '_'
 const IPFS_DEFAULT_EXEC_PATH = path.join(__dirname, '..', 'vendor')
-const IPFS_EXEC_PATH = process.env.IPFS_EXEC || IPFS_DEFAULT_EXEC_PATH
 
 const bin = new BinWrapper()
     .src(PROJECT_BASE + 'darwin-386.tar.gz', 'darwin', 'ia32')
@@ -28,20 +27,13 @@ const bin = new BinWrapper()
     .src(PROJECT_BASE + 'linux-arm.tar.gz', 'linux', 'arm')
     .src(PROJECT_BASE + 'windows-386.tar.gz', 'win32', 'ia32')
     .src(PROJECT_BASE + 'windows-amd64.tar.gz', 'win32', 'x64')
-    // TODO handle dest folder
-    .dest(IPFS_EXEC_PATH)
     .use(process.platform === 'win32' ? 'ipfs.exe' : 'ipfs')
     // .version('>=1.71');
-
-// const rootPath = process.env.testpath ? process.env.testpath : __dirname
-
-// console.log(PROJECT_BASE + 'linux-amd64.tar.gz')
 
 const GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 
 function configureNode (node, conf, done) {
   const keys = Object.keys(conf)
-  // console.log('CONFIG NODE', conf)
   series(keys.map((key) => (cb) => {
     const value = conf[key]
     const env = {env: node.env}
@@ -64,7 +56,10 @@ function parseConfig (path, done) {
 function Node (path, opts, disposable) {
   this.path = path
   this.opts = opts || {}
+  // Set dest on bin wrapper
+  bin.dest(process.env.IPFS_EXEC || IPFS_DEFAULT_EXEC_PATH)
   this.exec = bin.path()
+
   this.subprocess = null
   this.initialized = fs.existsSync(path)
   this.clean = true
@@ -78,7 +73,6 @@ function Node (path, opts, disposable) {
 Node.prototype._run = function _run (args, env, listeners, done) {
   let result = ''
   let callback
-  // console.log('RUNNING - ', args, listeners)
   // Handy method if we just want the result and err returned in a callback
   if (typeof listeners === 'function') {
     callback = listeners
@@ -90,8 +84,6 @@ Node.prototype._run = function _run (args, env, listeners, done) {
       end: () => callback(null, result.trim())
     }
   }
-  // console.log('SETTING LISTENERS', listeners)
-  // console.log('EXEC', this.exec)
   series([
     // Check the binary and download it if needed be
     (cb) => {
@@ -102,13 +94,11 @@ Node.prototype._run = function _run (args, env, listeners, done) {
       })
     }
   ], (err, results) => {
-
     if (err) {
       // If no done callback return error to the error listener
       if (!done) return listeners.error(err)
       return done(err)
     }
-    // console.log('GOING TO RUN >>>', this.exec, args)
     const process = run(this.exec, args, env)
     const listenerKeys = Object.keys(listeners)
     listenerKeys.forEach((key) => process.on(key, listeners[key]))
@@ -161,7 +151,6 @@ Node.prototype.startDaemon = function startDaemon (done) {
 
     this._run(['daemon'], {env: this.env}, {
       error: (err) => {
-        // console.log('<<<<< START DAEMON - ' + data)
         if (String(err).match('daemon is running')) {
           // we're good
           done(null, ipfs(conf.Addresses.API))
@@ -172,7 +161,6 @@ Node.prototype.startDaemon = function startDaemon (done) {
         }
       },
       data: (data) => {
-        // console.log('<<<<< START DAEMON - ' + data)
         const match = String(data).trim().match(/API server listening on (.*)/)
         if (match) {
           this.apiAddr = match[1]
