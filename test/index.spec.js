@@ -52,7 +52,7 @@ const path = require('path')
 // })
 
 describe('disposable node with local api', function () {
-  this.timeout(20000)
+  this.timeout(30000)
   let ipfs
   before((done) => {
     ipfsd.disposable((err, node) => {
@@ -101,7 +101,7 @@ describe('disposable node with local api', function () {
 })
 
 describe('disposableApi node', function () {
-  this.timeout(20000)
+  this.timeout(30000)
   let ipfs
   before((done) => {
     ipfsd.disposableApi((err, api) => {
@@ -149,7 +149,7 @@ describe('disposableApi node', function () {
 })
 
 describe('starting and stopping', function () {
-  this.timeout(20000)
+  this.timeout(30000)
   let node
 
   describe('init', () => {
@@ -250,7 +250,7 @@ describe('setting up and initializing a local node', () => {
     })
 
     describe('initialize', function () {
-      this.timeout(10000)
+      this.timeout(30000)
 
       before((done) => {
         node.init((err) => {
@@ -275,7 +275,7 @@ describe('setting up and initializing a local node', () => {
 })
 
 describe('change config values of a disposable node', function () {
-  this.timeout(20000)
+  this.timeout(30000)
 
   let ipfsNode
 
@@ -342,7 +342,7 @@ describe('version', () => {
 })
 
 describe('ipfs-api version', function () {
-  this.timeout(20000)
+  this.timeout(30000)
 
   let ipfs
 
@@ -364,7 +364,7 @@ describe('ipfs-api version', function () {
 
       const added = res[res.length - 1]
       assert(added)
-      assert.equal(added.Hash, 'QmQVPLL4jxo2vfehwETP9u6VymX7pBaLnam7GuKf8RPbue')
+      assert.equal(added.Hash, 'QmfRx2pfPBv74foESCr6DbPKMCPWJCaUq13ZZpNNB7ZTdB')
       done()
     })
   })

@@ -12,9 +12,9 @@ const join = path.join
 
 const BinWrapper = require('bin-wrapper')
 
-// TODO should go to config
+// TODO maybe this should go to some config file
 const DIST_BASE = 'https://dist.ipfs.io/go-ipfs'
-const VERSION = 'v0.3.11'
+const VERSION = 'v0.4.1'
 const PROJECT_BASE = DIST_BASE + '/' + VERSION + '/go-ipfs_' + VERSION + '_'
 const IPFS_DEFAULT_EXEC_PATH = path.join(__dirname, '..', 'vendor')
 
@@ -42,15 +42,17 @@ function configureNode (node, conf, done) {
   }), done)
 }
 
-// Consistent error handling
 function parseConfig (path, done) {
-  try {
-    const file = fs.readFileSync(join(path, 'config'))
-    const parsed = JSON.parse(file)
-    done(null, parsed)
-  } catch (err) {
-    done(err)
-  }
+  fs.readFile(join(path, 'config'), (err, data) => {
+    if (err) return done(err)
+    // Consistent error handling
+    try {
+      const parsed = JSON.parse(data)
+      return done(null, parsed)
+    } catch (err) {
+      return done(err)
+    }
+  })
 }
 
 function Node (path, opts, disposable) {
@@ -70,7 +72,7 @@ function Node (path, opts, disposable) {
   if (this.opts.env) Object.assign(this.env, this.opts.env)
 }
 
-Node.prototype._run = function _run (args, env, listeners, done) {
+Node.prototype._run = function _run (args, opts, listeners, done) {
   let result = ''
   let callback
   // Handy method if we just want the result and err returned in a callback
@@ -99,11 +101,11 @@ Node.prototype._run = function _run (args, env, listeners, done) {
       if (!done) return listeners.error(err)
       return done(err)
     }
-    const process = run(this.exec, args, env)
+    const ps = run(this.exec, args, opts)
     const listenerKeys = Object.keys(listeners)
-    listenerKeys.forEach((key) => process.on(key, listeners[key]))
+    listenerKeys.forEach((key) => ps.on(key, listeners[key]))
     // If done callback return process
-    if (done) return done(null, process)
+    if (done) return done(null, ps)
   })
 }
 
