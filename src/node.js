@@ -7,29 +7,22 @@ const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const shutdown = require('shutdown')
+const BinWrapper = require('bin-wrapper')
 const path = require('path')
 const join = path.join
 
-const BinWrapper = require('bin-wrapper')
-
-// TODO maybe this should go to some config file
-const DIST_BASE = 'https://dist.ipfs.io/go-ipfs'
-const VERSION = 'v0.4.1'
-const PROJECT_BASE = DIST_BASE + '/' + VERSION + '/go-ipfs_' + VERSION + '_'
-const IPFS_DEFAULT_EXEC_PATH = path.join(__dirname, '..', 'vendor')
+const config = require('../config')
 
 const bin = new BinWrapper()
-    .src(PROJECT_BASE + 'darwin-386.tar.gz', 'darwin', 'ia32')
-    .src(PROJECT_BASE + 'darwin-amd64.tar.gz', 'darwin', 'x64')
-    .src(PROJECT_BASE + 'freebsd-amd64.tar.gz', 'freebsd', 'x64')
-    .src(PROJECT_BASE + 'linux-386.tar.gz', 'linux', 'ia32')
-    .src(PROJECT_BASE + 'linux-amd64.tar.gz', 'linux', 'x64')
-    .src(PROJECT_BASE + 'linux-arm.tar.gz', 'linux', 'arm')
-    .src(PROJECT_BASE + 'windows-386.tar.gz', 'win32', 'ia32')
-    .src(PROJECT_BASE + 'windows-amd64.tar.gz', 'win32', 'x64')
+    .src(config.baseUrl + 'darwin-386.tar.gz', 'darwin', 'ia32')
+    .src(config.baseUrl + 'darwin-amd64.tar.gz', 'darwin', 'x64')
+    .src(config.baseUrl + 'freebsd-amd64.tar.gz', 'freebsd', 'x64')
+    .src(config.baseUrl + 'linux-386.tar.gz', 'linux', 'ia32')
+    .src(config.baseUrl + 'linux-amd64.tar.gz', 'linux', 'x64')
+    .src(config.baseUrl + 'linux-arm.tar.gz', 'linux', 'arm')
+    .src(config.baseUrl + 'windows-386.tar.gz', 'win32', 'ia32')
+    .src(config.baseUrl + 'windows-amd64.tar.gz', 'win32', 'x64')
     .use(process.platform === 'win32' ? 'ipfs.exe' : 'ipfs')
-
-const GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 
 function configureNode (node, conf, done) {
   const keys = Object.keys(conf)
@@ -56,7 +49,7 @@ module.exports = class Node {
     this.path = path
     this.opts = opts || {}
     // Set dest on bin wrapper
-    bin.dest(process.env.IPFS_EXEC || IPFS_DEFAULT_EXEC_PATH)
+    bin.dest(process.env.IPFS_EXEC || config.defaultExecPath)
     this.exec = bin.path()
 
     this.subprocess = null
@@ -186,7 +179,7 @@ module.exports = class Node {
     const timeout = setTimeout(() => {
       this.subprocess.kill('SIGKILL')
       done(null)
-    }, GRACE_PERIOD)
+    }, config.gracePeriod)
 
     this.subprocess.on('close', () => {
       clearTimeout(timeout)
