@@ -42,16 +42,13 @@ function configureNode (node, conf, done) {
 }
 
 function parseConfig (path, done) {
-  fs.readFile(join(path, 'config'), (err, data) => {
-    if (err) return done(err)
-    // Consistent error handling
-    try {
-      const parsed = JSON.parse(data)
-      return done(null, parsed)
-    } catch (err) {
-      return done(err)
-    }
-  })
+  try {
+    const file = fs.readFileSync(join(path, 'config'))
+    const parsed = JSON.parse(file)
+    done(null, parsed)
+  } catch (err) {
+    done(err)
+  }
 }
 
 module.exports = class Node {
