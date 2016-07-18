@@ -11,7 +11,7 @@ const BinWrapper = require('bin-wrapper')
 const path = require('path')
 const join = path.join
 
-const config = require('../config')
+const config = require('./config')
 
 const bin = new BinWrapper()
     .src(config.baseUrl + 'darwin-386.tar.gz', 'darwin', 'ia32')
