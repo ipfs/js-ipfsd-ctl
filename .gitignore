@@ -33,3 +33,6 @@ node_modules
 
 lib
 dist
+
+# Bin default dir
+vendor
