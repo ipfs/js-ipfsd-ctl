@@ -2,54 +2,12 @@
 'use strict'
 
 const ipfsd = require('../src')
-const assert = require('assert')
+const expect = require('chai').expect
 const ipfsApi = require('ipfs-api')
 const run = require('subcomandante')
 const fs = require('fs')
 const rimraf = require('rimraf')
-// const mkdirp = require('mkdirp')
 const path = require('path')
-
-// describe('ipfs executable path', function () {
-//   this.timeout(2000)
-//   let Node
-//
-//   it('has the correct path when installed with npm3', (done) => {
-//     process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
-//     let npm3Path = '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
-//
-//     mkdirp(npm3Path, (err) => {
-//       if (err) {
-//         throw err
-//       }
-//
-//       fs.writeFileSync(path.join(npm3Path, 'ipfs'))
-//       delete require.cache[require.resolve('../src/node.js')]
-//       Node = require('../src/node.js')
-//       var node = new Node()
-//       assert.equal(node.exec, '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs')
-//       rimraf('/tmp/ipfsd-ctl-test', done)
-//     })
-//   })
-//
-//   it('has the correct path when installed with npm2', (done) => {
-//     process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
-//     let npm2Path = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs'
-//
-//     mkdirp(npm2Path, (err) => {
-//       if (err) {
-//         throw err
-//       }
-//
-//       fs.writeFileSync(path.join(npm2Path, 'ipfs'))
-//       delete require.cache[require.resolve('../src/node.js')]
-//       Node = require('../src/node.js')
-//       var node = new Node()
-//       assert.equal(node.exec, '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/ipfs')
-//       rimraf('/tmp/ipfsd-ctl-test', done)
-//     })
-//   })
-// })
 
 describe('disposable node with local api', function () {
   this.timeout(30000)
@@ -66,8 +24,8 @@ describe('disposable node with local api', function () {
   })
 
   it('should have started the daemon and returned an api', () => {
-    assert(ipfs)
-    assert(ipfs.id)
+    expect(ipfs).to.be.ok
+    expect(ipfs.id).to.be.ok
   })
 
   let store, retrieve
@@ -93,10 +51,10 @@ describe('disposable node with local api', function () {
     })
   })
   it('should be able to store objects', () => {
-    assert.equal(store, 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
+    expect(store).to.be.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
   })
   it('should be able to retrieve objects', () => {
-    assert.equal(retrieve, 'blorb')
+    expect(retrieve).to.be.equal('blorb')
   })
 })
 
@@ -112,10 +70,10 @@ describe('disposableApi node', function () {
   })
 
   it('should have started the daemon and returned an api with host/port', () => {
-    assert(ipfs)
-    assert(ipfs.id)
-    assert(ipfs.apiHost)
-    assert(ipfs.apiPort)
+    expect(ipfs).to.be.ok
+    expect(ipfs.id).to.be.ok
+    expect(ipfs.apiHost).to.be.ok
+    expect(ipfs.apiPort).to.be.ok
   })
 
   let store, retrieve
@@ -141,10 +99,10 @@ describe('disposableApi node', function () {
     })
   })
   it('should be able to store objects', () => {
-    assert.equal(store, 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
+    expect(store).to.be.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
   })
   it('should be able to retrieve objects', () => {
-    assert.equal(retrieve, 'blorb')
+    expect(retrieve).to.be.equal('blorb')
   })
 })
 
@@ -161,12 +119,12 @@ describe('starting and stopping', function () {
       })
     })
 
-    it('should returned a node', () => {
-      assert(node)
+    it('should have returned a node', () => {
+      expect(node).to.be.ok
     })
 
     it('daemon should not be running', () => {
-      assert(!node.daemonPid())
+      expect(node.daemonPid()).to.not.be.ok
     })
   })
 
@@ -189,7 +147,7 @@ describe('starting and stopping', function () {
     })
 
     it('should be running', () => {
-      assert(ipfs.id)
+      expect(ipfs.id).to.be.ok
     })
   })
 
@@ -212,8 +170,8 @@ describe('starting and stopping', function () {
     })
 
     it('should be stopped', () => {
-      assert(!node.daemonPid())
-      assert(stopped)
+      expect(node.daemonPid()).to.not.be.ok
+      expect(stopped).to.be.true
     })
   })
 })
@@ -227,7 +185,7 @@ describe('setting up and initializing a local node', () => {
     })
 
     it('should not have a directory', () => {
-      assert.equal(fs.existsSync('/tmp/ipfstestpath1'), false)
+      expect(fs.existsSync('/tmp/ipfstestpath1')).to.be.false
     })
   })
 
@@ -242,11 +200,11 @@ describe('setting up and initializing a local node', () => {
     })
 
     it('should have returned a node', () => {
-      assert(node)
+      expect(node).to.be.ok
     })
 
     it('should not be initialized', () => {
-      assert.equal(node.initialized, false)
+      expect(node.initialized).to.be.false
     })
 
     describe('initialize', function () {
@@ -260,15 +218,15 @@ describe('setting up and initializing a local node', () => {
       })
 
       it('should have made a directory', () => {
-        assert.equal(fs.existsSync(testpath1), true)
+        expect(fs.existsSync(testpath1)).to.be.true
       })
 
       it('should be initialized', () => {
-        assert.equal(node.initialized, true)
+        expect(node.initialized).to.be.true
       })
 
       it('should be initialized', () => {
-        assert.equal(node.initialized, true)
+        expect(node.initialized).to.be.true
       })
     })
   })
@@ -294,7 +252,7 @@ describe('change config values of a disposable node', function () {
       if (err) {
         throw err
       }
-      assert(config)
+      expect(config).to.be.ok
       done()
     })
   })
@@ -309,7 +267,7 @@ describe('change config values of a disposable node', function () {
         if (err) {
           throw err
         }
-        assert.equal(config, 'null')
+        expect(config).to.be.equal('null')
         done()
       })
     })
@@ -322,7 +280,7 @@ describe('external ipfs binaray', () => {
     ipfsd.local((err, node) => {
       if (err) throw err
 
-      assert.equal(node.exec, '/some/path/ipfs')
+      expect(node.exec).to.be.equal('/some/path/ipfs')
 
       process.env.IPFS_EXEC = ''
       done()
@@ -335,7 +293,7 @@ describe('version', () => {
     ipfsd.version((err, version) => {
       if (err) throw err
 
-      assert(version)
+      expect(version).to.be.ok
       done()
     })
   })
@@ -363,8 +321,8 @@ describe('ipfs-api version', function () {
       if (err) throw err
 
       const added = res[res.length - 1]
-      assert(added)
-      assert.equal(added.Hash, 'QmbRVxoHUFGrqhEyAv2uwSBksmpeS6hYH6yrD2kyMUYpSD')
+      expect(added).to.be.ok
+      expect(added.Hash).to.be.equal('QmbRVxoHUFGrqhEyAv2uwSBksmpeS6hYH6yrD2kyMUYpSD')
       done()
     })
   })
