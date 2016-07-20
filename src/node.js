@@ -55,6 +55,7 @@ module.exports = class Node {
     this.subprocess = null
     this.initialized = fs.existsSync(path)
     this.clean = true
+    this.disposable = disposable
     // Has the binary been checked?
     this.checked = false
 
@@ -129,12 +130,8 @@ module.exports = class Node {
 
   // cleanup tmp files
   shutdown (done) {
-    if (!this.clean && this.disposable) {
-      rimraf(this.path, (err) => {
-        if (err) throw err
-        done()
-      })
-    }
+    if (this.clean || !this.disposable) return done()
+    rimraf(this.path, done)
   }
 
   startDaemon (done) {
