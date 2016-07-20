@@ -2,6 +2,7 @@
 'use strict'
 
 const ipfsd = require('../src')
+const config = require('../src/config')
 const expect = require('chai').expect
 const ipfsApi = require('ipfs-api')
 const run = require('subcomandante')
@@ -12,9 +13,14 @@ const path = require('path')
 describe('disposable node with local api', function () {
   this.timeout(30000)
   let ipfs
+  let node
+
   before((done) => {
-    ipfsd.disposable((err, node) => {
+    // Remove default exec dir at start, if any
+    rimraf.sync(config.defaultExecPath)
+    ipfsd.disposable((err, ipfsNode) => {
       if (err) throw err
+      node = ipfsNode
       node.startDaemon((err, ignore) => {
         if (err) throw err
         ipfs = ipfsApi(node.apiAddr)
@@ -23,9 +29,17 @@ describe('disposable node with local api', function () {
     })
   })
 
+  it('the binary should be checked', () => {
+    expect(node.checked).to.be.true
+  })
+
   it('should have started the daemon and returned an api', () => {
     expect(ipfs).to.be.ok
     expect(ipfs.id).to.be.ok
+  })
+
+  it('should have downloaded the binary to the default directory', () => {
+    expect(fs.existsSync(config.defaultExecPath)).to.be.true
   })
 
   let store, retrieve
@@ -50,11 +64,38 @@ describe('disposable node with local api', function () {
       })
     })
   })
+
   it('should be able to store objects', () => {
     expect(store).to.be.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
   })
+
   it('should be able to retrieve objects', () => {
     expect(retrieve).to.be.equal('blorb')
+  })
+})
+
+describe('disposable node without being initialized', function () {
+  this.timeout(30000)
+  let node
+
+  it('binary should not be checked and node should be clean', (done) => {
+    ipfsd.disposable({init: false}, (err, ipfsNode) => {
+      node = ipfsNode
+      expect(err).to.not.exist
+      expect(node.checked).to.be.false
+      expect(node.clean).to.be.true
+      done()
+    })
+  })
+
+  it('binary should be checked and node should not be clean', (done) => {
+    node.init((err, ignore) => {
+      expect(err).to.not.exist
+      expect(node.checked).to.be.true
+      expect(node.clean).to.be.false
+      expect(fs.existsSync(config.defaultExecPath)).to.be.true
+      done()
+    })
   })
 })
 
@@ -98,9 +139,11 @@ describe('disposableApi node', function () {
       })
     })
   })
+
   it('should be able to store objects', () => {
     expect(store).to.be.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
   })
+
   it('should be able to retrieve objects', () => {
     expect(retrieve).to.be.equal('blorb')
   })
