@@ -290,7 +290,7 @@ describe('change config values of a disposable node', function () {
     })
   })
 
-  it('Should return a config value', (done) => {
+  it('should return a config value', (done) => {
     ipfsNode.getConfig('Bootstrap', (err, config) => {
       if (err) {
         throw err
@@ -300,21 +300,42 @@ describe('change config values of a disposable node', function () {
     })
   })
 
-  it('Should set a config value', (done) => {
+  it('should set a config value', (done) => {
     ipfsNode.setConfig('Bootstrap', null, (err) => {
       if (err) {
         throw err
       }
 
       ipfsNode.getConfig('Bootstrap', (err, config) => {
-        if (err) {
-          throw err
-        }
+        expect(err).to.not.exist
         expect(config).to.be.equal('null')
         done()
       })
     })
   })
+
+  it('should replace the config with new file', (done) => {
+    const configPath = path.join(__dirname, 'test-data', 'config.json')
+    const expectedConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+
+    ipfsNode.replaceConf(configPath, (err) => {
+      expect(err).to.not.exist
+
+      ipfsNode.getConfig('Bootstrap', (err, config) => {
+        expect(err).to.not.exist
+        expect(JSON.parse(config)).to.be.deep.equal(expectedConfig.Bootstrap)
+        done()
+      })
+    })
+  })
+
+  // it('should fail to read a bad config file', (done) => {
+  //   const configPath = path.join(__dirname, 'test-data', 'badconfig')
+  //
+  //   ipfsNode.replaceConf(configPath, (err, result) => {
+  //     expect(err).to.exist
+  //   })
+  // })
 })
 
 describe('external ipfs binaray', () => {
