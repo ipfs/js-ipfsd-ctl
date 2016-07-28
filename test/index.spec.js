@@ -386,7 +386,7 @@ describe('ipfs-api version', function () {
 
       const added = res[res.length - 1]
       expect(added).to.be.ok
-      expect(added.Hash).to.be.equal('QmXtMrSLANtZKo3aHvLrhdXsHyjhmfSC3bvx9rAFXikdCh')
+      expect(added.Hash).to.be.equal('QmbqPeR37SQMRf8bApNcgbyLbgVLLjPjbQtvDDXTn8NM7w')
       done()
     })
   })

@@ -96,7 +96,7 @@ module.exports = class Node {
       const listenerKeys = Object.keys(listeners)
       listenerKeys.forEach((key) => ps.on(key, listeners[key]))
       // If done callback return process
-      if (done) return done(null, ps)
+      if (done) done(null, ps)
     })
   }
 
