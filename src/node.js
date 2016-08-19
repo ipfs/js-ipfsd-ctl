@@ -1,7 +1,6 @@
 'use strict'
 
 const fs = require('fs')
-const run = require('subcomandante')
 const series = require('run-series')
 const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
@@ -12,17 +11,18 @@ const path = require('path')
 const join = path.join
 
 const config = require('./config')
+const exec = require('./exec')
 
 const bin = new BinWrapper()
-    .src(config.baseUrl + 'darwin-386.tar.gz', 'darwin', 'ia32')
-    .src(config.baseUrl + 'darwin-amd64.tar.gz', 'darwin', 'x64')
-    .src(config.baseUrl + 'freebsd-amd64.tar.gz', 'freebsd', 'x64')
-    .src(config.baseUrl + 'linux-386.tar.gz', 'linux', 'ia32')
-    .src(config.baseUrl + 'linux-amd64.tar.gz', 'linux', 'x64')
-    .src(config.baseUrl + 'linux-arm.tar.gz', 'linux', 'arm')
-    .src(config.baseUrl + 'windows-386.tar.gz', 'win32', 'ia32')
-    .src(config.baseUrl + 'windows-amd64.tar.gz', 'win32', 'x64')
-    .use(process.platform === 'win32' ? 'ipfs.exe' : 'ipfs')
+  .src(config.baseUrl + 'darwin-386.tar.gz', 'darwin', 'ia32')
+  .src(config.baseUrl + 'darwin-amd64.tar.gz', 'darwin', 'x64')
+  .src(config.baseUrl + 'freebsd-amd64.tar.gz', 'freebsd', 'x64')
+  .src(config.baseUrl + 'linux-386.tar.gz', 'linux', 'ia32')
+  .src(config.baseUrl + 'linux-amd64.tar.gz', 'linux', 'x64')
+  .src(config.baseUrl + 'linux-arm.tar.gz', 'linux', 'arm')
+  .src(config.baseUrl + 'windows-386.tar.gz', 'win32', 'ia32')
+  .src(config.baseUrl + 'windows-amd64.tar.gz', 'win32', 'x64')
+  .use(process.platform === 'win32' ? 'ipfs.exe' : 'ipfs')
 
 function configureNode (node, conf, done) {
   const keys = Object.keys(conf)
@@ -63,9 +63,11 @@ module.exports = class Node {
     if (this.opts.env) Object.assign(this.env, this.opts.env)
   }
 
-  _run (args, opts, listeners, done) {
+  _run (args, opts = {}, listeners, done) {
     let result = ''
     let callback
+    // Cleanup the process on exit
+    opts.cleanup = true
     // Handy method if we just want the result and err returned in a callback
     if (typeof listeners === 'function') {
       callback = listeners
@@ -92,11 +94,10 @@ module.exports = class Node {
         if (!done) return listeners.error(err)
         return done(err)
       }
-      const ps = run(this.exec, args, opts)
-      const listenerKeys = Object.keys(listeners)
-      listenerKeys.forEach((key) => ps.on(key, listeners[key]))
+      const command = exec(this.exec, args, opts, listeners)
+
       // If done callback return process
-      if (done) done(null, ps)
+      if (done) done(null, command)
     })
   }
 

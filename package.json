@@ -48,7 +48,7 @@
     "rimraf": "^2.4.5",
     "run-series": "^1.1.4",
     "shutdown": "^0.2.4",
-    "subcomandante": "^1.0.5",
+    "execa": "git://github.com/sindresorhus/execa.git#master",
     "bin-wrapper": "^3.0.2"
   },
   "devDependencies": {

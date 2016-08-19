@@ -3,7 +3,7 @@
 const path = require('path')
 
 const config = {
-  version: 'v0.4.3-rc1', // ipfs dist version
+  version: 'v0.4.3-rc3', // ipfs dist version
   defaultExecPath: path.join(__dirname, '..', 'vendor'), // default path for the downloaded exec
   gracePeriod: 7500 // amount of ms to wait before sigkill
 }
