@@ -25,6 +25,8 @@ Install:
 npm install --save ipfsd-ctl
 ```
 
+__The current go ipfs version used is v0.4.3-rc3__
+
 ## Usage
 
 IPFS daemons are already easy to start and stop, but this module is here to do it from javascript itself.
@@ -36,17 +38,53 @@ IPFS daemons are already easy to start and stop, but this module is here to do i
 // IPFS_PATH will point to /tmp/ipfs_***** and will be
 // cleaned up when the process exits.
 
-var ipfsd = require('ipfsd-ctl')
+const ipfsd = require('ipfsd-ctl')
 
-ipfsd.disposableApi(function (err, ipfs) {
-  ipfs.id(function (err, id) {
+ipfsd.disposableApi((err, ipfs) => {
+  ipfs.id((err, id) => {
     console.log(id)
     process.kill()
   })
 })
 ```
 
-If you need want to use an existing ipfs installation you can set `$IPFS_EXEC=/path/to/ipfs` to ensure it uses that.
+The daemon controller safely spawns the node for you and exposes you the ipfs API. __If the parent process exits, the daemon will also be killed__ ensuring that the daemon isn't left hanging.
+
+This module works by downloading the binary once, on first use, if it detects that no current binary is available to use. So keep in mind that the first command executed might throw in some overhead.
+
+If you want to use an existing ipfs installation you can set `$IPFS_EXEC=/path/to/ipfs` to ensure it uses that.
+
+## API
+
+## ipfsd
+
+#### ipfsd.version(done)
+
+#### ipfsd.local(path, done)
+
+#### ipfsd.disposableApi(opts, done)
+
+#### ipfsd.disposable(opts, done)
+
+## Ipfs(path, opts, disposable)
+
+#### ipfs.init(initOpts, done)
+
+#### ipfs.shutdown(done)
+
+#### ipfs.startDaemon(done)
+
+#### ipfs.stopDaemon(done)
+
+#### ipfs.daemonPid()
+
+#### ipfs.getConfig(key, done)
+
+#### ipfs.setConfig(key, value, done)
+
+#### ipfs.replaceConf(file, done)
+
+#### ipfs.version(done)
 
 ## Contribute
 
