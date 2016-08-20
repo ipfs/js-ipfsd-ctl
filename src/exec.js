@@ -2,8 +2,26 @@
 
 const execa = require('execa')
 
-function exec (cmd, args, opts, handlers) {
+function exec (cmd, args, opts = {}, handlers) {
   let err = ''
+  let result = ''
+  let callback
+  // Handy method if we just want the result and err returned in a callback
+  if (typeof handlers === 'function') {
+    callback = handlers
+    handlers = {
+      error: callback,
+      data: (data) => {
+        result += data
+      },
+      done: () => {
+        if (err) return callback(new Error(err))
+        callback(null, result)
+      }
+    }
+  }
+
+  // The listeners that will actually be set on the process
   const listeners = {
     data: handlers.data,
     error: (data) => {
@@ -16,16 +34,17 @@ function exec (cmd, args, opts, handlers) {
           '\n  while running: ' + cmd + ' ' + args.join(' ') +
           '\n\n  ' + err))
       }
-      if (handlers.end) handlers.end()
+      if (handlers.done) handlers.done()
     }
   }
 
   const command = execa(cmd, args, opts)
 
-  command.stdout.on('data', listeners.data)
+  if (listeners.data) command.stdout.on('data', listeners.data)
 
   command.stderr.on('data', listeners.error)
 
+  // If command fails to execute return directly to the handler
   command.on('error', handlers.error)
 
   command.on('close', listeners.done)

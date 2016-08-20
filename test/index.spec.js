@@ -3,10 +3,11 @@
 
 const ipfsd = require('../src')
 const config = require('../src/config')
+const exec = require('../src/exec')
 const expect = require('chai').expect
 const ipfsApi = require('ipfs-api')
-const run = require('subcomandante')
 const fs = require('fs')
+const series = require('run-series')
 const rimraf = require('rimraf')
 const path = require('path')
 
@@ -183,9 +184,7 @@ describe('starting and stopping', function () {
         ipfs = res
 
         // actually running?
-        run('kill', ['-0', pid])
-          .on(err, (err) => { throw err })
-          .on('end', () => { done() })
+        exec('kill', ['-0', pid], {}, done)
       })
     })
 
@@ -203,12 +202,13 @@ describe('starting and stopping', function () {
       })
       // make sure it's not still running
       const poll = setInterval(() => {
-        run('kill', ['-0', pid])
-          .on('error', () => {
+        exec('kill', ['-0', pid], {}, {
+          error: () => {
             clearInterval(poll)
             done()
             done = () => {} // so it does not get called again
-          })
+          }
+        })
       }, 100)
     })
 
@@ -308,7 +308,7 @@ describe('change config values of a disposable node', function () {
 
       ipfsNode.getConfig('Bootstrap', (err, config) => {
         expect(err).to.not.exist
-        expect(config).to.be.equal('null')
+        expect(config).to.be.null
         done()
       })
     })
@@ -323,19 +323,20 @@ describe('change config values of a disposable node', function () {
 
       ipfsNode.getConfig('Bootstrap', (err, config) => {
         expect(err).to.not.exist
-        expect(JSON.parse(config)).to.be.deep.equal(expectedConfig.Bootstrap)
+        expect(config).to.be.deep.equal(expectedConfig.Bootstrap)
         done()
       })
     })
   })
 
-  // it('should fail to read a bad config file', (done) => {
-  //   const configPath = path.join(__dirname, 'test-data', 'badconfig')
-  //
-  //   ipfsNode.replaceConf(configPath, (err, result) => {
-  //     expect(err).to.exist
-  //   })
-  // })
+  it('should fail to read a bad config file', (done) => {
+    const configPath = path.join(__dirname, 'test-data', 'badconfig')
+
+    ipfsNode.replaceConf(configPath, (err, result) => {
+      expect(err).to.exist
+      done()
+    })
+  })
 })
 
 describe('external ipfs binaray', () => {
@@ -386,7 +387,7 @@ describe('ipfs-api version', function () {
 
       const added = res[res.length - 1]
       expect(added).to.be.ok
-      expect(added.Hash).to.be.equal('QmU71gQmnapJita4FKdXrzKWRpSVhwT7rosnn1Agjxd5gv')
+      expect(added.Hash).to.be.equal('QmavtFfv9LMHaWBgXvbJgSfpSmtcA7WMNhzeF5J3KEUTKg')
       done()
     })
   })

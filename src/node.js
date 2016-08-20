@@ -45,7 +45,7 @@ function parseConfig (path, done) {
 }
 
 module.exports = class Node {
-  constructor (path, opts, disposable) {
+  constructor (path, opts = {}, disposable) {
     this.path = path
     this.opts = opts || {}
     // Set dest on bin wrapper
@@ -63,22 +63,10 @@ module.exports = class Node {
     if (this.opts.env) Object.assign(this.env, this.opts.env)
   }
 
-  _run (args, opts = {}, listeners, done) {
-    let result = ''
-    let callback
+  _run (args, opts = {}, handlers, done) {
     // Cleanup the process on exit
     opts.cleanup = true
-    // Handy method if we just want the result and err returned in a callback
-    if (typeof listeners === 'function') {
-      callback = listeners
-      listeners = {
-        error: callback,
-        data: (data) => {
-          result += data
-        },
-        end: () => callback(null, result.trim())
-      }
-    }
+
     series([
       // Check the binary and download it if needed be
       (cb) => {
@@ -90,13 +78,13 @@ module.exports = class Node {
       }
     ], (err, results) => {
       if (err) {
-        // If no done callback return error to the error listener
-        if (!done) return listeners.error(err)
+        // If no done callback return error to the error handler
+        if (!done) return handlers.error(err)
         return done(err)
       }
-      const command = exec(this.exec, args, opts, listeners)
+      const command = exec(this.exec, args, opts, handlers)
 
-      // If done callback return process
+      // If done callback return command
       if (done) done(null, command)
     })
   }
@@ -197,7 +185,15 @@ module.exports = class Node {
       key = ''
     }
 
-    this._run(['config', key], {env: this.env}, done)
+    this._run(['config', key], {env: this.env}, (err, config) => {
+      if (err) return done(err)
+      try {
+        const parsed = JSON.parse(config)
+        return done(null, parsed)
+      } catch (err) {
+        return done(err)
+      }
+    })
   }
 
   setConfig (key, value, done) {
