@@ -2,7 +2,8 @@
 
 const execa = require('execa')
 
-function exec (cmd, args, opts = {}, handlers) {
+function exec (cmd, args, opts, handlers) {
+  opts = opts || {}
   let err = ''
   let result = ''
   let callback

@@ -45,7 +45,7 @@ function parseConfig (path, done) {
 }
 
 module.exports = class Node {
-  constructor (path, opts = {}, disposable) {
+  constructor (path, opts, disposable) {
     this.path = path
     this.opts = opts || {}
     // Set dest on bin wrapper
@@ -63,7 +63,8 @@ module.exports = class Node {
     if (this.opts.env) Object.assign(this.env, this.opts.env)
   }
 
-  _run (args, opts = {}, handlers, done) {
+  _run (args, opts, handlers, done) {
+    opts = opts || {}
     // Cleanup the process on exit
     opts.cleanup = true
 

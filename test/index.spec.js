@@ -194,7 +194,7 @@ describe('starting and stopping', function () {
         ipfs = res
 
         // actually running?
-        exec('kill', ['-0', pid], {}, done)
+        exec('kill', ['-0', pid], {cleanup: true}, done)
       })
     })
 
@@ -212,7 +212,7 @@ describe('starting and stopping', function () {
       })
       // make sure it's not still running
       const poll = setInterval(() => {
-        exec('kill', ['-0', pid], {}, {
+        exec('kill', ['-0', pid], {cleanup: true}, {
           error: () => {
             clearInterval(poll)
             done()
@@ -392,7 +392,7 @@ describe('ipfs-api version', function () {
 
       const added = res[res.length - 1]
       expect(added).to.be.ok
-      expect(added.Hash).to.be.equal('QmavtFfv9LMHaWBgXvbJgSfpSmtcA7WMNhzeF5J3KEUTKg')
+      expect(added.Hash).to.be.equal('QmS1ucxhcjPd65X4g5WgJfePXik1inUNBBnNP8WnGAXDt6')
       done()
     })
   })
