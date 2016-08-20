@@ -47,22 +47,27 @@ describe('disposable node with local api', function () {
 
   before((done) => {
     const blorb = Buffer('blorb')
-    ipfs.block.put(blorb, (err, res) => {
-      if (err) throw err
-      store = res.Key
-
-      ipfs.block.get(res.Key, (err, res) => {
-        if (err) throw err
-        let buf = ''
-        res
-          .on('data', (data) => {
-            buf += data
-          })
-          .on('end', () => {
-            retrieve = buf
-            done()
-          })
-      })
+    series([
+      (cb) => {
+        ipfs.block.put(blorb, (err, res) => {
+          if (err) return cb(err)
+          store = res.Key
+          cb()
+        })
+      },
+      (cb) => ipfs.block.get(store, cb)
+    ], (err, results) => {
+      if (err) return done(err)
+      const res = results[1]
+      let buf = ''
+      res
+        .on('data', (data) => {
+          buf += data
+        })
+        .on('end', () => {
+          retrieve = buf
+          done()
+        })
     })
   })
 
@@ -122,22 +127,27 @@ describe('disposableApi node', function () {
 
   before((done) => {
     const blorb = Buffer('blorb')
-    ipfs.block.put(blorb, (err, res) => {
-      if (err) throw err
-      store = res.Key
-
-      ipfs.block.get(res.Key, (err, res) => {
-        if (err) throw err
-        let buf = ''
-        res
-          .on('data', (data) => {
-            buf += data
-          })
-          .on('end', () => {
-            retrieve = buf
-            done()
-          })
-      })
+    series([
+      (cb) => {
+        ipfs.block.put(blorb, (err, res) => {
+          if (err) return cb(err)
+          store = res.Key
+          cb()
+        })
+      },
+      (cb) => ipfs.block.get(store, cb)
+    ], (err, results) => {
+      if (err) return done(err)
+      const res = results[1]
+      let buf = ''
+      res
+        .on('data', (data) => {
+          buf += data
+        })
+        .on('end', () => {
+          retrieve = buf
+          done()
+        })
     })
   })
 
@@ -253,12 +263,7 @@ describe('setting up and initializing a local node', () => {
     describe('initialize', function () {
       this.timeout(30000)
 
-      before((done) => {
-        node.init((err) => {
-          if (err) throw err
-          done()
-        })
-      })
+      before((done) => node.init(done))
 
       it('should have made a directory', () => {
         expect(fs.existsSync(testpath1)).to.be.true
