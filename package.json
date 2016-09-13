@@ -2,7 +2,7 @@
   "name": "ipfsd-ctl",
   "version": "0.15.0",
   "description": "simple controls for an ipfs node",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "jsxnext:main": "src/index.js",
   "scripts": {
     "lint": "aegir-lint",
