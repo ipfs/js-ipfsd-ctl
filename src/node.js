@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const series = require('run-series')
-const ipfs = require('ipfs-api')
+const IpfsAPI = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const shutdown = require('shutdown')
@@ -53,6 +53,7 @@ module.exports = class Node {
     this.exec = bin.path()
 
     this.subprocess = null
+    // Only set when the daemon is started
     this.initialized = fs.existsSync(path)
     this.clean = true
     this.disposable = disposable
@@ -65,28 +66,30 @@ module.exports = class Node {
 
   _run (args, opts, handlers, done) {
     opts = opts || {}
+    // If no done callback return error to the error handler
+    let errorHandler = done || handlers.error
+    // Single handler `callback(err, res)` provided
+    if (typeof handlers === 'function') {
+      errorHandler = handlers
+    }
     // Cleanup the process on exit
     opts.cleanup = true
 
-    series([
-      // Check the binary and download it if needed be
-      (cb) => {
-        if (this.checked) return cb()
-        bin.run(['version'], (err) => {
-          if (!err) this.checked = true
-          return cb(err)
-        })
-      }
-    ], (err, results) => {
-      if (err) {
-        // If no done callback return error to the error handler
-        if (!done) return handlers.error(err)
-        return done(err)
-      }
+    this.checkBinary((err) => {
+      if (err) return errorHandler(err)
       const command = exec(this.exec, args, opts, handlers)
 
       // If done callback return command
       if (done) done(null, command)
+    })
+  }
+
+  // Check the binary and download it if needed be
+  checkBinary (cb) {
+    if (this.checked) return cb()
+    bin.run(['version'], (err) => {
+      if (!err) this.checked = true
+      return cb(err)
     })
   }
 
@@ -132,10 +135,10 @@ module.exports = class Node {
         error: (err) => {
           if (String(err).match('daemon is running')) {
             // we're good
-            done(null, ipfs(conf.Addresses.API))
-          } else if (String(err).match('non-zero exit code')) {
-            // ignore when kill -9'd
-          } else {
+            return done()
+          }
+          // ignore when kill -9'd
+          if (!String(err).match('non-zero exit code')) {
             done(err)
           }
         },
@@ -143,11 +146,7 @@ module.exports = class Node {
           const match = String(data).trim().match(/API server listening on (.*)/)
           if (match) {
             this.apiAddr = match[1]
-            const addr = multiaddr(this.apiAddr).nodeAddress()
-            const api = ipfs(this.apiAddr)
-            api.apiHost = addr.address
-            api.apiPort = addr.port
-            done(null, api)
+            done()
           }
         }
       }, (err, process) => {
@@ -155,6 +154,15 @@ module.exports = class Node {
         this.subprocess = process
       })
     })
+  }
+
+  apiCtl () {
+    if (!this.apiAddr) return null
+    const addr = multiaddr(this.apiAddr).nodeAddress()
+    const api = IpfsAPI(addr)
+    api.apiHost = addr.address
+    api.apiPort = addr.port
+    return api
   }
 
   stopDaemon (done) {
@@ -174,10 +182,6 @@ module.exports = class Node {
     })
 
     this.subprocess = null
-  }
-
-  daemonPid () {
-    return this.subprocess && this.subprocess.pid
   }
 
   getConfig (key, done) {

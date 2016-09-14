@@ -19,7 +19,7 @@ describe('disposable node with local api', function () {
   before((done) => {
     // Remove default exec dir at start, if any
     rimraf.sync(config.defaultExecPath)
-    ipfsd.disposable((err, ipfsNode) => {
+    ipfsd.create((err, ipfsNode) => {
       if (err) throw err
       node = ipfsNode
       node.startDaemon((err, ignore) => {
@@ -85,7 +85,7 @@ describe('disposable node without being initialized', function () {
   let node
 
   it('binary should not be checked and node should be clean', (done) => {
-    ipfsd.disposable({init: false}, (err, ipfsNode) => {
+    ipfsd.create({init: false}, (err, ipfsNode) => {
       node = ipfsNode
       expect(err).to.not.exist
       expect(node.checked).to.be.false
@@ -105,14 +105,17 @@ describe('disposable node without being initialized', function () {
   })
 })
 
-describe('disposableApi node', function () {
+describe('disposable node API', function () {
   this.timeout(30000)
   let ipfs
   before((done) => {
-    ipfsd.disposableApi((err, api) => {
+    ipfsd.create((err, node) => {
       if (err) throw err
-      ipfs = api
-      done()
+      node.startDaemon((err) => {
+        if (err) throw err
+        ipfs = node.apiCtl()
+        done()
+      })
     })
   })
 
@@ -166,7 +169,7 @@ describe('starting and stopping', function () {
 
   describe('init', () => {
     before((done) => {
-      ipfsd.disposable((err, res) => {
+      ipfsd.create((err, res) => {
         if (err) throw err
         node = res
         done()
@@ -178,7 +181,7 @@ describe('starting and stopping', function () {
     })
 
     it('daemon should not be running', () => {
-      expect(node.daemonPid()).to.not.be.ok
+      expect(node.subprocess).to.not.be.ok
     })
   })
 
@@ -187,11 +190,11 @@ describe('starting and stopping', function () {
   describe('starting', () => {
     let ipfs
     before((done) => {
-      node.startDaemon((err, res) => {
+      node.startDaemon((err) => {
         if (err) throw err
 
-        pid = node.daemonPid()
-        ipfs = res
+        pid = node.subprocess.pid
+        ipfs = node.apiCtl()
 
         // actually running?
         exec('kill', ['-0', pid], {cleanup: true}, done)
@@ -223,7 +226,7 @@ describe('starting and stopping', function () {
     })
 
     it('should be stopped', () => {
-      expect(node.daemonPid()).to.not.be.ok
+      expect(node.subprocess).to.not.be.ok
       expect(stopped).to.be.true
     })
   })
@@ -286,7 +289,7 @@ describe('change config values of a disposable node', function () {
   let ipfsNode
 
   before((done) => {
-    ipfsd.disposable((err, node) => {
+    ipfsd.create((err, node) => {
       if (err) {
         throw err
       }
@@ -359,12 +362,14 @@ describe('external ipfs binaray', () => {
 })
 
 describe('version', () => {
-  it('prints the version', (done) => {
-    ipfsd.version((err, version) => {
+  it('prints the version of a node', (done) => {
+    ipfsd.create((err, node) => {
       if (err) throw err
-
-      expect(version).to.be.ok
-      done()
+      node.version((err, version) => {
+        if (err) throw err
+        expect(version).to.be.ok
+        done()
+      })
     })
   })
 })
@@ -375,7 +380,7 @@ describe('ipfs-api version', function () {
   let ipfs
 
   before((done) => {
-    ipfsd.disposable((err, node) => {
+    ipfsd.create((err, node) => {
       if (err) throw err
       node.startDaemon((err, ignore) => {
         if (err) throw err
@@ -392,7 +397,7 @@ describe('ipfs-api version', function () {
 
       const added = res[res.length - 1]
       expect(added).to.be.ok
-      expect(added.Hash).to.be.equal('QmS1ucxhcjPd65X4g5WgJfePXik1inUNBBnNP8WnGAXDt6')
+      expect(added.Hash).to.be.equal('QmfWDSVeHDM8gCJoaNLkF8nYgAeaqs46Bowa1oBmsvDBAR')
       done()
     })
   })

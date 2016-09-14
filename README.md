@@ -40,15 +40,20 @@ IPFS daemons are already easy to start and stop, but this module is here to do i
 
 const ipfsd = require('ipfsd-ctl')
 
-ipfsd.disposableApi((err, ipfs) => {
-  ipfs.id((err, id) => {
-    console.log(id)
-    process.kill()
+ipfsd.create((err, node) => {
+  if (err) throw err
+  node.startDaemon((err) => {
+    if (err) throw err
+    const ipfs = node.apiCtl()
+    ipfs.id((err, id) => {
+      console.log(id)
+      process.kill()
+    })
   })
 })
 ```
 
-The daemon controller safely spawns the node for you and exposes you the ipfs API. __If the parent process exits, the daemon will also be killed__ ensuring that the daemon isn't left hanging.
+The daemon controller safely spawns the node for you and exposes you an ipfs API client through `node.apiCtl()`. __If the parent process exits, the daemon will also be killed__ ensuring that the daemon isn't left hanging.
 
 This module works by downloading the binary once, on first use, if it detects that no current binary is available to use. So keep in mind that the first command executed might throw in some overhead.
 
@@ -58,33 +63,33 @@ If you want to use an existing ipfs installation you can set `$IPFS_EXEC=/path/t
 
 ## ipfsd
 
-#### ipfsd.version(done)
-
 #### ipfsd.local(path, done)
 
-#### ipfsd.disposableApi(opts, done)
+#### ipfsd.create(opts, done)
 
-#### ipfsd.disposable(opts, done)
+## IpfsNode(path, opts, disposable)
 
-## Ipfs(path, opts, disposable)
+#### node.init(initOpts, done)
 
-#### ipfs.init(initOpts, done)
+#### node.shutdown(done)
 
-#### ipfs.shutdown(done)
+#### node.startDaemon(done)
 
-#### ipfs.startDaemon(done)
+#### node.stopDaemon(done)
 
-#### ipfs.stopDaemon(done)
+#### node.apiCtl(done)
 
-#### ipfs.daemonPid()
+#### node.daemonPid()
 
-#### ipfs.getConfig(key, done)
+#### node.getConfig(key, done)
 
-#### ipfs.setConfig(key, value, done)
+#### node.setConfig(key, value, done)
 
-#### ipfs.replaceConf(file, done)
+#### node.replaceConf(file, done)
 
-#### ipfs.version(done)
+#### node.version(done)
+
+#### node.subprocess
 
 ## Contribute
 
