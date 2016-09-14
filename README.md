@@ -67,7 +67,7 @@ If you want to use an existing ipfs installation you can set `$IPFS_EXEC=/path/t
 
 #### ipfsd.create(opts, done)
 
-## IpfsNode(path, opts, disposable)
+## IPFSNode(path, opts, disposable)
 
 #### node.init(initOpts, done)
 
