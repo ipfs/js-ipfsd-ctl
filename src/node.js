@@ -6,23 +6,13 @@ const IpfsAPI = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const shutdown = require('shutdown')
-const BinWrapper = require('bin-wrapper')
+
 const path = require('path')
 const join = path.join
 
 const config = require('./config')
 const exec = require('./exec')
-
-const bin = new BinWrapper()
-  .src(config.baseUrl + 'darwin-386.tar.gz', 'darwin', 'ia32')
-  .src(config.baseUrl + 'darwin-amd64.tar.gz', 'darwin', 'x64')
-  .src(config.baseUrl + 'freebsd-amd64.tar.gz', 'freebsd', 'x64')
-  .src(config.baseUrl + 'linux-386.tar.gz', 'linux', 'ia32')
-  .src(config.baseUrl + 'linux-amd64.tar.gz', 'linux', 'x64')
-  .src(config.baseUrl + 'linux-arm.tar.gz', 'linux', 'arm')
-  .src(config.baseUrl + 'windows-386.tar.gz', 'win32', 'ia32')
-  .src(config.baseUrl + 'windows-amd64.tar.gz', 'win32', 'x64')
-  .use(process.platform === 'win32' ? 'ipfs.exe' : 'ipfs')
+const binary = require('./binary')()
 
 function configureNode (node, conf, done) {
   const keys = Object.keys(conf)
@@ -48,17 +38,13 @@ module.exports = class Node {
   constructor (path, opts, disposable) {
     this.path = path
     this.opts = opts || {}
-    // Set dest on bin wrapper
-    bin.dest(process.env.IPFS_EXEC || config.defaultExecPath)
-    this.exec = bin.path()
+    this.exec = binary.path()
 
     this.subprocess = null
     // Only set when the daemon is started
     this.initialized = fs.existsSync(path)
     this.clean = true
     this.disposable = disposable
-    // Has the binary been checked?
-    this.checked = false
 
     this.env = Object.assign({}, process.env, {IPFS_PATH: path})
     if (this.opts.env) Object.assign(this.env, this.opts.env)
@@ -75,21 +61,12 @@ module.exports = class Node {
     // Cleanup the process on exit
     opts.cleanup = true
 
-    this.checkBinary((err) => {
+    binary.check((err) => {
       if (err) return errorHandler(err)
       const command = exec(this.exec, args, opts, handlers)
 
       // If done callback return command
       if (done) done(null, command)
-    })
-  }
-
-  // Check the binary and download it if needed be
-  checkBinary (cb) {
-    if (this.checked) return cb()
-    bin.run(['version'], (err) => {
-      if (!err) this.checked = true
-      return cb(err)
     })
   }
 

@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+'use strict'
+
+console.log('Checking IPFS binary...')
+const binary = require('../src/binary')()
+const version = require('../src/config').version
+
+binary.check((err) => {
+  if (err) throw err
+  console.log(`IPFS binary version ${version} working`)
+})

@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "jsxnext:main": "src/index.js",
   "scripts": {
+    "postinstall": "./bin/check-binary",
     "lint": "aegir-lint",
     "coverage": "aegir-coverage",
     "test": "aegir-test --env node",

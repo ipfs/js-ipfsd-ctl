@@ -30,10 +30,11 @@ function exec (cmd, args, opts, handlers) {
     },
     done: (code) => {
       if (code !== 0) {
-        return handlers.error(new Error(
-          'non-zero exit code ' + code +
-          '\n  while running: ' + cmd + ' ' + args.join(' ') +
-          '\n\n  ' + err))
+        return handlers.error(
+          new Error(`non-zero exit code ${code}\n
+            while running: ${cmd} ${args.join(' ')}\n\n
+            ${err}`)
+        )
       }
       if (handlers.done) handlers.done()
     }

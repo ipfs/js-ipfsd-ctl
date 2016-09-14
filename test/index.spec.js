@@ -30,10 +30,6 @@ describe('disposable node with local api', function () {
     })
   })
 
-  it('the binary should be checked', () => {
-    expect(node.checked).to.be.true
-  })
-
   it('should have started the daemon and returned an api', () => {
     expect(ipfs).to.be.ok
     expect(ipfs.id).to.be.ok
@@ -84,20 +80,18 @@ describe('disposable node without being initialized', function () {
   this.timeout(30000)
   let node
 
-  it('binary should not be checked and node should be clean', (done) => {
+  it('node should be clean', (done) => {
     ipfsd.create({init: false}, (err, ipfsNode) => {
       node = ipfsNode
       expect(err).to.not.exist
-      expect(node.checked).to.be.false
       expect(node.clean).to.be.true
       done()
     })
   })
 
-  it('binary should be checked and node should not be clean', (done) => {
+  it('node should not be clean', (done) => {
     node.init((err, ignore) => {
       expect(err).to.not.exist
-      expect(node.checked).to.be.true
       expect(node.clean).to.be.false
       expect(fs.existsSync(config.defaultExecPath)).to.be.true
       done()
@@ -347,20 +341,6 @@ describe('change config values of a disposable node', function () {
   })
 })
 
-describe('external ipfs binaray', () => {
-  it('allows passing via $IPFS_EXEC', (done) => {
-    process.env.IPFS_EXEC = '/some/path'
-    ipfsd.local((err, node) => {
-      if (err) throw err
-
-      expect(node.exec).to.be.equal('/some/path/ipfs')
-
-      process.env.IPFS_EXEC = ''
-      done()
-    })
-  })
-})
-
 describe('version', () => {
   it('prints the version of a node', (done) => {
     ipfsd.create((err, node) => {
@@ -397,7 +377,7 @@ describe('ipfs-api version', function () {
 
       const added = res[res.length - 1]
       expect(added).to.be.ok
-      expect(added.Hash).to.be.equal('QmfWDSVeHDM8gCJoaNLkF8nYgAeaqs46Bowa1oBmsvDBAR')
+      expect(added.Hash).to.be.equal('Qmf83JawSYirKchqGUj3Do5Zkt9XtbncA4TjrfAucBJFWZ')
       done()
     })
   })
