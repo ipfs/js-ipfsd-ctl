@@ -52,11 +52,7 @@
     "bin-wrapper": "^3.0.2"
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "aegir": "^8.0.1",
-=======
-    "aegir": "^7.0.0",
->>>>>>> ebc9eb6... bump aegir version
+    "aegir": "^8.1.0",
     "chai": "^3.5.0",
     "pre-commit": "^1.1.2"
   },
