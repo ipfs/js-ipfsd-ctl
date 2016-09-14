@@ -135,12 +135,23 @@ module.exports = class Node {
         })
         .on('data', (data) => {
           const match = String(data).trim().match(/API server listening on (.*)/)
+          const gwmatch = String(data).trim().match(/Gateway (.*) listening on (.*)/)
           if (match) {
             this.apiAddr = match[1]
             const addr = multiaddr(this.apiAddr).nodeAddress()
             const api = ipfs(this.apiAddr)
             api.apiHost = addr.address
             api.apiPort = addr.port
+
+            // Add gateway address to the instance
+            // FIXME: we should just put all addresses to api.address?
+            if (gwmatch) {
+              this.gatewayAddr = gwmatch[2]
+              const addr = multiaddr(this.gatewayAddr).nodeAddress()
+              api.gatewayHost = addr.address
+              api.gatewayPort = addr.port
+            }
+
             done(null, api)
           }
         })
