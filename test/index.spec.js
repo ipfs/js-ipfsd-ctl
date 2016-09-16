@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
 const ipfsd = require('../src')
@@ -374,15 +375,14 @@ describe('node startDaemon', () => {
   it('allows passing flags', (done) => {
     ipfsd.disposable((err, node) => {
       if (err) throw err
-      node.startDaemon(["--should-not-exist"], (err, ignore) => {
+      node.startDaemon(['--should-not-exist'], (err, ignore) => {
         if (!err) {
-          throw new Error("should have errored")
+          throw new Error('should have errored')
         }
 
-        let errStr = "Unrecognized option 'should-not-exist'"
+        let errStr = 'Unrecognized option \'should-not-exist\''
 
-        err = ""+ err
-        if (err.indexOf(errStr) >= 0) {
+        if (String(err).indexOf(errStr) >= 0) {
           done() // correct error
         }
 
