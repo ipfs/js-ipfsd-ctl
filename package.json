@@ -10,8 +10,8 @@
     "test": "aegir-test --env node",
     "build": "aegir-build --env node",
     "release": "aegir-release --env node",
-    "release:minor": "aegir-release --type minor --env node",
-    "release:major": "aegir-release --type major --env node",
+    "release-minor": "aegir-release --type minor --env node",
+    "release-major": "aegir-release --type major --env node",
     "coverage-publish": "aegir-coverage publish"
   },
   "engines": {
