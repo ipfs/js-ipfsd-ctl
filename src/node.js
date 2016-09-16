@@ -151,18 +151,19 @@ module.exports = class Node {
     if (!done) done = () => {}
     if (!this.subprocess) return done(null)
 
-    this.subprocess.kill('SIGTERM')
-
+    // need a local var for the closure, as we clear the var.
+    const subprocess = this.subprocess
     const timeout = setTimeout(() => {
-      this.subprocess.kill('SIGKILL')
+      subprocess.kill('SIGKILL')
       done(null)
     }, GRACE_PERIOD)
 
-    this.subprocess.on('close', () => {
+    subprocess.on('close', () => {
       clearTimeout(timeout)
       done(null)
     })
 
+    subprocess.kill('SIGTERM')
     this.subprocess = null
   }
 
