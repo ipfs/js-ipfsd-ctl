@@ -6,6 +6,7 @@ const ipfsd = require('../src')
 const assert = require('assert')
 const ipfsApi = require('ipfs-api')
 const run = require('subcomandante')
+const bs58 = require('bs58')
 const fs = require('fs')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
@@ -75,21 +76,14 @@ describe('disposable node with local api', function () {
 
   before((done) => {
     const blorb = Buffer('blorb')
-    ipfs.block.put(blorb, (err, res) => {
+    ipfs.block.put(blorb, (err, block) => {
       if (err) throw err
-      store = res.Key
+      store = bs58.encode(block.key).toString()
 
-      ipfs.block.get(res.Key, (err, res) => {
+      ipfs.block.get(store, (err, block) => {
         if (err) throw err
-        let buf = ''
-        res
-          .on('data', (data) => {
-            buf += data
-          })
-          .on('end', () => {
-            retrieve = buf
-            done()
-          })
+        retrieve = block.data
+        done()
       })
     })
   })
@@ -123,21 +117,14 @@ describe('disposableApi node', function () {
 
   before((done) => {
     const blorb = Buffer('blorb')
-    ipfs.block.put(blorb, (err, res) => {
+    ipfs.block.put(blorb, (err, block) => {
       if (err) throw err
-      store = res.Key
+      store = bs58.encode(block.key).toString()
 
-      ipfs.block.get(res.Key, (err, res) => {
+      ipfs.block.get(store, (err, block) => {
         if (err) throw err
-        let buf = ''
-        res
-          .on('data', (data) => {
-            buf += data
-          })
-          .on('end', () => {
-            retrieve = buf
-            done()
-          })
+        retrieve = block.data
+        done()
       })
     })
   })
@@ -360,12 +347,12 @@ describe('ipfs-api version', function () {
 
   // NOTE: if you change ../src/, the hash will need to be changed
   it('uses the correct ipfs-api', (done) => {
-    ipfs.add(path.join(__dirname, '../src'), { recursive: true }, (err, res) => {
+    ipfs.util.addFromFs(path.join(__dirname, '../src'), { recursive: true }, (err, res) => {
       if (err) throw err
 
       const added = res[res.length - 1]
       assert(added)
-      assert.equal(added.Hash, 'QmcECcejtuFh54aAYZTHoyAWEKHBg9xFc1i943UmxRBZQq')
+      assert.equal(added.hash, 'QmatJh68V8sNqHujiJe9Bbz9jwaM4TFiER9qqWtFoyBKic')
       done()
     })
   })
