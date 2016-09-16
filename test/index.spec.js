@@ -352,7 +352,7 @@ describe('ipfs-api version', function () {
 
       const added = res[res.length - 1]
       assert(added)
-      assert.equal(added.hash, 'QmUNYnr4nm9Zfr6utTD9rVdSf9ASRguqHDciwvsc2gsH8y')
+      assert.equal(added.hash, 'QmasmbU9QyEu8bfgiDCB6vxzVVfrJTkZxCSUTuzWBmNW7B')
       done()
     })
   })
