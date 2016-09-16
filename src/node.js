@@ -117,18 +117,24 @@ module.exports = class Node {
     }
   }
 
-  startDaemon (done) {
+  startDaemon (flags, done) {
+    if (typeof(flags) === 'function' && typeof(done) === 'undefined') {
+      done = flags
+      flags = []
+    }
+
     const node = this
     parseConfig(node.path, (err, conf) => {
       if (err) return done(err)
 
       let stdout = ""
+      let args = ['daemon'].concat(flags || [])
 
       // strategy:
       // - run subprocess
       // - listen for API addr on stdout (success)
       // - or an early exit or error (failure)
-      node.subprocess = run(node.exec, ['daemon'], {env: node.env})
+      node.subprocess = run(node.exec, args, {env: node.env})
       node.subprocess.on('error', onErr)
         .on('data', onData)
 

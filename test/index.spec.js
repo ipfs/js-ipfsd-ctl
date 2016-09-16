@@ -369,3 +369,25 @@ describe('ipfs-api version', function () {
     })
   })
 })
+
+describe('node startDaemon', () => {
+  it('allows passing flags', (done) => {
+    ipfsd.disposable((err, node) => {
+      if (err) throw err
+      node.startDaemon(["--should-not-exist"], (err, ignore) => {
+        if (!err) {
+          throw new Error("should have errored")
+        }
+
+        let errStr = "Unrecognized option 'should-not-exist'"
+
+        err = ""+ err
+        if (err.indexOf(errStr) >= 0) {
+          done() // correct error
+        }
+
+        throw err
+      })
+    })
+  })
+})
