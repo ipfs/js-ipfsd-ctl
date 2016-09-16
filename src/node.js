@@ -109,6 +109,8 @@ module.exports = class Node {
   }
 
   // cleanup tmp files
+  // TODO: this is a bad name for a function. a user may call this expecting
+  // something similar to "stopDaemon()". consider changing it. - @jbenet
   shutdown (done) {
     if (!this.clean && this.disposable) {
       rimraf(this.path, (err) => {
