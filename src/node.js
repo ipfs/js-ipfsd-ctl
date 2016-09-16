@@ -139,14 +139,14 @@ module.exports = class Node {
         .on('data', onData)
 
       // done2 is called to call done after removing the event listeners
-      function done2 (err, val) {
+      let done2 = (err, val) => {
         node.subprocess.removeListener('data', onData)
         node.subprocess.removeListener('error', onErr)
         if (err) {
           node.killProcess(() => {}) // we failed. kill, just to be sure...
         }
         done(err, val)
-        done = () => {} // in case it gets called twice
+        done2 = () => {} // in case it gets called twice
       }
 
       function onErr (err) {
