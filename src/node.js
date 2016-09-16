@@ -185,7 +185,8 @@ module.exports = class Node {
         const gatewayM = stdout.match(/Gateway \((readonly|writable)\) server listening on (.*)\n/)
         if (gatewayM) {
           // found the Gateway server listening. extract the addr.
-          node.gatewayAddr = gatewayM[1]
+          const addr = multiaddr(gatewayM[2]).nodeAddress()
+          node.gatewayAddr = addr.address + ':' + addr.port
         }
 
         const addr = multiaddr(node.apiAddr).nodeAddress()
