@@ -80,7 +80,6 @@ module.exports = class Node {
       done = initOpts
       initOpts = {}
     }
-    let buf = ''
 
     const keySize = initOpts.keysize || 2048
 
@@ -91,9 +90,7 @@ module.exports = class Node {
 
     run(this.exec, ['init', '-b', keySize], {env: this.env})
       .on('error', done)
-      .on('data', (data) => {
-        buf += data
-      })
+      .on('data', () => {}) // let it flow
       .on('end', () => {
         configureNode(this, this.opts, (err) => {
           if (err) return done(err)
@@ -109,6 +106,8 @@ module.exports = class Node {
   }
 
   // cleanup tmp files
+  // TODO: this is a bad name for a function. a user may call this expecting
+  // something similar to "stopDaemon()". consider changing it. - @jbenet
   shutdown (done) {
     if (!this.clean && this.disposable) {
       rimraf(this.path, (err) => {
@@ -118,51 +117,106 @@ module.exports = class Node {
     }
   }
 
-  startDaemon (done) {
-    parseConfig(this.path, (err, conf) => {
+  startDaemon (flags, done) {
+    if (typeof flags === 'function' && typeof done === 'undefined') {
+      done = flags
+      flags = []
+    }
+
+    const node = this
+    parseConfig(node.path, (err, conf) => {
       if (err) return done(err)
 
-      this.subprocess = run(this.exec, ['daemon'], {env: this.env})
-        .on('error', (err) => {
-          if (String(err).match('daemon is running')) {
-            // we're good
-            done(null, ipfs(conf.Addresses.API))
-          } else if (String(err).match('non-zero exit code')) {
-            // ignore when kill -9'd
-          } else {
-            done(err)
-          }
-        })
-        .on('data', (data) => {
-          const match = String(data).trim().match(/API server listening on (.*)/)
-          if (match) {
-            this.apiAddr = match[1]
-            const addr = multiaddr(this.apiAddr).nodeAddress()
-            const api = ipfs(this.apiAddr)
-            api.apiHost = addr.address
-            api.apiPort = addr.port
-            done(null, api)
-          }
-        })
+      let stdout = ''
+      let args = ['daemon'].concat(flags || [])
+
+      // strategy:
+      // - run subprocess
+      // - listen for API addr on stdout (success)
+      // - or an early exit or error (failure)
+      node.subprocess = run(node.exec, args, {env: node.env})
+      node.subprocess.on('error', onErr)
+        .on('data', onData)
+
+      // done2 is called to call done after removing the event listeners
+      let done2 = (err, val) => {
+        node.subprocess.removeListener('data', onData)
+        node.subprocess.removeListener('error', onErr)
+        if (err) {
+          node.killProcess(() => {}) // we failed. kill, just to be sure...
+        }
+        done(err, val)
+        done2 = () => {} // in case it gets called twice
+      }
+
+      function onErr (err) {
+        if (String(err).match('daemon is running')) {
+          // we're good
+          done2(null, ipfs(conf.Addresses.API))
+
+          // TODO: I don't think this case is OK at all...
+          // When does the daemon outout "daemon is running" ?? seems old.
+          // Someone should check on this... - @jbenet
+        } else if (String(err).match('non-zero exit code')) {
+          // exited with an error on startup, before we removed listeners
+          done2(err)
+        } else {
+          done2(err)
+        }
+      }
+
+      function onData (data) {
+        data = String(data)
+        stdout += data
+
+        if (!data.trim().match(/Daemon is ready/)) {
+          return // not ready yet, keep waiting.
+        }
+
+        const apiM = stdout.match(/API server listening on (.*)\n/)
+        if (apiM) {
+          // found the API server listening. extract the addr.
+          node.apiAddr = apiM[1]
+        } else {
+          // daemon ready but no API server? seems wrong...
+          done2(new Error('daemon ready without api'))
+        }
+
+        const gatewayM = stdout.match(/Gateway \((readonly|writable)\) server listening on (.*)\n/)
+        if (gatewayM) {
+          // found the Gateway server listening. extract the addr.
+          node.gatewayAddr = gatewayM[1]
+        }
+
+        const addr = multiaddr(node.apiAddr).nodeAddress()
+        const api = ipfs(node.apiAddr)
+        api.apiHost = addr.address
+        api.apiPort = addr.port
+        done2(null, api)
+      }
     })
   }
 
   stopDaemon (done) {
     if (!done) done = () => {}
     if (!this.subprocess) return done(null)
+    this.killProcess(done)
+  }
 
-    this.subprocess.kill('SIGTERM')
-
+  killProcess (done) {
+    // need a local var for the closure, as we clear the var.
+    const subprocess = this.subprocess
     const timeout = setTimeout(() => {
-      this.subprocess.kill('SIGKILL')
+      subprocess.kill('SIGKILL')
       done(null)
     }, GRACE_PERIOD)
 
-    this.subprocess.on('close', () => {
+    subprocess.on('close', () => {
       clearTimeout(timeout)
       done(null)
     })
 
+    subprocess.kill('SIGTERM')
     this.subprocess = null
   }
 

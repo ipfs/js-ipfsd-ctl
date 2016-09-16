@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
 const ipfsd = require('../src')
@@ -366,6 +367,27 @@ describe('ipfs-api version', function () {
       assert(added)
       assert.equal(added.Hash, 'Qmd4VbGayymErsAE1E6FYD4SnDgbL8z3P2h9jRQCaBaDSV')
       done()
+    })
+  })
+})
+
+describe('node startDaemon', () => {
+  it('allows passing flags', (done) => {
+    ipfsd.disposable((err, node) => {
+      if (err) throw err
+      node.startDaemon(['--should-not-exist'], (err, ignore) => {
+        if (!err) {
+          throw new Error('should have errored')
+        }
+
+        let errStr = 'Unrecognized option \'should-not-exist\''
+
+        if (String(err).indexOf(errStr) >= 0) {
+          done() // correct error
+        }
+
+        throw err
+      })
     })
   })
 })
