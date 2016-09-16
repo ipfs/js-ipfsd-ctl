@@ -80,7 +80,6 @@ module.exports = class Node {
       done = initOpts
       initOpts = {}
     }
-    let buf = ''
 
     const keySize = initOpts.keysize || 2048
 
@@ -91,9 +90,7 @@ module.exports = class Node {
 
     run(this.exec, ['init', '-b', keySize], {env: this.env})
       .on('error', done)
-      .on('data', (data) => {
-        buf += data
-      })
+      .on('data', () => {}) // let it flow
       .on('end', () => {
         configureNode(this, this.opts, (err) => {
           if (err) return done(err)
