@@ -1,10 +1,12 @@
 /* eslint-env mocha */
+/* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
 const ipfsd = require('../src')
 const assert = require('assert')
 const ipfsApi = require('ipfs-api')
 const run = require('subcomandante')
+const bs58 = require('bs58')
 const fs = require('fs')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
@@ -74,21 +76,14 @@ describe('disposable node with local api', function () {
 
   before((done) => {
     const blorb = Buffer('blorb')
-    ipfs.block.put(blorb, (err, res) => {
+    ipfs.block.put(blorb, (err, block) => {
       if (err) throw err
-      store = res.Key
+      store = bs58.encode(block.key).toString()
 
-      ipfs.block.get(res.Key, (err, res) => {
+      ipfs.block.get(store, (err, block) => {
         if (err) throw err
-        let buf = ''
-        res
-          .on('data', (data) => {
-            buf += data
-          })
-          .on('end', () => {
-            retrieve = buf
-            done()
-          })
+        retrieve = block.data
+        done()
       })
     })
   })
@@ -122,21 +117,14 @@ describe('disposableApi node', function () {
 
   before((done) => {
     const blorb = Buffer('blorb')
-    ipfs.block.put(blorb, (err, res) => {
+    ipfs.block.put(blorb, (err, block) => {
       if (err) throw err
-      store = res.Key
+      store = bs58.encode(block.key).toString()
 
-      ipfs.block.get(res.Key, (err, res) => {
+      ipfs.block.get(store, (err, block) => {
         if (err) throw err
-        let buf = ''
-        res
-          .on('data', (data) => {
-            buf += data
-          })
-          .on('end', () => {
-            retrieve = buf
-            done()
-          })
+        retrieve = block.data
+        done()
       })
     })
   })
@@ -359,13 +347,34 @@ describe('ipfs-api version', function () {
 
   // NOTE: if you change ../src/, the hash will need to be changed
   it('uses the correct ipfs-api', (done) => {
-    ipfs.add(path.join(__dirname, '../src'), { recursive: true }, (err, res) => {
+    ipfs.util.addFromFs(path.join(__dirname, '../src'), { recursive: true }, (err, res) => {
       if (err) throw err
 
       const added = res[res.length - 1]
       assert(added)
-      assert.equal(added.Hash, 'Qmafmh1Cw3H1bwdYpaaj5AbCW4LkYyUWaM7Nykpn5NZoYL')
+      assert.equal(added.hash, 'QmUNYnr4nm9Zfr6utTD9rVdSf9ASRguqHDciwvsc2gsH8y')
       done()
+    })
+  })
+})
+
+describe('node startDaemon', () => {
+  it('allows passing flags', (done) => {
+    ipfsd.disposable((err, node) => {
+      if (err) throw err
+      node.startDaemon(['--should-not-exist'], (err, ignore) => {
+        if (!err) {
+          throw new Error('should have errored')
+        }
+
+        let errStr = 'Unrecognized option \'should-not-exist\''
+
+        if (String(err).indexOf(errStr) >= 0) {
+          done() // correct error
+        }
+
+        throw err
+      })
     })
   })
 })
