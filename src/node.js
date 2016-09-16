@@ -118,7 +118,7 @@ module.exports = class Node {
   }
 
   startDaemon (flags, done) {
-    if (typeof(flags) === 'function' && typeof(done) === 'undefined') {
+    if (typeof flags === 'function' && typeof done === 'undefined') {
       done = flags
       flags = []
     }
@@ -127,7 +127,7 @@ module.exports = class Node {
     parseConfig(node.path, (err, conf) => {
       if (err) return done(err)
 
-      let stdout = ""
+      let stdout = ''
       let args = ['daemon'].concat(flags || [])
 
       // strategy:
@@ -179,7 +179,7 @@ module.exports = class Node {
           node.apiAddr = apiM[1]
         } else {
           // daemon ready but no API server? seems wrong...
-          done2(new Error("daemon ready without api"))
+          done2(new Error('daemon ready without api'))
         }
 
         const gatewayM = stdout.match(/Gateway \((readonly|writable)\) server listening on (.*)\n/)
