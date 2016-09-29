@@ -48,6 +48,7 @@
     "go-ipfs-dep": "0.4.3",
     "ipfs-api": "^9.0.0",
     "multiaddr": "^2.0.3",
+    "once": "^1.4.0",
     "rimraf": "^2.5.4",
     "run-series": "^1.1.4",
     "shutdown": "^0.2.4",

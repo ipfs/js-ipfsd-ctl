@@ -10,6 +10,7 @@ const shutdown = require('shutdown')
 const path = require('path')
 const join = path.join
 const bl = require('bl')
+const once = require('once')
 
 const ipfsDefaultPath = findIpfsExecutable()
 
@@ -255,6 +256,7 @@ module.exports = class Node {
   }
 
   setConfig (key, value, done) {
+    done = once(done)
     run(this.exec, ['config', key, value, '--json'], {env: this.env})
       .on('error', done)
       .on('data', () => {})
