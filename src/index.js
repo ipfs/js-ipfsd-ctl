@@ -35,7 +35,7 @@ module.exports = {
     }
     this.disposable(opts, (err, node) => {
       if (err) return done(err)
-      node.startDaemon(done)
+      node.startDaemon(opts.flags || {}, done)
     })
   },
   disposable (opts, done) {
