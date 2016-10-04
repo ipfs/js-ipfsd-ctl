@@ -44,8 +44,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "go-ipfs-dep": "0.4.1",
-    "ipfs-api": "^9.0.0",
+    "go-ipfs-dep": "https://github.com/haadcode/go-ipfs-dep.git",
+    "ipfs-api": "https://github.com/haadcode/js-ipfs-api.git",
     "multiaddr": "^2.0.0",
     "rimraf": "^2.4.5",
     "run-series": "^1.1.4",
