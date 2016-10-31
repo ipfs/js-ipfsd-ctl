@@ -56,7 +56,7 @@
     "subcomandante": "^1.0.5"
   },
   "devDependencies": {
-    "aegir": "^8.1.2",
+    "aegir": "^9.0.1",
     "mkdirp": "^0.5.1",
     "pre-commit": "^1.1.3"
   },
