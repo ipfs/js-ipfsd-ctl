@@ -13,7 +13,7 @@ module.exports = {
   version (done) {
     (new Node()).version(done)
   },
-  local (path, done) {
+  local (path, opts, done) {
     if (typeof opts === 'function') {
       done = opts
       opts = {}
