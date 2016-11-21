@@ -48,7 +48,7 @@
     "bl": "^1.1.2",
     "go-ipfs-dep": "0.4.4",
     "ipfs-api": "^9.0.0",
-    "multiaddr": "^2.0.3",
+    "multiaddr": "^2.1.0",
     "once": "^1.4.0",
     "rimraf": "^2.5.4",
     "run-series": "^1.1.4",
