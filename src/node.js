@@ -46,9 +46,8 @@ function configureNode (node, conf, done) {
 
 // Consistent error handling
 function parseConfig (path, done) {
-  const file = fs.readFileSync(join(path, 'config'))
-
   try {
+    const file = fs.readFileSync(join(path, 'config'))
     const parsed = JSON.parse(file)
     done(null, parsed)
   } catch (err) {
