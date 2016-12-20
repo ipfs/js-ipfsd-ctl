@@ -243,7 +243,7 @@ module.exports = class Node {
       done()
     }, GRACE_PERIOD)
 
-    subprocess.on('close', () => {
+    subprocess.once('close', () => {
       clearTimeout(timeout)
       this.subprocess = null
       done()
