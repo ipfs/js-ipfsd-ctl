@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const run = require('subcomandante')
-const series = require('run-series')
+const async = require('async')
 const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
@@ -11,6 +11,7 @@ const path = require('path')
 const join = path.join
 const bl = require('bl')
 const once = require('once')
+const pump = require('pump')
 
 const ipfsDefaultPath = findIpfsExecutable()
 
@@ -32,16 +33,21 @@ function findIpfsExecutable () {
   }
 }
 
-function configureNode (node, conf, done) {
-  const keys = Object.keys(conf)
-  series(keys.map((key) => (cb) => {
-    const value = conf[key]
-    const env = {env: node.env}
+function setConfigValue (node, key, value, callback) {
+  const c = run(
+    node.exec,
+    ['config', key, value, '--json'],
+    {env: node.env}
+  )
+  callback = once(callback)
+  c.once('error', callback)
+  c.once('close', callback)
+}
 
-    run(node.exec, ['config', key, '--json', JSON.stringify(value)], env)
-      .on('error', cb)
-      .on('end', cb)
-  }), done)
+function configureNode (node, conf, callback) {
+  async.eachOfSeries(conf, (value, key, cb) => {
+    setConfigValue(node, key, JSON.stringify(value), cb)
+  }, callback)
 }
 
 // Consistent error handling
@@ -69,15 +75,16 @@ module.exports = class Node {
   }
 
   _run (args, envArg, done) {
-    run(this.exec, args, envArg)
-      .on('error', done)
-      .pipe(bl((err, result) => {
+    pump(
+      run(this.exec, args, envArg),
+      bl((err, result) => {
         if (err) {
           return done(err)
         }
 
         done(null, result.toString().trim())
-      }))
+      })
+    )
   }
 
   init (initOpts, done) {
@@ -93,10 +100,12 @@ module.exports = class Node {
       this.env.IPFS_PATH = this.path
     }
 
-    run(this.exec, ['init', '-b', keySize], {env: this.env})
-      .on('error', done)
-      .pipe(bl((err, buf) => {
-        if (err) return done(err)
+    pump(
+      run(this.exec, ['init', '-b', keySize], {env: this.env}),
+      bl((err, buf) => {
+        if (err) {
+          return done(err)
+        }
 
         configureNode(this, this.opts, (err) => {
           if (err) {
@@ -108,7 +117,8 @@ module.exports = class Node {
 
           done(null, this)
         })
-      }))
+      })
+    )
 
     if (this.disposable) {
       shutdown.addHandler('disposable', 1, this.shutdown.bind(this))
@@ -120,10 +130,7 @@ module.exports = class Node {
   // something similar to "stopDaemon()". consider changing it. - @jbenet
   shutdown (done) {
     if (!this.clean && this.disposable) {
-      rimraf(this.path, (err) => {
-        if (err) throw err
-        done()
-      })
+      rimraf(this.path, done)
     }
   }
 
@@ -135,7 +142,9 @@ module.exports = class Node {
 
     const node = this
     parseConfig(node.path, (err, conf) => {
-      if (err) return done(err)
+      if (err) {
+        return done(err)
+      }
 
       let stdout = ''
       let args = ['daemon'].concat(flags || [])
@@ -255,11 +264,7 @@ module.exports = class Node {
   }
 
   setConfig (key, value, done) {
-    done = once(done)
-    run(this.exec, ['config', key, value, '--json'], {env: this.env})
-      .on('error', done)
-      .on('data', () => {})
-      .on('end', () => done())
+    setConfigValue(this, key, value, done)
   }
 
   replaceConf (file, done) {
