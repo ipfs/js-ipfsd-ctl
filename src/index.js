@@ -5,6 +5,14 @@ const join = require('path').join
 
 const Node = require('./node')
 
+const defaultOptions = {
+  'Addresses.Swarm': ['/ip4/0.0.0.0/tcp/0'],
+  'Addresses.Gateway': '',
+  'Addresses.API': '/ip4/127.0.0.1/tcp/0',
+  disposable: true,
+  init: true
+}
+
 function tempDir () {
   return join(os.tmpdir(), `ipfs_${String(Math.random()).substr(2)}`)
 }
@@ -34,7 +42,10 @@ module.exports = {
       opts = {}
     }
     this.disposable(opts, (err, node) => {
-      if (err) return done(err)
+      if (err) {
+        return done(err)
+      }
+
       node.startDaemon(done)
     })
   },
@@ -43,28 +54,22 @@ module.exports = {
       done = opts
       opts = {}
     }
-    opts['Addresses.Swarm'] = ['/ip4/0.0.0.0/tcp/0']
-    opts['Addresses.Gateway'] = ''
-    opts['Addresses.API'] = '/ip4/127.0.0.1/tcp/0'
 
-    if (opts.apiAddr) {
-      opts['Addresses.API'] = opts.apiAddr
-    }
+    let options = {}
+    Object.assign(options, defaultOptions, opts || {})
 
-    if (opts.gatewayAddr) {
-      opts['Addresses.Gateway'] = opts.gatewayAddr
-    }
+    const repoPath = options.repoPath || tempDir()
+    const disposable = options.disposable
+    delete options.disposable
+    delete options.repoPath
 
-    const node = new Node(opts.repoPath || tempDir(), opts, true)
+    const node = new Node(repoPath, options, disposable)
 
-    if (typeof opts.init === 'boolean' && opts.init === false) {
-      process.nextTick(() => {
-        done(null, node)
-      })
+    if (typeof options.init === 'boolean' &&
+        options.init === false) {
+      process.nextTick(() => done(null, node))
     } else {
-      node.init((err) => {
-        done(err, node)
-      })
+      node.init((err) => done(err, node))
     }
   }
 }

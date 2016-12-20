@@ -2,11 +2,9 @@
 /* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
-const ipfsd = require('../src')
 const async = require('async')
 const expect = require('chai').expect
 const ipfsApi = require('ipfs-api')
-const run = require('subcomandante')
 const mh = require('multihashes')
 const fs = require('fs')
 const rimraf = require('rimraf')
@@ -14,9 +12,11 @@ const mkdirp = require('mkdirp')
 const path = require('path')
 const once = require('once')
 
+const exec = require('../src/exec')
+const ipfsd = require('../src')
+
 describe('ipfs executable path', () => {
   let Node
-
   it('has the correct path when installed with npm3', (done) => {
     process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
     let npm3Path = '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
@@ -212,9 +212,7 @@ describe('daemons', () => {
 
           // actually running?
           done = once(done)
-          run('kill', ['-0', pid])
-            .once('error', done)
-            .once('close', done)
+          exec('kill', ['-0', pid], {cleanup: true}, () => done())
         })
       })
 
@@ -235,14 +233,14 @@ describe('daemons', () => {
         })
         // make sure it's not still running
         const poll = setInterval(() => {
-          run('kill', ['-0', pid])
-            .on('error', () => {
+          exec('kill', ['-0', pid], {cleanup: true}, {
+            error () {
               clearInterval(poll)
               done()
-
               // so it does not get called again
               done = () => {}
-            })
+            }
+          })
         }, 100)
       })
 
@@ -362,7 +360,7 @@ describe('daemons', () => {
   it('prints the version', (done) => {
     ipfsd.version((err, version) => {
       expect(err).to.not.exist
-      expect(version).to.exist
+      expect(version).to.be.eql('ipfs version 0.4.4')
       done()
     })
   })
@@ -399,19 +397,17 @@ describe('daemons', () => {
   describe('startDaemon', () => {
     it('allows passing flags', (done) => {
       ipfsd.disposable((err, node) => {
-        if (err) throw err
-        node.startDaemon(['--should-not-exist'], (err, ignore) => {
-          if (!err) {
-            throw new Error('should have errored')
-          }
+        expect(err).to.not.exist
 
-          let errStr = 'Unrecognized option \'should-not-exist\''
+        node.startDaemon(['--should-not-exist'], (err) => {
+          expect(err).to.exist
+          expect(
+            err.message
+          ).to.match(
+            /Unrecognized option 'should-not-exist'/
+          )
 
-          if (String(err).indexOf(errStr) >= 0) {
-            done() // correct error
-          }
-
-          throw err
+          done()
         })
       })
     })
