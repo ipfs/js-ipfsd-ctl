@@ -41,7 +41,10 @@ function setConfigValue (node, key, value, callback) {
   )
   callback = once(callback)
   c.once('error', callback)
-  c.once('close', callback)
+  c.once('close', () => {
+    // make sure errors have propagated before we return
+    setTimeout(callback, 5)
+  })
 }
 
 function configureNode (node, conf, callback) {
