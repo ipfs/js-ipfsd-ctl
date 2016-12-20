@@ -13,7 +13,11 @@ module.exports = {
   version (done) {
     (new Node()).version(done)
   },
-  local (path, done) {
+  local (path, opts, done) {
+    if (typeof opts === 'function') {
+      done = opts
+      opts = {}
+    }
     if (!done) {
       done = path
       path = process.env.IPFS_PATH ||
@@ -21,7 +25,7 @@ module.exports = {
              process.env.USERPROFILE, '.ipfs')
     }
     process.nextTick(() => {
-      done(null, new Node(path))
+      done(null, new Node(path, opts))
     })
   },
   disposableApi (opts, done) {

@@ -53,6 +53,32 @@ describe('ipfs executable path', function () {
   })
 })
 
+describe('local daemon', function () {
+  const repoPath = '/tmp/ipfsd-ctl-test'
+  const addr = '/ip4/127.0.0.1/tcp/5678'
+  const config = {
+    Addresses: {
+      API: addr
+    }
+  }
+
+  it('allows passing flags to init', (done) => {
+    ipfsd.local(repoPath, config, (err, node) => {
+      assert.equal(err, null)
+
+      node.init((err) => {
+        assert.equal(err, null)
+
+        node.getConfig('Addresses.API', (err, res) => {
+          assert.equal(err, null)
+          assert.equal(res, addr)
+          rimraf(repoPath, done)
+        })
+      })
+    })
+  })
+})
+
 describe('disposable node with local api', function () {
   this.timeout(20000)
   let ipfs
@@ -345,8 +371,9 @@ describe('ipfs-api version', function () {
     })
   })
 
+  // NOTE: if you change ./fixtures, the hash will need to be changed
   it('uses the correct ipfs-api', (done) => {
-    ipfs.util.addFromFs(path.join(__dirname, 'fixtures'), { recursive: true }, (err, res) => {
+    ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), { recursive: true }, (err, res) => {
       if (err) throw err
 
       const added = res[res.length - 1]
