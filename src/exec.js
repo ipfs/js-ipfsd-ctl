@@ -59,7 +59,12 @@ function exec (cmd, args, opts, handlers) {
 
   command.on('close', listeners.done)
 
-  command.catch(handlers.error)
+  command.catch((err) => {
+    // escape the promises
+    setTimeout(() => {
+      handlers.error(err)
+    }, 0)
+  })
 
   return command
 }

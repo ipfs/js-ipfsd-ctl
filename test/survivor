@@ -1,0 +1,3 @@
+#!/bin/sh
+trap "echo 'you cannot kill me!'" SIGHUP SIGINT SIGTERM SIGQUIT SIGPIPE
+while true; do sleep 1; done
