@@ -7,9 +7,10 @@
     "lint": "aegir-lint",
     "coverage": "aegir-coverage",
     "test": "aegir-test --env node",
-    "release": "aegir-release --env node",
-    "release-minor": "aegir-release --type minor --env node",
-    "release-major": "aegir-release --type major --env node",
+    "docs": "aegir-docs",
+    "release": "aegir-release --env node --docs",
+    "release-minor": "aegir-release --type minor --env node --docs",
+    "release-major": "aegir-release --type major --env node --docs",
     "coverage-publish": "aegir-coverage publish"
   },
   "engines": {

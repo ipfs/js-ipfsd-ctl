@@ -27,10 +27,10 @@ npm install --save ipfsd-ctl
 
 ## Usage
 
-IPFS daemons are already easy to start and stop, but this module is here to do it from javascript itself.
+IPFS daemons are already easy to start and stop, but this module is here to do it from JavaScript itself.
 
 ```js
-// start a disposable node, and get access to the api
+// Start a disposable node, and get access to the api
 // print the node id, and kill the temporary daemon
 
 // IPFS_PATH will point to /tmp/ipfs_***** and will be
@@ -41,12 +41,14 @@ var ipfsd = require('ipfsd-ctl')
 ipfsd.disposableApi(function (err, ipfs) {
   ipfs.id(function (err, id) {
     console.log(id)
-    process.kill()
+    process.exit()
   })
 })
 ```
 
 If you need want to use an existing ipfs installation you can set `$IPFS_EXEC=/path/to/ipfs` to ensure it uses that.
+
+For more details see https://ipfs.github.io/js-ipfsd-ctl/.
 
 ## Contribute
 

@@ -74,7 +74,19 @@ function parseConfig (path, callback) {
   ], callback)
 }
 
-module.exports = class Node {
+/**
+ * Controll a go-ipfs node.
+ */
+class Node {
+  /**
+   * Create a new node.
+   *
+   * @param {string} path
+   * @param {Object} [opts]
+   * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
+   * @param {boolean} [disposable=false] - Should this be a temporary node.
+   * @returns {Node}
+   */
   constructor (path, opts, disposable) {
     this.path = path
     this.opts = opts || {}
@@ -94,6 +106,15 @@ module.exports = class Node {
     run(this.exec, args, opts, callback)
   }
 
+  /**
+   * Initialize a repo.
+   *
+   * @param {Object} [initOpts={}]
+   * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
+   * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
+   * @param {function (Error, Node)} callback
+   * @returns {undefined}
+   */
   init (initOpts, callback) {
     if (!callback) {
       callback = initOpts
@@ -128,7 +149,14 @@ module.exports = class Node {
     }
   }
 
-  // cleanup tmp files
+  /**
+   * Delete the repo that was being used.
+   * If the node was marked as `disposable` this will be called
+   * automatically when the process is exited.
+   *
+   * @param {function(Error)} callback
+   * @returns {undefined}
+   */
   shutdown (callback) {
     if (this.clean || !this.disposable) {
       return callback()
@@ -137,6 +165,13 @@ module.exports = class Node {
     rimraf(this.path, callback)
   }
 
+  /**
+   * Start the daemon.
+   *
+   * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
+   * @param {function(Error, IpfsApi)} callback
+   * @returns {undefined}
+   */
   startDaemon (flags, callback) {
     if (typeof flags === 'function') {
       callback = flags
@@ -156,7 +191,7 @@ module.exports = class Node {
         error: (err) => {
           if (String(err).match('daemon is running')) {
             // we're good
-            return callback()
+            return callback(null, this.api)
           }
           // ignore when kill -9'd
           if (!String(err).match('non-zero exit code')) {
@@ -185,6 +220,12 @@ module.exports = class Node {
     })
   }
 
+  /**
+   * Stop the daemon.
+   *
+   * @param {function(Error)} callback
+   * @returns {undefined}
+   */
   stopDaemon (callback) {
     if (!callback) {
       callback = () => {}
@@ -197,6 +238,15 @@ module.exports = class Node {
     this.killProcess(callback)
   }
 
+  /**
+   * Kill the `ipfs daemon` process.
+   *
+   * First `SIGTERM` is sent, after 7.5 seconds `SIGKILL` is sent
+   * if the process hasn't exited yet.
+   *
+   * @param {function()} callback - Called when the process was killed.
+   * @returns {undefined}
+   */
   killProcess (callback) {
     // need a local var for the closure, as we clear the var.
     const subprocess = this.subprocess
@@ -215,10 +265,24 @@ module.exports = class Node {
     this.subprocess = null
   }
 
+  /**
+   * Get the pid of the `ipfs daemon` process.
+   *
+   * @returns {number}
+   */
   daemonPid () {
     return this.subprocess && this.subprocess.pid
   }
 
+  /**
+   * Call `ipfs config`
+   *
+   * If no `key` is passed, the whole config is returned as an object.
+   *
+   * @param {string} [key] - A specific config to retrieve.
+   * @param {function(Error, (Object|string))} callback
+   * @returns {undefined}
+   */
   getConfig (key, callback) {
     if (typeof key === 'function') {
       callback = key
@@ -240,6 +304,14 @@ module.exports = class Node {
     ], callback)
   }
 
+  /**
+   * Set a config value.
+   *
+   * @param {string} key
+   * @param {string} value
+   * @param {function(Error)} callback
+   * @returns {undefined}
+   */
   setConfig (key, value, callback) {
     this._run(
       ['config', key, value, '--json'],
@@ -248,6 +320,13 @@ module.exports = class Node {
     )
   }
 
+  /**
+   * Replace the configuration with a given file
+   *
+   * @param {string} file - path to the new config file
+   * @param {function(Error)} callback
+   * @returns {undefined}
+   */
   replaceConf (file, callback) {
     this._run(
       ['config', 'replace', file],
@@ -255,8 +334,15 @@ module.exports = class Node {
       callback
     )
   }
-
+  /**
+   * Get the version of ipfs
+   *
+   * @param {function(Error, string)} callback
+   * @returns {undefined}
+   */
   version (callback) {
     this._run(['version'], {env: this.env}, callback)
   }
 }
+
+module.exports = Node
