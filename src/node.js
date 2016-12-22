@@ -94,7 +94,7 @@ class Node {
   }
 
   _run (args, opts, callback) {
-    exec(this.exec, args, opts, callback)
+    return exec(this.exec, args, opts, callback)
   }
 
   /**
@@ -178,7 +178,7 @@ class Node {
         return callback(err)
       }
 
-      this._run(args, {env: this.env}, {
+      this.subprocess = this._run(args, {env: this.env}, {
         error: (err) => {
           // Only look at the last error
           const input = String(err)
@@ -209,11 +209,6 @@ class Node {
             callback(null, this.api)
           }
         }
-      }, (err, process) => {
-        if (err) {
-          return callback(err)
-        }
-        this.subprocess = process
       })
     })
   }
@@ -249,6 +244,7 @@ class Node {
     // need a local var for the closure, as we clear the var.
     const subprocess = this.subprocess
     const timeout = setTimeout(() => {
+      console.log('KILLINg')
       subprocess.kill('SIGKILL')
       callback()
     }, GRACE_PERIOD)

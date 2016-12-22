@@ -11,6 +11,7 @@ const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
 const path = require('path')
 const once = require('once')
+const os = require('os')
 
 const exec = require('../src/exec')
 const ipfsd = require('../src')
@@ -395,6 +396,35 @@ describe('daemons', () => {
   })
 
   describe('startDaemon', () => {
+    it('start and stop', (done) => {
+      const dir = os.tmpdir() + `/${Math.ceil(Math.random() * 100)}`
+      const check = (cb) => {
+        if (fs.existsSync(path.join(dir, 'repo.lock'))) {
+          cb(new Error('repo.lock not removed'))
+        }
+        if (fs.existsSync(path.join(dir, 'api'))) {
+          cb(new Error('api file not removed'))
+        }
+        cb()
+      }
+
+      async.waterfall([
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => node.init((err) => cb(err, node)),
+        (node, cb) => node.startDaemon((err) => cb(err, node)),
+        (node, cb) => node.stopDaemon(cb),
+        check,
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => node.startDaemon((err) => cb(err, node)),
+        (node, cb) => node.stopDaemon(cb),
+        check,
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => node.startDaemon((err) => cb(err, node)),
+        (node, cb) => node.stopDaemon(cb),
+        check
+      ], done)
+    })
+
     it('allows passing flags', (done) => {
       ipfsd.disposable((err, node) => {
         expect(err).to.not.exist
