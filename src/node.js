@@ -32,17 +32,8 @@ function findIpfsExecutable () {
   }
 }
 
-function run (cmd, args, opts, handlers) {
-  opts = opts || {}
-
-  // Cleanup the process on exit
-  opts.cleanup = true
-
-  return exec(cmd, args, opts, handlers)
-}
-
 function setConfigValue (node, key, value, callback) {
-  run(
+  exec(
     node.exec,
     ['config', key, value, '--json'],
     {env: node.env},
@@ -103,7 +94,7 @@ class Node {
   }
 
   _run (args, opts, callback) {
-    run(this.exec, args, opts, callback)
+    exec(this.exec, args, opts, callback)
   }
 
   /**
@@ -189,12 +180,19 @@ class Node {
 
       this._run(args, {env: this.env}, {
         error: (err) => {
-          if (String(err).match('daemon is running')) {
+          // Only look at the last error
+          const input = String(err)
+                .split('\n')
+                .map((l) => l.trim())
+                .filter(Boolean)
+                .slice(-1)[0] || ''
+
+          if (input.match('daemon is running')) {
             // we're good
             return callback(null, this.api)
           }
           // ignore when kill -9'd
-          if (!String(err).match('non-zero exit code')) {
+          if (!input.match('non-zero exit code')) {
             callback(err)
           }
         },

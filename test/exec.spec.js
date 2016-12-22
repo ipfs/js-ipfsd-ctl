@@ -55,7 +55,7 @@ function makeCheck (n, done) {
   }
 }
 
-describe('run', () => {
+describe('exec', () => {
   it('SIGTERM kills hang', (done) => {
     const tok = token()
 
@@ -92,8 +92,7 @@ describe('run', () => {
     const tok = token()
 
     const p = exec(survivor, [tok], {}, (err) => {
-      // killed, so not exiting with code 0
-      expect(err).to.exist
+      expect(err).to.not.exist
 
       isRunningGrep(token, (err, running) => {
         expect(err).to.not.exist

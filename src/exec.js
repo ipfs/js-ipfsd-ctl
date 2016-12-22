@@ -1,6 +1,6 @@
 'use strict'
 
-const execa = require('execa')
+const run = require('subcomandante')
 const once = require('once')
 
 function exec (cmd, args, opts, handlers) {
@@ -32,8 +32,8 @@ function exec (cmd, args, opts, handlers) {
     error (data) {
       err += data
     },
-    done (code) {
-      if (code !== 0) {
+    done: once((code) => {
+      if (typeof code === 'number' && code !== 0) {
         return handlers.error(
           new Error(`non-zero exit code ${code}\n
             while running: ${cmd} ${args.join(' ')}\n\n
@@ -43,10 +43,10 @@ function exec (cmd, args, opts, handlers) {
       if (handlers.done) {
         handlers.done()
       }
-    }
+    })
   }
 
-  const command = execa(cmd, args, opts)
+  const command = run(cmd, args, opts)
 
   if (listeners.data) {
     command.stdout.on('data', listeners.data)
@@ -58,13 +58,7 @@ function exec (cmd, args, opts, handlers) {
   command.on('error', handlers.error)
 
   command.on('close', listeners.done)
-
-  command.catch((err) => {
-    // escape the promises
-    setTimeout(() => {
-      handlers.error(err)
-    }, 0)
-  })
+  command.on('exit', listeners.done)
 
   return command
 }
