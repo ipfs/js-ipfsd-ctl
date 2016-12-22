@@ -86,6 +86,11 @@ describe('exec', () => {
     })
   })
 
+  // Travis and CircleCI don't like the usage of SIGHUP
+  if (process.env.CI) {
+    return
+  }
+
   it('SIGKILL kills survivor', (done) => {
     const check = makeCheck(2, done)
 
