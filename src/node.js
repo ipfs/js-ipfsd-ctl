@@ -1,16 +1,16 @@
 'use strict'
 
 const fs = require('fs')
-const run = require('subcomandante')
-const series = require('run-series')
+const async = require('async')
 const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const shutdown = require('shutdown')
 const path = require('path')
 const join = path.join
-const bl = require('bl')
 const once = require('once')
+
+const exec = require('./exec')
 
 const ipfsDefaultPath = findIpfsExecutable()
 
@@ -32,30 +32,52 @@ function findIpfsExecutable () {
   }
 }
 
-function configureNode (node, conf, done) {
-  const keys = Object.keys(conf)
-  series(keys.map((key) => (cb) => {
-    const value = conf[key]
-    const env = {env: node.env}
+function setConfigValue (node, key, value, callback) {
+  exec(
+    node.exec,
+    ['config', key, value, '--json'],
+    {env: node.env},
+    callback
+  )
+}
 
-    run(node.exec, ['config', key, '--json', JSON.stringify(value)], env)
-      .on('error', cb)
-      .on('end', cb)
-  }), done)
+function configureNode (node, conf, callback) {
+  async.eachOfSeries(conf, (value, key, cb) => {
+    setConfigValue(node, key, JSON.stringify(value), cb)
+  }, callback)
+}
+
+function tryJsonParse (input, callback) {
+  let res
+  try {
+    res = JSON.parse(input)
+  } catch (err) {
+    return callback(err)
+  }
+  callback(null, res)
 }
 
 // Consistent error handling
-function parseConfig (path, done) {
-  try {
-    const file = fs.readFileSync(join(path, 'config'))
-    const parsed = JSON.parse(file)
-    done(null, parsed)
-  } catch (err) {
-    done(err)
-  }
+function parseConfig (path, callback) {
+  async.waterfall([
+    (cb) => fs.readFile(join(path, 'config'), cb),
+    (file, cb) => tryJsonParse(file.toString(), cb)
+  ], callback)
 }
 
-module.exports = class Node {
+/**
+ * Controll a go-ipfs node.
+ */
+class Node {
+  /**
+   * Create a new node.
+   *
+   * @param {string} path
+   * @param {Object} [opts]
+   * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
+   * @param {boolean} [disposable=false] - Should this be a temporary node.
+   * @returns {Node}
+   */
   constructor (path, opts, disposable) {
     this.path = path
     this.opts = opts || {}
@@ -64,25 +86,29 @@ module.exports = class Node {
     this.initialized = fs.existsSync(path)
     this.clean = true
     this.env = Object.assign({}, process.env, {IPFS_PATH: path})
+    this.disposable = disposable
 
-    if (this.opts.env) Object.assign(this.env, this.opts.env)
+    if (this.opts.env) {
+      Object.assign(this.env, this.opts.env)
+    }
   }
 
-  _run (args, envArg, done) {
-    run(this.exec, args, envArg)
-      .on('error', done)
-      .pipe(bl((err, result) => {
-        if (err) {
-          return done(err)
-        }
-
-        done(null, result.toString().trim())
-      }))
+  _run (args, opts, callback) {
+    return exec(this.exec, args, opts, callback)
   }
 
-  init (initOpts, done) {
-    if (!done) {
-      done = initOpts
+  /**
+   * Initialize a repo.
+   *
+   * @param {Object} [initOpts={}]
+   * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
+   * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
+   * @param {function (Error, Node)} callback
+   * @returns {undefined}
+   */
+  init (initOpts, callback) {
+    if (!callback) {
+      callback = initOpts
       initOpts = {}
     }
 
@@ -93,180 +119,224 @@ module.exports = class Node {
       this.env.IPFS_PATH = this.path
     }
 
-    run(this.exec, ['init', '-b', keySize], {env: this.env})
-      .on('error', done)
-      .pipe(bl((err, buf) => {
-        if (err) return done(err)
+    this._run(['init', '-b', keySize], {env: this.env}, (err, result) => {
+      if (err) {
+        return callback(err)
+      }
 
-        configureNode(this, this.opts, (err) => {
-          if (err) {
-            return done(err)
-          }
+      configureNode(this, this.opts, (err) => {
+        if (err) {
+          return callback(err)
+        }
 
-          this.clean = false
-          this.initialized = true
-
-          done(null, this)
-        })
-      }))
+        this.clean = false
+        this.initialized = true
+        callback(null, this)
+      })
+    })
 
     if (this.disposable) {
       shutdown.addHandler('disposable', 1, this.shutdown.bind(this))
     }
   }
 
-  // cleanup tmp files
-  // TODO: this is a bad name for a function. a user may call this expecting
-  // something similar to "stopDaemon()". consider changing it. - @jbenet
-  shutdown (done) {
-    if (!this.clean && this.disposable) {
-      rimraf(this.path, (err) => {
-        if (err) throw err
-        done()
-      })
+  /**
+   * Delete the repo that was being used.
+   * If the node was marked as `disposable` this will be called
+   * automatically when the process is exited.
+   *
+   * @param {function(Error)} callback
+   * @returns {undefined}
+   */
+  shutdown (callback) {
+    if (this.clean || !this.disposable) {
+      return callback()
     }
+
+    rimraf(this.path, callback)
   }
 
-  startDaemon (flags, done) {
-    if (typeof flags === 'function' && typeof done === 'undefined') {
-      done = flags
+  /**
+   * Start the daemon.
+   *
+   * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
+   * @param {function(Error, IpfsApi)} callback
+   * @returns {undefined}
+   */
+  startDaemon (flags, callback) {
+    if (typeof flags === 'function') {
+      callback = flags
       flags = []
     }
 
-    const node = this
-    parseConfig(node.path, (err, conf) => {
-      if (err) return done(err)
+    const args = ['daemon'].concat(flags)
 
-      let stdout = ''
-      let args = ['daemon'].concat(flags || [])
+    callback = once(callback)
 
-      // strategy:
-      // - run subprocess
-      // - listen for API addr on stdout (success)
-      // - or an early exit or error (failure)
-      node.subprocess = run(node.exec, args, {env: node.env})
-      node.subprocess.on('error', onErr)
-        .on('data', onData)
-
-      // done2 is called to call done after removing the event listeners
-      let done2 = (err, val) => {
-        node.subprocess.removeListener('data', onData)
-        node.subprocess.removeListener('error', onErr)
-        if (err) {
-          node.killProcess(() => {}) // we failed. kill, just to be sure...
-        }
-        done(err, val)
-        done2 = () => {} // in case it gets called twice
+    parseConfig(this.path, (err, conf) => {
+      if (err) {
+        return callback(err)
       }
 
-      function onErr (err) {
-        if (String(err).match('daemon is running')) {
-          // we're good
-          done2(null, ipfs(conf.Addresses.API))
+      this.subprocess = this._run(args, {env: this.env}, {
+        error: (err) => {
+          // Only look at the last error
+          const input = String(err)
+                .split('\n')
+                .map((l) => l.trim())
+                .filter(Boolean)
+                .slice(-1)[0] || ''
 
-          // TODO: I don't think this case is OK at all...
-          // When does the daemon outout "daemon is running" ?? seems old.
-          // Someone should check on this... - @jbenet
-        } else if (String(err).match('non-zero exit code')) {
-          // exited with an error on startup, before we removed listeners
-          done2(err)
-        } else {
-          done2(err)
+          if (input.match('daemon is running')) {
+            // we're good
+            return callback(null, this.api)
+          }
+          // ignore when kill -9'd
+          if (!input.match('non-zero exit code')) {
+            callback(err)
+          }
+        },
+        data: (data) => {
+          const match = String(data).trim().match(/API server listening on (.*)/)
+
+          if (match) {
+            this.apiAddr = match[1]
+            const addr = multiaddr(this.apiAddr).nodeAddress()
+            this.api = ipfs(this.apiAddr)
+            this.api.apiHost = addr.address
+            this.api.apiPort = addr.port
+
+            callback(null, this.api)
+          }
         }
-      }
-
-      function onData (data) {
-        data = String(data)
-        stdout += data
-
-        if (!data.trim().match(/Daemon is ready/)) {
-          return // not ready yet, keep waiting.
-        }
-
-        const apiM = stdout.match(/API server listening on (.*)\n/)
-        if (apiM) {
-          // found the API server listening. extract the addr.
-          node.apiAddr = apiM[1]
-        } else {
-          // daemon ready but no API server? seems wrong...
-          done2(new Error('daemon ready without api'))
-        }
-
-        const gatewayM = stdout.match(/Gateway \((readonly|writable)\) server listening on (.*)\n/)
-        if (gatewayM) {
-          // found the Gateway server listening. extract the addr.
-          node.gatewayAddr = gatewayM[1]
-        }
-
-        const addr = multiaddr(node.apiAddr).nodeAddress()
-        const api = ipfs(node.apiAddr)
-        api.apiHost = addr.address
-        api.apiPort = addr.port
-
-        // We are happyly listening, so let's not hide other errors
-        node.subprocess.removeListener('error', onErr)
-
-        done2(null, api)
-      }
+      })
     })
   }
 
-  stopDaemon (done) {
-    if (!done) {
-      done = () => {}
+  /**
+   * Stop the daemon.
+   *
+   * @param {function(Error)} callback
+   * @returns {undefined}
+   */
+  stopDaemon (callback) {
+    if (!callback) {
+      callback = () => {}
     }
 
     if (!this.subprocess) {
-      return done()
+      return callback()
     }
 
-    this.killProcess(done)
+    this.killProcess(callback)
   }
 
-  killProcess (done) {
+  /**
+   * Kill the `ipfs daemon` process.
+   *
+   * First `SIGTERM` is sent, after 7.5 seconds `SIGKILL` is sent
+   * if the process hasn't exited yet.
+   *
+   * @param {function()} callback - Called when the process was killed.
+   * @returns {undefined}
+   */
+  killProcess (callback) {
     // need a local var for the closure, as we clear the var.
     const subprocess = this.subprocess
     const timeout = setTimeout(() => {
+      console.log('KILLINg')
       subprocess.kill('SIGKILL')
-      done()
+      callback()
     }, GRACE_PERIOD)
 
-    subprocess.on('close', () => {
+    subprocess.once('close', () => {
       clearTimeout(timeout)
       this.subprocess = null
-      done()
+      callback()
     })
 
     subprocess.kill('SIGTERM')
     this.subprocess = null
   }
 
+  /**
+   * Get the pid of the `ipfs daemon` process.
+   *
+   * @returns {number}
+   */
   daemonPid () {
     return this.subprocess && this.subprocess.pid
   }
 
-  getConfig (key, done) {
+  /**
+   * Call `ipfs config`
+   *
+   * If no `key` is passed, the whole config is returned as an object.
+   *
+   * @param {string} [key] - A specific config to retrieve.
+   * @param {function(Error, (Object|string))} callback
+   * @returns {undefined}
+   */
+  getConfig (key, callback) {
     if (typeof key === 'function') {
-      done = key
+      callback = key
       key = ''
     }
 
-    this._run(['config', key], {env: this.env}, done)
+    async.waterfall([
+      (cb) => this._run(
+        ['config', key],
+        {env: this.env},
+        cb
+      ),
+      (config, cb) => {
+        if (!key) {
+          return tryJsonParse(config, cb)
+        }
+        cb(null, config.trim())
+      }
+    ], callback)
   }
 
-  setConfig (key, value, done) {
-    done = once(done)
-    run(this.exec, ['config', key, value, '--json'], {env: this.env})
-      .on('error', done)
-      .on('data', () => {})
-      .on('end', () => done())
+  /**
+   * Set a config value.
+   *
+   * @param {string} key
+   * @param {string} value
+   * @param {function(Error)} callback
+   * @returns {undefined}
+   */
+  setConfig (key, value, callback) {
+    this._run(
+      ['config', key, value, '--json'],
+      {env: this.env},
+      callback
+    )
   }
 
-  replaceConf (file, done) {
-    this._run(['config', 'replace', file], {env: this.env}, done)
+  /**
+   * Replace the configuration with a given file
+   *
+   * @param {string} file - path to the new config file
+   * @param {function(Error)} callback
+   * @returns {undefined}
+   */
+  replaceConf (file, callback) {
+    this._run(
+      ['config', 'replace', file],
+      {env: this.env},
+      callback
+    )
   }
-
-  version (done) {
-    this._run(['version'], {}, done)
+  /**
+   * Get the version of ipfs
+   *
+   * @param {function(Error, string)} callback
+   * @returns {undefined}
+   */
+  version (callback) {
+    this._run(['version'], {env: this.env}, callback)
   }
 }
+
+module.exports = Node

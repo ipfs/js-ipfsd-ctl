@@ -2,20 +2,22 @@
 /* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
-const ipfsd = require('../src')
-const assert = require('assert')
+const async = require('async')
+const expect = require('chai').expect
 const ipfsApi = require('ipfs-api')
-const run = require('subcomandante')
-const bs58 = require('bs58')
+const mh = require('multihashes')
 const fs = require('fs')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
 const path = require('path')
+const once = require('once')
+const os = require('os')
 
-describe('ipfs executable path', function () {
-  this.timeout(2000)
+const exec = require('../src/exec')
+const ipfsd = require('../src')
+
+describe('ipfs executable path', () => {
   let Node
-
   it('has the correct path when installed with npm3', (done) => {
     process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
     let npm3Path = '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
@@ -29,7 +31,11 @@ describe('ipfs executable path', function () {
       delete require.cache[require.resolve('../src/node.js')]
       Node = require('../src/node.js')
       var node = new Node()
-      assert.equal(node.exec, '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs')
+      expect(
+        node.exec
+      ).to.be.eql(
+        '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs'
+      )
       rimraf('/tmp/ipfsd-ctl-test', done)
     })
   })
@@ -47,359 +53,392 @@ describe('ipfs executable path', function () {
       delete require.cache[require.resolve('../src/node.js')]
       Node = require('../src/node.js')
       var node = new Node()
-      assert.equal(node.exec, '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/ipfs')
+      expect(
+        node.exec
+      ).to.be.eql(
+        '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/ipfs'
+      )
       rimraf('/tmp/ipfsd-ctl-test', done)
     })
   })
 })
 
-describe('local daemon', function () {
-  const repoPath = '/tmp/ipfsd-ctl-test'
-  const addr = '/ip4/127.0.0.1/tcp/5678'
-  const config = {
-    Addresses: {
-      API: addr
+describe('daemons', () => {
+  describe('local node', () => {
+    const repoPath = '/tmp/ipfsd-ctl-test'
+    const addr = '/ip4/127.0.0.1/tcp/5678'
+    const config = {
+      Addresses: {
+        API: addr
+      }
     }
-  }
 
-  it('allows passing flags to init', (done) => {
-    ipfsd.local(repoPath, config, (err, node) => {
-      assert.equal(err, null)
-
-      node.init((err) => {
-        assert.equal(err, null)
-
-        node.getConfig('Addresses.API', (err, res) => {
-          assert.equal(err, null)
-          assert.equal(res, addr)
-          rimraf(repoPath, done)
-        })
-      })
-    })
-  })
-})
-
-describe('disposable node with local api', function () {
-  this.timeout(20000)
-  let ipfs
-  before((done) => {
-    ipfsd.disposable((err, node) => {
-      if (err) throw err
-      node.startDaemon((err, ignore) => {
-        if (err) throw err
-        ipfs = ipfsApi(node.apiAddr)
-        done()
-      })
-    })
-  })
-
-  it('should have started the daemon and returned an api', () => {
-    assert(ipfs)
-    assert(ipfs.id)
-  })
-
-  let store, retrieve
-
-  before((done) => {
-    const blorb = Buffer('blorb')
-    ipfs.block.put(blorb, (err, block) => {
-      if (err) throw err
-      store = bs58.encode(block.key).toString()
-
-      ipfs.block.get(store, (err, block) => {
-        if (err) throw err
-        retrieve = block.data
-        done()
-      })
-    })
-  })
-  it('should be able to store objects', () => {
-    assert.equal(store, 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
-  })
-  it('should be able to retrieve objects', () => {
-    assert.equal(retrieve, 'blorb')
-  })
-})
-
-describe('disposableApi node', function () {
-  this.timeout(20000)
-  let ipfs
-  before((done) => {
-    ipfsd.disposableApi((err, api) => {
-      if (err) throw err
-      ipfs = api
-      done()
-    })
-  })
-
-  it('should have started the daemon and returned an api with host/port', () => {
-    assert(ipfs)
-    assert(ipfs.id)
-    assert(ipfs.apiHost)
-    assert(ipfs.apiPort)
-  })
-
-  let store, retrieve
-
-  before((done) => {
-    const blorb = Buffer('blorb')
-    ipfs.block.put(blorb, (err, block) => {
-      if (err) throw err
-      store = bs58.encode(block.key).toString()
-
-      ipfs.block.get(store, (err, block) => {
-        if (err) throw err
-        retrieve = block.data
-        done()
-      })
-    })
-  })
-  it('should be able to store objects', () => {
-    assert.equal(store, 'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
-  })
-  it('should be able to retrieve objects', () => {
-    assert.equal(retrieve, 'blorb')
-  })
-})
-
-describe('starting and stopping', function () {
-  this.timeout(20000)
-  let node
-
-  describe('init', () => {
-    before((done) => {
-      ipfsd.disposable((err, res) => {
-        if (err) throw err
-        node = res
-        done()
-      })
-    })
-
-    it('should returned a node', () => {
-      assert(node)
-    })
-
-    it('daemon should not be running', () => {
-      assert(!node.daemonPid())
-    })
-  })
-
-  let pid
-
-  describe('starting', () => {
-    let ipfs
-    before((done) => {
-      node.startDaemon((err, res) => {
-        if (err) throw err
-
-        pid = node.daemonPid()
-        ipfs = res
-
-        // actually running?
-        run('kill', ['-0', pid])
-          .on(err, (err) => { throw err })
-          .on('end', () => { done() })
-      })
-    })
-
-    it('should be running', () => {
-      assert(ipfs.id)
-    })
-  })
-
-  let stopped = false
-  describe('stopping', () => {
-    before((done) => {
-      node.stopDaemon((err) => {
-        if (err) throw err
-        stopped = true
-      })
-      // make sure it's not still running
-      const poll = setInterval(() => {
-        run('kill', ['-0', pid])
-          .on('error', () => {
-            clearInterval(poll)
-            done()
-            done = () => {} // so it does not get called again
+    it('allows passing flags to init', (done) => {
+      async.waterfall([
+        (cb) => ipfsd.local(repoPath, config, cb),
+        (node, cb) => {
+          async.series([
+            (cb) => node.init(cb),
+            (cb) => node.getConfig('Addresses.API', cb)
+          ], (err, res) => {
+            expect(err).to.not.exist
+            expect(res[1]).to.be.eql(addr)
+            rimraf(repoPath, cb)
           })
-      }, 100)
-    })
-
-    it('should be stopped', () => {
-      assert(!node.daemonPid())
-      assert(stopped)
-    })
-  })
-})
-
-describe('setting up and initializing a local node', () => {
-  const testpath1 = '/tmp/ipfstestpath1'
-
-  describe('cleanup', () => {
-    before((done) => {
-      rimraf(testpath1, done)
-    })
-
-    it('should not have a directory', () => {
-      assert.equal(fs.existsSync('/tmp/ipfstestpath1'), false)
+        }
+      ], done)
     })
   })
 
-  describe('setup', () => {
-    let node
-    before((done) => {
-      ipfsd.local(testpath1, (err, res) => {
-        if (err) throw err
-        node = res
-        done()
+  describe('disposable node', () => {
+    const blorb = new Buffer('blorb')
+    let ipfs
+    let store
+    let retrieve
+
+    beforeEach((done) => {
+      async.waterfall([
+        (cb) => ipfs.block.put(blorb, cb),
+        (block, cb) => block.key(cb),
+        (key, cb) => {
+          store = mh.toB58String(key)
+          ipfs.block.get(store, cb)
+        },
+        (_block, cb) => {
+          retrieve = _block.data
+          cb()
+        }
+      ], done)
+    })
+
+    describe('with local api', () => {
+      before((done) => {
+        async.waterfall([
+          (cb) => ipfsd.disposable(cb),
+          (node, cb) => {
+            node.startDaemon((err) => {
+              if (err) {
+                return cb(err)
+              }
+              ipfs = ipfsApi(node.apiAddr)
+              cb()
+            })
+          }
+        ], done)
+      })
+
+      it('should have started the daemon and returned an api', () => {
+        expect(ipfs).to.exist
+        expect(ipfs.id).to.exist
+      })
+
+      it('should be able to store objects', () => {
+        expect(
+          store
+        ).to.be.eql(
+          'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
+        )
+      })
+
+      it('should be able to retrieve objects', () => {
+        expect(retrieve.toString()).to.be.eql('blorb')
       })
     })
 
-    it('should have returned a node', () => {
-      assert(node)
-    })
-
-    it('should not be initialized', () => {
-      assert.equal(node.initialized, false)
-    })
-
-    describe('initialize', function () {
-      this.timeout(10000)
-
+    describe('disposableApi', () => {
       before((done) => {
-        node.init((err) => {
-          if (err) throw err
+        ipfsd.disposableApi((err, api) => {
+          if (err) {
+            done(err)
+          }
+
+          ipfs = api
           done()
         })
       })
 
-      it('should have made a directory', () => {
-        assert.equal(fs.existsSync(testpath1), true)
+      it('should have started the daemon and returned an api with host/port', () => {
+        expect(ipfs).to.have.property('id')
+        expect(ipfs).to.have.property('apiHost')
+        expect(ipfs).to.have.property('apiPort')
       })
 
-      it('should be initialized', () => {
-        assert.equal(node.initialized, true)
+      it('should be able to store objects', () => {
+        expect(
+          store
+        ).to.be.eql(
+          'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
+        )
       })
 
-      it('should be initialized', () => {
-        assert.equal(node.initialized, true)
+      it('should be able to retrieve objects', () => {
+        expect(retrieve.toString()).to.be.eql('blorb')
       })
     })
   })
-})
 
-describe('change config values of a disposable node', function () {
-  this.timeout(20000)
+  describe('starting and stopping', () => {
+    let node
 
-  let ipfsNode
+    describe('init', () => {
+      before((done) => {
+        ipfsd.disposable((err, res) => {
+          if (err) {
+            done(err)
+          }
+          node = res
+          done()
+        })
+      })
 
-  before((done) => {
-    ipfsd.disposable((err, node) => {
-      if (err) {
-        throw err
-      }
-      ipfsNode = node
-      done()
+      it('should returned a node', () => {
+        expect(node).to.exist
+      })
+
+      it('daemon should not be running', () => {
+        expect(node.daemonPid()).to.be.falsy
+      })
+    })
+
+    let pid
+    describe('starting', () => {
+      let ipfs
+
+      before((done) => {
+        node.startDaemon((err, res) => {
+          if (err) throw err
+
+          pid = node.daemonPid()
+          ipfs = res
+
+          // actually running?
+          done = once(done)
+          exec('kill', ['-0', pid], {cleanup: true}, () => done())
+        })
+      })
+
+      it('should be running', () => {
+        expect(ipfs.id).to.be.truthy
+      })
+    })
+
+    describe('stopping', () => {
+      let stopped = false
+
+      before((done) => {
+        node.stopDaemon((err) => {
+          if (err) {
+            return done(err)
+          }
+          stopped = true
+        })
+        // make sure it's not still running
+        const poll = setInterval(() => {
+          exec('kill', ['-0', pid], {cleanup: true}, {
+            error () {
+              clearInterval(poll)
+              done()
+              // so it does not get called again
+              done = () => {}
+            }
+          })
+        }, 100)
+      })
+
+      it('should be stopped', () => {
+        expect(node.daemonPid()).to.be.falsy
+        expect(stopped).to.be.truthy
+      })
     })
   })
 
-  it('Should return a config value', (done) => {
-    ipfsNode.getConfig('Bootstrap', (err, config) => {
-      if (err) {
-        throw err
-      }
-      assert(config)
-      done()
+  describe('setting up and init a local node', () => {
+    const testpath1 = '/tmp/ipfstestpath1'
+
+    describe('cleanup', () => {
+      before((done) => {
+        rimraf(testpath1, done)
+      })
+
+      it('should not have a directory', () => {
+        expect(fs.existsSync('/tmp/ipfstestpath1')).to.be.eql(false)
+      })
+    })
+
+    describe('setup', () => {
+      let node
+      before((done) => {
+        ipfsd.local(testpath1, (err, res) => {
+          if (err) {
+            return done(err)
+          }
+          node = res
+          done()
+        })
+      })
+
+      it('should have returned a node', () => {
+        expect(node).to.exist
+      })
+
+      it('should not be initialized', () => {
+        expect(node.initialized).to.be.eql(false)
+      })
+
+      describe('initialize', () => {
+        before((done) => {
+          node.init(done)
+        })
+
+        it('should have made a directory', () => {
+          expect(fs.existsSync(testpath1)).to.be.eql(true)
+        })
+
+        it('should be initialized', () => {
+          expect(node.initialized).to.be.eql(true)
+        })
+
+        it('should be initialized', () => {
+          expect(node.initialized).to.be.eql(true)
+        })
+      })
     })
   })
 
-  it('Should set a config value', (done) => {
-    ipfsNode.setConfig('Bootstrap', null, (err) => {
-      if (err) {
-        throw err
-      }
+  describe('change config of a disposable node', () => {
+    let ipfsNode
 
-      ipfsNode.getConfig('Bootstrap', (err, config) => {
+    before((done) => {
+      ipfsd.disposable((err, node) => {
         if (err) {
-          throw err
+          return done(err)
         }
-        assert.equal(config, 'null')
+        ipfsNode = node
+        done()
+      })
+    })
+
+    it('Should return a config value', (done) => {
+      ipfsNode.getConfig('Bootstrap', (err, config) => {
+        expect(err).to.not.exist
+        expect(config).to.exist
+        done()
+      })
+    })
+
+    it('Should set a config value', (done) => {
+      async.series([
+        (cb) => ipfsNode.setConfig('Bootstrap', 'null', cb),
+        (cb) => ipfsNode.getConfig('Bootstrap', cb)
+      ], (err, res) => {
+        expect(err).to.not.exist
+        expect(res[1]).to.be.eql('null')
+        done()
+      })
+    })
+
+    it('should give an error if setting an invalid config value', (done) => {
+      ipfsNode.setConfig('Bootstrap', 'true', (err) => {
+        expect(err.message).to.match(
+           /failed to set config value/
+        )
         done()
       })
     })
   })
-})
 
-describe('external ipfs binaray', () => {
   it('allows passing via $IPFS_EXEC', (done) => {
     process.env.IPFS_EXEC = '/some/path'
     ipfsd.local((err, node) => {
-      if (err) throw err
-
-      assert.equal(node.exec, '/some/path')
+      expect(err).to.not.exist
+      expect(node.exec).to.be.eql('/some/path')
 
       process.env.IPFS_EXEC = ''
       done()
     })
   })
-})
 
-describe('version', () => {
   it('prints the version', (done) => {
     ipfsd.version((err, version) => {
-      if (err) throw err
-
-      assert(version)
+      expect(err).to.not.exist
+      expect(version).to.be.eql('ipfs version 0.4.4')
       done()
     })
   })
-})
 
-describe('ipfs-api version', function () {
-  this.timeout(20000)
+  describe('ipfs-api version', () => {
+    let ipfs
 
-  let ipfs
-
-  before((done) => {
-    ipfsd.disposable((err, node) => {
-      if (err) throw err
-      node.startDaemon((err, ignore) => {
+    before((done) => {
+      ipfsd.disposable((err, node) => {
         if (err) throw err
-        ipfs = ipfsApi(node.apiAddr)
+        node.startDaemon((err, ignore) => {
+          if (err) throw err
+          ipfs = ipfsApi(node.apiAddr)
+          done()
+        })
+      })
+    })
+
+    // NOTE: if you change ./fixtures, the hash will need to be changed
+    it('uses the correct ipfs-api', (done) => {
+      ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), { recursive: true }, (err, res) => {
+        if (err) throw err
+
+        const added = res[res.length - 1]
+        expect(added).to.have.property(
+          'hash',
+          'QmXkiTdnfRJjiQREtF5dWf2X4V9awNHQSn9YGofwVY4qUU'
+        )
         done()
       })
     })
   })
 
-  // NOTE: if you change ./fixtures, the hash will need to be changed
-  it('uses the correct ipfs-api', (done) => {
-    ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), { recursive: true }, (err, res) => {
-      if (err) throw err
+  describe('startDaemon', () => {
+    it('start and stop', (done) => {
+      const dir = os.tmpdir() + `/${Math.ceil(Math.random() * 100)}`
+      const check = (cb) => {
+        if (fs.existsSync(path.join(dir, 'repo.lock'))) {
+          cb(new Error('repo.lock not removed'))
+        }
+        if (fs.existsSync(path.join(dir, 'api'))) {
+          cb(new Error('api file not removed'))
+        }
+        cb()
+      }
 
-      const added = res[res.length - 1]
-      assert(added)
-      assert.equal(added.hash, 'QmXkiTdnfRJjiQREtF5dWf2X4V9awNHQSn9YGofwVY4qUU')
-      done()
+      async.waterfall([
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => node.init((err) => cb(err, node)),
+        (node, cb) => node.startDaemon((err) => cb(err, node)),
+        (node, cb) => node.stopDaemon(cb),
+        check,
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => node.startDaemon((err) => cb(err, node)),
+        (node, cb) => node.stopDaemon(cb),
+        check,
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => node.startDaemon((err) => cb(err, node)),
+        (node, cb) => node.stopDaemon(cb),
+        check
+      ], done)
     })
-  })
-})
 
-describe('node startDaemon', () => {
-  it('allows passing flags', (done) => {
-    ipfsd.disposable((err, node) => {
-      if (err) throw err
-      node.startDaemon(['--should-not-exist'], (err, ignore) => {
-        if (!err) {
-          throw new Error('should have errored')
-        }
+    it('allows passing flags', (done) => {
+      ipfsd.disposable((err, node) => {
+        expect(err).to.not.exist
 
-        let errStr = 'Unrecognized option \'should-not-exist\''
+        node.startDaemon(['--should-not-exist'], (err) => {
+          expect(err).to.exist
+          expect(
+            err.message
+          ).to.match(
+            /Unrecognized option 'should-not-exist'/
+          )
 
-        if (String(err).indexOf(errStr) >= 0) {
-          done() // correct error
-        }
-
-        throw err
+          done()
+        })
       })
     })
   })

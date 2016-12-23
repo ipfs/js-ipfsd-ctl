@@ -2,16 +2,15 @@
   "name": "ipfsd-ctl",
   "version": "0.17.0",
   "description": "simple controls for an ipfs node",
-  "main": "lib/index.js",
-  "jsxnext:main": "src/index.js",
+  "main": "src/index.js",
   "scripts": {
     "lint": "aegir-lint",
     "coverage": "aegir-coverage",
     "test": "aegir-test --env node",
-    "build": "aegir-build --env node",
-    "release": "aegir-release --env node",
-    "release-minor": "aegir-release --type minor --env node",
-    "release-major": "aegir-release --type major --env node",
+    "docs": "aegir-docs",
+    "release": "aegir-release --env node --docs",
+    "release-minor": "aegir-release --type minor --env node --docs",
+    "release-major": "aegir-release --type major --env node --docs",
     "coverage-publish": "aegir-coverage publish"
   },
   "engines": {
@@ -45,20 +44,22 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "bl": "^1.1.2",
+    "async": "^2.1.4",
     "go-ipfs-dep": "0.4.4",
-    "ipfs-api": "^12.0.3",
-    "multiaddr": "^2.1.0",
+    "ipfs-api": "^12.1.2",
+    "multiaddr": "^2.1.1",
     "once": "^1.4.0",
     "rimraf": "^2.5.4",
-    "run-series": "^1.1.4",
     "shutdown": "^0.2.4",
     "subcomandante": "^1.0.5"
   },
   "devDependencies": {
-    "aegir": "^9.2.1",
+    "aegir": "^9.3.0",
+    "chai": "^3.5.0",
+    "is-running": "^2.1.0",
     "mkdirp": "^0.5.1",
-    "pre-commit": "^1.2.1"
+    "multihashes": "^0.3.1",
+    "pre-commit": "^1.2.2"
   },
   "repository": {
     "type": "git",
