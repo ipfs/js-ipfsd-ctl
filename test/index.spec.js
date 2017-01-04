@@ -425,6 +425,24 @@ describe('daemons', () => {
       ], done)
     })
 
+    it('should have started the daemon and returned an api with gateway host and port', (done) => {
+      let daemon
+      const dir = os.tmpdir() + `/${Math.ceil(Math.random() * 100)}`
+      async.waterfall([
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => {
+          daemon = node
+          node.init((err) => cb(err, node))
+        },
+        (node, cb) => node.startDaemon((err) => cb(err, node))
+      ], (err, res) => {
+        expect(err).to.exist
+        expect(res).to.have.property('gatewayHost')
+        expect(res).to.have.property('gatewayPort')
+        daemon.stopDaemon(done)
+      })
+    })
+
     it('allows passing flags', (done) => {
       ipfsd.disposable((err, node) => {
         expect(err).to.not.exist

@@ -198,6 +198,7 @@ class Node {
         },
         data: (data) => {
           const match = String(data).trim().match(/API server listening on (.*)/)
+          const gwmatch = String(data).trim().match(/Gateway (.*) listening on (.*)/)
 
           if (match) {
             this.apiAddr = match[1]
@@ -205,6 +206,13 @@ class Node {
             this.api = ipfs(this.apiAddr)
             this.api.apiHost = addr.address
             this.api.apiPort = addr.port
+
+            if (gwmatch) {
+              this.gatewayAddr = gwmatch[2]
+              const addr = multiaddr(this.gatewayAddr).nodeAddress()
+              this.api.gatewayHost = addr.address
+              this.api.gatewayPort = addr.port
+            }
 
             callback(null, this.api)
           }
