@@ -9,7 +9,8 @@ function exec (cmd, args, opts, handlers) {
   let result = ''
   let callback
 
-  // Handy method if we just want the result and err returned in a callback
+  // Handy method if we just want the result and err
+  // returned in a callback
   if (typeof handlers === 'function') {
     callback = once(handlers)
     handlers = {
