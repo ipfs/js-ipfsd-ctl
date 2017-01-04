@@ -9,35 +9,33 @@ const path = require('path')
 const exec = require('../src/exec')
 
 const survivor = path.join(__dirname, 'survivor')
-const hang = 'tail -f /dev/null'.split(' ')
 
 function token () {
   return Math.random().toString().substr(2)
 }
 
-function psExpect (pid, expect, grace, cb) {
+function psExpect (pid, expect, grace, callback) {
   setTimeout(() => {
     const actual = isrunning(pid)
 
     if (actual !== expect && grace > 0) {
-      psExpect(pid, expect, grace--, cb)
-      return
+      return psExpect(pid, expect, --grace, callback)
     }
 
-    cb(null, actual)
+    callback(null, actual)
   }, 200)
 }
 
-function isRunningGrep (pattern, cb) {
+function isRunningGrep (pattern, callback) {
   const cmd = 'ps aux'
   cp.exec(cmd, (err, stdout, stderr) => {
     if (err) {
-      return cb(err)
+      return callback(err)
     }
 
     const running = stdout.match(pattern) !== null
 
-    cb(null, running)
+    callback(null, running)
   })
 }
 
@@ -60,6 +58,7 @@ describe('exec', () => {
     const tok = token()
 
     const check = makeCheck(2, done)
+    const hang = 'tail -f /dev/null'.split(' ')
     const args = hang.concat(tok)
 
     const p = exec(args[0], args.slice(1), {}, (err) => {
@@ -106,21 +105,21 @@ describe('exec', () => {
       })
     })
 
-    p.stdout.pipe(process.stdout)
-    p.stderr.pipe(process.stderr)
-
     psExpect(p.pid, true, 10, (err, running) => {
       expect(err).to.not.exist
       expect(running).to.be.ok
 
-      p.kill('SIGTERM') // should not kill it
+      // should not kill it
+      p.kill('SIGTERM')
 
       psExpect(p.pid, true, 10, (err, running) => {
         expect(err).to.not.exist
         expect(running).to.be.ok
 
-        p.kill('SIGKILL') // should kill it
-        psExpect(p.pid, false, 15, (err, running) => {
+        // will kill it
+        p.kill('SIGKILL')
+
+        psExpect(p.pid, false, 50, (err, running) => {
           expect(err).to.not.exist
           expect(running).to.not.be.ok
           check()

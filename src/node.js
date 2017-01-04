@@ -244,7 +244,6 @@ class Node {
     // need a local var for the closure, as we clear the var.
     const subprocess = this.subprocess
     const timeout = setTimeout(() => {
-      console.log('KILLINg')
       subprocess.kill('SIGKILL')
       callback()
     }, GRACE_PERIOD)
