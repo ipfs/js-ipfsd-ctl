@@ -197,8 +197,9 @@ class Node {
           }
         },
         data: (data) => {
-          const match = String(data).trim().match(/API server listening on (.*)/)
-          const gwmatch = String(data).trim().match(/Gateway (.*) listening on (.*)/)
+          const str = String(data).trim()
+          const match = str.match(/API server listening on (.*)/)
+          const gwmatch = str.match(/Gateway (.*) listening on (.*)/)
 
           if (match) {
             this.apiAddr = match[1]
