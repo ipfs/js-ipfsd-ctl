@@ -434,9 +434,9 @@ describe('daemons', () => {
           daemon = node
           node.init((err) => cb(err, node))
         },
-        (node, cb) => node.startDaemon((err) => cb(err, node))
+        (node, cb) => node.startDaemon((err, api) => cb(err, api))
       ], (err, res) => {
-        expect(err).to.exist
+        expect(err).to.not.exist
         expect(res).to.have.property('gatewayHost')
         expect(res).to.have.property('gatewayPort')
         daemon.stopDaemon(done)
