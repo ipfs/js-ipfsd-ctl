@@ -6,6 +6,7 @@ const async = require('async')
 const expect = require('chai').expect
 const ipfsApi = require('ipfs-api')
 const mh = require('multihashes')
+const multiaddr = require('multiaddr')
 const fs = require('fs')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
@@ -425,7 +426,7 @@ describe('daemons', () => {
       ], done)
     })
 
-    it('should have started the daemon and returned an api with gateway host and port', (done) => {
+    it('starts the daemon and returns valid API and gateway addresses', (done) => {
       let daemon
       const dir = os.tmpdir() + `/${Math.ceil(Math.random() * 100)}`
       async.waterfall([
@@ -437,8 +438,23 @@ describe('daemons', () => {
         (node, cb) => node.startDaemon((err, api) => cb(err, api))
       ], (err, res) => {
         expect(err).to.not.exist
+
+        expect(daemon).to.have.property('apiAddr')
+        expect(daemon).to.have.property('gatewayAddr')
+        expect(daemon.apiAddr).to.be.instanceof(multiaddr)
+        expect(daemon.gatewayAddr).to.be.instanceof(multiaddr)
+        expect(daemon.apiAddr).to.not.equal(null)
+        expect(daemon.gatewayAddr).to.not.equal(null)
+
+        expect(res).to.have.property('apiHost')
+        expect(res).to.have.property('apiPort')
         expect(res).to.have.property('gatewayHost')
         expect(res).to.have.property('gatewayPort')
+        expect(res.apiHost).to.equal('127.0.0.1')
+        expect(res.apiPort).to.equal('5001')
+        expect(res.gatewayHost).to.equal('127.0.0.1')
+        expect(res.gatewayPort).to.equal('8080')
+
         daemon.stopDaemon(done)
       })
     })

@@ -87,10 +87,30 @@ class Node {
     this.clean = true
     this.env = Object.assign({}, process.env, {IPFS_PATH: path})
     this.disposable = disposable
+    this._apiAddr = null
+    this._gatewayAddr = null
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
     }
+  }
+
+  /**
+   * Get the address of connected IPFS API.
+   *
+   * @returns {Multiaddr}
+   */
+  get apiAddr () {
+    return this._apiAddr
+  }
+
+  /**
+   * Get the address of connected IPFS HTTP Gateway.
+   *
+   * @returns {Multiaddr}
+   */
+  get gatewayAddr () {
+    return this._gatewayAddr
   }
 
   _run (args, opts, callback) {
@@ -202,17 +222,15 @@ class Node {
           const gwmatch = str.match(/Gateway (.*) listening on (.*)/)
 
           if (match) {
-            this.apiAddr = match[1]
-            const addr = multiaddr(this.apiAddr).nodeAddress()
-            this.api = ipfs(this.apiAddr)
-            this.api.apiHost = addr.address
-            this.api.apiPort = addr.port
+            this._apiAddr = multiaddr(match[1])
+            this.api = ipfs(match[1])
+            this.api.apiHost = this.apiAddr.nodeAddress().address
+            this.api.apiPort = this.apiAddr.nodeAddress().port
 
             if (gwmatch) {
-              this.gatewayAddr = gwmatch[2]
-              const addr = multiaddr(this.gatewayAddr).nodeAddress()
-              this.api.gatewayHost = addr.address
-              this.api.gatewayPort = addr.port
+              this._gatewayAddr = multiaddr(gwmatch[2])
+              this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+              this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
             }
 
             callback(null, this.api)
