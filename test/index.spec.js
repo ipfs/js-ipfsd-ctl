@@ -402,7 +402,8 @@ describe('daemons', () => {
 
   describe('startDaemon', () => {
     it('start and stop', (done) => {
-      const dir = os.tmpdir() + `/${Math.ceil(Math.random() * 100)}`
+      const dir = os.tmpdir() + `/tmp-${Math.ceil(Math.random() * 100)}`
+
       const check = (cb) => {
         if (fs.existsSync(path.join(dir, 'repo.lock'))) {
           cb(new Error('repo.lock not removed'))
@@ -432,7 +433,8 @@ describe('daemons', () => {
 
     it('starts the daemon and returns valid API and gateway addresses', (done) => {
       let daemon
-      const dir = os.tmpdir() + `/${Math.ceil(Math.random() * 100)}`
+      const dir = os.tmpdir() + `/tmp--${Math.ceil(Math.random() * 100)}`
+
       async.waterfall([
         (cb) => ipfsd.local(dir, cb),
         (node, cb) => {
