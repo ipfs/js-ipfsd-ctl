@@ -3,7 +3,10 @@
 'use strict'
 
 const async = require('async')
-const expect = require('chai').expect
+const chai = require('chai')
+const dirtyChai = require('dirty-chai')
+const expect = chai.expect
+chai.use(dirtyChai)
 const ipfsApi = require('ipfs-api')
 const mh = require('multihashes')
 const multiaddr = require('multiaddr')
@@ -82,7 +85,7 @@ describe('daemons', () => {
             (cb) => node.init(cb),
             (cb) => node.getConfig('Addresses.API', cb)
           ], (err, res) => {
-            expect(err).to.not.exist
+            expect(err).to.not.exist()
             expect(res[1]).to.be.eql(addr)
             rimraf(repoPath, cb)
           })
@@ -129,8 +132,8 @@ describe('daemons', () => {
       })
 
       it('should have started the daemon and returned an api', () => {
-        expect(ipfs).to.exist
-        expect(ipfs.id).to.exist
+        expect(ipfs).to.exist()
+        expect(ipfs.id).to.exist()
       })
 
       it('should be able to store objects', () => {
@@ -193,15 +196,16 @@ describe('daemons', () => {
       })
 
       it('should returned a node', () => {
-        expect(node).to.exist
+        expect(node).to.exist()
       })
 
       it('daemon should not be running', () => {
-        expect(node.daemonPid()).to.be.falsy
+        expect(node.daemonPid()).to.not.exist()
       })
     })
 
     let pid
+
     describe('starting', () => {
       let ipfs
 
@@ -219,7 +223,7 @@ describe('daemons', () => {
       })
 
       it('should be running', () => {
-        expect(ipfs.id).to.be.truthy
+        expect(ipfs.id).to.exist()
       })
     })
 
@@ -247,8 +251,8 @@ describe('daemons', () => {
       })
 
       it('should be stopped', () => {
-        expect(node.daemonPid()).to.be.falsy
-        expect(stopped).to.be.truthy
+        expect(node.daemonPid()).to.not.exist()
+        expect(stopped).to.equal(true)
       })
     })
   })
@@ -279,7 +283,7 @@ describe('daemons', () => {
       })
 
       it('should have returned a node', () => {
-        expect(node).to.exist
+        expect(node).to.exist()
       })
 
       it('should not be initialized', () => {
@@ -321,8 +325,8 @@ describe('daemons', () => {
 
     it('Should return a config value', (done) => {
       ipfsNode.getConfig('Bootstrap', (err, config) => {
-        expect(err).to.not.exist
-        expect(config).to.exist
+        expect(err).to.not.exist()
+        expect(config).to.exist()
         done()
       })
     })
@@ -332,7 +336,7 @@ describe('daemons', () => {
         (cb) => ipfsNode.setConfig('Bootstrap', 'null', cb),
         (cb) => ipfsNode.getConfig('Bootstrap', cb)
       ], (err, res) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist()
         expect(res[1]).to.be.eql('null')
         done()
       })
@@ -351,7 +355,7 @@ describe('daemons', () => {
   it('allows passing via $IPFS_EXEC', (done) => {
     process.env.IPFS_EXEC = '/some/path'
     ipfsd.local((err, node) => {
-      expect(err).to.not.exist
+      expect(err).to.not.exist()
       expect(node.exec).to.be.eql('/some/path')
 
       process.env.IPFS_EXEC = ''
@@ -361,8 +365,8 @@ describe('daemons', () => {
 
   it('prints the version', (done) => {
     ipfsd.version((err, version) => {
-      expect(err).to.not.exist
-      expect(version).to.be.eql('ipfs version 0.4.4')
+      expect(err).to.not.exist()
+      expect(version).to.be.eql('ipfs version 0.4.7')
       done()
     })
   })
@@ -437,7 +441,7 @@ describe('daemons', () => {
         },
         (node, cb) => node.startDaemon((err, api) => cb(err, api))
       ], (err, res) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist()
 
         expect(daemon).to.have.property('apiAddr')
         expect(daemon).to.have.property('gatewayAddr')
@@ -461,15 +465,12 @@ describe('daemons', () => {
 
     it('allows passing flags', (done) => {
       ipfsd.disposable((err, node) => {
-        expect(err).to.not.exist
+        expect(err).to.not.exist()
 
         node.startDaemon(['--should-not-exist'], (err) => {
-          expect(err).to.exist
-          expect(
-            err.message
-          ).to.match(
-            /Unrecognized option 'should-not-exist'/
-          )
+          expect(err).to.exist()
+          expect(err.message)
+            .to.match(/Unrecognized option 'should-not-exist'/)
 
           done()
         })

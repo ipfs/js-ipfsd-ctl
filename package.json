@@ -14,7 +14,8 @@
     "coverage-publish": "aegir-coverage publish"
   },
   "engines": {
-    "node": ">=4.2.2"
+    "node": ">=4.2.2",
+    "npm": ">=3.0.0"
   },
   "pre-commit": [
     "lint",
@@ -46,21 +47,22 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "async": "^2.1.4",
-    "go-ipfs-dep": "0.4.5",
+    "async": "^2.1.5",
+    "go-ipfs-dep": "0.4.7",
     "ipfs-api": "^12.1.7",
-    "multiaddr": "^2.2.1",
+    "multiaddr": "^2.2.2",
     "once": "^1.4.0",
-    "rimraf": "^2.5.4",
+    "rimraf": "^2.6.1",
     "shutdown": "^0.2.4",
     "subcomandante": "^1.0.5"
   },
   "devDependencies": {
-    "aegir": "^10.0.0",
+    "aegir": "^11.0.0",
     "chai": "^3.5.0",
+    "dirty-chai": "^1.2.2",
     "is-running": "1.0.5",
     "mkdirp": "^0.5.1",
-    "multihashes": "~0.3.3",
+    "multihashes": "~0.4.4",
     "pre-commit": "^1.2.2"
   },
   "repository": {

@@ -63,23 +63,23 @@ describe('exec', () => {
 
     const p = exec(args[0], args.slice(1), {}, (err) => {
       // `tail -f /dev/null somerandom` errors out
-      expect(err).to.exist
+      expect(err).to.exist()
 
       isRunningGrep(token, (err, running) => {
-        expect(err).to.not.exist
-        expect(running).to.not.be.ok
+        expect(err).to.not.exist()
+        expect(running).to.not.be.ok()
         check()
       })
     })
 
     psExpect(p.pid, true, 10, (err, running) => {
-      expect(err).to.not.exist
-      expect(running).to.be.ok
+      expect(err).to.not.exist()
+      expect(running).to.be.ok()
 
       p.kill('SIGTERM') // should kill it
       psExpect(p.pid, false, 10, (err, running) => {
-        expect(err).to.not.exist
-        expect(running).to.not.be.ok
+        expect(err).to.not.exist()
+        expect(running).to.not.be.ok()
         check()
       })
     })
@@ -96,32 +96,32 @@ describe('exec', () => {
     const tok = token()
 
     const p = exec(survivor, [tok], {}, (err) => {
-      expect(err).to.not.exist
+      expect(err).to.not.exist()
 
       isRunningGrep(token, (err, running) => {
-        expect(err).to.not.exist
-        expect(running).to.not.be.ok
+        expect(err).to.not.exist()
+        expect(running).to.not.be.ok()
         check()
       })
     })
 
     psExpect(p.pid, true, 10, (err, running) => {
-      expect(err).to.not.exist
-      expect(running).to.be.ok
+      expect(err).to.not.exist()
+      expect(running).to.be.ok()
 
       // should not kill it
       p.kill('SIGTERM')
 
       psExpect(p.pid, true, 10, (err, running) => {
-        expect(err).to.not.exist
-        expect(running).to.be.ok
+        expect(err).to.not.exist()
+        expect(running).to.be.ok()
 
         // will kill it
         p.kill('SIGKILL')
 
         psExpect(p.pid, false, 50, (err, running) => {
-          expect(err).to.not.exist
-          expect(running).to.not.be.ok
+          expect(err).to.not.exist()
+          expect(running).to.not.be.ok()
           check()
         })
       })
