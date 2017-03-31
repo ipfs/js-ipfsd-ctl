@@ -49,7 +49,7 @@
   "dependencies": {
     "async": "^2.1.5",
     "go-ipfs-dep": "0.4.7",
-    "ipfs-api": "^12.1.7",
+    "ipfs-api": "^14.0.0",
     "multiaddr": "^2.2.2",
     "once": "^1.4.0",
     "rimraf": "^2.6.1",

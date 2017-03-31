@@ -220,19 +220,22 @@ class Node {
           const str = String(data).trim()
           const match = str.match(/API server listening on (.*)/)
           const gwmatch = str.match(/Gateway (.*) listening on (.*)/)
+          const readyMatch = str.match(/Daemon is ready/)
 
           if (match) {
             this._apiAddr = multiaddr(match[1])
             this.api = ipfs(match[1])
             this.api.apiHost = this.apiAddr.nodeAddress().address
             this.api.apiPort = this.apiAddr.nodeAddress().port
+          }
 
-            if (gwmatch) {
-              this._gatewayAddr = multiaddr(gwmatch[2])
-              this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-              this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
-            }
+          if (gwmatch) {
+            this._gatewayAddr = multiaddr(gwmatch[2])
+            this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+            this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+          }
 
+          if (readyMatch) {
             callback(null, this.api)
           }
         }
