@@ -8,8 +8,8 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const ipfsApi = require('ipfs-api')
-const mh = require('multihashes')
 const multiaddr = require('multiaddr')
+const Buffer = require('safe-buffer').Buffer
 const fs = require('fs')
 const rimraf = require('rimraf')
 const mkdirp = require('mkdirp')
@@ -22,6 +22,7 @@ const ipfsd = require('../src')
 
 describe('ipfs executable path', () => {
   let Node
+
   it('has the correct path when installed with npm3', (done) => {
     process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
     let npm3Path = '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
@@ -35,11 +36,8 @@ describe('ipfs executable path', () => {
       delete require.cache[require.resolve('../src/node.js')]
       Node = require('../src/node.js')
       var node = new Node()
-      expect(
-        node.exec
-      ).to.be.eql(
-        '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs'
-      )
+      expect(node.exec)
+        .to.eql('/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs')
       rimraf('/tmp/ipfsd-ctl-test', done)
     })
   })
@@ -95,7 +93,7 @@ describe('daemons', () => {
   })
 
   describe('disposable node', () => {
-    const blorb = new Buffer('blorb')
+    const blorb = Buffer.from('blorb')
     let ipfs
     let store
     let retrieve
@@ -103,9 +101,8 @@ describe('daemons', () => {
     beforeEach((done) => {
       async.waterfall([
         (cb) => ipfs.block.put(blorb, cb),
-        (block, cb) => block.key(cb),
-        (key, cb) => {
-          store = mh.toB58String(key)
+        (block, cb) => {
+          store = block.cid.toBaseEncodedString()
           ipfs.block.get(store, cb)
         },
         (_block, cb) => {
@@ -137,11 +134,8 @@ describe('daemons', () => {
       })
 
       it('should be able to store objects', () => {
-        expect(
-          store
-        ).to.be.eql(
-          'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
-        )
+        expect(store)
+          .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
       })
 
       it('should be able to retrieve objects', () => {
@@ -168,11 +162,8 @@ describe('daemons', () => {
       })
 
       it('should be able to store objects', () => {
-        expect(
-          store
-        ).to.be.eql(
-          'QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ'
-        )
+        expect(store)
+          .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
       })
 
       it('should be able to retrieve objects', () => {
@@ -366,7 +357,7 @@ describe('daemons', () => {
   it('prints the version', (done) => {
     ipfsd.version((err, version) => {
       expect(err).to.not.exist()
-      expect(version).to.be.eql('ipfs version 0.4.7')
+      expect(version).to.be.eql('ipfs version 0.4.9')
       done()
     })
   })
