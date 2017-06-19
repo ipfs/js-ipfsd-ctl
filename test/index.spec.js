@@ -322,6 +322,14 @@ describe('daemons', () => {
       })
     })
 
+    it('Should return the whole config', (done) => {
+      ipfsNode.getConfig((err, config) => {
+        expect(err).to.not.exist()
+        expect(config).to.exist()
+        done()
+      })
+    })
+
     it('Should set a config value', (done) => {
       async.series([
         (cb) => ipfsNode.setConfig('Bootstrap', 'null', cb),
