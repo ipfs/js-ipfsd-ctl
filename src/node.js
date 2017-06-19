@@ -306,7 +306,7 @@ class Node {
   getConfig (key, callback) {
     if (typeof key === 'function') {
       callback = key
-      key = ''
+      key = 'show'
     }
 
     async.waterfall([
