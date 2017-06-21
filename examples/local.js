@@ -1,6 +1,6 @@
 'use strict'
 
-var ipfsd = require('../index.js')
+var ipfsd = require('..')
 
 // opens an api connection to local running ipfs node
 
