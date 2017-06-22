@@ -1,6 +1,6 @@
 'use strict'
 
-var ipfsd = require('..')
+var ipfsd = require('../')
 
 ipfsd.disposableApi(function (err, ipfs) {
   if (err) throw err
