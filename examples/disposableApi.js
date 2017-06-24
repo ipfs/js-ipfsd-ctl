@@ -1,12 +1,12 @@
 'use strict'
 
 // Start a disposable node, and get access to the api
-// print the node id, and kill the temporary daemon
+// print the node id
 
 // IPFS_PATH will point to /tmp/ipfs_***** and will be
 // cleaned up when the process exits.
 
-const ipfsd = require('ipfsd-ctl')
+const ipfsd = require('../')
 
 ipfsd.disposableApi((err, ipfs) => {
   if (err) throw err
