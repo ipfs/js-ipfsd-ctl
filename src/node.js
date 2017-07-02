@@ -6,6 +6,7 @@ const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const shutdown = require('shutdown')
+const os = require('os')
 const path = require('path')
 const join = path.join
 const once = require('once')
