@@ -47,15 +47,6 @@ function exec (cmd, args, opts, handlers) {
     })
   }
 
-  // If inside <appname>.asar try to load from .asar.unpacked
-  // this only works if asar was built with
-  // asar --unpack-dir=node_modules/go-ipfs-dep/**
-  // or
-  // electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep/**
-  if (cmd.includes('.asar/node_modules')) {
-    cmd = cmd.replace('.asar/node_modules', '.asar.unpacked/node_modules')
-  }
-
   const command = run(cmd, args, opts)
 
   if (listeners.data) {
