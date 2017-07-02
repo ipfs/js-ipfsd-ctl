@@ -26,7 +26,7 @@ function findIpfsExecutable () {
   // asar --unpack-dir=node_modules/go-ipfs-dep/* (not tested)
   // or
   // electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep/*
-  if ( appRoot.includes(`.asar${path.sep}`) ) {
+  if (appRoot.includes(`.asar${path.sep}`)) {
     appRoot = appRoot.replace(`.asar${path.sep}`, `.asar.unpacked${path.sep}`)
   }
   const ipfsExecutable = os.platform() === 'win32' ? 'ipfs.exe' : 'ipfs'
