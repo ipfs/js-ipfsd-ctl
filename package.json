@@ -48,8 +48,8 @@
   "license": "MIT",
   "dependencies": {
     "async": "^2.5.0",
-    "go-ipfs-dep": "0.4.9",
-    "ipfs-api": "^14.1.0",
+    "go-ipfs-dep": "0.4.10",
+    "ipfs-api": "^14.1.2",
     "multiaddr": "^2.3.0",
     "once": "^1.4.0",
     "rimraf": "^2.6.1",
@@ -58,11 +58,11 @@
   },
   "devDependencies": {
     "aegir": "^11.0.2",
-    "chai": "^4.1.0",
+    "chai": "^4.1.1",
     "dirty-chai": "^2.0.1",
     "is-running": "1.0.5",
     "mkdirp": "^0.5.1",
-    "multihashes": "~0.4.5",
+    "multihashes": "~0.4.8",
     "pre-commit": "^1.2.2",
     "safe-buffer": "^5.1.1"
   },
