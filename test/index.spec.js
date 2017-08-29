@@ -365,7 +365,7 @@ describe('daemons', () => {
   it('prints the version', (done) => {
     ipfsd.version((err, version) => {
       expect(err).to.not.exist()
-      expect(version).to.be.eql('ipfs version 0.4.9')
+      expect(version).to.be.eql('ipfs version 0.4.10')
       done()
     })
   })
@@ -446,8 +446,8 @@ describe('daemons', () => {
 
         expect(daemon).to.have.property('apiAddr')
         expect(daemon).to.have.property('gatewayAddr')
-        expect(daemon.apiAddr).to.be.instanceof(multiaddr)
-        expect(daemon.gatewayAddr).to.be.instanceof(multiaddr)
+        expect(multiaddr.isMultiaddr(daemon.apiAddr)).to.equal(true)
+        expect(multiaddr.isMultiaddr(daemon.gatewayAddr)).to.equal(true)
         expect(daemon.apiAddr).to.not.equal(null)
         expect(daemon.gatewayAddr).to.not.equal(null)
 
