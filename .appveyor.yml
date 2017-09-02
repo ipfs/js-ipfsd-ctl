@@ -4,8 +4,8 @@ environment:
     - nodejs_version: "6"
     - nodejs_version: "8"
 
-cache:
-  - node_modules
+# cache:
+#  - node_modules
 
 platform:
   - x64
