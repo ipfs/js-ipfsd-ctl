@@ -37,7 +37,7 @@ describe('ipfs executable path', () => {
       Node = require('../src/node.js')
       var node = new Node()
       expect(node.exec)
-        .to.eql('/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs')
+        .to.eql(path.normalize('/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs'))
       rimraf('/tmp/ipfsd-ctl-test', done)
     })
   })
@@ -58,7 +58,7 @@ describe('ipfs executable path', () => {
       expect(
         node.exec
       ).to.be.eql(
-        '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/ipfs'
+        path.normalize('/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/ipfs')
       )
       rimraf('/tmp/ipfsd-ctl-test', done)
     })
