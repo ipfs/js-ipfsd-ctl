@@ -53,8 +53,10 @@ function makeCheck (n, done) {
   }
 }
 
-// TODO Needs issues with https://github.com/ipfs/js-ipfsd-ctl/pull/160#issuecomment-325669206
-// fixed first. The test vector, tail, is what is causing issues
+// TODO The test vector, `tail` is no longer a good test vector as it is not
+// exiting as it once was when the test was designed
+// - [ ] Need test vector or figure out why tail changed
+// Ref: https://github.com/ipfs/js-ipfsd-ctl/pull/160#issuecomment-325669206
 describe.skip('exec', () => {
   it('SIGTERM kills hang', (done) => {
     const tok = token()
