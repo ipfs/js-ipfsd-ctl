@@ -43,7 +43,8 @@
     "greenkeeperio-bot <support@greenkeeper.io>",
     "haad <haad@headbanggames.com>",
     "haadcode <haadcode@headbanggames.com>",
-    "jbenet <juan@benet.ai>"
+    "jbenet <juan@benet.ai>",
+    "tcme <hi@this-connect.me>"
   ],
   "license": "MIT",
   "dependencies": {
