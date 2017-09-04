@@ -3,7 +3,7 @@
   "private": true,
   "main": "./app.js",
   "dependencies": {
-    "ipfsd-ctl": "thisconnect/js-ipfsd-ctl#asar-unpacked"
+    "ipfsd-ctl": "*"
   },
   "devDependencies": {
     "electron": "^1.7.6",
