@@ -432,40 +432,37 @@ describe('daemons', () => {
   })
 
   describe('startDaemon', () => {
-    // skip on windows
-    // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326983530
-    if (isWindows) it.skip('start and stop')
-    else {
-      it('start and stop', (done) => {
-        const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
+    it('start and stop', (done) => {
+      const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
 
-        const check = (cb) => {
-          if (fs.existsSync(path.join(dir, 'repo.lock'))) {
-            cb(new Error('repo.lock not removed'))
-          }
-          if (fs.existsSync(path.join(dir, 'api'))) {
-            cb(new Error('api file not removed'))
-          }
-          cb()
+      const check = (cb) => {
+        // skip on windows
+        // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326983530
+        if (!isWindows && fs.existsSync(path.join(dir, 'repo.lock'))) {
+          cb(new Error('repo.lock not removed'))
         }
+        if (fs.existsSync(path.join(dir, 'api'))) {
+          cb(new Error('api file not removed'))
+        }
+        cb()
+      }
 
-        async.waterfall([
-          (cb) => ipfsd.local(dir, cb),
-          (node, cb) => node.init((err) => cb(err, node)),
-          (node, cb) => node.startDaemon((err) => cb(err, node)),
-          (node, cb) => node.stopDaemon(cb),
-          check,
-          (cb) => ipfsd.local(dir, cb),
-          (node, cb) => node.startDaemon((err) => cb(err, node)),
-          (node, cb) => node.stopDaemon(cb),
-          check,
-          (cb) => ipfsd.local(dir, cb),
-          (node, cb) => node.startDaemon((err) => cb(err, node)),
-          (node, cb) => node.stopDaemon(cb),
-          check
-        ], done)
-      })
-    }
+      async.waterfall([
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => node.init((err) => cb(err, node)),
+        (node, cb) => node.startDaemon((err) => cb(err, node)),
+        (node, cb) => node.stopDaemon(cb),
+        check,
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => node.startDaemon((err) => cb(err, node)),
+        (node, cb) => node.stopDaemon(cb),
+        check,
+        (cb) => ipfsd.local(dir, cb),
+        (node, cb) => node.startDaemon((err) => cb(err, node)),
+        (node, cb) => node.stopDaemon(cb),
+        check
+      ], done)
+    })
 
     it('starts the daemon and returns valid API and gateway addresses', (done) => {
       let daemon
