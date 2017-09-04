@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 'use strict'
 
 const { app, ipcMain, BrowserWindow } = require('electron')
