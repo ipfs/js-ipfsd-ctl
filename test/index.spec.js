@@ -438,11 +438,13 @@ describe('daemons', () => {
       const check = (cb) => {
         // skip on windows
         // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326983530
-        if (!isWindows && fs.existsSync(path.join(dir, 'repo.lock'))) {
-          cb(new Error('repo.lock not removed'))
-        }
-        if (fs.existsSync(path.join(dir, 'api'))) {
-          cb(new Error('api file not removed'))
+        if (!isWindows) {
+          if (fs.existsSync(path.join(dir, 'repo.lock'))) {
+            cb(new Error('repo.lock not removed'))
+          }
+          if (fs.existsSync(path.join(dir, 'api'))) {
+            cb(new Error('api file not removed'))
+          }
         }
         cb()
       }
