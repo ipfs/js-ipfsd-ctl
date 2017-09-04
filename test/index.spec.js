@@ -390,17 +390,8 @@ describe('daemons', () => {
         if (err) throw err
 
         const added = res[res.length - 1]
-        expect(res.length).to.equal(2)
-        expect(added).to.have.property('path', 'fixtures')
-        expect(added).to.have.property(
-          'hash',
-          'QmXkiTdnfRJjiQREtF5dWf2X4V9awNHQSn9YGofwVY4qUU'
-        )
-        expect(res[0]).to.have.property('path', 'fixtures/test.txt')
-        expect(res[0]).to.have.property(
-          'hash',
-          'Qmf412jQZiuVUtdgnB36FXFX7xg5V6KEbSJ4dpQuhkLyfD'
-        )
+
+        // Temporary: Need to see what is going on on windows
         expect(res).to.deep.equal([
           {
             path: 'fixtures/test.txt',
@@ -413,6 +404,18 @@ describe('daemons', () => {
             size: 73
           }
         ])
+
+        expect(res.length).to.equal(2)
+        expect(added).to.have.property('path', 'fixtures')
+        expect(added).to.have.property(
+          'hash',
+          'QmXkiTdnfRJjiQREtF5dWf2X4V9awNHQSn9YGofwVY4qUU'
+        )
+        expect(res[0]).to.have.property('path', 'fixtures/test.txt')
+        expect(res[0]).to.have.property(
+          'hash',
+          'Qmf412jQZiuVUtdgnB36FXFX7xg5V6KEbSJ4dpQuhkLyfD'
+        )
         done()
       })
     })
