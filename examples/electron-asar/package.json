@@ -1,0 +1,16 @@
+{
+  "name": "test-ipfs-app",
+  "private": true,
+  "main": "./app.js",
+  "dependencies": {
+    "ipfsd-ctl": "thisconnect/js-ipfsd-ctl#asar-unpacked"
+  },
+  "devDependencies": {
+    "electron": "^1.7.6",
+    "electron-packager": "^9.0.0"
+  },
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-packager ./ --overwrite --asar.unpackDir=node_modules/go-ipfs-dep"
+  }
+}
