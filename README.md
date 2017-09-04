@@ -50,6 +50,21 @@ If you need want to use an existing ipfs installation you can set `$IPFS_EXEC=/p
 
 For more details see https://ipfs.github.io/js-ipfsd-ctl/.
 
+### Packaging
+
+`ipfsd-ctl` can be packaged in Electron applications, but the ipfs binary
+has to be excluded from asar (Electron Archives),
+[read more about unpack files from asar](https://electron.atom.io/docs/tutorial/application-packaging/#adding-unpacked-files-in-asar-archive).
+`ipfsd-ctl` will try to detect if used from within an `app.asar` archive
+and tries to resolve ipfs from `app.asar.unpacked`. The ipfs binary is part of
+the `go-ipfs-dep` module.
+
+```bash
+electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep
+```
+
+See [electron asar example](https://github.com/ipfs/js-ipfsd-ctl/tree/master/examples/electron-asar/)
+
 ## Contribute
 
 Feel free to join in. All welcome. Open an [issue](https://github.com/ipfs/js-ipfsd-ctl/issues)!

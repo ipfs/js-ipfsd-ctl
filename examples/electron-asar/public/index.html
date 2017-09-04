@@ -1,0 +1,21 @@
+<!doctype html>
+<title>loading</title>
+<button>test ipfs app</button>
+<script>
+const { ipcRenderer } = require('electron')
+
+ipcRenderer.on('message', (event, msg) => appendPre(msg))
+ipcRenderer.on('error', (event, err) => appendPre(err))
+
+document.querySelector('button')
+  .addEventListener('click', () => {
+    ipcRenderer.once('id', (event, id) => appendPre(id))
+    ipcRenderer.send('start')
+  })
+
+function appendPre(data) {
+  const pre = document.createElement('pre')
+  pre.textContent = data
+  document.body.appendChild(pre)
+}
+</script>

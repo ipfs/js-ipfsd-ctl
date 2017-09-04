@@ -19,7 +19,15 @@ const GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 function findIpfsExecutable () {
   const rootPath = process.env.testpath ? process.env.testpath : __dirname
 
-  const appRoot = path.join(rootPath, '..')
+  let appRoot = path.join(rootPath, '..')
+  // If inside <appname>.asar try to load from .asar.unpacked
+  // this only works if asar was built with
+  // asar --unpack-dir=node_modules/go-ipfs-dep/* (not tested)
+  // or
+  // electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep
+  if (appRoot.includes(`.asar${path.sep}`)) {
+    appRoot = appRoot.replace(`.asar${path.sep}`, `.asar.unpacked${path.sep}`)
+  }
   const depPath = path.join('go-ipfs-dep', 'go-ipfs', 'ipfs')
   const npm3Path = path.join(appRoot, '../', depPath)
   const npm2Path = path.join(appRoot, 'node_modules', depPath)
