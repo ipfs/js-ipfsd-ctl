@@ -482,11 +482,11 @@ describe('daemons', () => {
 
         expect(daemon).to.have.property('apiAddr')
         expect(daemon).to.have.property('gatewayAddr')
-        expect(multiaddr.isMultiaddr(daemon.apiAddr)).to.equal(true)
-        expect(multiaddr.isMultiaddr(daemon.gatewayAddr)).to.equal(true)
-        expect(daemon.apiAddr).to.not.equal(null)
-        expect(daemon.gatewayAddr).to.not.equal(null)
 
+        expect(daemon.apiAddr).to.not.equal(null)
+        expect(multiaddr.isMultiaddr(daemon.apiAddr)).to.equal(true)
+        expect(daemon.gatewayAddr).to.not.equal(null)
+        expect(multiaddr.isMultiaddr(daemon.gatewayAddr)).to.equal(true)
         expect(res).to.have.property('apiHost')
         expect(res).to.have.property('apiPort')
         expect(res).to.have.property('gatewayHost')
