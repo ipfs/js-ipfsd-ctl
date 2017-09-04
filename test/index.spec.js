@@ -384,6 +384,15 @@ describe('daemons', () => {
       })
     })
 
+    // skip on windows for now
+    // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
+    // fails on windows see https://github.com/ipfs/js-ipfs-api/issues/408
+    if (os.platform() === 'win32') {
+      it.skip('uses the correct ipfs-api', (done) => {})
+
+      return // does not continue this test on win
+    }
+
     // NOTE: if you change ./fixtures, the hash will need to be changed
     it('uses the correct ipfs-api', (done) => {
       ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), { recursive: true }, (err, res) => {
