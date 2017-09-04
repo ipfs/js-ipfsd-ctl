@@ -20,6 +20,8 @@ const os = require('os')
 const exec = require('../src/exec')
 const ipfsd = require('../src')
 
+const isWindows = os.platform() === 'win32'
+
 describe('ipfs executable path', () => {
   let Node
 
@@ -387,9 +389,8 @@ describe('daemons', () => {
     // skip on windows for now
     // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
     // fails on windows see https://github.com/ipfs/js-ipfs-api/issues/408
-    if (os.platform() === 'win32') {
-      it.skip('uses the correct ipfs-api', (done) => {})
-
+    if (isWindows) {
+      it.skip('uses the correct ipfs-api')
       return // does not continue this test on win
     }
 
@@ -431,35 +432,40 @@ describe('daemons', () => {
   })
 
   describe('startDaemon', () => {
-    it('start and stop', (done) => {
-      const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
+    // skip on windows
+    // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326983530
+    if (isWindows) it.skip('start and stop')
+    else {
+      it('start and stop', (done) => {
+        const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
 
-      const check = (cb) => {
-        if (fs.existsSync(path.join(dir, 'repo.lock'))) {
-          cb(new Error('repo.lock not removed'))
+        const check = (cb) => {
+          if (fs.existsSync(path.join(dir, 'repo.lock'))) {
+            cb(new Error('repo.lock not removed'))
+          }
+          if (fs.existsSync(path.join(dir, 'api'))) {
+            cb(new Error('api file not removed'))
+          }
+          cb()
         }
-        if (fs.existsSync(path.join(dir, 'api'))) {
-          cb(new Error('api file not removed'))
-        }
-        cb()
-      }
 
-      async.waterfall([
-        (cb) => ipfsd.local(dir, cb),
-        (node, cb) => node.init((err) => cb(err, node)),
-        (node, cb) => node.startDaemon((err) => cb(err, node)),
-        (node, cb) => node.stopDaemon(cb),
-        check,
-        (cb) => ipfsd.local(dir, cb),
-        (node, cb) => node.startDaemon((err) => cb(err, node)),
-        (node, cb) => node.stopDaemon(cb),
-        check,
-        (cb) => ipfsd.local(dir, cb),
-        (node, cb) => node.startDaemon((err) => cb(err, node)),
-        (node, cb) => node.stopDaemon(cb),
-        check
-      ], done)
-    })
+        async.waterfall([
+          (cb) => ipfsd.local(dir, cb),
+          (node, cb) => node.init((err) => cb(err, node)),
+          (node, cb) => node.startDaemon((err) => cb(err, node)),
+          (node, cb) => node.stopDaemon(cb),
+          check,
+          (cb) => ipfsd.local(dir, cb),
+          (node, cb) => node.startDaemon((err) => cb(err, node)),
+          (node, cb) => node.stopDaemon(cb),
+          check,
+          (cb) => ipfsd.local(dir, cb),
+          (node, cb) => node.startDaemon((err) => cb(err, node)),
+          (node, cb) => node.stopDaemon(cb),
+          check
+        ], done)
+      })
+    }
 
     it('starts the daemon and returns valid API and gateway addresses', (done) => {
       let daemon
