@@ -6,7 +6,6 @@ const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const shutdown = require('shutdown')
-const os = require('os')
 const path = require('path')
 const join = path.join
 const once = require('once')
@@ -29,8 +28,7 @@ function findIpfsExecutable () {
   if (appRoot.includes(`.asar${path.sep}`)) {
     appRoot = appRoot.replace(`.asar${path.sep}`, `.asar.unpacked${path.sep}`)
   }
-  const ipfsExecutable = os.platform() === 'win32' ? 'ipfs.exe' : 'ipfs'
-  const depPath = path.join('go-ipfs-dep', 'go-ipfs', ipfsExecutable)
+  const depPath = path.join('go-ipfs-dep', 'go-ipfs', 'ipfs')
   const npm3Path = path.join(appRoot, '../', depPath)
   const npm2Path = path.join(appRoot, 'node_modules', depPath)
 
