@@ -401,6 +401,18 @@ describe('daemons', () => {
           'hash',
           'Qmf412jQZiuVUtdgnB36FXFX7xg5V6KEbSJ4dpQuhkLyfD'
         )
+        expect(res).to.deep.equal([
+          {
+            path: 'fixtures/test.txt',
+            hash: 'Qmf412jQZiuVUtdgnB36FXFX7xg5V6KEbSJ4dpQuhkLyfD',
+            size: 19
+          },
+          {
+            path: 'fixtures',
+            hash: 'QmXkiTdnfRJjiQREtF5dWf2X4V9awNHQSn9YGofwVY4qUU',
+            size: 73
+          }
+        ])
         done()
       })
     })
