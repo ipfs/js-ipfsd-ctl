@@ -467,34 +467,32 @@ describe('daemons', () => {
     })
 
     it('starts the daemon and returns valid API and gateway addresses', (done) => {
-      let daemon
       const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
 
       async.waterfall([
         (cb) => ipfsd.local(dir, cb),
-        (node, cb) => {
-          daemon = node
-          node.init((err) => cb(err, node))
-        },
-        (node, cb) => node.startDaemon((err, api) => cb(err, api))
-      ], (err, res) => {
+        (daemon, cb) => daemon.init((err) => cb(err, daemon)),
+        (daemon, cb) => daemon.startDaemon((err, api) => cb(err, daemon, api))
+      ], (err, daemon, api) => {
         expect(err).to.not.exist()
 
+        // Check for props in daemon
         expect(daemon).to.have.property('apiAddr')
         expect(daemon).to.have.property('gatewayAddr')
-
         expect(daemon.apiAddr).to.not.equal(null)
         expect(multiaddr.isMultiaddr(daemon.apiAddr)).to.equal(true)
         expect(daemon.gatewayAddr).to.not.equal(null)
         expect(multiaddr.isMultiaddr(daemon.gatewayAddr)).to.equal(true)
-        expect(res).to.have.property('apiHost')
-        expect(res).to.have.property('apiPort')
-        expect(res).to.have.property('gatewayHost')
-        expect(res).to.have.property('gatewayPort')
-        expect(res.apiHost).to.equal('127.0.0.1')
-        expect(res.apiPort).to.equal('5001')
-        expect(res.gatewayHost).to.equal('127.0.0.1')
-        expect(res.gatewayPort).to.equal('8080')
+
+        // Check for props in ipfs-api instance
+        expect(api).to.have.property('apiHost')
+        expect(api).to.have.property('apiPort')
+        expect(api).to.have.property('gatewayHost')
+        expect(api).to.have.property('gatewayPort')
+        expect(api.apiHost).to.equal('127.0.0.1')
+        expect(api.apiPort).to.equal('5001')
+        expect(api.gatewayHost).to.equal('127.0.0.1')
+        expect(api.gatewayPort).to.equal('8080')
 
         daemon.stopDaemon(done)
       })
