@@ -20,8 +20,8 @@ const ipfsd = require('../src')
 
 const isWindows = os.platform() === 'win32'
 
-describe('daemons', () => {
-  describe('local node', () => {
+describe('daemon spawning', () => {
+  describe('local daemon', () => {
     const repoPath = '/tmp/ipfsd-ctl-test'
     const addr = '/ip4/127.0.0.1/tcp/5678'
     const config = {
@@ -47,7 +47,7 @@ describe('daemons', () => {
     })
   })
 
-  describe('disposable node', () => {
+  describe('disposable daemon', () => {
     const blorb = Buffer.from('blorb')
     let ipfs
     let store
@@ -67,7 +67,7 @@ describe('daemons', () => {
       ], done)
     })
 
-    describe('with local api', () => {
+    describe('without api instance (.disposable)', () => {
       before((done) => {
         async.waterfall([
           (cb) => ipfsd.disposable(cb),
@@ -98,12 +98,10 @@ describe('daemons', () => {
       })
     })
 
-    describe('disposableApi', () => {
+    describe('with api instance (.disposableApi)', () => {
       before((done) => {
         ipfsd.disposableApi((err, api) => {
-          if (err) {
-            done(err)
-          }
+          expect(err).to.not.exist()
 
           ipfs = api
           done()
@@ -118,11 +116,11 @@ describe('daemons', () => {
 
       it('should be able to store objects', () => {
         expect(store)
-          .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
+          .to.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
       })
 
       it('should be able to retrieve objects', () => {
-        expect(retrieve.toString()).to.be.eql('blorb')
+        expect(retrieve.toString()).to.equal('blorb')
       })
     })
   })
@@ -157,7 +155,7 @@ describe('daemons', () => {
 
       before((done) => {
         node.startDaemon((err, res) => {
-          if (err) throw err
+          expect(err).to.not.exist()
 
           pid = node.daemonPid()
           ipfs = res
@@ -178,11 +176,10 @@ describe('daemons', () => {
 
       before((done) => {
         node.stopDaemon((err) => {
-          if (err) {
-            return done(err)
-          }
+          expect(err).to.not.exist()
           stopped = true
         })
+
         // make sure it's not still running
         const poll = setInterval(() => {
           exec('kill', ['-0', pid], {cleanup: true}, {
@@ -298,9 +295,7 @@ describe('daemons', () => {
 
     it('should give an error if setting an invalid config value', (done) => {
       ipfsNode.setConfig('Bootstrap', 'true', (err) => {
-        expect(err.message).to.match(
-           /failed to set config value/
-        )
+        expect(err.message).to.match(/failed to set config value/)
         done()
       })
     })
@@ -330,9 +325,9 @@ describe('daemons', () => {
 
     before((done) => {
       ipfsd.disposable((err, node) => {
-        if (err) throw err
+        expect(err).to.not.exist()
         node.startDaemon((err, ignore) => {
-          if (err) throw err
+          expect(err).to.not.exist()
           ipfs = ipfsApi(node.apiAddr)
           done()
         })
@@ -342,15 +337,13 @@ describe('daemons', () => {
     // skip on windows for now
     // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
     // fails on windows see https://github.com/ipfs/js-ipfs-api/issues/408
-    if (isWindows) {
-      it.skip('uses the correct ipfs-api')
-      return // does not continue this test on win
-    }
+    if (isWindows) { return it.skip('uses the correct ipfs-api') }
 
-    // NOTE: if you change ./fixtures, the hash will need to be changed
     it('uses the correct ipfs-api', (done) => {
-      ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), { recursive: true }, (err, res) => {
-        if (err) throw err
+      ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), {
+        recursive: true
+      }, (err, res) => {
+        expect(err).to.not.exist()
 
         const added = res[res.length - 1]
 
