@@ -94,7 +94,7 @@ const IpfsDaemonController = {
   },
 
   /**
-   * Create a new disposable node and already start the daemon.
+   * Create a new disposable node and already started the daemon.
    *
    * @memberof IpfsDaemonController
    * @param {Object} [opts={}]
