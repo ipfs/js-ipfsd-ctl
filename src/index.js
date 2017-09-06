@@ -3,7 +3,7 @@
 const os = require('os')
 const join = require('path').join
 
-const Node = require('./node')
+const Node = require('./daemon')
 
 const defaultOptions = {
   'Addresses.Swarm': ['/ip4/0.0.0.0/tcp/0'],

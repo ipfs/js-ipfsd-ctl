@@ -226,22 +226,22 @@ class Node {
         },
         data: (data) => {
           const str = String(data).trim()
-          const match = str.match(/API server listening on (.*)/)
-          const gwmatch = str.match(/Gateway (.*) listening on (.*)/)
+          const apiMatch = str.match(/API server listening on (.*)/)
+          const gwMatch = str.match(/Gateway (.*) listening on (.*)/)
 
-          if (match) {
-            this._apiAddr = multiaddr(match[1])
-            this.api = ipfs(match[1])
+          if (apiMatch && gwMatch) {
+            this._apiAddr = multiaddr(apiMatch[1])
+            this.api = ipfs(apiMatch[1])
             this.api.apiHost = this.apiAddr.nodeAddress().address
             this.api.apiPort = this.apiAddr.nodeAddress().port
 
-            if (gwmatch) {
-              this._gatewayAddr = multiaddr(gwmatch[2])
-              this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-              this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
-            }
+            this._gatewayAddr = multiaddr(gwMatch[2])
+            this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+            this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
 
             callback(null, this.api)
+          } else {
+            callback(new Error('Daemon did not start properly'))
           }
         }
       })

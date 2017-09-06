@@ -9,10 +9,8 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const ipfsApi = require('ipfs-api')
 const multiaddr = require('multiaddr')
-const Buffer = require('safe-buffer').Buffer
 const fs = require('fs')
 const rimraf = require('rimraf')
-const mkdirp = require('mkdirp')
 const path = require('path')
 const once = require('once')
 const os = require('os')
@@ -21,51 +19,6 @@ const exec = require('../src/exec')
 const ipfsd = require('../src')
 
 const isWindows = os.platform() === 'win32'
-
-describe('ipfs executable path', () => {
-  let Node
-
-  it('has the correct path when installed with npm3', (done) => {
-    process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
-    let npm3Path = '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
-
-    mkdirp(npm3Path, (err) => {
-      if (err) {
-        throw err
-      }
-
-      fs.writeFileSync(path.join(npm3Path, 'ipfs'))
-      delete require.cache[require.resolve('../src/node.js')]
-      Node = require('../src/node.js')
-      var node = new Node()
-      expect(node.exec)
-        .to.eql(path.normalize('/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs'))
-      rimraf('/tmp/ipfsd-ctl-test', done)
-    })
-  })
-
-  it('has the correct path when installed with npm2', (done) => {
-    process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
-    let npm2Path = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs'
-
-    mkdirp(npm2Path, (err) => {
-      if (err) {
-        throw err
-      }
-
-      fs.writeFileSync(path.join(npm2Path, 'ipfs'))
-      delete require.cache[require.resolve('../src/node.js')]
-      Node = require('../src/node.js')
-      var node = new Node()
-      expect(
-        node.exec
-      ).to.be.eql(
-        path.normalize('/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/ipfs')
-      )
-      rimraf('/tmp/ipfsd-ctl-test', done)
-    })
-  })
-})
 
 describe('daemons', () => {
   describe('local node', () => {
