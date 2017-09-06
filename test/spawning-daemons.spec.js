@@ -73,9 +73,7 @@ describe('daemon spawning', () => {
           (cb) => ipfsd.disposable(cb),
           (node, cb) => {
             node.startDaemon((err) => {
-              if (err) {
-                return cb(err)
-              }
+              expect(err).to.not.exist()
               ipfs = ipfsApi(node.apiAddr)
               cb()
             })
