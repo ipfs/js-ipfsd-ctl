@@ -3,8 +3,9 @@
 const os = require('os')
 const join = require('path').join
 
-const Node = require('./node')
+const Node = require('./daemon')
 
+// Note how defaultOptions are Addresses.Swarm and not Addresses: { Swarm : <> }
 const defaultOptions = {
   'Addresses.Swarm': ['/ip4/0.0.0.0/tcp/0'],
   'Addresses.Gateway': '',
@@ -33,6 +34,7 @@ const IpfsDaemonController = {
   version (callback) {
     (new Node()).version(callback)
   },
+
   /**
    * Create a new local node.
    *
@@ -47,37 +49,17 @@ const IpfsDaemonController = {
       callback = opts
       opts = {}
     }
+
     if (!callback) {
       callback = path
       path = process.env.IPFS_PATH ||
         join(process.env.HOME ||
              process.env.USERPROFILE, '.ipfs')
     }
-    process.nextTick(() => {
-      callback(null, new Node(path, opts))
-    })
-  },
-  /**
-   * Create a new disposable node and already start the daemon.
-   *
-   * @memberof IpfsDaemonController
-   * @param {Object} [opts={}]
-   * @param {function(Error, Node)} callback
-   * @returns {undefined}
-   */
-  disposableApi (opts, callback) {
-    if (typeof opts === 'function') {
-      callback = opts
-      opts = {}
-    }
-    this.disposable(opts, (err, node) => {
-      if (err) {
-        return callback(err)
-      }
 
-      node.startDaemon(callback)
-    })
+    process.nextTick(() => callback(null, new Node(path, opts)))
   },
+
   /**
    * Create a new disposable node.
    * This means the repo is created in a temporary location and cleaned up on process exit.
@@ -90,7 +72,7 @@ const IpfsDaemonController = {
   disposable (opts, callback) {
     if (typeof opts === 'function') {
       callback = opts
-      opts = {}
+      opts = defaultOptions
     }
 
     let options = {}
@@ -109,6 +91,29 @@ const IpfsDaemonController = {
     } else {
       node.init((err) => callback(err, node))
     }
+  },
+
+  /**
+   * Create a new disposable node and already started the daemon.
+   *
+   * @memberof IpfsDaemonController
+   * @param {Object} [opts={}]
+   * @param {function(Error, Node)} callback
+   * @returns {undefined}
+   */
+  disposableApi (opts, callback) {
+    if (typeof opts === 'function') {
+      callback = opts
+      opts = defaultOptions
+    }
+
+    this.disposable(opts, (err, node) => {
+      if (err) {
+        return callback(err)
+      }
+
+      node.startDaemon(callback)
+    })
   }
 }
 

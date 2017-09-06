@@ -32,12 +32,15 @@ function findIpfsExecutable () {
   const npm3Path = path.join(appRoot, '../', depPath)
   const npm2Path = path.join(appRoot, 'node_modules', depPath)
 
+  let npmPath
   try {
     fs.statSync(npm3Path)
-    return npm3Path
+    npmPath = npm3Path
   } catch (e) {
-    return npm2Path
+    npmPath = npm2Path
   }
+
+  return npmPath
 }
 
 function setConfigValue (node, key, value, callback) {
@@ -201,10 +204,25 @@ class Node {
 
     callback = once(callback)
 
+    // Check if there were explicit options to want or not want. Otherwise,
+    // assume values will be in the local daemon config
+    // TODO: This should check the local daemon config
+    const want = {
+      gateway: typeof this.opts['Addresses.Gateway'] === 'string'
+        ? this.opts['Addresses.Gateway'].length > 0
+        : true,
+      api: typeof this.opts['Addresses.API'] === 'string'
+        ? this.opts['Addresses.API'].length > 0
+        : true
+    }
+
     parseConfig(this.path, (err, conf) => {
       if (err) {
         return callback(err)
       }
+
+      let output = ''
+      let returned = false
 
       this.subprocess = this._run(args, {env: this.env}, {
         error: (err) => {
@@ -225,18 +243,28 @@ class Node {
           }
         },
         data: (data) => {
-          const str = String(data).trim()
-          const match = str.match(/API server listening on (.*)/)
-          const gwmatch = str.match(/Gateway (.*) listening on (.*)/)
+          output += String(data)
 
-          if (match) {
-            this._apiAddr = multiaddr(match[1])
-            this.api = ipfs(match[1])
-            this.api.apiHost = this.apiAddr.nodeAddress().address
-            this.api.apiPort = this.apiAddr.nodeAddress().port
+          const apiMatch = want.api
+            ? output.trim().match(/API server listening on (.*)/)
+            : true
 
-            if (gwmatch) {
-              this._gatewayAddr = multiaddr(gwmatch[2])
+          const gwMatch = want.gateway
+            ? output.trim().match(/Gateway (.*) listening on (.*)/)
+            : true
+
+          if (apiMatch && gwMatch && !returned) {
+            returned = true
+
+            if (want.api) {
+              this._apiAddr = multiaddr(apiMatch[1])
+              this.api = ipfs(apiMatch[1])
+              this.api.apiHost = this.apiAddr.nodeAddress().address
+              this.api.apiPort = this.apiAddr.nodeAddress().port
+            }
+
+            if (want.gateway) {
+              this._gatewayAddr = multiaddr(gwMatch[2])
               this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
               this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
             }
@@ -255,9 +283,7 @@ class Node {
    * @returns {undefined}
    */
   stopDaemon (callback) {
-    if (!callback) {
-      callback = () => {}
-    }
+    callback = callback || function noop () {}
 
     if (!this.subprocess) {
       return callback()

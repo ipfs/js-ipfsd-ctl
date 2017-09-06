@@ -9,10 +9,8 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const ipfsApi = require('ipfs-api')
 const multiaddr = require('multiaddr')
-const Buffer = require('safe-buffer').Buffer
 const fs = require('fs')
 const rimraf = require('rimraf')
-const mkdirp = require('mkdirp')
 const path = require('path')
 const once = require('once')
 const os = require('os')
@@ -22,53 +20,8 @@ const ipfsd = require('../src')
 
 const isWindows = os.platform() === 'win32'
 
-describe('ipfs executable path', () => {
-  let Node
-
-  it('has the correct path when installed with npm3', (done) => {
-    process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
-    let npm3Path = '/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
-
-    mkdirp(npm3Path, (err) => {
-      if (err) {
-        throw err
-      }
-
-      fs.writeFileSync(path.join(npm3Path, 'ipfs'))
-      delete require.cache[require.resolve('../src/node.js')]
-      Node = require('../src/node.js')
-      var node = new Node()
-      expect(node.exec)
-        .to.eql(path.normalize('/tmp/ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs/ipfs'))
-      rimraf('/tmp/ipfsd-ctl-test', done)
-    })
-  })
-
-  it('has the correct path when installed with npm2', (done) => {
-    process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
-    let npm2Path = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs'
-
-    mkdirp(npm2Path, (err) => {
-      if (err) {
-        throw err
-      }
-
-      fs.writeFileSync(path.join(npm2Path, 'ipfs'))
-      delete require.cache[require.resolve('../src/node.js')]
-      Node = require('../src/node.js')
-      var node = new Node()
-      expect(
-        node.exec
-      ).to.be.eql(
-        path.normalize('/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/ipfs')
-      )
-      rimraf('/tmp/ipfsd-ctl-test', done)
-    })
-  })
-})
-
-describe('daemons', () => {
-  describe('local node', () => {
+describe('daemon spawning', () => {
+  describe('local daemon', () => {
     const repoPath = '/tmp/ipfsd-ctl-test'
     const addr = '/ip4/127.0.0.1/tcp/5678'
     const config = {
@@ -94,7 +47,7 @@ describe('daemons', () => {
     })
   })
 
-  describe('disposable node', () => {
+  describe('disposable daemon', () => {
     const blorb = Buffer.from('blorb')
     let ipfs
     let store
@@ -114,15 +67,13 @@ describe('daemons', () => {
       ], done)
     })
 
-    describe('with local api', () => {
+    describe('without api instance (.disposable)', () => {
       before((done) => {
         async.waterfall([
           (cb) => ipfsd.disposable(cb),
           (node, cb) => {
             node.startDaemon((err) => {
-              if (err) {
-                return cb(err)
-              }
+              expect(err).to.not.exist()
               ipfs = ipfsApi(node.apiAddr)
               cb()
             })
@@ -145,12 +96,10 @@ describe('daemons', () => {
       })
     })
 
-    describe('disposableApi', () => {
+    describe('with api instance (.disposableApi)', () => {
       before((done) => {
         ipfsd.disposableApi((err, api) => {
-          if (err) {
-            done(err)
-          }
+          expect(err).to.not.exist()
 
           ipfs = api
           done()
@@ -165,11 +114,11 @@ describe('daemons', () => {
 
       it('should be able to store objects', () => {
         expect(store)
-          .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
+          .to.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
       })
 
       it('should be able to retrieve objects', () => {
-        expect(retrieve.toString()).to.be.eql('blorb')
+        expect(retrieve.toString()).to.equal('blorb')
       })
     })
   })
@@ -204,7 +153,7 @@ describe('daemons', () => {
 
       before((done) => {
         node.startDaemon((err, res) => {
-          if (err) throw err
+          expect(err).to.not.exist()
 
           pid = node.daemonPid()
           ipfs = res
@@ -225,11 +174,10 @@ describe('daemons', () => {
 
       before((done) => {
         node.stopDaemon((err) => {
-          if (err) {
-            return done(err)
-          }
+          expect(err).to.not.exist()
           stopped = true
         })
+
         // make sure it's not still running
         const poll = setInterval(() => {
           exec('kill', ['-0', pid], {cleanup: true}, {
@@ -345,9 +293,7 @@ describe('daemons', () => {
 
     it('should give an error if setting an invalid config value', (done) => {
       ipfsNode.setConfig('Bootstrap', 'true', (err) => {
-        expect(err.message).to.match(
-           /failed to set config value/
-        )
+        expect(err.message).to.match(/failed to set config value/)
         done()
       })
     })
@@ -377,9 +323,9 @@ describe('daemons', () => {
 
     before((done) => {
       ipfsd.disposable((err, node) => {
-        if (err) throw err
+        expect(err).to.not.exist()
         node.startDaemon((err, ignore) => {
-          if (err) throw err
+          expect(err).to.not.exist()
           ipfs = ipfsApi(node.apiAddr)
           done()
         })
@@ -389,15 +335,13 @@ describe('daemons', () => {
     // skip on windows for now
     // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
     // fails on windows see https://github.com/ipfs/js-ipfs-api/issues/408
-    if (isWindows) {
-      it.skip('uses the correct ipfs-api')
-      return // does not continue this test on win
-    }
+    if (isWindows) { return it.skip('uses the correct ipfs-api') }
 
-    // NOTE: if you change ./fixtures, the hash will need to be changed
     it('uses the correct ipfs-api', (done) => {
-      ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), { recursive: true }, (err, res) => {
-        if (err) throw err
+      ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), {
+        recursive: true
+      }, (err, res) => {
+        expect(err).to.not.exist()
 
         const added = res[res.length - 1]
 
@@ -467,34 +411,32 @@ describe('daemons', () => {
     })
 
     it('starts the daemon and returns valid API and gateway addresses', (done) => {
-      let daemon
       const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
 
       async.waterfall([
         (cb) => ipfsd.local(dir, cb),
-        (node, cb) => {
-          daemon = node
-          node.init((err) => cb(err, node))
-        },
-        (node, cb) => node.startDaemon((err, api) => cb(err, api))
-      ], (err, res) => {
+        (daemon, cb) => daemon.init((err) => cb(err, daemon)),
+        (daemon, cb) => daemon.startDaemon((err, api) => cb(err, daemon, api))
+      ], (err, daemon, api) => {
         expect(err).to.not.exist()
 
+        // Check for props in daemon
         expect(daemon).to.have.property('apiAddr')
         expect(daemon).to.have.property('gatewayAddr')
-        expect(multiaddr.isMultiaddr(daemon.apiAddr)).to.equal(true)
-        expect(multiaddr.isMultiaddr(daemon.gatewayAddr)).to.equal(true)
         expect(daemon.apiAddr).to.not.equal(null)
+        expect(multiaddr.isMultiaddr(daemon.apiAddr)).to.equal(true)
         expect(daemon.gatewayAddr).to.not.equal(null)
+        expect(multiaddr.isMultiaddr(daemon.gatewayAddr)).to.equal(true)
 
-        expect(res).to.have.property('apiHost')
-        expect(res).to.have.property('apiPort')
-        expect(res).to.have.property('gatewayHost')
-        expect(res).to.have.property('gatewayPort')
-        expect(res.apiHost).to.equal('127.0.0.1')
-        expect(res.apiPort).to.equal('5001')
-        expect(res.gatewayHost).to.equal('127.0.0.1')
-        expect(res.gatewayPort).to.equal('8080')
+        // Check for props in ipfs-api instance
+        expect(api).to.have.property('apiHost')
+        expect(api).to.have.property('apiPort')
+        expect(api).to.have.property('gatewayHost')
+        expect(api).to.have.property('gatewayPort')
+        expect(api.apiHost).to.equal('127.0.0.1')
+        expect(api.apiPort).to.equal('5001')
+        expect(api.gatewayHost).to.equal('127.0.0.1')
+        expect(api.gatewayPort).to.equal('8080')
 
         daemon.stopDaemon(done)
       })
