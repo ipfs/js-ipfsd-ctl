@@ -243,14 +243,14 @@ class Node {
           }
         },
         data: (data) => {
-          output += String(data).trim()
+          output += String(data)
 
           const apiMatch = want.api
-            ? output.match(/API server listening on (.*)/)
+            ? output.trim().match(/API server listening on (.*)/)
             : true
 
           const gwMatch = want.gateway
-            ? output.match(/Gateway (.*) listening on (.*)/)
+            ? output.trim().match(/Gateway (.*) listening on (.*)/)
             : true
 
           if (apiMatch && gwMatch && !returned) {
@@ -270,8 +270,6 @@ class Node {
             }
 
             callback(null, this.api)
-          } else {
-            console.log('bit more')
           }
         }
       })
