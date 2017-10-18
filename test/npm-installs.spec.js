@@ -32,6 +32,7 @@ describe('ipfs executable path', () => {
 
   it('has the correct path when installed with npm2', (done) => {
     process.env.testpath = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/lib' // fake __dirname
+
     let npm2Path = '/tmp/ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs'
 
     mkdirp(npm2Path, (err) => {
