@@ -61,7 +61,7 @@
     "aegir": "^11.0.2",
     "chai": "^4.1.2",
     "dirty-chai": "^2.0.1",
-    "is-running": "2.1.0",
+    "is-running": "1.0.5",
     "mkdirp": "^0.5.1",
     "multihashes": "~0.4.10",
     "pre-commit": "^1.2.2",
