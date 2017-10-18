@@ -4,17 +4,17 @@
   "description": "simple controls for an ipfs node",
   "main": "src/index.js",
   "scripts": {
-    "lint": "aegir-lint",
-    "coverage": "aegir-coverage",
-    "test": "aegir-test --env node",
-    "docs": "aegir-docs",
-    "release": "aegir-release --env node --docs",
-    "release-minor": "aegir-release --type minor --env node --docs",
-    "release-major": "aegir-release --type major --env node --docs",
-    "coverage-publish": "aegir-coverage publish"
+    "lint": "aegir lint",
+    "coverage": "aegir coverage",
+    "test": "aegir test --target node",
+    "docs": "aegir docs",
+    "release": "aegir release --env node --docs",
+    "release-minor": "aegir release --type minor --target node --docs",
+    "release-major": "aegir release --type major --target node --docs",
+    "coverage-publish": "aegir coverage --provider coveralls"
   },
   "engines": {
-    "node": ">=4.2.2",
+    "node": ">=6.0.0",
     "npm": ">=3.0.0"
   },
   "pre-commit": [
@@ -49,21 +49,21 @@
   "license": "MIT",
   "dependencies": {
     "async": "^2.5.0",
-    "go-ipfs-dep": "0.4.10",
-    "ipfs-api": "^14.3.2",
-    "multiaddr": "^3.0.0",
+    "go-ipfs-dep": "0.4.11",
+    "ipfs-api": "^14.3.5",
+    "multiaddr": "^3.0.1",
     "once": "^1.4.0",
-    "rimraf": "^2.6.1",
+    "rimraf": "^2.6.2",
     "shutdown": "^0.3.0",
     "subcomandante": "^1.0.5"
   },
   "devDependencies": {
-    "aegir": "^11.0.2",
+    "aegir": "^12.0.8",
     "chai": "^4.1.2",
     "dirty-chai": "^2.0.1",
-    "is-running": "1.0.5",
+    "is-running": "2.1.0",
     "mkdirp": "^0.5.1",
-    "multihashes": "~0.4.9",
+    "multihashes": "~0.4.10",
     "pre-commit": "^1.2.2",
     "safe-buffer": "^5.1.1"
   },
