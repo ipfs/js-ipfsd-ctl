@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "aegir lint",
     "coverage": "aegir coverage",
-    "test": "aegir test -t node",
+    "test": "aegir test --target node",
     "docs": "aegir docs",
     "release": "aegir release -t node",
     "release-minor": "aegir release --type minor -t node",
@@ -52,7 +52,6 @@
   "dependencies": {
     "async": "^2.6.0",
     "detect-node": "^2.0.3",
-    "eslint-config-standard-jsx": "^4.0.2",
     "go-ipfs-dep": "0.4.11",
     "ipfs-api": "^17.1.1",
     "multiaddr": "^3.0.1",

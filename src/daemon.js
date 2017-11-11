@@ -14,13 +14,9 @@ const isWindows = os.platform() === 'win32'
 
 const exec = require('./exec')
 
-const ipfsDefaultPath = findIpfsExecutable()
-
 const GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
 
-function findIpfsExecutable () {
-  const rootPath = process.env.testpath ? process.env.testpath : __dirname
-
+function findIpfsExecutable (isJs, rootPath) {
   let appRoot = path.join(rootPath, '..')
   // If inside <appname>.asar try to load from .asar.unpacked
   // this only works if asar was built with
@@ -31,7 +27,9 @@ function findIpfsExecutable () {
     appRoot = appRoot.replace(`.asar${path.sep}`, `.asar.unpacked${path.sep}`)
   }
   const appName = isWindows ? 'ipfs.exe' : 'ipfs'
-  const depPath = path.join('go-ipfs-dep', 'go-ipfs', appName)
+  const depPath = isJs
+    ? path.join('ipfs', 'src', 'cli', 'bin.js')
+    : path.join('go-ipfs-dep', 'go-ipfs', appName)
   const npm3Path = path.join(appRoot, '../', depPath)
   const npm2Path = path.join(appRoot, 'node_modules', depPath)
 
@@ -92,13 +90,17 @@ class Node {
    * @returns {Node}
    */
   constructor (path, opts, disposable) {
-    this.path = path
-    this.opts = opts || {}
-    this.exec = process.env.IPFS_EXEC || ipfsDefaultPath
+    const rootPath = process.env.testpath ? process.env.testpath : __dirname
+    const isJS = process.env.IPFS_JS && process.env.IPFS_JS === 'true'
+
+    this.path = path || null
+    this.opts = opts || { isJs: false }
+    this.isJs = this.opts.isJs || isJS || false
+    this.exec = process.env.IPFS_EXEC || findIpfsExecutable(this.isJs, rootPath)
     this.subprocess = null
     this.initialized = fs.existsSync(path)
     this.clean = true
-    this.env = Object.assign({}, process.env, { IPFS_PATH: path })
+    this.env = path ? Object.assign({}, process.env, { IPFS_PATH: path }) : process.env
     this.disposable = disposable
     this._apiAddr = null
     this._gatewayAddr = null
@@ -251,11 +253,11 @@ class Node {
           output += String(data)
 
           const apiMatch = want.api
-            ? output.trim().match(/API server listening on (.*)/)
+            ? output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
             : true
 
           const gwMatch = want.gateway
-            ? output.trim().match(/Gateway (.*) listening on (.*)/)
+            ? output.trim().match(/Gateway (?:.*)? 27listening on[:]?(.*)/)
             : true
 
           if (apiMatch && gwMatch && !returned) {
