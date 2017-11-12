@@ -22,7 +22,7 @@ const isWindows = os.platform() === 'win32'
 
 describe('daemon spawning', () => {
   describe('local daemon', () => {
-    const repoPath = path.join(os.tmpdir(), 'ipfsd-ctl-test');
+    const repoPath = path.join(os.tmpdir(), 'ipfsd-ctl-test')
     const addr = '/ip4/127.0.0.1/tcp/5678'
     const config = {
       Addresses: {
