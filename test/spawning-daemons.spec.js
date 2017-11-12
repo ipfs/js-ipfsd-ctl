@@ -22,7 +22,7 @@ const isWindows = os.platform() === 'win32'
 
 describe('daemon spawning', () => {
   describe('local daemon', () => {
-    const repoPath = '/tmp/ipfsd-ctl-test'
+    const repoPath = path.join(os.tmpdir(), 'ipfsd-ctl-test');
     const addr = '/ip4/127.0.0.1/tcp/5678'
     const config = {
       Addresses: {
@@ -199,7 +199,7 @@ describe('daemon spawning', () => {
   })
 
   describe('setting up and init a local node', () => {
-    const testpath1 = '/tmp/ipfstestpath1'
+    const testpath1 = path.join(os.tmpdir(), 'ipfstestpath1')
 
     describe('cleanup', () => {
       before((done) => {
@@ -207,7 +207,7 @@ describe('daemon spawning', () => {
       })
 
       it('should not have a directory', () => {
-        expect(fs.existsSync('/tmp/ipfstestpath1')).to.be.eql(false)
+        expect(fs.existsSync(testpath1)).to.be.eql(false)
       })
     })
 
