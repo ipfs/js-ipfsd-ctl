@@ -42,7 +42,7 @@ function findIpfsExecutable () {
     return npm2Path
   }
 
-  throw new Error("Cannot find the IPFS executable")
+  throw new Error('Cannot find the IPFS executable')
 }
 
 function setConfigValue (node, key, value, callback) {
