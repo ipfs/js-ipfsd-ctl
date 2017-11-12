@@ -9,6 +9,8 @@ const shutdown = require('shutdown')
 const path = require('path')
 const join = path.join
 const once = require('once')
+const os = require('os')
+const isWindows = os.platform() === 'win32'
 
 const exec = require('./exec')
 
@@ -28,19 +30,19 @@ function findIpfsExecutable () {
   if (appRoot.includes(`.asar${path.sep}`)) {
     appRoot = appRoot.replace(`.asar${path.sep}`, `.asar.unpacked${path.sep}`)
   }
-  const depPath = path.join('go-ipfs-dep', 'go-ipfs', 'ipfs')
+  const appName = isWindows ? 'ipfs.exe' : 'ipfs'
+  const depPath = path.join('go-ipfs-dep', 'go-ipfs', appName)
   const npm3Path = path.join(appRoot, '../', depPath)
   const npm2Path = path.join(appRoot, 'node_modules', depPath)
 
-  let npmPath
-  try {
-    fs.statSync(npm3Path)
-    npmPath = npm3Path
-  } catch (e) {
-    npmPath = npm2Path
+  if (fs.existsSync(npm3Path)) {
+    return npm3Path
+  }
+  if (fs.existsSync(npm2Path)) {
+    return npm2Path
   }
 
-  return npmPath
+  throw new Error('Cannot find the IPFS executable')
 }
 
 function setConfigValue (node, key, value, callback) {
