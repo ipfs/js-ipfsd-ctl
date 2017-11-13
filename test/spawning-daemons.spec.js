@@ -18,10 +18,13 @@ const os = require('os')
 const exec = require('../src/exec')
 const ipfsd = require('../src')
 
+const VERSION_STRING = process.env.IPFS_JS ? 'js-ipfs version: 0.26.0' : 'ipfs version 0.4.11'
+const API_PORT = process.env.IPFS_JS ? '5002' : '5001'
+const GW_PORT = process.env.IPFS_JS ? '9090' : '8080'
+
 const isWindows = os.platform() === 'win32'
 describe('daemon spawning', function () {
   this.timeout(60 * 1000)
-
   describe('local daemon', () => {
     const repoPath = path.join(os.tmpdir(), 'ipfsd-ctl-test')
     const addr = '/ip4/127.0.0.1/tcp/5678'
@@ -292,11 +295,15 @@ describe('daemon spawning', function () {
       })
     })
 
-    it('should give an error if setting an invalid config value', (done) => {
-      ipfsNode.setConfig('Bootstrap', 'true', (err) => {
-        expect(err.message).to.match(/failed to set config value/)
-        done()
-      })
+    it('should give an error if setting an invalid config value', function (done) {
+      if (!process.env.IPFS_JS) { // TODO: handle proper truthy/falsy
+        ipfsNode.setConfig('Bootstrap', 'true', (err) => {
+          expect(err.message).to.match(/failed to set config value/)
+          done()
+        })
+      } else {
+        this.skip()
+      }
     })
   })
 
@@ -314,7 +321,7 @@ describe('daemon spawning', function () {
   it('prints the version', (done) => {
     ipfsd.version((err, version) => {
       expect(err).to.not.exist()
-      expect(version).to.equal('ipfs version 0.4.13')
+      expect(version).to.be.eql(VERSION_STRING)
       done()
     })
   })
@@ -372,7 +379,8 @@ describe('daemon spawning', function () {
   })
 
   describe('startDaemon', () => {
-    it('start and stop', (done) => {
+    it('start and stop', function (done) {
+      this.timeout(20000)
       const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
 
       const check = (cb) => {
@@ -406,7 +414,9 @@ describe('daemon spawning', function () {
       ], done)
     })
 
-    it('starts the daemon and returns valid API and gateway addresses', (done) => {
+    it('starts the daemon and returns valid API and gateway addresses', function (done) {
+      this.timeout(20000)
+
       const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
 
       async.waterfall([
@@ -430,26 +440,30 @@ describe('daemon spawning', function () {
         expect(api).to.have.property('gatewayHost')
         expect(api).to.have.property('gatewayPort')
         expect(api.apiHost).to.equal('127.0.0.1')
-        expect(api.apiPort).to.equal('5001')
+        console.log(API_PORT)
+        expect(api.apiPort).to.equal(API_PORT)
         expect(api.gatewayHost).to.equal('127.0.0.1')
-        expect(api.gatewayPort).to.equal('8080')
+        expect(api.gatewayPort).to.equal(GW_PORT)
 
         daemon.stopDaemon(done)
       })
     })
 
-    it('allows passing flags', (done) => {
-      ipfsd.disposable((err, node) => {
-        expect(err).to.not.exist()
+    it('allows passing flags', function (done) {
+      if (!process.env.IPFS_JS) {
+        ipfsd.disposable((err, node) => {
+          expect(err).to.not.exist()
+          node.startDaemon(['--should-not-exist'], (err) => {
+            expect(err).to.exist()
+            expect(err.message)
+              .to.match(/Unrecognized option 'should-not-exist'/)
 
-        node.startDaemon(['--should-not-exist'], (err) => {
-          expect(err).to.exist()
-          expect(err.message)
-            .to.match(/Unrecognized option 'should-not-exist'/)
-
-          done()
+            done()
+          })
         })
-      })
+      } else {
+        this.skip()
+      }
     })
   })
 })

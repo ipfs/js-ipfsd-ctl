@@ -14,7 +14,7 @@ const isWindows = os.platform() === 'win32'
 
 const exec = require('./exec')
 
-const GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
+const GRACE_PERIOD = 10500 // amount of ms to wait before sigkill
 
 function findIpfsExecutable (isJs, rootPath) {
   let appRoot = path.join(rootPath, '..')
@@ -91,11 +91,12 @@ class Node {
    */
   constructor (path, opts, disposable) {
     const rootPath = process.env.testpath ? process.env.testpath : __dirname
-    const isJS = process.env.IPFS_JS && process.env.IPFS_JS === 'true'
+    const isJS = process.env.IPFS_JS && process.env.IPFS_JS === 'true' // TODO: handle proper truthy/falsy
+
+    this.opts = opts || { isJs: isJS || false }
+    process.env.IPFS_JS = this.opts.isJs
 
     this.path = path || null
-    this.opts = opts || { isJs: false }
-    this.isJs = this.opts.isJs || isJS || false
     this.exec = process.env.IPFS_EXEC || findIpfsExecutable(this.isJs, rootPath)
     this.subprocess = null
     this.initialized = fs.existsSync(path)
@@ -240,7 +241,7 @@ class Node {
             .filter(Boolean)
             .slice(-1)[0] || ''
 
-          if (input.match('daemon is running')) {
+          if (input.match(/(?:daemon is running|Daemon is ready)/)) {
             // we're good
             return callback(null, this.api)
           }
@@ -257,7 +258,7 @@ class Node {
             : true
 
           const gwMatch = want.gateway
-            ? output.trim().match(/Gateway (?:.*)? 27listening on[:]?(.*)/)
+            ? output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
             : true
 
           if (apiMatch && gwMatch && !returned) {
@@ -271,7 +272,7 @@ class Node {
             }
 
             if (want.gateway) {
-              this._gatewayAddr = multiaddr(gwMatch[2])
+              this._gatewayAddr = multiaddr(gwMatch[1])
               this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
               this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
             }
