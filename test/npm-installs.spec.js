@@ -50,9 +50,7 @@ describe('ipfs executable path', () => {
       const node = new Daemon()
 
       expect(node.exec)
-        .to.eql(
-        path.join(tmp, `ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/${appName}`)
-      )
+        .to.eql(path.join(tmp, `ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs/${appName}`))
       rimraf(path.join(tmp, 'ipfsd-ctl-test'), done)
     })
   })

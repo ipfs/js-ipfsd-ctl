@@ -54,7 +54,7 @@ const IpfsDaemonController = {
       callback = path
       path = process.env.IPFS_PATH ||
         join(process.env.HOME ||
-             process.env.USERPROFILE, '.ipfs')
+          process.env.USERPROFILE, '.ipfs')
     }
 
     process.nextTick(() => callback(null, new Node(path, opts)))
@@ -86,7 +86,7 @@ const IpfsDaemonController = {
     const node = new Node(repoPath, options, disposable)
 
     if (typeof options.init === 'boolean' &&
-        options.init === false) {
+      options.init === false) {
       process.nextTick(() => callback(null, node))
     } else {
       node.init((err) => callback(err, node))
