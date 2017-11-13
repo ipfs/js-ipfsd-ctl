@@ -10,6 +10,8 @@ const path = require('path')
 const join = path.join
 const once = require('once')
 const os = require('os')
+const truthy = require('truthy')
+
 const isWindows = os.platform() === 'win32'
 
 const exec = require('./exec')
@@ -91,7 +93,7 @@ class Node {
    */
   constructor (path, opts, disposable) {
     const rootPath = process.env.testpath ? process.env.testpath : __dirname
-    const isJS = process.env.IPFS_JS && process.env.IPFS_JS === 'true' // TODO: handle proper truthy/falsy
+    const isJS = truthy(process.env.IPFS_JS)
 
     this.opts = opts || { isJs: isJS || false }
     process.env.IPFS_JS = this.opts.isJs
