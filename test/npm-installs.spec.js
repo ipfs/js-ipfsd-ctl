@@ -17,8 +17,11 @@ describe('ipfs executable path', () => {
   const tmp = os.tmpdir()
   const appName = isWindows ? 'ipfs.exe' : 'ipfs'
 
+  const oldPath = process.env.testpath
+  before(() => { process.env.testpath = path.join(tmp, 'ipfsd-ctl-test/node_modules/ipfsd-ctl/lib') }) // fake __dirname
+  after(() => { process.env.testpath = oldPath })
+
   it('has the correct path when installed with npm3', (done) => {
-    process.env.testpath = path.join(tmp, 'ipfsd-ctl-test/node_modules/ipfsd-ctl/lib') // fake __dirname
     let npm3Path = path.join(tmp, 'ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs')
 
     mkdirp(npm3Path, (err) => {
@@ -36,8 +39,6 @@ describe('ipfs executable path', () => {
   })
 
   it('has the correct path when installed with npm2', (done) => {
-    process.env.testpath = path.join(tmp, 'ipfsd-ctl-test/node_modules/ipfsd-ctl/lib') // fake __dirname
-
     let npm2Path = path.join(tmp, 'ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs')
 
     mkdirp(npm2Path, (err) => {

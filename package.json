@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "aegir lint",
     "coverage": "aegir coverage",
-    "test": "aegir test --target node",
+    "test": "aegir test -t node --timeout 50000",
     "docs": "aegir docs",
     "release": "aegir release -t node",
     "release-minor": "aegir release --type minor -t node",
