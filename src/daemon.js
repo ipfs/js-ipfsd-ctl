@@ -49,7 +49,7 @@ function setConfigValue (node, key, value, callback) {
   exec(
     node.exec,
     ['config', key, value, '--json'],
-    {env: node.env},
+    { env: node.env },
     callback
   )
 }
@@ -98,7 +98,7 @@ class Node {
     this.subprocess = null
     this.initialized = fs.existsSync(path)
     this.clean = true
-    this.env = Object.assign({}, process.env, {IPFS_PATH: path})
+    this.env = Object.assign({}, process.env, { IPFS_PATH: path })
     this.disposable = disposable
     this._apiAddr = null
     this._gatewayAddr = null
@@ -152,7 +152,7 @@ class Node {
       this.env.IPFS_PATH = this.path
     }
 
-    this._run(['init', '-b', keySize], {env: this.env}, (err, result) => {
+    this._run(['init', '-b', keySize], { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)
       }
@@ -226,14 +226,14 @@ class Node {
       let output = ''
       let returned = false
 
-      this.subprocess = this._run(args, {env: this.env}, {
+      this.subprocess = this._run(args, { env: this.env }, {
         error: (err) => {
           // Only look at the last error
           const input = String(err)
-                .split('\n')
-                .map((l) => l.trim())
-                .filter(Boolean)
-                .slice(-1)[0] || ''
+            .split('\n')
+            .map((l) => l.trim())
+            .filter(Boolean)
+            .slice(-1)[0] || ''
 
           if (input.match('daemon is running')) {
             // we're good
@@ -348,7 +348,7 @@ class Node {
     async.waterfall([
       (cb) => this._run(
         ['config', key],
-        {env: this.env},
+        { env: this.env },
         cb
       ),
       (config, cb) => {
@@ -371,7 +371,7 @@ class Node {
   setConfig (key, value, callback) {
     this._run(
       ['config', key, value, '--json'],
-      {env: this.env},
+      { env: this.env },
       callback
     )
   }
@@ -386,10 +386,11 @@ class Node {
   replaceConf (file, callback) {
     this._run(
       ['config', 'replace', file],
-      {env: this.env},
+      { env: this.env },
       callback
     )
   }
+
   /**
    * Get the version of ipfs
    *
@@ -397,7 +398,7 @@ class Node {
    * @returns {undefined}
    */
   version (callback) {
-    this._run(['version'], {env: this.env}, callback)
+    this._run(['version'], { env: this.env }, callback)
   }
 }
 
