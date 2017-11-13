@@ -20,7 +20,9 @@ const ipfsd = require('../src')
 
 const isWindows = os.platform() === 'win32'
 
-describe('daemon spawning', () => {
+describe('daemon spawning', function () {
+  this.timeout(20 * 1000)
+  
   describe('local daemon', () => {
     const repoPath = path.join(os.tmpdir(), 'ipfsd-ctl-test')
     const addr = '/ip4/127.0.0.1/tcp/5678'
