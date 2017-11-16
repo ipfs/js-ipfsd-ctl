@@ -53,7 +53,7 @@
     "detect-node": "^2.0.3",
     "eslint-config-standard-jsx": "^4.0.2",
     "go-ipfs-dep": "0.4.11",
-    "ipfs-api": "^14.3.5",
+    "ipfs-api": "^15.1.0",
     "multiaddr": "^3.0.1",
     "once": "^1.4.0",
     "rimraf": "^2.6.2",
