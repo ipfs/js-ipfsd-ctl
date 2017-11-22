@@ -250,10 +250,6 @@ module.exports = () => {
             it('should be initialized', () => {
               expect(node.initialized).to.be.eql(true)
             })
-
-            it('should be initialized', () => {
-              expect(node.initialized).to.be.eql(true)
-            })
           })
         })
       })
@@ -457,6 +453,7 @@ module.exports = () => {
         })
 
         it('allows passing flags', function (done) {
+          // skip in js, since js-ipfs doesn't fail on unrecognized args, it prints the help instead
           if (isJs) {
             this.skip()
           } else {
