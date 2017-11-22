@@ -343,13 +343,6 @@ module.exports = () => {
           })
         })
 
-        // skip on windows for now
-        // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
-        // fails on windows see https://github.com/ipfs/js-ipfs-api/issues/408
-        if (isWindows) {
-          return it.skip('uses the correct ipfs-api')
-        }
-
         it('uses the correct ipfs-api', (done) => {
           ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), {
             recursive: true
