@@ -201,6 +201,9 @@ class Node {
       callback = flags
       flags = []
     }
+    if (typeof flags === 'object' && Object.keys(flags).length === 0) {
+      flags = []
+    }
 
     const args = ['daemon'].concat(flags)
 
