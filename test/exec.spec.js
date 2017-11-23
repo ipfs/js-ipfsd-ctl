@@ -2,7 +2,11 @@
 /* eslint-env mocha */
 'use strict'
 
-const expect = require('chai').expect
+const chai = require('chai')
+const dirtyChai = require('dirty-chai')
+const expect = chai.expect
+chai.use(dirtyChai)
+
 const isrunning = require('is-running')
 const cp = require('child_process')
 const path = require('path')
@@ -57,7 +61,7 @@ function makeCheck (n, done) {
 // exiting as it once was when the test was designed
 // - [ ] Need test vector or figure out why tail changed
 // Ref: https://github.com/ipfs/js-ipfsd-ctl/pull/160#issuecomment-325669206
-describe.skip('exec', () => {
+describe('exec', () => {
   it('SIGTERM kills hang', (done) => {
     const tok = token()
 
