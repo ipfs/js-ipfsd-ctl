@@ -30,8 +30,8 @@ module.exports = (isJs) => {
     const API_PORT = isJs ? '5002' : '5001'
     const GW_PORT = isJs ? '9090' : '8080'
 
-    it.skip('prints the version', (done) => {
-      ipfsdFactory.version((err, version) => {
+    it('prints the version', (done) => {
+      ipfsdFactory.version({ isJs }, (err, version) => {
         expect(err).to.not.exist()
         expect(version).to.be.eql(VERSION_STRING)
         done()

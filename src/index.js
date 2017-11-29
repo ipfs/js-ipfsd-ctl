@@ -20,11 +20,12 @@ const IpfsDaemonController = {
    * Get the version of the currently used go-ipfs binary.
    *
    * @memberof IpfsDaemonController
+   * @param {Object} [opts={}]
    * @param {function(Error, string)} callback
    * @returns {undefined}
    */
-  version (callback) {
-    (new Node()).version(callback)
+  version (opts, callback) {
+    (new Node(opts)).version(callback)
   },
 
   /**
