@@ -330,8 +330,7 @@ module.exports = (isJs) => {
           })
         })
 
-        describe('stopping', function () {
-          this.timeout(20 * 1000) // shutdown grace period is already 10500
+        describe('stopping', () => {
           let stopped = false
 
           before((done) => {
@@ -353,7 +352,9 @@ module.exports = (isJs) => {
             }, 100)
           })
 
-          it('should be stopped', () => {
+          it('should be stopped', function () {
+            this.timeout(20 * 1000) // shutdown grace period is already 10500
+
             expect(node.daemonPid()).to.not.exist()
             expect(stopped).to.equal(true)
             expect(fs.existsSync(path.join(node.path, 'repo.lock'))).to.not.be.ok()
