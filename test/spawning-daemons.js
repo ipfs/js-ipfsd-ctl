@@ -10,87 +10,86 @@ chai.use(dirtyChai)
 const ipfsApi = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const fs = require('fs')
-const rimraf = require('rimraf')
 const path = require('path')
 const once = require('once')
 const os = require('os')
 
 const exec = require('../src/exec')
-const ipfsd = require('../src')
+const ipfsdFactory = require('../src')
 
 const isWindows = os.platform() === 'win32'
 
-module.exports = () => {
-  return (isJs) => {
+function tempDir (isJs) {
+  return path.join(os.tmpdir(), `${isJs ? 'jsipfs' : 'ipfs'}_${String(Math.random()).substr(2)}`)
+}
+
+module.exports = (isJs) => {
+  return () => {
     const VERSION_STRING = isJs ? 'js-ipfs version: 0.26.0' : 'ipfs version 0.4.11'
 
     const API_PORT = isJs ? '5002' : '5001'
     const GW_PORT = isJs ? '9090' : '8080'
 
-    describe('daemon spawning', () => {
-      describe('local daemon', () => {
-        const repoPath = '/tmp/ipfsd-ctl-test'
-        const addr = '/ip4/127.0.0.1/tcp/5678'
-        const config = {
-          Addresses: {
-            API: addr
-          }
-        }
-
-        it('allows passing flags to init', (done) => {
-          async.waterfall([
-            (cb) => ipfsd.local(repoPath, config, cb),
-            (node, cb) => {
-              async.series([
-                (cb) => node.init(cb),
-                (cb) => node.getConfig('Addresses.API', cb)
-              ], (err, res) => {
-                expect(err).to.not.exist()
-                expect(res[1]).to.be.eql(addr)
-                rimraf(repoPath, cb)
-              })
-            }
-          ], done)
-        })
+    it.skip('prints the version', (done) => {
+      ipfsdFactory.version((err, version) => {
+        expect(err).to.not.exist()
+        expect(version).to.be.eql(VERSION_STRING)
+        done()
       })
+    })
 
-      describe('disposable daemon', () => {
-        const blorb = Buffer.from('blorb')
-        let ipfs
-        let store
-        let retrieve
+    describe('daemon spawning', () => {
+      describe('spawn a bare node', () => {
+        let node = null
+        let api = null
 
-        beforeEach((done) => {
-          async.waterfall([
-            (cb) => ipfs.block.put(blorb, cb),
-            (block, cb) => {
-              store = block.cid.toBaseEncodedString()
-              ipfs.block.get(store, cb)
-            },
-            (_block, cb) => {
-              retrieve = _block.data
-              cb()
-            }
-          ], done)
+        after((done) => node.stopDaemon(done))
+
+        it('create node', (done) => {
+          ipfsdFactory.spawn({ isJs, init: false, start: false, disposable: true }, (err, ipfsd) => {
+            expect(err).to.not.exist()
+            expect(ipfsd.ctrl).to.exist()
+            expect(ipfsd.ctl).to.not.exist()
+            node = ipfsd.ctrl
+            done()
+          })
         })
 
-        describe('without api instance (.disposable)', () => {
+        it('init node', (done) => {
+          node.init((err) => {
+            expect(err).to.not.exist()
+            expect(node.initialized).to.be.ok()
+            done()
+          })
+        })
+
+        it('start node', (done) => {
+          node.startDaemon((err, a) => {
+            api = a
+            expect(err).to.not.exist()
+            expect(api).to.exist()
+            expect(api.id).to.exist()
+            done()
+          })
+        })
+
+        describe('should add and retrieve content', () => {
+          const blorb = Buffer.from('blorb')
+          let store
+          let retrieve
+
           before((done) => {
             async.waterfall([
-              (cb) => ipfsd.disposable(cb),
-              (node, cb) => {
-                node.startDaemon((err) => {
-                  expect(err).to.not.exist()
-                  ipfs = ipfsApi(node.apiAddr)
-                  cb()
-                })
+              (cb) => api.block.put(blorb, cb),
+              (block, cb) => {
+                store = block.cid.toBaseEncodedString()
+                api.block.get(store, cb)
+              },
+              (_block, cb) => {
+                retrieve = _block.data
+                cb()
               }
             ], done)
-          })
-
-          it('should have started the daemon and returned an api', () => {
-            expect(ipfs).to.exist()
-            expect(ipfs.id).to.exist()
           })
 
           it('should be able to store objects', () => {
@@ -101,22 +100,11 @@ module.exports = () => {
           it('should be able to retrieve objects', () => {
             expect(retrieve.toString()).to.be.eql('blorb')
           })
-        })
-
-        describe('with api instance (.disposableApi)', () => {
-          before((done) => {
-            ipfsd.disposableApi((err, api) => {
-              expect(err).to.not.exist()
-
-              ipfs = api
-              done()
-            })
-          })
 
           it('should have started the daemon and returned an api with host/port', () => {
-            expect(ipfs).to.have.property('id')
-            expect(ipfs).to.have.property('apiHost')
-            expect(ipfs).to.have.property('apiPort')
+            expect(api).to.have.property('id')
+            expect(api).to.have.property('apiHost')
+            expect(api).to.have.property('apiPort')
           })
 
           it('should be able to store objects', () => {
@@ -130,16 +118,182 @@ module.exports = () => {
         })
       })
 
+      describe('spawn an initialized node', () => {
+        let node = null
+        let api = null
+
+        after((done) => node.stopDaemon(done))
+
+        it('create node and init', (done) => {
+          ipfsdFactory.spawn({ isJs, start: false, disposable: true }, (err, ipfsd) => {
+            expect(err).to.not.exist()
+            expect(ipfsd.ctrl).to.exist()
+            expect(ipfsd.ctl).to.not.exist()
+            node = ipfsd.ctrl
+            done()
+          })
+        })
+
+        it('start node', (done) => {
+          node.startDaemon((err, a) => {
+            api = a
+            expect(err).to.not.exist()
+            expect(api).to.exist()
+            expect(api.id).to.exist()
+            done()
+          })
+        })
+
+        describe('should add and retrieve content', () => {
+          const blorb = Buffer.from('blorb')
+          let store
+          let retrieve
+
+          before((done) => {
+            async.waterfall([
+              (cb) => api.block.put(blorb, cb),
+              (block, cb) => {
+                store = block.cid.toBaseEncodedString()
+                api.block.get(store, cb)
+              },
+              (_block, cb) => {
+                retrieve = _block.data
+                cb()
+              }
+            ], done)
+          })
+
+          it('should be able to store objects', () => {
+            expect(store)
+              .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
+          })
+
+          it('should be able to retrieve objects', () => {
+            expect(retrieve.toString()).to.be.eql('blorb')
+          })
+
+          it('should have started the daemon and returned an api with host/port', () => {
+            expect(api).to.have.property('id')
+            expect(api).to.have.property('apiHost')
+            expect(api).to.have.property('apiPort')
+          })
+
+          it('should be able to store objects', () => {
+            expect(store)
+              .to.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
+          })
+
+          it('should be able to retrieve objects', () => {
+            expect(retrieve.toString()).to.equal('blorb')
+          })
+        })
+      })
+
+      describe('spawn a node and attach api', () => {
+        let node = null
+        let api = null
+
+        after((done) => node.stopDaemon(done))
+
+        it('create init and start node', (done) => {
+          ipfsdFactory.spawn({ isJs }, (err, ipfsd) => {
+            expect(err).to.not.exist()
+            expect(ipfsd.ctrl).to.exist()
+            expect(ipfsd.ctl).to.exist()
+            expect(ipfsd.ctl.id).to.exist()
+            node = ipfsd.ctrl
+            api = ipfsd.ctl
+            done()
+          })
+        })
+
+        describe('should add and retrieve content', () => {
+          const blorb = Buffer.from('blorb')
+          let store
+          let retrieve
+
+          before((done) => {
+            async.waterfall([
+              (cb) => api.block.put(blorb, cb),
+              (block, cb) => {
+                store = block.cid.toBaseEncodedString()
+                api.block.get(store, cb)
+              },
+              (_block, cb) => {
+                retrieve = _block.data
+                cb()
+              }
+            ], done)
+          })
+
+          it('should be able to store objects', () => {
+            expect(store)
+              .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
+          })
+
+          it('should be able to retrieve objects', () => {
+            expect(retrieve.toString()).to.be.eql('blorb')
+          })
+
+          it('should have started the daemon and returned an api with host/port', () => {
+            expect(api).to.have.property('id')
+            expect(api).to.have.property('apiHost')
+            expect(api).to.have.property('apiPort')
+          })
+
+          it('should be able to store objects', () => {
+            expect(store)
+              .to.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
+          })
+
+          it('should be able to retrieve objects', () => {
+            expect(retrieve.toString()).to.equal('blorb')
+          })
+        })
+      })
+
+      describe('spawn a node and pass init options', () => {
+        const repoPath = tempDir(isJs)
+        const addr = '/ip4/127.0.0.1/tcp/5678'
+        const config = {
+          'Addresses.API': addr
+        }
+
+        it('allows passing ipfs config options to spawn', (done) => {
+          const options = {
+            config,
+            repoPath,
+            init: true,
+            isJs
+          }
+
+          let node
+          async.waterfall([
+            (cb) => ipfsdFactory.spawn(options, cb),
+            (ipfsd, cb) => {
+              node = ipfsd.ctrl
+              node.getConfig('Addresses.API', cb)
+            }
+          ], (err, res) => {
+            expect(err).to.not.exist()
+            expect(res).to.be.eql(addr)
+            async.series([
+              (cb) => node.stopDaemon(cb)
+            ], done)
+          })
+        })
+      })
+
       describe('starting and stopping', () => {
         let node
 
-        describe('init', () => {
+        describe(`create and init a node (ctlr)`, () => {
           before((done) => {
-            ipfsd.disposable((err, res) => {
-              if (err) {
-                done(err)
-              }
-              node = res
+            ipfsdFactory.spawn({ isJs, init: true, start: false, disposable: true }, (err, ipfsd) => {
+              expect(err).to.not.exist()
+              expect(ipfsd.ctrl).to.exist()
+
+              node = ipfsd.ctrl
               done()
             })
           })
@@ -201,74 +355,31 @@ module.exports = () => {
           it('should be stopped', () => {
             expect(node.daemonPid()).to.not.exist()
             expect(stopped).to.equal(true)
-          })
-        })
-      })
-
-      describe('setting up and init a local node', () => {
-        const testpath1 = '/tmp/ipfstestpath1'
-
-        describe('cleanup', () => {
-          before((done) => {
-            rimraf(testpath1, done)
-          })
-
-          it('should not have a directory', () => {
-            expect(fs.existsSync('/tmp/ipfstestpath1')).to.be.eql(false)
-          })
-        })
-
-        describe('setup', () => {
-          let node
-          before((done) => {
-            ipfsd.local(testpath1, (err, res) => {
-              if (err) {
-                return done(err)
-              }
-              node = res
-              done()
-            })
-          })
-
-          it('should have returned a node', () => {
-            expect(node).to.exist()
-          })
-
-          it('should not be initialized', () => {
-            expect(node.initialized).to.be.eql(false)
-          })
-
-          describe('initialize', () => {
-            before((done) => {
-              node.init(done)
-            })
-
-            it('should have made a directory', () => {
-              expect(fs.existsSync(testpath1)).to.be.eql(true)
-            })
-
-            it('should be initialized', () => {
-              expect(node.initialized).to.be.eql(true)
-            })
+            expect(fs.existsSync(path.join(node.path, 'repo.lock'))).to.not.be.ok()
+            expect(fs.existsSync(path.join(node.path, 'api'))).to.not.be.ok()
           })
         })
       })
 
       describe('change config of a disposable node', () => {
-        let ipfsNode
+        let node
+        // let ipfs
 
         before((done) => {
-          ipfsd.disposable((err, node) => {
+          ipfsdFactory.spawn({ isJs }, (err, res) => {
             if (err) {
               return done(err)
             }
-            ipfsNode = node
+            node = res.ctrl
+            // ipfs = res.ctl
             done()
           })
         })
 
+        after((done) => node.stopDaemon(done))
+
         it('Should return a config value', (done) => {
-          ipfsNode.getConfig('Bootstrap', (err, config) => {
+          node.getConfig('Bootstrap', (err, config) => {
             expect(err).to.not.exist()
             expect(config).to.exist()
             done()
@@ -276,17 +387,17 @@ module.exports = () => {
         })
 
         it('Should return the whole config', (done) => {
-          ipfsNode.getConfig((err, config) => {
+          node.getConfig((err, config) => {
             expect(err).to.not.exist()
             expect(config).to.exist()
             done()
           })
         })
 
-        it('Should set a config value', (done) => {
+        it.skip('Should set a config value', (done) => {
           async.series([
-            (cb) => ipfsNode.setConfig('Bootstrap', 'null', cb),
-            (cb) => ipfsNode.getConfig('Bootstrap', cb)
+            (cb) => node.setConfig('Bootstrap', 'null', cb),
+            (cb) => node.getConfig('Bootstrap', cb)
           ], (err, res) => {
             expect(err).to.not.exist()
             expect(res[1]).to.be.eql('null')
@@ -296,9 +407,9 @@ module.exports = () => {
 
         it('should give an error if setting an invalid config value', function (done) {
           if (isJs) {
-            this.skip()
+            this.skip() // js doesn't fail on invalid config
           } else {
-            ipfsNode.setConfig('Bootstrap', 'true', (err) => {
+            node.setConfig('Bootstrap', 'true', (err) => {
               expect(err.message).to.match(/failed to set config value/)
               done()
             })
@@ -306,31 +417,14 @@ module.exports = () => {
         })
       })
 
-      it('allows passing via $IPFS_EXEC', (done) => {
-        process.env.IPFS_EXEC = '/some/path'
-        ipfsd.local((err, node) => {
-          expect(err).to.not.exist()
-          expect(node.exec).to.be.eql('/some/path')
-
-          process.env.IPFS_EXEC = ''
-          done()
-        })
-      })
-
-      it('prints the version', (done) => {
-        ipfsd.version((err, version) => {
-          expect(err).to.not.exist()
-          expect(version).to.be.eql(VERSION_STRING)
-          done()
-        })
-      })
-
       describe('ipfs-api version', () => {
         let ipfs
+        let node
 
         before((done) => {
-          ipfsd.disposable((err, node) => {
+          ipfsdFactory.spawn({ start: false }, (err, ret) => {
             expect(err).to.not.exist()
+            node = ret.ctrl
             node.startDaemon((err, ignore) => {
               expect(err).to.not.exist()
               ipfs = ipfsApi(node.apiAddr)
@@ -338,6 +432,8 @@ module.exports = () => {
             })
           })
         })
+
+        after((done) => node.stopDaemon(done))
 
         // skip on windows for now
         // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
@@ -385,57 +481,19 @@ module.exports = () => {
       })
 
       describe('startDaemon', () => {
-        it('start and stop', (done) => {
-          const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
-
-          const check = (cb) => {
-            // skip on windows
-            // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326983530
-            if (!isWindows) {
-              if (fs.existsSync(path.join(dir, 'repo.lock'))) {
-                cb(new Error('repo.lock not removed'))
-              }
-              if (fs.existsSync(path.join(dir, 'api'))) {
-                cb(new Error('api file not removed'))
-              }
-            }
-            cb()
-          }
-
-          async.waterfall([
-            (cb) => ipfsd.local(dir, cb),
-            (node, cb) => node.init((err) => cb(err, node)),
-            (node, cb) => node.startDaemon((err) => cb(err, node)),
-            (node, cb) => node.stopDaemon(cb),
-            check,
-            (cb) => ipfsd.local(dir, cb),
-            (node, cb) => node.startDaemon((err) => cb(err, node)),
-            (node, cb) => node.stopDaemon(cb),
-            check,
-            (cb) => ipfsd.local(dir, cb),
-            (node, cb) => node.startDaemon((err) => cb(err, node)),
-            (node, cb) => node.stopDaemon(cb),
-            check
-          ], done)
-        })
-
         it('starts the daemon and returns valid API and gateway addresses', (done) => {
-          const dir = `${os.tmpdir()}/tmp-${Date.now() + '-' + Math.random().toString(36)}`
-
-          async.waterfall([
-            (cb) => ipfsd.local(dir, cb),
-            (daemon, cb) => daemon.init((err) => cb(err, daemon)),
-            (daemon, cb) => daemon.startDaemon((err, api) => cb(err, daemon, api))
-          ], (err, daemon, api) => {
+          ipfsdFactory.spawn({ isJs, config: null }, (err, ipfsd) => {
             expect(err).to.not.exist()
+            const api = ipfsd.ctl
+            const node = ipfsd.ctrl
 
             // Check for props in daemon
-            expect(daemon).to.have.property('apiAddr')
-            expect(daemon).to.have.property('gatewayAddr')
-            expect(daemon.apiAddr).to.not.equal(null)
-            expect(multiaddr.isMultiaddr(daemon.apiAddr)).to.equal(true)
-            expect(daemon.gatewayAddr).to.not.equal(null)
-            expect(multiaddr.isMultiaddr(daemon.gatewayAddr)).to.equal(true)
+            expect(node).to.have.property('apiAddr')
+            expect(node).to.have.property('gatewayAddr')
+            expect(node.apiAddr).to.not.equal(null)
+            expect(multiaddr.isMultiaddr(node.apiAddr)).to.equal(true)
+            expect(node.gatewayAddr).to.not.equal(null)
+            expect(multiaddr.isMultiaddr(node.gatewayAddr)).to.equal(true)
 
             // Check for props in ipfs-api instance
             expect(api).to.have.property('apiHost')
@@ -443,12 +501,11 @@ module.exports = () => {
             expect(api).to.have.property('gatewayHost')
             expect(api).to.have.property('gatewayPort')
             expect(api.apiHost).to.equal('127.0.0.1')
-            console.log(API_PORT)
             expect(api.apiPort).to.equal(API_PORT)
             expect(api.gatewayHost).to.equal('127.0.0.1')
             expect(api.gatewayPort).to.equal(GW_PORT)
 
-            daemon.stopDaemon(done)
+            node.stopDaemon(done)
           })
         })
 
@@ -457,9 +514,9 @@ module.exports = () => {
           if (isJs) {
             this.skip()
           } else {
-            ipfsd.disposable((err, node) => {
+            ipfsdFactory.spawn({ start: false }, (err, ipfsd) => {
               expect(err).to.not.exist()
-              node.startDaemon(['--should-not-exist'], (err) => {
+              ipfsd.ctrl.startDaemon(['--should-not-exist'], (err) => {
                 expect(err).to.exist()
                 expect(err.message)
                   .to.match(/Unrecognized option 'should-not-exist'/)

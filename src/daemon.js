@@ -78,6 +78,10 @@ function parseConfig (path, callback) {
   ], callback)
 }
 
+function tempDir (isJs) {
+  return join(os.tmpdir(), `${isJs ? 'jsipfs' : 'ipfs'}_${String(Math.random()).substr(2)}`)
+}
+
 /**
  * Controll a go-ipfs node.
  */
@@ -85,26 +89,24 @@ class Node {
   /**
    * Create a new node.
    *
-   * @param {string} path
    * @param {Object} [opts]
    * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
-   * @param {boolean} [disposable=false] - Should this be a temporary node.
    * @returns {Node}
    */
-  constructor (path, opts, disposable) {
+  constructor (opts) {
     const rootPath = process.env.testpath ? process.env.testpath : __dirname
-    const isJS = truthy(process.env.IPFS_JS)
+    const isJs = truthy(process.env.IPFS_JS)
 
-    this.opts = opts || { isJs: isJS || false }
+    this.opts = opts || { isJs: isJs || false }
     process.env.IPFS_JS = this.opts.isJs
 
-    this.path = path || null
-    this.exec = process.env.IPFS_EXEC || findIpfsExecutable(this.isJs, rootPath)
+    this.path = this.opts.disposable ? tempDir(isJs) : (this.opts.repoPath || tempDir(isJs))
+    this.disposable = this.opts.disposable
+    this.exec = process.env.IPFS_EXEC || findIpfsExecutable(this.opts.isJs, rootPath)
     this.subprocess = null
     this.initialized = fs.existsSync(path)
     this.clean = true
-    this.env = path ? Object.assign({}, process.env, { IPFS_PATH: path }) : process.env
-    this.disposable = disposable
+    this.env = this.path ? Object.assign({}, process.env, { IPFS_PATH: this.path }) : process.env
     this._apiAddr = null
     this._gatewayAddr = null
 
@@ -162,7 +164,7 @@ class Node {
         return callback(err)
       }
 
-      configureNode(this, this.opts, (err) => {
+      configureNode(this, this.opts.config, (err) => {
         if (err) {
           return callback(err)
         }
@@ -214,25 +216,12 @@ class Node {
 
     callback = once(callback)
 
-    // Check if there were explicit options to want or not want. Otherwise,
-    // assume values will be in the local daemon config
-    // TODO: This should check the local daemon config
-    const want = {
-      gateway: typeof this.opts['Addresses.Gateway'] === 'string'
-        ? this.opts['Addresses.Gateway'].length > 0
-        : true,
-      api: typeof this.opts['Addresses.API'] === 'string'
-        ? this.opts['Addresses.API'].length > 0
-        : true
-    }
-
     parseConfig(this.path, (err, conf) => {
       if (err) {
         return callback(err)
       }
 
       let output = ''
-      let returned = false
 
       this.subprocess = this._run(args, { env: this.env }, {
         error: (err) => {
@@ -255,31 +244,25 @@ class Node {
         data: (data) => {
           output += String(data)
 
-          const apiMatch = want.api
-            ? output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
-            : true
+          const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
+          const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
 
-          const gwMatch = want.gateway
-            ? output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
-            : true
+          if (apiMatch && apiMatch.length > 0) {
+            this._apiAddr = multiaddr(apiMatch[1])
+            this.api = ipfs(apiMatch[1])
+            this.api.apiHost = this.apiAddr.nodeAddress().address
+            this.api.apiPort = this.apiAddr.nodeAddress().port
+          }
 
-          if (apiMatch && gwMatch && !returned) {
-            returned = true
+          if (gwMatch && gwMatch.length > 0) {
+            this._gatewayAddr = multiaddr(gwMatch[1])
+            this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+            this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+          }
 
-            if (want.api) {
-              this._apiAddr = multiaddr(apiMatch[1])
-              this.api = ipfs(apiMatch[1])
-              this.api.apiHost = this.apiAddr.nodeAddress().address
-              this.api.apiPort = this.apiAddr.nodeAddress().port
-            }
-
-            if (want.gateway) {
-              this._gatewayAddr = multiaddr(gwMatch[1])
-              this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-              this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
-            }
-
-            callback(null, this.api)
+          if (output.match(/(?:daemon is running|Daemon is ready)/)) {
+            // we're good
+            return callback(null, this.api)
           }
         }
       })

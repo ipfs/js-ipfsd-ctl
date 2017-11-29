@@ -1,23 +1,15 @@
 'use strict'
 
-const os = require('os')
-const join = require('path').join
+const merge = require('lodash.merge')
+const waterfall = require('async/waterfall')
 
 const Node = require('./daemon')
 
-// Note how defaultOptions are Addresses.Swarm and not Addresses: { Swarm : <> }
 const defaultOptions = {
-  'Addresses.Swarm': ['/ip4/0.0.0.0/tcp/0'],
-  'Addresses.Gateway': '',
-  'Addresses.API': '/ip4/127.0.0.1/tcp/0',
   disposable: true,
+  start: true,
   init: true
 }
-
-function tempDir () {
-  return join(os.tmpdir(), `ipfs_${String(Math.random()).substr(2)}`)
-}
-
 /**
  * Control go-ipfs nodes directly from JavaScript.
  *
@@ -36,83 +28,36 @@ const IpfsDaemonController = {
   },
 
   /**
-   * Create a new local node.
-   *
-   * @memberof IpfsDaemonController
-   * @param {string} [path] - Location of the repo. Defaults to `$IPFS_PATH`, or `$HOME/.ipfs`, or `$USER_PROFILE/.ipfs`.
-   * @param {Object} [opts={}]
-   * @param {function(Error, Node)} callback
-   * @returns {undefined}
-   */
-  local (path, opts, callback) {
-    if (typeof opts === 'function') {
-      callback = opts
-      opts = {}
-    }
-
-    if (!callback) {
-      callback = path
-      path = process.env.IPFS_PATH ||
-        join(process.env.HOME ||
-          process.env.USERPROFILE, '.ipfs')
-    }
-
-    process.nextTick(() => callback(null, new Node(path, opts)))
-  },
-
-  /**
-   * Create a new disposable node.
-   * This means the repo is created in a temporary location and cleaned up on process exit.
+   * Spawn an IPFS node
+   * The repo is created in a temporary location and cleaned up on process exit.
    *
    * @memberof IpfsDaemonController
    * @param {Object} [opts={}]
-   * @param {function(Error, Node)} callback
+   * @param {function(Error, {ctl: IpfsApi, ctrl: Node})} callback
    * @returns {undefined}
    */
-  disposable (opts, callback) {
+  spawn (opts, callback) {
     if (typeof opts === 'function') {
       callback = opts
       opts = defaultOptions
     }
 
     let options = {}
-    Object.assign(options, defaultOptions, opts || {})
+    merge(options, defaultOptions, opts || {})
+    options.init = (typeof options.init !== 'undefined' ? options.init : true)
+    options.start = options.init && options.start // don't start if not initialized
 
-    const repoPath = options.repoPath || tempDir()
-    const disposable = options.disposable
-    delete options.disposable
-    delete options.repoPath
+    const node = new Node(options)
 
-    const node = new Node(repoPath, options, disposable)
-
-    if (typeof options.init === 'boolean' &&
-      options.init === false) {
-      process.nextTick(() => callback(null, node))
-    } else {
-      node.init((err) => callback(err, node))
-    }
-  },
-
-  /**
-   * Create a new disposable node and already started the daemon.
-   *
-   * @memberof IpfsDaemonController
-   * @param {Object} [opts={}]
-   * @param {function(Error, Node)} callback
-   * @returns {undefined}
-   */
-  disposableApi (opts, callback) {
-    if (typeof opts === 'function') {
-      callback = opts
-      opts = defaultOptions
-    }
-
-    this.disposable(opts, (err, node) => {
+    waterfall([
+      (cb) => options.init ? node.init(cb) : cb(null, node),
+      (node, cb) => options.start ? node.startDaemon(cb) : cb(null, null)
+    ], (err, api) => {
       if (err) {
         return callback(err)
       }
 
-      node.startDaemon(callback)
+      callback(null, { ctl: api, ctrl: node })
     })
   }
 }
