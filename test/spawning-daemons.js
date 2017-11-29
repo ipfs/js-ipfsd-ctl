@@ -330,7 +330,8 @@ module.exports = (isJs) => {
           })
         })
 
-        describe('stopping', () => {
+        describe('stopping', function () {
+          this.timeout(20 * 1000) // shutdown grace period is already 10500
           let stopped = false
 
           before((done) => {
