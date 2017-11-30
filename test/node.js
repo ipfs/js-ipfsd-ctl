@@ -1,23 +1,21 @@
 /* eslint-env mocha */
+
 'use strict'
 
-const daemon = require('./spawning-daemons.js')
+require('./daemon')
+require('./exec')
+
+const startStop = require('./start-stop')
 const install = require('./npm-installs')
 
-describe('ipfsd-ctl', () => {
-  afterEach(() => Object.keys(process.env).forEach((key) => {
-    if (key.includes('IPFS')) {
-      delete process.env[key] // clean up IPFS envs
-    }
-  }))
-
-  describe('Go daemon', () => {
-    daemon(false)()
-    install(false)()
+describe('node', () => {
+  describe('cleanup', () => {
+    startStop(true)()
+    startStop(false)()
   })
 
-  describe('Js daemon', () => {
-    daemon(true)()
+  describe('install', () => {
     install(true)()
+    install(false)()
   })
 })

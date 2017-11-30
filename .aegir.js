@@ -1,12 +1,21 @@
 'use strict'
 
-const tasks = require('./src/remote-factory/tasks')
+const server = require('./src/remote/server')
 
 module.exports = {
+  karma: {
+    files: [{
+      pattern: 'test/fixtures/**/*',
+      watched: false,
+      served: true,
+      included: false
+    }],
+    singleRun: true
+  },
   hooks: {
     browser: {
-      pre: tasks.start,
-      post: tasks.stop
+      pre: server.start,
+      post: server.stop
     }
   }
 }

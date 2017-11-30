@@ -6,6 +6,14 @@ const waterfall = require('async/waterfall')
 const Node = require('./daemon')
 
 const defaultOptions = {
+  config: {
+    'API.HTTPHeaders.Access-Control-Allow-Origin': ['*'],
+    'API.HTTPHeaders.Access-Control-Allow-Methods': [
+      'PUT',
+      'POST',
+      'GET'
+    ]
+  },
   disposable: true,
   start: true,
   init: true
