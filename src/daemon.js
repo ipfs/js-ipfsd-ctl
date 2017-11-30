@@ -109,6 +109,7 @@ class Node {
     this.env = this.path ? Object.assign({}, process.env, { IPFS_PATH: this.path }) : process.env
     this._apiAddr = null
     this._gatewayAddr = null
+    this._started = false
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
@@ -131,6 +132,15 @@ class Node {
    */
   get gatewayAddr () {
     return this._gatewayAddr
+  }
+
+  /**
+   * Is the node started
+   *
+   * @return {boolean}
+   */
+  get started () {
+    return this._started
   }
 
   _run (args, opts, callback) {
@@ -262,6 +272,7 @@ class Node {
 
           if (output.match(/(?:daemon is running|Daemon is ready)/)) {
             // we're good
+            this._started = true
             return callback(null, this.api)
           }
         }
@@ -333,6 +344,9 @@ class Node {
   getConfig (key, callback) {
     if (typeof key === 'function') {
       callback = key
+      key = 'show'
+    }
+    if (!key) {
       key = 'show'
     }
 
