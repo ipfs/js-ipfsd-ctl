@@ -314,7 +314,7 @@ describe('daemon spawning', function () {
   it('prints the version', (done) => {
     ipfsd.version((err, version) => {
       expect(err).to.not.exist()
-      expect(version).to.be.eql('ipfs version 0.4.11')
+      expect(version).to.equal('ipfs version 0.4.13')
       done()
     })
   })
