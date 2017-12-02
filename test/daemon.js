@@ -3,13 +3,14 @@
 
 const daemon = require('./spawning')
 const isNode = require('detect-node')
+const factory = require('../src')
 
 let ipfsdFactory
 
 if (isNode) {
-  ipfsdFactory = require('../src')
+  ipfsdFactory = factory.localFactory
 } else {
-  ipfsdFactory = require('../src/remote')()
+  ipfsdFactory = factory.remoteFactory()
 }
 
 describe('ipfsd-ctl', () => {
