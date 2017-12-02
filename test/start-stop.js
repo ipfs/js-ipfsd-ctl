@@ -12,7 +12,8 @@ const once = require('once')
 const path = require('path')
 const exec = require('../src/exec')
 
-const ipfsdFactory = require('../src')
+const factory = require('../src')
+const ipfsdFactory = factory.localFactory
 
 module.exports = (isJs) => {
   return () => {

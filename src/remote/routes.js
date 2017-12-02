@@ -1,6 +1,6 @@
 'use strict'
 
-const ipfsFactory = require('../')
+const ipfsFactory = require('../local')
 const guid = require('guid')
 const boom = require('boom')
 const utils = require('./utils')
