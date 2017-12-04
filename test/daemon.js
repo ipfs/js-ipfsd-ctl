@@ -5,12 +5,12 @@ const daemon = require('./spawning')
 const isNode = require('detect-node')
 const factory = require('../src')
 
-let ipfsdFactory
+let ipfsdController
 
 if (isNode) {
-  ipfsdFactory = factory.localFactory
+  ipfsdController = factory.localController
 } else {
-  ipfsdFactory = factory.remoteFactory()
+  ipfsdController = factory.remoteController()
 }
 
 describe('ipfsd-ctl', () => {
@@ -22,10 +22,10 @@ describe('ipfsd-ctl', () => {
   }))
 
   describe('Go daemon', () => {
-    daemon(ipfsdFactory, false)()
+    daemon(ipfsdController, false)()
   })
 
   describe('Js daemon', () => {
-    daemon(ipfsdFactory, true)()
+    daemon(ipfsdController, true)()
   })
 })

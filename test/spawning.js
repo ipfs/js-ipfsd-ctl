@@ -19,9 +19,9 @@ function tempDir (isJs) {
   return path.join(os.tmpdir(), `${isJs ? 'jsipfs' : 'ipfs'}_${String(Math.random()).substr(2)}`)
 }
 
-module.exports = (ipfsdFactory, isJs) => {
+module.exports = (ipfsdController, isJs) => {
   return () => {
-    const VERSION_STRING = isJs ? 'js-ipfs version: 0.26.0' : 'ipfs version 0.4.13'
+    const VERSION_STRING = isJs ? 'js-ipfs version: 0.27.0' : 'ipfs version 0.4.13'
     const API_PORT = isJs ? '5002' : '5001'
     const GW_PORT = isJs ? '9090' : '8080'
 
@@ -29,7 +29,7 @@ module.exports = (ipfsdFactory, isJs) => {
       if (!isNode) {
         this.skip()
       }
-      ipfsdFactory.version({ isJs }, (err, version) => {
+      ipfsdController.version({ isJs }, (err, version) => {
         expect(err).to.not.exist()
         expect(version).to.be.eql(VERSION_STRING)
         done()
@@ -44,7 +44,7 @@ module.exports = (ipfsdFactory, isJs) => {
         after((done) => node.stopDaemon(done))
 
         it('create node', (done) => {
-          ipfsdFactory.spawn({ isJs, init: false, start: false, disposable: true }, (err, ipfsd) => {
+          ipfsdController.spawn({ isJs, init: false, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.not.exist()
@@ -123,7 +123,7 @@ module.exports = (ipfsdFactory, isJs) => {
         after((done) => node.stopDaemon(done))
 
         it('create node and init', (done) => {
-          ipfsdFactory.spawn({ isJs, start: false, disposable: true }, (err, ipfsd) => {
+          ipfsdController.spawn({ isJs, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.not.exist()
@@ -194,7 +194,7 @@ module.exports = (ipfsdFactory, isJs) => {
         after((done) => node.stopDaemon(done))
 
         it('create init and start node', (done) => {
-          ipfsdFactory.spawn({ isJs }, (err, ipfsd) => {
+          ipfsdController.spawn({ isJs }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.exist()
@@ -267,7 +267,7 @@ module.exports = (ipfsdFactory, isJs) => {
 
           let node
           async.waterfall([
-            (cb) => ipfsdFactory.spawn(options, cb),
+            (cb) => ipfsdController.spawn(options, cb),
             (ipfsd, cb) => {
               node = ipfsd.ctrl
               node.getConfig('Addresses.API', cb)
@@ -287,7 +287,7 @@ module.exports = (ipfsdFactory, isJs) => {
         // let ipfs
 
         before((done) => {
-          ipfsdFactory.spawn({ isJs }, (err, res) => {
+          ipfsdController.spawn({ isJs }, (err, res) => {
             if (err) {
               return done(err)
             }
@@ -343,7 +343,7 @@ module.exports = (ipfsdFactory, isJs) => {
         let node
 
         before((done) => {
-          ipfsdFactory.spawn({ start: false }, (err, ret) => {
+          ipfsdController.spawn({ start: false }, (err, ret) => {
             expect(err).to.not.exist()
             node = ret.ctrl
             node.startDaemon((err, ignore) => {
@@ -403,7 +403,7 @@ module.exports = (ipfsdFactory, isJs) => {
 
       describe('validate api', () => {
         it('starts the daemon and returns valid API and gateway addresses', (done) => {
-          ipfsdFactory.spawn({ isJs, config: null }, (err, ipfsd) => {
+          ipfsdController.spawn({ isJs, config: null }, (err, ipfsd) => {
             expect(err).to.not.exist()
             const api = ipfsd.ctl
             const node = ipfsd.ctrl
@@ -435,7 +435,7 @@ module.exports = (ipfsdFactory, isJs) => {
           if (isJs) {
             this.skip()
           } else {
-            ipfsdFactory.spawn({ start: false }, (err, ipfsd) => {
+            ipfsdController.spawn({ start: false }, (err, ipfsd) => {
               expect(err).to.not.exist()
               ipfsd.ctrl.startDaemon(['--should-not-exist'], (err) => {
                 expect(err).to.exist()

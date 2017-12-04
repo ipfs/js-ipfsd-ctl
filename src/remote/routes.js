@@ -42,8 +42,6 @@ module.exports = (server) => {
 
   /**
    * Get the address of connected IPFS API.
-   *
-   * @returns {Multiaddr}
    */
   server.route({
     method: 'GET',
