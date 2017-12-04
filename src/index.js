@@ -1,9 +1,10 @@
 'use strict'
 
-const localFactory = require('./local')
-const remoteFactory = require('./remote')
+const localController = require('./local')
+const remote = require('./remote')
 
 module.exports = {
-  localFactory,
-  remoteFactory
+  localController,
+  remoteController: remote.remoteController,
+  server: remote.server
 }

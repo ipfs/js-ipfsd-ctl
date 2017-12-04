@@ -13,7 +13,7 @@ const path = require('path')
 const exec = require('../src/exec')
 
 const factory = require('../src')
-const ipfsdFactory = factory.localFactory
+const ipfsdFactory = factory.localController
 
 module.exports = (isJs) => {
   return () => {
