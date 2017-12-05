@@ -17,6 +17,8 @@
   },
   "browser": {
     "./src/daemon.js": false,
+    "./src/exec.js": false,
+    "hapi": false,
     "glob": false,
     "fs": false,
     "stream": "readable-stream",
@@ -67,7 +69,7 @@
     "guid": "0.0.12",
     "hapi": "^16.6.2",
     "http-browserify": "^1.7.0",
-    "ipfs-api": "^17.1.3",
+    "ipfs-api": "^17.2.0",
     "lodash.clonewith": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.mapvalues": "^4.6.0",

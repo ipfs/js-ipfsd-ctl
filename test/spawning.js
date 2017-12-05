@@ -37,7 +37,7 @@ module.exports = (ipfsdController, isJs) => {
     })
 
     describe('daemon spawning', () => {
-      describe('spawn a bare node', () => {
+      describe.only('spawn a bare node', () => {
         let node = null
         let api = null
 
@@ -275,9 +275,7 @@ module.exports = (ipfsdController, isJs) => {
           ], (err, res) => {
             expect(err).to.not.exist()
             expect(res).to.be.eql(addr)
-            async.series([
-              (cb) => node.stopDaemon(cb)
-            ], done)
+            node.stopDaemon(done)
           })
         })
       })
