@@ -41,7 +41,10 @@ module.exports = (ipfsdController, isJs) => {
         let node = null
         let api = null
 
-        after((done) => node.stopDaemon(done))
+        after(function (done) {
+          this.timeout(20 * 1000)
+          node.stopDaemon(done)
+        })
 
         it('create node', (done) => {
           ipfsdController.spawn({ isJs, init: false, start: false, disposable: true }, (err, ipfsd) => {
@@ -53,7 +56,8 @@ module.exports = (ipfsdController, isJs) => {
           })
         })
 
-        it('init node', (done) => {
+        it('init node', function (done) {
+          this.timeout(20 * 1000)
           node.init((err) => {
             expect(err).to.not.exist()
             expect(node.initialized).to.be.ok()
@@ -61,7 +65,8 @@ module.exports = (ipfsdController, isJs) => {
           })
         })
 
-        it('start node', (done) => {
+        it('start node', function (done) {
+          this.timeout(30 * 1000)
           node.startDaemon((err, a) => {
             api = a
             expect(err).to.not.exist()
@@ -76,7 +81,8 @@ module.exports = (ipfsdController, isJs) => {
           let store
           let retrieve
 
-          before((done) => {
+          before(function (done) {
+            this.timeout(30 * 1000)
             async.waterfall([
               (cb) => api.block.put(blorb, cb),
               (block, cb) => {
@@ -120,9 +126,13 @@ module.exports = (ipfsdController, isJs) => {
         let node = null
         let api = null
 
-        after((done) => node.stopDaemon(done))
+        after(function (done) {
+          this.timeout(20 * 1000)
+          node.stopDaemon(done)
+        })
 
-        it('create node and init', (done) => {
+        it('create node and init', function (done) {
+          this.timeout(30 * 1000)
           ipfsdController.spawn({ isJs, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
@@ -132,7 +142,8 @@ module.exports = (ipfsdController, isJs) => {
           })
         })
 
-        it('start node', (done) => {
+        it('start node', function (done) {
+          this.timeout(30 * 1000)
           node.startDaemon((err, a) => {
             api = a
             expect(err).to.not.exist()
@@ -147,7 +158,8 @@ module.exports = (ipfsdController, isJs) => {
           let store
           let retrieve
 
-          before((done) => {
+          before(function (done) {
+            this.timeout(20 * 1000)
             async.waterfall([
               (cb) => api.block.put(blorb, cb),
               (block, cb) => {
@@ -191,9 +203,13 @@ module.exports = (ipfsdController, isJs) => {
         let node = null
         let api = null
 
-        after((done) => node.stopDaemon(done))
+        after(function (done) {
+          this.timeout(20 * 1000)
+          node.stopDaemon(done)
+        })
 
-        it('create init and start node', (done) => {
+        it('create init and start node', function (done) {
+          this.timeout(20 * 1000)
           ipfsdController.spawn({ isJs }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
@@ -210,7 +226,8 @@ module.exports = (ipfsdController, isJs) => {
           let store
           let retrieve
 
-          before((done) => {
+          before(function (done) {
+            this.timeout(20 * 1000)
             async.waterfall([
               (cb) => api.block.put(blorb, cb),
               (block, cb) => {
@@ -257,7 +274,8 @@ module.exports = (ipfsdController, isJs) => {
           'Addresses.API': addr
         }
 
-        it('allows passing ipfs config options to spawn', (done) => {
+        it('allows passing ipfs config options to spawn', function (done) {
+          this.timeout(20 * 1000)
           const options = {
             config,
             repoPath,
@@ -284,7 +302,8 @@ module.exports = (ipfsdController, isJs) => {
         let node
         // let ipfs
 
-        before((done) => {
+        before(function (done) {
+          this.timeout(20 * 1000)
           ipfsdController.spawn({ isJs }, (err, res) => {
             if (err) {
               return done(err)
@@ -340,7 +359,8 @@ module.exports = (ipfsdController, isJs) => {
         let ipfs
         let node
 
-        before((done) => {
+        before(function (done) {
+          this.timeout(20 * 1000)
           ipfsdController.spawn({ start: false }, (err, ret) => {
             expect(err).to.not.exist()
             node = ret.ctrl
@@ -400,7 +420,8 @@ module.exports = (ipfsdController, isJs) => {
       })
 
       describe('validate api', () => {
-        it('starts the daemon and returns valid API and gateway addresses', (done) => {
+        it('starts the daemon and returns valid API and gateway addresses', function (done) {
+          this.timeout(20 * 1000)
           ipfsdController.spawn({ isJs, config: null }, (err, ipfsd) => {
             expect(err).to.not.exist()
             const api = ipfsd.ctl

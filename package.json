@@ -6,9 +6,9 @@
   "scripts": {
     "lint": "aegir lint",
     "coverage": "aegir coverage",
-    "test": "aegir test -t node -t browser --no-cors --timeout 50000",
-    "test:node": "aegir test -t node --timeout 50000",
-    "test:browser": "aegir test -t browser --no-cors --timeout 50000",
+    "test": "aegir test -t node -t browser --no-cors",
+    "test:node": "aegir test -t node",
+    "test:browser": "aegir test -t browser --no-cors",
     "docs": "aegir docs",
     "release": "aegir release -t node",
     "release-minor": "aegir release --type minor -t node",
