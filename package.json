@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "lint": "aegir lint",
-    "coverage": "aegir coverage",
+    "coverage": "aegir coverage --timeout 50000",
     "test": "aegir test -t node -t browser --no-cors",
     "test:node": "aegir test -t node",
     "test:browser": "aegir test -t browser --no-cors",
