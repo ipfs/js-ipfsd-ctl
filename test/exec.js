@@ -57,7 +57,7 @@ function makeCheck (n, done) {
 // exiting as it once was when the test was designed
 // - [ ] Need test vector or figure out why tail changed
 // Ref: https://github.com/ipfs/js-ipfsd-ctl/pull/160#issuecomment-325669206
-describe.skip('exec', () => {
+describe('exec', () => {
   it('SIGTERM kills hang', (done) => {
     const tok = token()
 

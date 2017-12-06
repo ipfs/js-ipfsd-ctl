@@ -37,7 +37,7 @@ module.exports = (ipfsdController, isJs) => {
     })
 
     describe('daemon spawning', () => {
-      describe.only('spawn a bare node', () => {
+      describe('spawn a bare node', () => {
         let node = null
         let api = null
 
