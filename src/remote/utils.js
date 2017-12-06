@@ -1,7 +1,7 @@
 'use strict'
 
 const Qs = require('qs')
-const mapValues = require('lodash.mapValues')
+const mapValues = require('lodash.mapvalues')
 
 exports.getResponse = (res, cb) => {
   let data = ''
