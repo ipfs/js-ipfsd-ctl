@@ -19,7 +19,7 @@ exports.start = function start (port, host, cb) {
   host = host || 'localhost'
 
   server = new Hapi.Server()
-  server.connection({ port, host })
+  server.connection({ port, host, routes: { cors: true } })
 
   routes(server)
   server.start(cb)
