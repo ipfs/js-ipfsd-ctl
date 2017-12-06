@@ -20,7 +20,8 @@ module.exports = (isJs) => {
     describe('starting and stopping', () => {
       let node
 
-      describe(`create and init a node (ctlr)`, () => {
+      describe(`create and init a node (ctlr)`, function () {
+        this.timeout(20 * 1000)
         before((done) => {
           ipfsdFactory.spawn({ isJs, init: true, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
@@ -45,7 +46,8 @@ module.exports = (isJs) => {
       describe('starting', () => {
         let ipfs
 
-        before((done) => {
+        before(function (done) {
+          this.timeout(20 * 1000)
           node.startDaemon((err, res) => {
             expect(err).to.not.exist()
 
@@ -86,7 +88,7 @@ module.exports = (isJs) => {
         })
 
         it('should be stopped', function () {
-          this.timeout(20 * 1000) // shutdown grace period is already 10500
+          this.timeout(30 * 1000) // shutdown grace period is already 10500
 
           expect(node.daemonPid()).to.not.exist()
           expect(stopped).to.equal(true)
