@@ -57,6 +57,8 @@ function makeCheck (n, done) {
 // exiting as it once was when the test was designed
 // - [ ] Need test vector or figure out why tail changed
 // Ref: https://github.com/ipfs/js-ipfsd-ctl/pull/160#issuecomment-325669206
+// UPDATE: 12/06/2017 - `tail` seems to work fine on all ci systems.
+// I'm leaving it enabled for now. This does need a different approach for windows though.
 describe('exec', () => {
   it('SIGTERM kills hang', (done) => {
     const tok = token()
