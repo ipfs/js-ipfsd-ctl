@@ -82,7 +82,7 @@ server.start((err) => {
 })
 ```
 
-It's also possible to start the server from `.aegir` per and post hooks. For reference take a look at the `.aegir` file in this repository.
+It's also possible to start the server from `.aegir` `pre` and `post` hooks. For reference take a look at the `.aegir` file in this repository.
 
 
 ## API
