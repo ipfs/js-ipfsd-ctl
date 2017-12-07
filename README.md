@@ -89,11 +89,10 @@ It's also possible to start the server from `.aegir` `pre` and `post` hooks. For
 
 ### Create factory
 
-- `localController` - create a local controller
-- `remoteController([port])` - create a remote controller, usable from browsers
+- This methods return a factory that exposes the `spawn` method, which allows spawning and controlling ipfs nodes
+  - `localController` - create a local controller
+  - `remoteController([port])` - create a remote controller, usable from browsers
 - `server` - exposes `start` and `stop` methods to start and stop the bundled http server that is required to run the remote controller.
-
-Both of this methods return a factory that exposes the `spawn` method, which allows spawning and controlling ipfs nodes
 
 ### Spawn nodes
 
