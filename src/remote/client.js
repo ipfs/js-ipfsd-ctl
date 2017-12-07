@@ -276,7 +276,16 @@ const createRemoteFactory = (host, port) => {
         opts = {}
       }
 
-      request.get({ host, port, path: `/spawn?${encodeParams(this._id, { opts })}` }, (res) => {
+      opts = opts || {}
+      const req = request.request({
+        host,
+        port,
+        method: 'POST',
+        path: `/spawn`,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }, (res) => {
         getResponse(res, (err, res) => {
           if (err) {
             return cb(err)
@@ -293,6 +302,9 @@ const createRemoteFactory = (host, port) => {
           cb(null, { ctl: _createApi(apiAddr, gatewayAddr), ctrl: node })
         })
       })
+
+      req.write(JSON.stringify({ opts }))
+      req.end()
     }
   }
 }

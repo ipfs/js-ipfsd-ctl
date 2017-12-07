@@ -15,12 +15,11 @@ module.exports = (server) => {
    * The repo is created in a temporary location and cleaned up on process exit.
    **/
   server.route({
-    method: 'GET',
+    method: 'POST',
     path: '/spawn',
     handler: (request, reply) => {
-      const qr = parseQuery(request.query)
-      const opts = qr.params.opts || {}
-      ipfsFactory.spawn(opts, (err, ipfsd) => {
+      const payload = request.payload || {}
+      ipfsFactory.spawn(payload.opts, (err, ipfsd) => {
         if (err) {
           return reply(boom.badRequest(err))
         }
