@@ -8,7 +8,7 @@ const utils = require('./utils')
 const encodeParams = utils.encodeParams
 const getResponse = utils.getResponse
 
-function _createApi (apiAddr, gwAddr) {
+function createApi (apiAddr, gwAddr) {
   let api
   if (apiAddr) {
     api = IpfsApi(apiAddr)
@@ -142,7 +142,7 @@ const createRemoteFactory = (host, port) => {
           const apiAddr = res.data ? res.data.apiAddr : ''
           const gatewayAddr = res.data ? res.data.gatewayAddr : ''
 
-          return cb(null, _createApi(apiAddr, gatewayAddr))
+          return cb(null, createApi(apiAddr, gatewayAddr))
         })
       })
     }
@@ -299,7 +299,7 @@ const createRemoteFactory = (host, port) => {
             apiAddr,
             gatewayAddr)
 
-          cb(null, { ctl: _createApi(apiAddr, gatewayAddr), ctrl: node })
+          cb(null, { ctl: createApi(apiAddr, gatewayAddr), ctrl: node })
         })
       })
 
