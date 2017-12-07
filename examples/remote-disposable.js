@@ -17,9 +17,17 @@ server.start((err) => {
 
   const remoteController = ipfsd.remoteController()
   remoteController.spawn(function (err, controller) {
+    if (err) {
+      throw err
+    }
+
     const ipfs = controller.ctl
     const node = controller.ctrl
     ipfs.id(function (err, id) {
+      if (err) {
+        throw err
+      }
+
       console.log(id)
       node.stopDaemon(() => server.stop())
     })
