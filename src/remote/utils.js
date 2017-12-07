@@ -22,7 +22,7 @@ exports.getResponse = (res, cb) => {
 }
 
 exports.encodeParams = (id, params) => {
-  return Qs.stringify({ id, params })
+  return Qs.stringify({ id, params }, { arrayFormat: 'brackets' })
 }
 
 exports.makeResponse = (id, data) => {
@@ -36,6 +36,10 @@ exports.parseQuery = (query) => {
   // hence the use of mapValues
   let parsed = Qs.parse(query)
   const transformer = (val) => {
+    if (Array.isArray(val)) {
+      return val
+    }
+
     if (typeof val === 'object') {
       return mapValues(val, transformer)
     }

@@ -374,11 +374,7 @@ class Node {
    * @returns {undefined}
    */
   setConfig (key, value, callback) {
-    this._run(
-      ['config', key, value, '--json'],
-      { env: this.env },
-      callback
-    )
+    setConfigValue(this, key, value, callback)
   }
 
   /**
