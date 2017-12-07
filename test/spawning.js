@@ -270,7 +270,10 @@ module.exports = (ipfsdController, isJs) => {
       describe('spawn a node and pass init options', () => {
         const repoPath = tempDir(isJs)
         const addr = '/ip4/127.0.0.1/tcp/5678'
+        const swarmAddr1 = '/ip4/127.0.0.1/tcp/35555/ws'
+        const swarmAddr2 = '/ip4/127.0.0.1/tcp/35666'
         const config = {
+          'Addresses.Swarm': [swarmAddr1, swarmAddr2],
           'Addresses.API': addr
         }
 
@@ -288,11 +291,21 @@ module.exports = (ipfsdController, isJs) => {
             (cb) => ipfsdController.spawn(options, cb),
             (ipfsd, cb) => {
               node = ipfsd.ctrl
-              node.getConfig('Addresses.API', cb)
+              node.getConfig('Addresses.API', (err, res) => {
+                expect(err).to.not.exist()
+                expect(res).to.be.eql(addr)
+                cb()
+              })
+            },
+            (cb) => {
+              node.getConfig('Addresses.Swarm', (err, res) => {
+                expect(err).to.not.exist()
+                expect(JSON.parse(res)).to.deep.eql([swarmAddr1, swarmAddr2])
+                cb()
+              })
             }
-          ], (err, res) => {
+          ], (err) => {
             expect(err).to.not.exist()
-            expect(res).to.be.eql(addr)
             node.stopDaemon(done)
           })
         })
@@ -300,7 +313,6 @@ module.exports = (ipfsdController, isJs) => {
 
       describe('change config of a disposable node', () => {
         let node
-        // let ipfs
 
         before(function (done) {
           this.timeout(20 * 1000)
@@ -309,7 +321,6 @@ module.exports = (ipfsdController, isJs) => {
               return done(err)
             }
             node = res.ctrl
-            // ipfs = res.ctl
             done()
           })
         })
@@ -332,7 +343,7 @@ module.exports = (ipfsdController, isJs) => {
           })
         })
 
-        it.skip('Should set a config value', (done) => {
+        it('Should set a config value', (done) => {
           async.series([
             (cb) => node.setConfig('Bootstrap', 'null', cb),
             (cb) => node.getConfig('Bootstrap', cb)
