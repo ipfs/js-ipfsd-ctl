@@ -30,22 +30,92 @@ npm install --save ipfsd-ctl
 
 IPFS daemons are already easy to start and stop, but this module is here to do it from JavaScript itself.
 
+### Local node
+
 ```js
 // Start a disposable node, and get access to the api
-// print the node id, and kill the temporary daemon
+// print the node id, and stop the temporary daemon
 
 // IPFS_PATH will point to /tmp/ipfs_***** and will be
 // cleaned up when the process exits.
 
-var ipfsd = require('ipfsd-ctl')
+const factory = require('ipfsd-ctl')
+const localController = factory.localController
 
-ipfsd.disposableApi(function (err, ipfs) {
+localController.spawn(function (err, ipfsd) {
+  const ipfs = ipfsd.ctl
+  const node = ipfsd.ctrl
   ipfs.id(function (err, id) {
     console.log(id)
-    process.exit()
+    node.stopDaemon()
   })
 })
 ```
+
+### Remote node
+
+```js
+// Start a remote disposable node, and get access to the api
+// print the node id, and stop the temporary daemon
+
+// IPFS_PATH will point to /tmp/ipfs_***** and will be
+// cleaned up when the process exits.
+
+const ipfsd = require('ipfsd-ctl')
+const server = ipfsd.server
+
+server.start((err) => {
+  if (err) {
+    throw err
+  }
+  
+  const remoteController = ipfsd.remoteController(port || 9999)
+  remoteController.spawn(function (err, controller) {
+    const ipfs = controller.ctl
+    const node = controller.ctrl
+    ipfs.id(function (err, id) {
+      console.log(id)
+      node.stopDaemon()
+      server.stop()
+    })
+  })  
+})
+```
+
+It's also possible to start the server from `.aegir` per and post hooks. For reference take a look at the `.aegir` file in this repository.
+
+
+## API
+
+### Create factory
+
+- `localController` - create a local controller
+- `remoteController([port])` - create a remote controller, usable from browsers
+- `server` - exposes `start` and `stop` methods to start and stop the bundled http server that is required to run the remote controller.
+
+Both of this methods return a factory that exposes the `spawn` method, which allows spawning and controlling ipfs nodes
+
+### Spawn nodes
+
+```js
+  /**
+    Spawn an IPFS node, either js-ipfs or go-ipfs
+
+    @param {Object} [options={}] - various config options and ipfs config parameters (see valid options below)
+    @param {Function} cb(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
+  */
+  spawn(options, cb)
+```
+
+Where `options` is:
+
+- `js` bool - spawn a js or go node (default go)
+- `init` bool - should the node be initialized
+- `start` bool - should the node be started
+- `repoPath` string - the repository path to use for this node, ignored if node is disposable
+- `disposable` bool - a new repo is created and initialized for each invocation
+- `config` - ipfs configuration options
+
 
 If you need want to use an existing ipfs installation you can set `$IPFS_EXEC=/path/to/ipfs` to ensure it uses that.
 
