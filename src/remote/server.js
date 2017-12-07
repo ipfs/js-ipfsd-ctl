@@ -26,5 +26,6 @@ exports.start = function start (port, host, cb) {
 }
 
 exports.stop = function stop (cb) {
+  cb = cb || (() => {})
   server.stop(cb)
 }

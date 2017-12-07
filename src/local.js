@@ -38,13 +38,19 @@ const IpfsDaemonController = {
   },
 
   /**
-   * Spawn an IPFS node
-   * The repo is created in a temporary location and cleaned up on process exit.
+   * Spawn an IPFS node, either js-ipfs or go-ipfs
    *
-   * @memberof IpfsDaemonController
-   * @param {Object} [opts={}]
-   * @param {function(Error, {ctl: IpfsApi, ctrl: Node})} callback
-   * @returns {undefined}
+   * Options are:
+   * - `js` bool - spawn a js or go node (default go)
+   * - `init` bool - should the node be initialized
+   * - `start` bool - should the node be started
+   * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
+   * - `disposable` bool - a new repo is created and initialized for each invocation
+   * - `config` - ipfs configuration options
+   *
+   * @param {Object} [opts={}] - various config options and ipfs config parameters
+   * @param {Function} callback(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
+   * @return {undefined}
    */
   spawn (opts, callback) {
     if (typeof opts === 'function') {
