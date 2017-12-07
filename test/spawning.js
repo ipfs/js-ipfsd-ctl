@@ -15,6 +15,8 @@ const os = require('os')
 const isNode = require('detect-node')
 const isWindows = os.platform() === 'win32'
 
+const addRetrieveTests = require('./add-retrive')
+
 function tempDir (isJs) {
   return path.join(os.tmpdir(), `${isJs ? 'jsipfs' : 'ipfs'}_${String(Math.random()).substr(2)}`)
 }
@@ -37,98 +39,55 @@ module.exports = (ipfsdController, isJs) => {
     })
 
     describe('daemon spawning', () => {
-      describe('spawn a bare node', () => {
-        let node = null
-        let api = null
+      describe('spawn a bare node', function () {
+        this.node = null
+        this.api = null
 
         after(function (done) {
           this.timeout(20 * 1000)
-          node.stopDaemon(done)
+          this.node.stopDaemon(done)
         })
 
-        it('create node', (done) => {
+        it('create node', function (done) {
           ipfsdController.spawn({ isJs, init: false, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.not.exist()
-            node = ipfsd.ctrl
+            this.node = ipfsd.ctrl
             done()
           })
         })
 
         it('init node', function (done) {
           this.timeout(20 * 1000)
-          node.init((err) => {
+          this.node.init((err) => {
             expect(err).to.not.exist()
-            expect(node.initialized).to.be.ok()
+            expect(this.node.initialized).to.be.ok()
             done()
           })
         })
 
         it('start node', function (done) {
           this.timeout(30 * 1000)
-          node.startDaemon((err, a) => {
-            api = a
+          this.node.startDaemon((err, a) => {
+            this.api = a
             expect(err).to.not.exist()
-            expect(api).to.exist()
-            expect(api.id).to.exist()
+            expect(this.api).to.exist()
+            expect(this.api.id).to.exist()
             done()
           })
         })
 
-        describe('should add and retrieve content', () => {
-          const blorb = Buffer.from('blorb')
-          let store
-          let retrieve
-
-          before(function (done) {
-            this.timeout(30 * 1000)
-            async.waterfall([
-              (cb) => api.block.put(blorb, cb),
-              (block, cb) => {
-                store = block.cid.toBaseEncodedString()
-                api.block.get(store, cb)
-              },
-              (_block, cb) => {
-                retrieve = _block.data
-                cb()
-              }
-            ], done)
-          })
-
-          it('should be able to store objects', () => {
-            expect(store)
-              .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
-          })
-
-          it('should be able to retrieve objects', () => {
-            expect(retrieve.toString()).to.be.eql('blorb')
-          })
-
-          it('should have started the daemon and returned an api with host/port', () => {
-            expect(api).to.have.property('id')
-            expect(api).to.have.property('apiHost')
-            expect(api).to.have.property('apiPort')
-          })
-
-          it('should be able to store objects', () => {
-            expect(store)
-              .to.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
-          })
-
-          it('should be able to retrieve objects', () => {
-            expect(retrieve.toString()).to.equal('blorb')
-          })
-        })
+        addRetrieveTests()
       })
 
-      describe('spawn an initialized node', () => {
-        let node = null
-        let api = null
+      describe('spawn an initialized node', function () {
+        this.node = null
+        this.api = null
 
         after(function (done) {
           this.timeout(20 * 1000)
-          node.stopDaemon(done)
+          this.node.stopDaemon(done)
         })
 
         it('create node and init', function (done) {
@@ -137,75 +96,32 @@ module.exports = (ipfsdController, isJs) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.not.exist()
-            node = ipfsd.ctrl
+            this.node = ipfsd.ctrl
             done()
           })
         })
 
         it('start node', function (done) {
           this.timeout(30 * 1000)
-          node.startDaemon((err, a) => {
-            api = a
+          this.node.startDaemon((err, a) => {
+            this.api = a
             expect(err).to.not.exist()
-            expect(api).to.exist()
-            expect(api.id).to.exist()
+            expect(this.api).to.exist()
+            expect(this.api.id).to.exist()
             done()
           })
         })
 
-        describe('should add and retrieve content', () => {
-          const blorb = Buffer.from('blorb')
-          let store
-          let retrieve
-
-          before(function (done) {
-            this.timeout(20 * 1000)
-            async.waterfall([
-              (cb) => api.block.put(blorb, cb),
-              (block, cb) => {
-                store = block.cid.toBaseEncodedString()
-                api.block.get(store, cb)
-              },
-              (_block, cb) => {
-                retrieve = _block.data
-                cb()
-              }
-            ], done)
-          })
-
-          it('should be able to store objects', () => {
-            expect(store)
-              .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
-          })
-
-          it('should be able to retrieve objects', () => {
-            expect(retrieve.toString()).to.be.eql('blorb')
-          })
-
-          it('should have started the daemon and returned an api with host/port', () => {
-            expect(api).to.have.property('id')
-            expect(api).to.have.property('apiHost')
-            expect(api).to.have.property('apiPort')
-          })
-
-          it('should be able to store objects', () => {
-            expect(store)
-              .to.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
-          })
-
-          it('should be able to retrieve objects', () => {
-            expect(retrieve.toString()).to.equal('blorb')
-          })
-        })
+        addRetrieveTests()
       })
 
       describe('spawn a node and attach api', () => {
-        let node = null
-        let api = null
+        this.node = null
+        this.api = null
 
         after(function (done) {
           this.timeout(20 * 1000)
-          node.stopDaemon(done)
+          this.node.stopDaemon(done)
         })
 
         it('create init and start node', function (done) {
@@ -215,56 +131,13 @@ module.exports = (ipfsdController, isJs) => {
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.exist()
             expect(ipfsd.ctl.id).to.exist()
-            node = ipfsd.ctrl
-            api = ipfsd.ctl
+            this.node = ipfsd.ctrl
+            this.api = ipfsd.ctl
             done()
           })
         })
 
-        describe('should add and retrieve content', () => {
-          const blorb = Buffer.from('blorb')
-          let store
-          let retrieve
-
-          before(function (done) {
-            this.timeout(20 * 1000)
-            async.waterfall([
-              (cb) => api.block.put(blorb, cb),
-              (block, cb) => {
-                store = block.cid.toBaseEncodedString()
-                api.block.get(store, cb)
-              },
-              (_block, cb) => {
-                retrieve = _block.data
-                cb()
-              }
-            ], done)
-          })
-
-          it('should be able to store objects', () => {
-            expect(store)
-              .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
-          })
-
-          it('should be able to retrieve objects', () => {
-            expect(retrieve.toString()).to.be.eql('blorb')
-          })
-
-          it('should have started the daemon and returned an api with host/port', () => {
-            expect(api).to.have.property('id')
-            expect(api).to.have.property('apiHost')
-            expect(api).to.have.property('apiPort')
-          })
-
-          it('should be able to store objects', () => {
-            expect(store)
-              .to.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
-          })
-
-          it('should be able to retrieve objects', () => {
-            expect(retrieve.toString()).to.equal('blorb')
-          })
-        })
+        addRetrieveTests()
       })
 
       describe('spawn a node and pass init options', () => {
