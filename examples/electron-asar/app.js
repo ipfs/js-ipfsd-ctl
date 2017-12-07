@@ -2,7 +2,7 @@
 'use strict'
 
 const { app, ipcMain, BrowserWindow } = require('electron')
-const ipfsd = require('ipfsd-ctl')
+const ipfsd = require('../..')
 
 app.on('ready', () => {
   const win = new BrowserWindow({
@@ -15,11 +15,13 @@ ipcMain.on('start', ({ sender }) => {
   console.log('starting disposable IPFS')
   sender.send('message', 'starting disposable IPFS')
 
-  ipfsd.disposableApi((err, ipfs) => {
+  ipfsd.localController.spawn((err, ipfsd) => {
     if (err) {
       sender.send('error', err)
       throw err
     }
+
+    const ipfs = ipfsd.ctl
     console.log('get id')
     sender.send('message', 'get id')
     ipfs.id(function (err, id) {

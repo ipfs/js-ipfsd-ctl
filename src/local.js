@@ -2,6 +2,7 @@
 
 const merge = require('lodash.merge')
 const waterfall = require('async/waterfall')
+const join = require('path').join
 
 const Node = require('./daemon')
 
@@ -62,6 +63,13 @@ const IpfsDaemonController = {
     merge(options, defaultOptions, opts || {})
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
     options.start = options.init && options.start // don't start if not initialized
+
+    if (!options.disposable) {
+      options.init = false
+      options.repoPath = process.env.IPFS_PATH ||
+        join(process.env.HOME ||
+          process.env.USERPROFILE, options.isJs ? '.jsipfs' : '.ipfs')
+    }
 
     const node = new Node(options)
 
