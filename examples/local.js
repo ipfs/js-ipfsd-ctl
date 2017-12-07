@@ -1,12 +1,18 @@
 /* eslint no-console: 0 */
 'use strict'
 
-var ipfsd = require('../')
+const factory = require('../')
+const localController = factory.localController
 
 // opens an api connection to local running ipfs node
 
-ipfsd.local(function (err, ipfs) {
-  if (err) throw err
-
-  console.log(ipfs)
-})
+localController.spawn({ disposable: false }, (err, ipfsd) => {
+    const ipfs = ipfsd.ctl
+    const node = ipfsd.ctrl
+    ipfs.id(function (err, id) {
+      console.log('go-ipfs')
+      console.log(id)
+      node.stopDaemon()
+    })
+  }
+)
