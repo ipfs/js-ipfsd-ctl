@@ -108,9 +108,9 @@ It's also possible to start the server from `.aegir` `pre` and `post` hooks. For
 
 Where `options` is:
 
-- `js` bool - spawn a js or go node (default go)
-- `init` bool - should the node be initialized
-- `start` bool - should the node be started
+- `js` bool (default false) - spawn a js or go node (default go)
+- `init` bool (default true) - should the node be initialized
+- `start` bool (default true) - should the node be started
 - `repoPath` string - the repository path to use for this node, ignored if node is disposable
 - `disposable` bool - a new repo is created and initialized for each invocation
 - `config` - ipfs configuration options
