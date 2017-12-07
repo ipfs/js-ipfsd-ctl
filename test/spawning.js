@@ -23,7 +23,7 @@ function tempDir (isJs) {
 
 module.exports = (ipfsdController, isJs) => {
   return () => {
-    const VERSION_STRING = isJs ? 'js-ipfs version: 0.27.0' : 'ipfs version 0.4.13'
+    const VERSION_STRING = isJs ? 'js-ipfs version: 0.27.1' : 'ipfs version 0.4.13'
     const API_PORT = isJs ? '5002' : '5001'
     const GW_PORT = isJs ? '9090' : '8080'
 
