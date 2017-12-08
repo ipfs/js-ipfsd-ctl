@@ -1,6 +1,6 @@
 'use strict'
 
-const merge = require('lodash.merge')
+const defaults = require('lodash.defaultsdeep')
 const waterfall = require('async/waterfall')
 const join = require('path').join
 
@@ -13,7 +13,10 @@ const defaultOptions = {
       'PUT',
       'POST',
       'GET'
-    ]
+    ],
+    'Addresses.Swarm': [`/ip4/127.0.0.1/tcp/0`],
+    'Addresses.API': `/ip4/127.0.0.1/tcp/0`,
+    'Addresses.Gateway': `/ip4/127.0.0.1/tcp/0`
   },
   disposable: true,
   start: true,
@@ -48,6 +51,7 @@ const IpfsDaemonController = {
    * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
    * - `disposable` bool - a new repo is created and initialized for each invocation
    * - `config` - ipfs configuration options
+   * - args - array of cmd line arguments to be passed to ipfs daemon
    *
    * @param {Object} [opts={}] - various config options and ipfs config parameters
    * @param {Function} callback(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
@@ -60,7 +64,7 @@ const IpfsDaemonController = {
     }
 
     let options = {}
-    merge(options, defaultOptions, opts || {})
+    defaults(options, opts || {}, defaultOptions)
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
     options.start = options.init && options.start // don't start if not initialized
 
@@ -75,7 +79,7 @@ const IpfsDaemonController = {
 
     waterfall([
       (cb) => options.init ? node.init(cb) : cb(null, node),
-      (node, cb) => options.start ? node.startDaemon(cb) : cb(null, null)
+      (node, cb) => options.start ? node.startDaemon(options.args, cb) : cb(null, null)
     ], (err, api) => {
       if (err) {
         return callback(err)
