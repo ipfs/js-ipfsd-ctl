@@ -222,7 +222,7 @@ class Node {
       flags = []
     }
 
-    const args = ['daemon'].concat(flags)
+    const args = ['daemon'].concat(flags || [])
 
     callback = once(callback)
 
