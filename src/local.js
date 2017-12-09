@@ -51,7 +51,7 @@ const IpfsDaemonController = {
    * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
    * - `disposable` bool - a new repo is created and initialized for each invocation
    * - `config` - ipfs configuration options
-   * - args - array of cmd line arguments to be passed to ipfs daemon
+   * - `args` - array of cmd line arguments to be passed to ipfs daemon
    *
    * @param {Object} [opts={}] - various config options and ipfs config parameters
    * @param {Function} callback(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
@@ -66,13 +66,11 @@ const IpfsDaemonController = {
     let options = {}
     defaults(options, opts || {}, defaultOptions)
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
-    options.start = options.init && options.start // don't start if not initialized
 
     if (!options.disposable) {
-      options.init = false
-      options.repoPath = process.env.IPFS_PATH ||
+      options.repoPath = options.repoPath || (process.env.IPFS_PATH ||
         join(process.env.HOME ||
-          process.env.USERPROFILE, options.isJs ? '.jsipfs' : '.ipfs')
+          process.env.USERPROFILE, options.isJs ? '.jsipfs' : '.ipfs'))
     }
 
     const node = new Node(options)

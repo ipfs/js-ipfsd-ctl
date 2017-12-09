@@ -134,6 +134,10 @@ class Node {
     return this._gatewayAddr
   }
 
+  get repoPath () {
+    return this.path
+  }
+
   /**
    * Is the node started
    *
