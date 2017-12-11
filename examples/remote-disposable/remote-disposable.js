@@ -7,7 +7,7 @@
 // IPFS_PATH will point to /tmp/ipfs_***** and will be
 // cleaned up when the process exits.
 
-const ipfsd = require('../')
+const ipfsd = require('ipfsd-ctl')
 const server = ipfsd.server
 
 server.start((err) => {

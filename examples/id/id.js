@@ -1,17 +1,10 @@
 /* eslint no-console: 0 */
 'use strict'
 
-// Start a disposable node, and get access to the api
-// print the node id
-
-// IPFS_PATH will point to /tmp/ipfs_***** and will be
-// cleaned up when the process exits.
-
-const factory = require('../')
+const factory = require('ipfsd-ctl')
 const localController = factory.localController
 
-// start a go daemon
-localController.spawn((err, ipfsd) => {
+localController.spawn(function (err, ipfsd) {
   if (err) {
     throw err
   }
@@ -22,15 +15,13 @@ localController.spawn((err, ipfsd) => {
     if (err) {
       throw err
     }
-
-    console.log('go-ipfs')
+    console.log('alice')
     console.log(id)
     node.stopDaemon()
   })
 })
 
-// start a js daemon
-localController.spawn({ isJs: true }, (err, ipfsd) => {
+localController.spawn(function (err, ipfsd) {
   if (err) {
     throw err
   }
@@ -41,8 +32,7 @@ localController.spawn({ isJs: true }, (err, ipfsd) => {
     if (err) {
       throw err
     }
-
-    console.log('js-ipfs')
+    console.log('bob')
     console.log(id)
     node.stopDaemon()
   })

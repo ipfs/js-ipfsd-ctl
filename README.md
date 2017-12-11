@@ -113,6 +113,7 @@ Where `options` is:
 - `start` bool (default true) - should the node be started
 - `repoPath` string - the repository path to use for this node, ignored if node is disposable
 - `disposable` bool - a new repo is created and initialized for each invocation
+- `args` - array of cmd line arguments to be passed to ipfs daemon
 - `config` - ipfs configuration options
 
 

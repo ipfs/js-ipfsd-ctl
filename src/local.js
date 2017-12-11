@@ -3,6 +3,7 @@
 const defaults = require('lodash.defaultsdeep')
 const waterfall = require('async/waterfall')
 const join = require('path').join
+const flat = require('flat')
 
 const Node = require('./daemon')
 
@@ -64,10 +65,11 @@ const IpfsDaemonController = {
     }
 
     let options = {}
-    defaults(options, opts || {}, defaultOptions)
+    defaults(options, opts, defaultOptions)
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
 
     if (!options.disposable) {
+      options.init = false
       options.repoPath = options.repoPath || (process.env.IPFS_PATH ||
         join(process.env.HOME ||
           process.env.USERPROFILE, options.isJs ? '.jsipfs' : '.ipfs'))

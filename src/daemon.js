@@ -83,7 +83,7 @@ function tempDir (isJs) {
 }
 
 /**
- * Controll a go-ipfs node.
+ * Controll a go-ipfs or js-ipfs node.
  */
 class Node {
   /**
