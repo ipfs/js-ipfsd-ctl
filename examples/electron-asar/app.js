@@ -1,8 +1,12 @@
 /* eslint no-console: 0 */
 'use strict'
 
-const { app, ipcMain, BrowserWindow } = require('electron')
-const ipfsd = require('../..')
+const electron = require('electron')
+const app = electron.app
+const ipcMain = electron.ipcMain
+const BrowserWindow = electron.BrowserWindow
+
+const ipfsd = require('ipfsd-ctl')
 
 app.on('ready', () => {
   const win = new BrowserWindow({

@@ -1,10 +1,11 @@
 /* eslint no-console: 0 */
 'use strict'
 
-const factory = require('../')
+const factory = require('ipfsd-ctl')
 const localController = factory.localController
 
-localController.spawn(function (err, ipfsd) {
+// opens an api connection to local running go-ipfs node
+localController.spawn({ disposable: false }, (err, ipfsd) => {
   if (err) {
     throw err
   }
@@ -15,13 +16,15 @@ localController.spawn(function (err, ipfsd) {
     if (err) {
       throw err
     }
-    console.log('alice')
+
+    console.log('go-ipfs')
     console.log(id)
     node.stopDaemon()
   })
 })
 
-localController.spawn(function (err, ipfsd) {
+// opens an api connection to local running js-ipfs node
+localController.spawn({ isJs: true, disposable: false }, (err, ipfsd) => {
   if (err) {
     throw err
   }
@@ -32,7 +35,8 @@ localController.spawn(function (err, ipfsd) {
     if (err) {
       throw err
     }
-    console.log('bob')
+
+    console.log('js-ipfs')
     console.log(id)
     node.stopDaemon()
   })

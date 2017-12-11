@@ -23,7 +23,7 @@ function tempDir (isJs) {
 
 module.exports = (ipfsdController, isJs) => {
   return () => {
-    const VERSION_STRING = isJs ? 'js-ipfs version: 0.27.1' : 'ipfs version 0.4.13'
+    const VERSION_STRING = isJs ? 'js-ipfs version: 0.27.3' : 'ipfs version 0.4.13'
     const API_PORT = isJs ? '5002' : '5001'
     const GW_PORT = isJs ? '9090' : '8080'
 
@@ -140,14 +140,19 @@ module.exports = (ipfsdController, isJs) => {
         addRetrieveTests()
       })
 
-      describe('spawn a node and pass init options', () => {
+      describe.only('spawn a node and pass init options', () => {
         const repoPath = tempDir(isJs)
         const addr = '/ip4/127.0.0.1/tcp/5678'
         const swarmAddr1 = '/ip4/127.0.0.1/tcp/35555/ws'
         const swarmAddr2 = '/ip4/127.0.0.1/tcp/35666'
         const config = {
-          'Addresses.Swarm': [swarmAddr1, swarmAddr2],
-          'Addresses.API': addr
+          Addresses: {
+            Swarm: [
+              swarmAddr1,
+              swarmAddr2
+            ],
+            API: addr
+          }
         }
 
         it('allows passing ipfs config options to spawn', function (done) {
