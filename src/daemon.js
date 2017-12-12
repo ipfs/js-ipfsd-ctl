@@ -7,80 +7,20 @@ const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const shutdown = require('shutdown')
 const path = require('path')
-const join = path.join
 const once = require('once')
-const os = require('os')
 const truthy = require('truthy')
+const utils = require('./utils')
 
-const isWindows = os.platform() === 'win32'
+const tryJsonParse = utils.tryJsonParse
+const parseConfig = utils.parseConfig
+const tempDir = utils.tempDir
+const findIpfsExecutable = utils.findIpfsExecutable
+const setConfigValue = utils.setConfigValue
+const configureNode = utils.configureNode
 
 const exec = require('./exec')
 
 const GRACE_PERIOD = 10500 // amount of ms to wait before sigkill
-
-function findIpfsExecutable (isJs, rootPath) {
-  let appRoot = path.join(rootPath, '..')
-  // If inside <appname>.asar try to load from .asar.unpacked
-  // this only works if asar was built with
-  // asar --unpack-dir=node_modules/go-ipfs-dep/* (not tested)
-  // or
-  // electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep
-  if (appRoot.includes(`.asar${path.sep}`)) {
-    appRoot = appRoot.replace(`.asar${path.sep}`, `.asar.unpacked${path.sep}`)
-  }
-  const appName = isWindows ? 'ipfs.exe' : 'ipfs'
-  const depPath = isJs
-    ? path.join('ipfs', 'src', 'cli', 'bin.js')
-    : path.join('go-ipfs-dep', 'go-ipfs', appName)
-  const npm3Path = path.join(appRoot, '../', depPath)
-  const npm2Path = path.join(appRoot, 'node_modules', depPath)
-
-  if (fs.existsSync(npm3Path)) {
-    return npm3Path
-  }
-  if (fs.existsSync(npm2Path)) {
-    return npm2Path
-  }
-
-  throw new Error('Cannot find the IPFS executable')
-}
-
-function setConfigValue (node, key, value, callback) {
-  exec(
-    node.exec,
-    ['config', key, value, '--json'],
-    { env: node.env },
-    callback
-  )
-}
-
-function configureNode (node, conf, callback) {
-  async.eachOfSeries(conf, (value, key, cb) => {
-    setConfigValue(node, key, JSON.stringify(value), cb)
-  }, callback)
-}
-
-function tryJsonParse (input, callback) {
-  let res
-  try {
-    res = JSON.parse(input)
-  } catch (err) {
-    return callback(err)
-  }
-  callback(null, res)
-}
-
-// Consistent error handling
-function parseConfig (path, callback) {
-  async.waterfall([
-    (cb) => fs.readFile(join(path, 'config'), cb),
-    (file, cb) => tryJsonParse(file.toString(), cb)
-  ], callback)
-}
-
-function tempDir (isJs) {
-  return join(os.tmpdir(), `${isJs ? 'jsipfs' : 'ipfs'}_${String(Math.random()).substr(2)}`)
-}
 
 /**
  * Controll a go-ipfs or js-ipfs node.

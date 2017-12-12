@@ -3,7 +3,7 @@
 const defaults = require('lodash.defaultsdeep')
 const waterfall = require('async/waterfall')
 const join = require('path').join
-const flat = require('flat')
+const flatten = require('./utils').flatten
 
 const Node = require('./daemon')
 
@@ -63,6 +63,8 @@ const IpfsDaemonController = {
       callback = opts
       opts = defaultOptions
     }
+
+    opts.config = flatten(opts.config)
 
     let options = {}
     defaults(options, opts, defaultOptions)

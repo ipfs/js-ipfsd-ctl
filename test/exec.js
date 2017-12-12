@@ -8,6 +8,10 @@ const cp = require('child_process')
 const path = require('path')
 const exec = require('../src/exec')
 
+const os = require('os')
+
+const isWindows = os.platform() === 'win32'
+
 const survivor = path.join(__dirname, 'survivor')
 
 function token () {
@@ -60,6 +64,11 @@ function makeCheck (n, done) {
 // UPDATE: 12/06/2017 - `tail` seems to work fine on all ci systems.
 // I'm leaving it enabled for now. This does need a different approach for windows though.
 describe('exec', () => {
+  // TODO: skip on windows for now
+  if (isWindows) {
+    return
+  }
+
   it('SIGTERM kills hang', (done) => {
     const tok = token()
 
