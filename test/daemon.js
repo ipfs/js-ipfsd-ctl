@@ -2,6 +2,7 @@
 'use strict'
 
 const daemon = require('./spawning')
+const api = require('./api')
 const isNode = require('detect-node')
 const factory = require('../src')
 
@@ -15,17 +16,20 @@ if (isNode) {
 
 describe('ipfsd-ctl', () => {
   // clean up IPFS env
-  afterEach(() => Object.keys(process.env).forEach((key) => {
-    if (key.includes('IPFS')) {
-      delete process.env[key]
-    }
-  }))
+  afterEach(() => Object.keys(process.env)
+    .forEach((key) => {
+      if (key.includes('IPFS')) {
+        delete process.env[key]
+      }
+    }))
 
   describe('Go daemon', () => {
     daemon(ipfsdController, false)()
+    api(ipfsdController, false)
   })
 
   describe('Js daemon', () => {
     daemon(ipfsdController, true)()
+    api(ipfsdController, false)
   })
 })
