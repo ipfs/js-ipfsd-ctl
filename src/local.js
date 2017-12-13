@@ -8,20 +8,21 @@ const flatten = require('./utils').flatten
 const Node = require('./daemon')
 
 const defaultOptions = {
-  config: {
-    'API.HTTPHeaders.Access-Control-Allow-Origin': ['*'],
-    'API.HTTPHeaders.Access-Control-Allow-Methods': [
-      'PUT',
-      'POST',
-      'GET'
-    ],
-    'Addresses.Swarm': [`/ip4/127.0.0.1/tcp/0`],
-    'Addresses.API': `/ip4/127.0.0.1/tcp/0`,
-    'Addresses.Gateway': `/ip4/127.0.0.1/tcp/0`
-  },
   disposable: true,
   start: true,
   init: true
+}
+
+const defaultConfig = {
+  'API.HTTPHeaders.Access-Control-Allow-Origin': ['*'],
+  'API.HTTPHeaders.Access-Control-Allow-Methods': [
+    'PUT',
+    'POST',
+    'GET'
+  ],
+  'Addresses.Swarm': [`/ip4/127.0.0.1/tcp/0`],
+  'Addresses.API': `/ip4/127.0.0.1/tcp/0`,
+  'Addresses.Gateway': `/ip4/127.0.0.1/tcp/0`
 }
 
 /**
@@ -64,26 +65,23 @@ const IpfsDaemonController = {
       opts = defaultOptions
     }
 
-    opts.config = flatten(opts.config)
-
-    // remove random ports for non disposable nodes
-    // we want them to run on default addresses/ports
-    if (!opts.disposable) {
-      delete defaultOptions.config['Addresses.Swarm']
-      delete defaultOptions.config['Addresses.API']
-      delete defaultOptions.config['Addresses.Gateway']
-    }
-
     let options = {}
     defaults(options, opts, defaultOptions)
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
 
     if (!options.disposable) {
+      delete defaultConfig['Addresses.Swarm']
+      delete defaultConfig['Addresses.API']
+      delete defaultConfig['Addresses.Gateway']
+
       options.init = false
       options.repoPath = options.repoPath || (process.env.IPFS_PATH ||
         join(process.env.HOME ||
           process.env.USERPROFILE, options.isJs ? '.jsipfs' : '.ipfs'))
     }
+
+    options.config = flatten(opts.config)
+    defaults(options.config, options.config, defaultConfig)
 
     const node = new Node(options)
 
