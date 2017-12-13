@@ -10,7 +10,7 @@
 [![Appveyor CI](https://ci.appveyor.com/api/projects/status/4p9r12ch0jtthnha?svg=true)](https://ci.appveyor.com/project/wubalubadubdub/js-ipfsd-ctl-a9ywu)
 [![Dependency Status](https://david-dm.org/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfsd-ctl) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 
-> Control an ipfs node daemon using Node.js
+> Control an ipfs node daemon using either Node.js or the browser
 
 ## Table of Contents
 
@@ -117,7 +117,7 @@ module.exports = {
 
 - `daemonFactory.localController` - create a local controller
 - `daemonFactory.remoteController([port])` - create a remote controller, usable from browsers
-  - This methods return a factory that exposes the `spawn` method, which allows spawning and controlling ipfs nodes
+  - These methods return a factory that exposes the `spawn` method, which allows spawning and controlling ipfs nodes
 - `daemonFactory.server` - exposes `start` and `stop` methods to start and stop the bundled http server that is required to run the remote controller.
 
 #### Spawn nodes
@@ -136,8 +136,8 @@ module.exports = {
   - `config` - ipfs configuration options
   
  - `cb(err, {ctl: <ipfs-api instance>, ctrl: <Node (ctrl) instance>})` - a callback that receives an object with two members:
-   - `ctl` an [ipfs-api](https://github.com/ipfs/js-ipfs-api) instance attached to the newly created ipfs node
-   - `ctrl` an instance of a daemon controller object
+   - `ctl` - an [ipfs-api](https://github.com/ipfs/js-ipfs-api) instance attached to the newly created ipfs node
+   - `ctrl` - an instance of a daemon controller object
    
    
 ### IPFS Client (ctl)
