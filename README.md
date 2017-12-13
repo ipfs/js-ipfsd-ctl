@@ -67,11 +67,11 @@ const daemonFactory = require('ipfsd-ctl')
 const local = daemonFactory.localController
 
 local.spawn(function (err, ipfsd) {
-  const ipfs = ipfsd.ctl
-  const node = ipfsd.ctrl
-  ipfs.id(function (err, id) {
+  const ipfsCtl = ipfsd.ctl
+  const ipfsCtrl = ipfsd.ctrl
+  ipfsCtl.id(function (err, id) {
     console.log(id)
-    node.stopDaemon()
+    ipfsCtrl.stopDaemon()
   })
 })
 ```
