@@ -10,7 +10,9 @@ chai.use(dirtyChai)
 const ipfsApi = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const os = require('os')
+const path = require('path')
 
+const isNode = require('detect-node')
 const isWindows = os.platform() === 'win32'
 
 module.exports = (ipfsdController, isJs) => {
