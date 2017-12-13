@@ -66,6 +66,14 @@ const IpfsDaemonController = {
 
     opts.config = flatten(opts.config)
 
+    // remove random ports for non disposable nodes
+    // we want them to run on default addresses/ports
+    if (!opts.disposable) {
+      delete defaultOptions.config['Addresses.Swarm']
+      delete defaultOptions.config['Addresses.API']
+      delete defaultOptions.config['Addresses.Gateway']
+    }
+
     let options = {}
     defaults(options, opts, defaultOptions)
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
