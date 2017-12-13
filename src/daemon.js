@@ -74,6 +74,11 @@ class Node {
     return this._gatewayAddr
   }
 
+  /**
+   * Get the current repo path
+   *
+   * @return {string}
+   */
   get repoPath () {
     return this.path
   }
