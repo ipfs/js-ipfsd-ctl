@@ -13,8 +13,6 @@
 > Control an ipfs node daemon using either Node.js or the browser
 
 ```
-                                                                                                              
-                                                                                                              
                                                                     +-----+                                   
                                                                     |  H  |                                   
                                                                     |  T  |                                   
@@ -32,7 +30,6 @@
     | +-----------------------+   |                    +-----------------------|----                      |  |
     |                             |                                            |   +----------------------+  |
     +-----------------------------+                                            +-----------------------------+
-                                                                                                              
 ```
 
 ## Table of Contents
@@ -60,13 +57,10 @@ IPFS daemons are already easy to start and stop, but this module is here to do i
 // Start a disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-// IPFS_PATH will point to /tmp/ipfs_***** and will be
-// cleaned up when the process exits.
+const controllerFactory = require('ipfsd-ctl')
+const daemonFactory = controllerFactory()
 
-const daemonFactory = require('ipfsd-ctl')
-const local = daemonFactory.localController
-
-local.spawn(function (err, ipfsd) {
+daemonFactory.spawn(function (err, ipfsd) {
   const ipfsCtl = ipfsd.ctl
   const ipfsCtrl = ipfsd.ctrl
   ipfsCtl.id(function (err, id) {
@@ -82,21 +76,18 @@ local.spawn(function (err, ipfsd) {
 // Start a remote disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-// IPFS_PATH will point to /tmp/ipfs_***** and will be
-// cleaned up when the process exits.
+const controllerFactory = require('ipfsd-ctl')
+const daemonFactory = controllerFactory()
 
-const daemonFactory = require('ipfsd-ctl')
-const server = daemonFactory.server
-
-server.start((err) => {
+const port = 9999
+daemonFactory.start(port, (err) => {
   if (err) {
     throw err
   }
   
-  const remote = daemonFactory.remoteController(port || 9999)
-  remote.spawn(function (err, controller) {
-    const ipfsCtl = controller.ctl
-    const ipfsCtrl = controller.ctrl
+  daemonFactory.spawn(function (err, ipfsd) {
+    const ipfsCtl = ipfsd.ctl
+    const ipfsCtrl = ipfsd.ctrl
     ipfsCtl.id(function (err, id) {
       console.log(id)
       ipfsCtrl.stopDaemon()
@@ -138,16 +129,25 @@ module.exports = {
 
 #### Create factory
 
-- `daemonFactory.localController` - create a local controller
-- `daemonFactory.remoteController([port])` - create a remote controller, usable from browsers
-  - These methods return a factory that exposes the `spawn` method, which allows spawning and controlling ipfs nodes
-- `daemonFactory.server` - exposes `start` and `stop` methods to start and stop the bundled http server that is required to run the remote controller.
+```js
+const controllerFactory = require('ipfsd-ctl')
+const daemonFactory = controllerFactory()
+```
+
+> Create a factory that will expose the `daemonFactory.spawn` method
+
+- These method return a factory that exposes the `spawn` method, which allows spawning and controlling ipfs nodes
+
+
+> `daemonFactory.server` 
+
+- exposes `start` and `stop` methods to start and stop the bundled http server that is required to run the remote controller.
 
 #### Spawn nodes
 
 > Spawn either a js-ipfs or go-ipfs node through `localController` or `remoteController`
 
-`spawn([options], cb)`
+`spawn([options], callback)`
 
 - `options` - is an optional object with various options and ipfs config parameters
   - `js` bool (default false) - spawn a js or go node (default go)
@@ -158,10 +158,11 @@ module.exports = {
   - `args` - array of cmd line arguments to be passed to ipfs daemon
   - `config` - ipfs configuration options
   
- - `cb(err, {ctl: <ipfs-api instance>, ctrl: <Node (ctrl) instance>})` - a callback that receives an object with two members:
-   - `ctl` - an [ipfs-api](https://github.com/ipfs/js-ipfs-api) instance attached to the newly created ipfs node
-   - `ctrl` - an instance of a daemon controller object
-   
+ - `callback` - is a function with the signature `cb(err, ipfsd)` where:
+   - `err` - is the error set if spawning the node is unsuccessful
+   - `ipfsd` - is an object with two properties: 
+     - `ctl` - an [ipfs-api](https://github.com/ipfs/js-ipfs-api) instance attached to the newly created ipfs node
+     - `ctrl` - an instance of a daemon controller object
    
 ### IPFS Client (ctl)
 
@@ -170,6 +171,7 @@ module.exports = {
 
 ### IPFS Daemon Controller (ctrl)
 
+> The IPFS daemon controller that allows interacting with the spawned IPFS process
 
 #### `apiAddr` (getter) 
 
@@ -177,7 +179,7 @@ module.exports = {
 
 - returns multiaddr
 
-#### `gatewayAddr` (getter) 
+#### `gatewayAddr` (getter)
 
 > Get the address (multiaddr) of connected IPFS HTTP Gateway.
 

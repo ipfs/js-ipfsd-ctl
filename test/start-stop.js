@@ -12,8 +12,7 @@ const once = require('once')
 const path = require('path')
 const exec = require('../src/exec')
 
-const factory = require('../src')
-const ipfsdFactory = factory.localController
+const daemonFactory = require('../src')()
 
 module.exports = (isJs) => {
   return () => {
@@ -23,7 +22,7 @@ module.exports = (isJs) => {
       describe(`create and init a node (ctlr)`, function () {
         this.timeout(20 * 1000)
         before((done) => {
-          ipfsdFactory.spawn({ isJs, init: true, start: false, disposable: true }, (err, ipfsd) => {
+          daemonFactory.spawn({ isJs, init: true, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
 

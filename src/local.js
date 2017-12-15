@@ -54,6 +54,7 @@ const IpfsDaemonController = {
    * - `disposable` bool - a new repo is created and initialized for each invocation
    * - `config` - ipfs configuration options
    * - `args` - array of cmd line arguments to be passed to ipfs daemon
+   * - `executable` - path to the desired IPFS executable to spawn
    *
    * @param {Object} [opts={}] - various config options and ipfs config parameters
    * @param {Function} callback(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
