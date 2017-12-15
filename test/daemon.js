@@ -3,18 +3,11 @@
 
 const daemon = require('./spawning')
 const api = require('./api')
-const isNode = require('detect-node')
-const factory = require('../src')
-
-let ipfsdController
-
-if (isNode) {
-  ipfsdController = factory.localController
-} else {
-  ipfsdController = factory.remoteController()
-}
+const controllerFactory = require('../src')
 
 describe('ipfsd-ctl', () => {
+  const daemonFactory = controllerFactory()
+
   // clean up IPFS env
   afterEach(() => Object.keys(process.env)
     .forEach((key) => {
@@ -24,12 +17,12 @@ describe('ipfsd-ctl', () => {
     }))
 
   describe('Go daemon', () => {
-    daemon(ipfsdController, false)()
-    api(ipfsdController, false)
+    daemon(daemonFactory, false)()
+    api(daemonFactory, false)
   })
 
   describe('Js daemon', () => {
-    daemon(ipfsdController, true)()
-    api(ipfsdController, false)
+    daemon(daemonFactory, true)()
+    api(daemonFactory, false)
   })
 })

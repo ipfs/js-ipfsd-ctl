@@ -4,22 +4,16 @@ const Hapi = require('hapi')
 const routes = require('./routes')
 
 let server = null
-exports.start = function start (port, host, cb) {
+exports.start = function start (port, cb) {
   if (typeof port === 'function') {
     cb = port
     port = 9999
   }
 
-  if (typeof host === 'function') {
-    cb = host
-    host = 'localhost'
-  }
-
   port = port || 9999
-  host = host || 'localhost'
 
   server = new Hapi.Server()
-  server.connection({ port, host, routes: { cors: true } })
+  server.connection({ port, host: 'localhost', routes: { cors: true } })
 
   routes(server)
   server.start(cb)

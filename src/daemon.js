@@ -38,11 +38,10 @@ class Node {
     const isJs = truthy(process.env.IPFS_JS)
 
     this.opts = opts || { isJs: isJs || false }
-    process.env.IPFS_JS = this.opts.isJs
 
     this.path = this.opts.disposable ? tempDir(isJs) : (this.opts.repoPath || tempDir(isJs))
     this.disposable = this.opts.disposable
-    this.exec = process.env.IPFS_EXEC || findIpfsExecutable(this.opts.isJs, rootPath)
+    this.exec = this.opts.executable || process.env.IPFS_EXEC || findIpfsExecutable(this.opts.isJs, rootPath)
     this.subprocess = null
     this.initialized = fs.existsSync(path)
     this.clean = true
@@ -115,7 +114,6 @@ class Node {
 
     if (initOpts.directory && initOpts.directory !== this.path) {
       this.path = initOpts.directory
-      this.env.IPFS_PATH = this.path
     }
 
     this._run(['init', '-b', keySize], { env: this.env }, (err, result) => {

@@ -1,10 +1,10 @@
 /* eslint no-console: 0 */
 'use strict'
 
-const factory = require('ipfsd-ctl')
-const localController = factory.localController
+const controllerFactory = require('ipfsd-ctl')
+const daemonFactory = controllerFactory()
 
-localController.spawn(function (err, ipfsd) {
+daemonFactory.spawn(function (err, ipfsd) {
   if (err) {
     throw err
   }
@@ -21,19 +21,19 @@ localController.spawn(function (err, ipfsd) {
   })
 })
 
-localController.spawn(function (err, ipfsd) {
+daemonFactory.spawn(function (err, ipfsd) {
   if (err) {
     throw err
   }
 
-  const ipfs = ipfsd.ctl
-  const node = ipfsd.ctrl
-  ipfs.id(function (err, id) {
+  const ipfsCtl = ipfsd.ctl
+  const ipfsCtrl = ipfsd.ctrl
+  ipfsCtl.id(function (err, id) {
     if (err) {
       throw err
     }
     console.log('bob')
     console.log(id)
-    node.stopDaemon()
+    ipfsCtrl.stopDaemon()
   })
 })
