@@ -6,7 +6,8 @@ const app = electron.app
 const ipcMain = electron.ipcMain
 const BrowserWindow = electron.BrowserWindow
 
-const ipfsd = require('ipfsd-ctl')
+const DaemonFactory = require('ipfsd-ctl')
+const df = DaemonFactory.create()
 
 app.on('ready', () => {
   const win = new BrowserWindow({
@@ -19,7 +20,7 @@ ipcMain.on('start', ({ sender }) => {
   console.log('starting disposable IPFS')
   sender.send('message', 'starting disposable IPFS')
 
-  ipfsd.localController.spawn((err, ipfsd) => {
+  df.spawn((err, ipfsd) => {
     if (err) {
       sender.send('error', err)
       throw err

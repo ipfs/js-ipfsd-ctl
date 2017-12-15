@@ -18,7 +18,7 @@ function tempDir (isJs) {
   return path.join(os.tmpdir(), `${isJs ? 'jsipfs' : 'ipfs'}_${String(Math.random()).substr(2)}`)
 }
 
-module.exports = (ipfsdController, isJs) => {
+module.exports = (df, isJs) => {
   return () => {
     const VERSION_STRING = isJs ? `js-ipfs version: ${require('ipfs/package.json').version}` : 'ipfs version 0.4.13'
 
@@ -26,7 +26,7 @@ module.exports = (ipfsdController, isJs) => {
       if (!isNode) {
         this.skip()
       }
-      ipfsdController.version({ isJs }, (err, version) => {
+      df.version({ isJs }, (err, version) => {
         expect(err).to.not.exist()
         expect(version).to.be.eql(VERSION_STRING)
         done()
@@ -44,7 +44,7 @@ module.exports = (ipfsdController, isJs) => {
         })
 
         it('create node', function (done) {
-          ipfsdController.spawn({ isJs, init: false, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ isJs, init: false, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.not.exist()
@@ -87,7 +87,7 @@ module.exports = (ipfsdController, isJs) => {
 
         it('create node and init', function (done) {
           this.timeout(30 * 1000)
-          ipfsdController.spawn({ isJs, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ isJs, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.not.exist()
@@ -121,7 +121,7 @@ module.exports = (ipfsdController, isJs) => {
 
         it('create init and start node', function (done) {
           this.timeout(20 * 1000)
-          ipfsdController.spawn({ isJs }, (err, ipfsd) => {
+          df.spawn({ isJs }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.exist()
@@ -161,7 +161,7 @@ module.exports = (ipfsdController, isJs) => {
 
           let node
           async.waterfall([
-            (cb) => ipfsdController.spawn(options, cb),
+            (cb) => df.spawn(options, cb),
             (ipfsd, cb) => {
               node = ipfsd.ctrl
               node.getConfig('Addresses.API', (err, res) => {
@@ -189,7 +189,7 @@ module.exports = (ipfsdController, isJs) => {
 
         before(function (done) {
           this.timeout(20 * 1000)
-          ipfsdController.spawn({ isJs }, (err, res) => {
+          df.spawn({ isJs }, (err, res) => {
             if (err) {
               return done(err)
             }

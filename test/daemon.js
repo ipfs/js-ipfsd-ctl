@@ -3,10 +3,10 @@
 
 const daemon = require('./spawning')
 const api = require('./api')
-const controllerFactory = require('../src')
+const DaemonFactory = require('../src')
 
 describe('ipfsd-ctl', () => {
-  const daemonFactory = controllerFactory()
+  const df = DaemonFactory.create()
 
   // clean up IPFS env
   afterEach(() => Object.keys(process.env)
@@ -17,12 +17,12 @@ describe('ipfsd-ctl', () => {
     }))
 
   describe('Go daemon', () => {
-    daemon(daemonFactory, false)()
-    api(daemonFactory, false)
+    daemon(df, false)()
+    api(df, false)
   })
 
   describe('Js daemon', () => {
-    daemon(daemonFactory, true)()
-    api(daemonFactory, false)
+    daemon(df, true)()
+    api(df, false)
   })
 })

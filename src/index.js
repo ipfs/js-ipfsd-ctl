@@ -5,16 +5,20 @@ const remote = require('./remote')
 const isNode = require('detect-node')
 const defaults = require('lodash.defaultsdeep')
 
-function controllerFactory (opts) {
-  const options = defaults({}, opts, { remote: !isNode })
+class DaemonFactory {
+  static create (opts) {
+    const options = defaults({}, opts, { remote: !isNode })
 
-  if (options.remote) {
-    return remote.remoteController(options.port)
+    if (options.remote) {
+      return remote.remoteController(options.port)
+    }
+
+    return localController
   }
 
-  return localController
+  static get server () {
+    return remote.server
+  }
 }
 
-controllerFactory.server = remote.server
-
-module.exports = controllerFactory
+module.exports = DaemonFactory

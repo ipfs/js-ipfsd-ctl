@@ -1,11 +1,11 @@
 /* eslint no-console: 0 */
 'use strict'
 
-const controllerFactory = require('ipfsd-ctl')
-const daemonFactory = controllerFactory()
+const DaemonFactory = require('ipfsd-ctl')
+const df = DaemonFactory.create()
 
 // opens an api connection to local running go-ipfs node
-daemonFactory.spawn({ disposable: false }, (err, ipfsd) => {
+df.spawn({ disposable: false }, (err, ipfsd) => {
   if (err) {
     throw err
   }
@@ -24,7 +24,7 @@ daemonFactory.spawn({ disposable: false }, (err, ipfsd) => {
 })
 
 // opens an api connection to local running js-ipfs node
-daemonFactory.spawn({ isJs: true, disposable: false }, (err, ipfsd) => {
+df.spawn({ isJs: true, disposable: false }, (err, ipfsd) => {
   if (err) {
     throw err
   }
