@@ -57,10 +57,10 @@ IPFS daemons are already easy to start and stop, but this module is here to do i
 // Start a disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const controllerFactory = require('ipfsd-ctl')
-const daemonFactory = controllerFactory()
+const DaemonFactory = require('ipfsd-ctl')
+const df = DaemonFactory.create()
 
-daemonFactory.spawn(function (err, ipfsd) {
+df.spawn(function (err, ipfsd) {
   const ipfsCtl = ipfsd.ctl
   const ipfsCtrl = ipfsd.ctrl
   ipfsCtl.id(function (err, id) {
@@ -76,16 +76,16 @@ daemonFactory.spawn(function (err, ipfsd) {
 // Start a remote disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const controllerFactory = require('ipfsd-ctl')
-const daemonFactory = controllerFactory()
+const DaemonFactory = require('ipfsd-ctl')
+const df = DaemonFactory.create()
 
 const port = 9999
-daemonFactory.start(port, (err) => {
+df.start(port, (err) => {
   if (err) {
     throw err
   }
   
-  daemonFactory.spawn(function (err, ipfsd) {
+  df.spawn(function (err, ipfsd) {
     const ipfsCtl = ipfsd.ctl
     const ipfsCtrl = ipfsd.ctrl
     ipfsCtl.id(function (err, id) {
@@ -127,25 +127,24 @@ module.exports = {
 
 ### Daemon Factory
 
-#### Create factory
+#### Create a `DaemonFactory`
 
 ```js
-const controllerFactory = require('ipfsd-ctl')
-const daemonFactory = controllerFactory()
+const DemonFactory = require('ipfsd-ctl')
+const df = DemonFactory.create([opts])
 ```
 
-> Create a factory that will expose the `daemonFactory.spawn` method
+> Create a factory that will expose the `df.spawn` method
 
 - These method return a factory that exposes the `spawn` method, which allows spawning and controlling ipfs nodes
 
-
-> `daemonFactory.server` 
+> `df.server` 
 
 - exposes `start` and `stop` methods to start and stop the bundled http server that is required to run the remote controller.
 
-#### Spawn nodes
+#### Spawn a new daemon with `df.spawn`
 
-> Spawn either a js-ipfs or go-ipfs node through `localController` or `remoteController`
+> Spawn either a js-ipfs or go-ipfs node
 
 `spawn([options], callback)`
 
@@ -167,6 +166,8 @@ const daemonFactory = controllerFactory()
 ### IPFS Client (ctl)
 
 > An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api)
+
+This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsdCtrl.startDaemon()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`. 
 
 
 ### IPFS Daemon Controller (ctrl)
@@ -275,8 +276,6 @@ If no `key` is passed, the whole config is returned as an object.
 
 - function(Error, string) callback
    
-For more details see https://ipfs.github.io/js-ipfsd-ctl/.
-
 ### Packaging
 
 `ipfsd-ctl` can be packaged in Electron applications, but the ipfs binary

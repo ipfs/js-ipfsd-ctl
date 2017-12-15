@@ -4,11 +4,11 @@
 // Start a disposable node, and get access to the api
 // print the node id
 
-const controllerFactory = require('ipfsd-ctl')
-const daemonFactory = controllerFactory()
+const DaemonFactory = require('ipfsd-ctl')
+const df = DaemonFactory.create()
 
 // start a go daemon
-daemonFactory.spawn((err, ipfsd) => {
+df.spawn((err, ipfsd) => {
   if (err) {
     throw err
   }
@@ -27,7 +27,7 @@ daemonFactory.spawn((err, ipfsd) => {
 })
 
 // start a js daemon
-daemonFactory.spawn({ isJs: true }, (err, ipfsd) => {
+df.spawn({ isJs: true }, (err, ipfsd) => {
   if (err) {
     throw err
   }

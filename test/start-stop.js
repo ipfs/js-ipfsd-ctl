@@ -12,7 +12,8 @@ const once = require('once')
 const path = require('path')
 const exec = require('../src/exec')
 
-const daemonFactory = require('../src')()
+const DaemonFactory = require('../src')
+const df = DaemonFactory.create()
 
 module.exports = (isJs) => {
   return () => {
@@ -22,7 +23,7 @@ module.exports = (isJs) => {
       describe(`create and init a node (ctlr)`, function () {
         this.timeout(20 * 1000)
         before((done) => {
-          daemonFactory.spawn({ isJs, init: true, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ isJs, init: true, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
 

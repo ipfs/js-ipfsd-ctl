@@ -1,10 +1,10 @@
 /* eslint no-console: 0 */
 'use strict'
 
-const controllerFactory = require('ipfsd-ctl')
-const daemonFactory = controllerFactory()
+const DaemonFactory = require('ipfsd-ctl')
+const df = DaemonFactory.create()
 
-daemonFactory.spawn(function (err, ipfsd) {
+df.spawn(function (err, ipfsd) {
   if (err) {
     throw err
   }
@@ -21,7 +21,7 @@ daemonFactory.spawn(function (err, ipfsd) {
   })
 })
 
-daemonFactory.spawn(function (err, ipfsd) {
+df.spawn(function (err, ipfsd) {
   if (err) {
     throw err
   }
