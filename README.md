@@ -77,9 +77,9 @@ df.spawn(function (err, ipfsd) {
 // print the node id, and stop the temporary daemon
 
 const DaemonFactory = require('ipfsd-ctl')
-const df = DaemonFactory.create()
 
 const port = 9999
+const df = DaemonFactory.create({remote: true, port})
 df.start(port, (err) => {
   if (err) {
     throw err
@@ -136,9 +136,11 @@ const df = DemonFactory.create([opts])
 
 > Create a factory that will expose the `df.spawn` method
 
-- These method return a factory that exposes the `spawn` method, which allows spawning and controlling ipfs nodes
+- `opts` - an optional object with the following properties
+  - `remote` bool - indicates if the factory should spawn local or remote nodes. By default, local nodes are spawned in Node.js and remote nodes are spawned in Browser environments.
+  - `port` number - the port number to use for the remote factory. It should match the port on which `df.server` was started. Defaults to 9999.
 
-> `df.server` 
+> `df.server` the bundled HTTP server used by the remote controller.
 
 - exposes `start` and `stop` methods to start and stop the bundled http server that is required to run the remote controller.
 
@@ -198,35 +200,35 @@ This instance is returned for each successfully started IPFS daemon, when either
 
 - returns boolean
  
-#### `init (initOpts, callback)`
+#### `init ([initOpts], callback)`
 
 > Initialize a repo.
 
-- initOpts (optional) - options object with the following entries
-  - keysize (default 2048) - The bit size of the identiy key.
-  - directory (default IPFS_PATH) - The location of the repo.
-  - function (Error, Node) callback - receives an instance of this Node on success or an instance of `Error` on failure
+- `initOpts` (optional) - options object with the following entries
+  - `keysize` (default 2048) - The bit size of the identiy key.
+  - `directory` (default IPFS_PATH) - The location of the repo.
+  - `function (Error, Node)` callback - receives an instance of this Node on success or an instance of `Error` on failure
 
 
 #### `shutdown (callback)`
 
 > Delete the repo that was being used. If the node was marked as `disposable` this will be called automatically when the process is exited.
 
-- function(Error) callback
+- `function(Error)` callback
 
 #### `startDaemon (flags, callback)`
 
 > Start the daemon.
 
-- flags - Flags array to be passed to the `ipfs daemon` command.
-- function(Error, IpfsApi)} callback - function that receives an instance of `ipfs-api` on success or an instance of `Error` on failure
+- `flags` - Flags array to be passed to the `ipfs daemon` command.
+- `function(Error, IpfsApi)}` callback - function that receives an instance of `ipfs-api` on success or an instance of `Error` on failure
 
 
 #### `stopDaemon (callback)`
 
 > Stop the daemon.
 
-- function(Error) callback - function that receives an instance of `Error` on failure
+- `function(Error)` callback - function that receives an instance of `Error` on failure
 
 #### `killProcess (callback)`
 
@@ -234,7 +236,7 @@ This instance is returned for each successfully started IPFS daemon, when either
 
 First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent if the process hasn't exited yet.
 
-- function() callback - Called once the process is killed
+- `function()` callback - Called once the process is killed
 
 
 #### `daemonPid ()`
@@ -250,31 +252,31 @@ First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent if the process has
 
 If no `key` is passed, the whole config is returned as an object.
 
-- key (optional) - A specific config to retrieve.
-- function(Error, (Object|string) callback - function that reseives an object or string on success or an `Error` instance on failure
+- `key` (optional) - A specific config to retrieve.
+- `function(Error, (Object|string)` callback - function that reseives an object or string on success or an `Error` instance on failure
 
 
 #### `setConfig (key, value, callback)`
 
 > Set a config value.
 
-- key - the key to set 
-- value - the value to set the key to
-- function(Error) callback
+- `key` - the key to set 
+- `value` - the value to set the key to
+- `function(Error)` callback
   
 
 #### `replaceConf (file, callback)`
 > Replace the configuration with a given file
 
-- file - path to the new config file
-- function(Error) callback
+- `file` - path to the new config file
+- `function(Error)` callback
 
 
 #### `version (callback)`
 
 > Get the version of ipfs
 
-- function(Error, string) callback
+- `function(Error, string)` callback
    
 ### Packaging
 
