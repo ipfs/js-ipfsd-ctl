@@ -21,23 +21,23 @@ module.exports = (ipfsdController, isJs) => {
     const GW_PORT = isJs ? '9090' : '8080'
 
     describe('ipfs-api version', () => {
-      let ipfs
-      let node
+      let ipfsCtl
+      let ipfsCtrl
 
       before(function (done) {
         this.timeout(20 * 1000)
-        ipfsdController.spawn({ start: false }, (err, ret) => {
+        ipfsdController.spawn({ start: false }, (err, ipfsd) => {
           expect(err).to.not.exist()
-          node = ret.ctrl
-          node.startDaemon((err, ignore) => {
+          ipfsCtrl = ipfsd.ctrl
+          ipfsCtrl.startDaemon((err, ignore) => {
             expect(err).to.not.exist()
-            ipfs = ipfsApi(node.apiAddr)
+            ipfsCtl = ipfsApi(ipfsCtrl.apiAddr)
             done()
           })
         })
       })
 
-      after((done) => node.stopDaemon(done))
+      after((done) => ipfsCtrl.stopDaemon(done))
 
       // skip on windows for now
       // https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
@@ -47,7 +47,7 @@ module.exports = (ipfsdController, isJs) => {
       }
 
       it('uses the correct ipfs-api', (done) => {
-        ipfs.util.addFromFs(path.join(__dirname, 'fixtures/'), {
+        ipfsCtl.util.addFromFs(path.join(__dirname, 'fixtures/'), {
           recursive: true
         }, (err, res) => {
           expect(err).to.not.exist()
@@ -89,28 +89,28 @@ module.exports = (ipfsdController, isJs) => {
         this.timeout(20 * 1000)
         ipfsdController.spawn({ isJs, config: null }, (err, ipfsd) => {
           expect(err).to.not.exist()
-          const api = ipfsd.ctl
-          const node = ipfsd.ctrl
+          const ipfsCtl = ipfsd.ctl
+          const ipfsCtrl = ipfsd.ctrl
 
           // Check for props in daemon
-          expect(node).to.have.property('apiAddr')
-          expect(node).to.have.property('gatewayAddr')
-          expect(node.apiAddr).to.not.equal(null)
-          expect(multiaddr.isMultiaddr(node.apiAddr)).to.equal(true)
-          expect(node.gatewayAddr).to.not.equal(null)
-          expect(multiaddr.isMultiaddr(node.gatewayAddr)).to.equal(true)
+          expect(ipfsCtrl).to.have.property('apiAddr')
+          expect(ipfsCtrl).to.have.property('gatewayAddr')
+          expect(ipfsCtrl.apiAddr).to.not.equal(null)
+          expect(multiaddr.isMultiaddr(ipfsCtrl.apiAddr)).to.equal(true)
+          expect(ipfsCtrl.gatewayAddr).to.not.equal(null)
+          expect(multiaddr.isMultiaddr(ipfsCtrl.gatewayAddr)).to.equal(true)
 
           // Check for props in ipfs-api instance
-          expect(api).to.have.property('apiHost')
-          expect(api).to.have.property('apiPort')
-          expect(api).to.have.property('gatewayHost')
-          expect(api).to.have.property('gatewayPort')
-          expect(api.apiHost).to.equal('127.0.0.1')
-          expect(api.apiPort).to.equal(API_PORT)
-          expect(api.gatewayHost).to.equal('127.0.0.1')
-          expect(api.gatewayPort).to.equal(GW_PORT)
+          expect(ipfsCtl).to.have.property('apiHost')
+          expect(ipfsCtl).to.have.property('apiPort')
+          expect(ipfsCtl).to.have.property('gatewayHost')
+          expect(ipfsCtl).to.have.property('gatewayPort')
+          expect(ipfsCtl.apiHost).to.equal('127.0.0.1')
+          expect(ipfsCtl.apiPort).to.equal(API_PORT)
+          expect(ipfsCtl.gatewayHost).to.equal('127.0.0.1')
+          expect(ipfsCtl.gatewayPort).to.equal(GW_PORT)
 
-          node.stopDaemon(done)
+          ipfsCtrl.stopDaemon(done)
         })
       })
 

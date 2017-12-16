@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "ipfsd-ctl": "file:../"
+    "ipfsd-ctl": "file:../.."
   },
   "author": "",
   "license": "MIT"

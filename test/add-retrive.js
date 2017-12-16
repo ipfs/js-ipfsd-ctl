@@ -16,10 +16,10 @@ module.exports = () => {
     before(function (done) {
       this.timeout(30 * 1000)
       async.waterfall([
-        (cb) => this.api.block.put(blorb, cb),
+        (cb) => this.ipfsCtl.block.put(blorb, cb),
         (block, cb) => {
           store = block.cid.toBaseEncodedString()
-          this.api.block.get(store, cb)
+          this.ipfsCtl.block.get(store, cb)
         },
         (_block, cb) => {
           retrieve = _block.data
@@ -38,9 +38,9 @@ module.exports = () => {
     })
 
     it('should have started the daemon and returned an api with host/port', function () {
-      expect(this.api).to.have.property('id')
-      expect(this.api).to.have.property('apiHost')
-      expect(this.api).to.have.property('apiPort')
+      expect(this.ipfsCtl).to.have.property('id')
+      expect(this.ipfsCtl).to.have.property('apiHost')
+      expect(this.ipfsCtl).to.have.property('apiPort')
     })
 
     it('should be able to store objects', () => {

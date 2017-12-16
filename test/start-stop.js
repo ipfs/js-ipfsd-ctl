@@ -18,7 +18,7 @@ const df = DaemonFactory.create()
 module.exports = (isJs) => {
   return () => {
     describe('starting and stopping', () => {
-      let node
+      let ipfsCtrl
 
       describe(`create and init a node (ctlr)`, function () {
         this.timeout(20 * 1000)
@@ -27,32 +27,32 @@ module.exports = (isJs) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
 
-            node = ipfsd.ctrl
+            ipfsCtrl = ipfsd.ctrl
             done()
           })
         })
 
-        it('should returned a node', () => {
-          expect(node).to.exist()
+        it('should return a node', () => {
+          expect(ipfsCtrl).to.exist()
         })
 
         it('daemon should not be running', () => {
-          expect(node.daemonPid()).to.not.exist()
+          expect(ipfsCtrl.daemonPid()).to.not.exist()
         })
       })
 
       let pid
 
       describe('starting', () => {
-        let ipfs
+        let ipfsCtl
 
         before(function (done) {
           this.timeout(20 * 1000)
-          node.startDaemon((err, res) => {
+          ipfsCtrl.startDaemon((err, ipfs) => {
             expect(err).to.not.exist()
 
-            pid = node.daemonPid()
-            ipfs = res
+            pid = ipfsCtrl.daemonPid()
+            ipfsCtl = ipfs
 
             // actually running?
             done = once(done)
@@ -61,7 +61,7 @@ module.exports = (isJs) => {
         })
 
         it('should be running', () => {
-          expect(ipfs.id).to.exist()
+          expect(ipfsCtl.id).to.exist()
         })
       })
 
@@ -69,7 +69,7 @@ module.exports = (isJs) => {
         let stopped = false
 
         before((done) => {
-          node.stopDaemon((err) => {
+          ipfsCtrl.stopDaemon((err) => {
             expect(err).to.not.exist()
             stopped = true
           })
@@ -90,10 +90,10 @@ module.exports = (isJs) => {
         it('should be stopped', function () {
           this.timeout(30 * 1000) // shutdown grace period is already 10500
 
-          expect(node.daemonPid()).to.not.exist()
+          expect(ipfsCtrl.daemonPid()).to.not.exist()
           expect(stopped).to.equal(true)
-          expect(fs.existsSync(path.join(node.path, 'repo.lock'))).to.not.be.ok()
-          expect(fs.existsSync(path.join(node.path, 'api'))).to.not.be.ok()
+          expect(fs.existsSync(path.join(ipfsCtrl.path, 'repo.lock'))).to.not.be.ok()
+          expect(fs.existsSync(path.join(ipfsCtrl.path, 'api'))).to.not.be.ok()
         })
       })
     })

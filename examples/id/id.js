@@ -9,15 +9,15 @@ df.spawn(function (err, ipfsd) {
     throw err
   }
 
-  const ipfs = ipfsd.ctl
-  const node = ipfsd.ctrl
-  ipfs.id(function (err, id) {
+  const ipfsCtl = ipfsd.ctl
+  const ipfsCtrl = ipfsd.ctrl
+  ipfsCtl.id(function (err, id) {
     if (err) {
       throw err
     }
     console.log('alice')
     console.log(id)
-    node.stopDaemon()
+    ipfsCtrl.stopDaemon()
   })
 })
 
