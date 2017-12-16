@@ -10,16 +10,16 @@ df.spawn({ disposable: false }, (err, ipfsd) => {
     throw err
   }
 
-  const ipfs = ipfsd.ctl
-  const node = ipfsd.ctrl
-  ipfs.id(function (err, id) {
+  const ipfsCtl = ipfsd.ctl
+  const ipfsCtrl = ipfsd.ctrl
+  ipfsCtl.id(function (err, id) {
     if (err) {
       throw err
     }
 
     console.log('go-ipfs')
     console.log(id)
-    node.stopDaemon()
+    ipfsCtrl.stopDaemon()
   })
 })
 
@@ -29,15 +29,15 @@ df.spawn({ isJs: true, disposable: false }, (err, ipfsd) => {
     throw err
   }
 
-  const ipfs = ipfsd.ctl
-  const node = ipfsd.ctrl
-  ipfs.id(function (err, id) {
+  const ipfsCtl = ipfsd.ctl
+  const ipfsCtrl = ipfsd.ctrl
+  ipfsCtl.id(function (err, id) {
     if (err) {
       throw err
     }
 
     console.log('js-ipfs')
     console.log(id)
-    node.stopDaemon()
+    ipfsCtrl.stopDaemon()
   })
 })
