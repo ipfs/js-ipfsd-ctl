@@ -35,13 +35,14 @@ class Node {
    */
   constructor (opts) {
     const rootPath = process.env.testpath ? process.env.testpath : __dirname
-    const isJs = truthy(process.env.IPFS_JS)
+    const type = truthy(process.env.IPFS_TYPE)
 
-    this.opts = opts || { isJs: isJs || false }
+    this.opts = opts || { type: type || 'go' }
 
-    this.path = this.opts.disposable ? tempDir(isJs) : (this.opts.repoPath || tempDir(isJs))
+    const tmpDir = tempDir(opts.type === 'js')
+    this.path = this.opts.disposable ? tmpDir : (this.opts.repoPath || tmpDir)
     this.disposable = this.opts.disposable
-    this.exec = this.opts.executable || process.env.IPFS_EXEC || findIpfsExecutable(this.opts.isJs, rootPath)
+    this.exec = this.opts.executable || process.env.IPFS_EXEC || findIpfsExecutable(this.opts.type, rootPath)
     this.subprocess = null
     this.initialized = fs.existsSync(path)
     this.clean = true

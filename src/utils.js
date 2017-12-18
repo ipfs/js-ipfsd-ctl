@@ -67,7 +67,12 @@ exports.tempDir = (isJs) => {
   return join(os.tmpdir(), `${isJs ? 'jsipfs' : 'ipfs'}_${hat()}`)
 }
 
-exports.findIpfsExecutable = (isJs, rootPath) => {
+exports.findIpfsExecutable = (type, rootPath) => {
+  const execPath = {
+    go: path.join('go-ipfs-dep', 'go-ipfs', isWindows ? 'ipfs.exe' : 'ipfs'),
+    js: path.join('ipfs', 'src', 'cli', 'bin.js')
+  }
+
   let appRoot = rootPath ? path.join(rootPath, '..') : process.cwd()
   // If inside <appname>.asar try to load from .asar.unpacked
   // this only works if asar was built with
@@ -77,10 +82,7 @@ exports.findIpfsExecutable = (isJs, rootPath) => {
   if (appRoot.includes(`.asar${path.sep}`)) {
     appRoot = appRoot.replace(`.asar${path.sep}`, `.asar.unpacked${path.sep}`)
   }
-  const appName = isWindows ? 'ipfs.exe' : 'ipfs'
-  const depPath = isJs
-    ? path.join('ipfs', 'src', 'cli', 'bin.js')
-    : path.join('go-ipfs-dep', 'go-ipfs', appName)
+  const depPath = execPath[type]
   const npm3Path = path.join(appRoot, '../', depPath)
   const npm2Path = path.join(appRoot, 'node_modules', depPath)
 

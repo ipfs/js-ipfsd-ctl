@@ -14,19 +14,21 @@ const isNode = require('detect-node')
 
 const addRetrieveTests = require('./add-retrive')
 
-function tempDir (isJs) {
-  return path.join(os.tmpdir(), `${isJs ? 'jsipfs' : 'ipfs'}_${String(Math.random()).substr(2)}`)
+function tempDir (js) {
+  return path.join(os.tmpdir(), `${js ? 'jsipfs' : 'ipfs'}_${String(Math.random()).substr(2)}`)
 }
 
-module.exports = (df, isJs) => {
+module.exports = (df, type) => {
   return () => {
-    const VERSION_STRING = isJs ? `js-ipfs version: ${require('ipfs/package.json').version}` : 'ipfs version 0.4.13'
+    const VERSION_STRING = type === 'js'
+      ? `js-ipfs version: ${require('ipfs/package.json').version}`
+      : 'ipfs version 0.4.13'
 
     it('prints the version', function (done) {
       if (!isNode) {
         this.skip()
       }
-      df.version({ isJs }, (err, version) => {
+      df.version({ type }, (err, version) => {
         expect(err).to.not.exist()
         expect(version).to.be.eql(VERSION_STRING)
         done()
@@ -44,7 +46,7 @@ module.exports = (df, isJs) => {
         })
 
         it('create node', function (done) {
-          df.spawn({ isJs, init: false, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ type, init: false, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.not.exist()
@@ -87,7 +89,7 @@ module.exports = (df, isJs) => {
 
         it('create node and init', function (done) {
           this.timeout(30 * 1000)
-          df.spawn({ isJs, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ type, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.not.exist()
@@ -121,7 +123,7 @@ module.exports = (df, isJs) => {
 
         it('create init and start node', function (done) {
           this.timeout(20 * 1000)
-          df.spawn({ isJs }, (err, ipfsd) => {
+          df.spawn({ type }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
             expect(ipfsd.ctl).to.exist()
@@ -136,7 +138,7 @@ module.exports = (df, isJs) => {
       })
 
       describe('spawn a node and pass init options', () => {
-        const repoPath = tempDir(isJs)
+        const repoPath = tempDir(type === 'js')
         const addr = '/ip4/127.0.0.1/tcp/5678'
         const swarmAddr1 = '/ip4/127.0.0.1/tcp/35555/ws'
         const swarmAddr2 = '/ip4/127.0.0.1/tcp/35666'
@@ -156,7 +158,7 @@ module.exports = (df, isJs) => {
             config,
             repoPath,
             init: true,
-            isJs
+            type
           }
 
           let ipfsCtrl
@@ -189,7 +191,7 @@ module.exports = (df, isJs) => {
 
         before(function (done) {
           this.timeout(20 * 1000)
-          df.spawn({ isJs }, (err, ipfsd) => {
+          df.spawn({ type }, (err, ipfsd) => {
             if (err) {
               return done(err)
             }
@@ -228,7 +230,7 @@ module.exports = (df, isJs) => {
         })
 
         it('should give an error if setting an invalid config value', function (done) {
-          if (isJs) {
+          if (type) {
             this.skip() // js doesn't fail on invalid config
           } else {
             ipfsCtrl.setConfig('Bootstrap', 'true', (err) => {

@@ -16,8 +16,8 @@ class DaemonFactory {
     return localController
   }
 
-  static get server () {
-    return remote.server
+  static createServer (port) {
+    return new remote.Server(port)
   }
 }
 

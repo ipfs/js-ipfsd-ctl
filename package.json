@@ -66,7 +66,6 @@
     "detect-node": "^2.0.3",
     "eslint-config-standard-jsx": "^4.0.2",
     "go-ipfs-dep": "0.4.13",
-    "guid": "0.0.12",
     "hapi": "^16.6.2",
     "hat": "0.0.3",
     "http-browserify": "^1.7.0",

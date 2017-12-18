@@ -13,11 +13,11 @@ const path = require('path')
 const os = require('os')
 const isWindows = os.platform() === 'win32'
 
-module.exports = (isJs) => {
+module.exports = (type) => {
   return () => {
     describe('ipfs executable path', () => {
       const tmp = os.tmpdir()
-      const appName = isJs
+      const appName = type === 'js'
         ? 'bin.js'
         : isWindows ? 'ipfs.exe' : 'ipfs'
 
@@ -26,7 +26,7 @@ module.exports = (isJs) => {
       after(() => { process.env.testpath = oldPath })
 
       it('has the correct path when installed with npm3', (done) => {
-        let execPath = isJs
+        let execPath = type === 'js'
           ? 'ipfsd-ctl-test/node_modules/ipfs/src/cli'
           : 'ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
 
@@ -39,7 +39,7 @@ module.exports = (isJs) => {
           delete require.cache[require.resolve('../src/daemon.js')]
           const Daemon = require('../src/daemon.js')
 
-          const node = new Daemon({ isJs })
+          const node = new Daemon({ type })
           expect(node.exec)
             .to.eql(path.join(tmp, `${execPath}/${appName}`))
           rimraf(path.join(tmp, 'ipfsd-ctl-test'), done)
@@ -47,7 +47,7 @@ module.exports = (isJs) => {
       })
 
       it('has the correct path when installed with npm2', (done) => {
-        let execPath = isJs
+        let execPath = type === 'js'
           ? 'ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/ipfs/src/cli'
           : 'ipfsd-ctl-test/node_modules/ipfsd-ctl/node_modules/go-ipfs-dep/go-ipfs'
 
@@ -60,7 +60,7 @@ module.exports = (isJs) => {
           delete require.cache[require.resolve('../src/daemon.js')]
           const Daemon = require('../src/daemon.js')
 
-          const node = new Daemon({ isJs })
+          const node = new Daemon({ type })
           expect(node.exec)
             .to.eql(path.join(tmp, `${execPath}/${appName}`))
           rimraf(path.join(tmp, 'ipfsd-ctl-test'), done)

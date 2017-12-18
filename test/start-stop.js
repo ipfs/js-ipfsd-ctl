@@ -15,7 +15,7 @@ const exec = require('../src/exec')
 const DaemonFactory = require('../src')
 const df = DaemonFactory.create()
 
-module.exports = (isJs) => {
+module.exports = (type) => {
   return () => {
     describe('starting and stopping', () => {
       let ipfsCtrl
@@ -23,7 +23,7 @@ module.exports = (isJs) => {
       describe(`create and init a node (ctlr)`, function () {
         this.timeout(20 * 1000)
         before((done) => {
-          df.spawn({ isJs, init: true, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ type, init: true, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd.ctrl).to.exist()
 

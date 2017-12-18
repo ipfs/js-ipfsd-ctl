@@ -44,14 +44,14 @@ describe('utils', () => {
 
   describe('find executable', () => {
     it('should find go executable', () => {
-      const execPath = findIpfsExecutable(false, __dirname)
+      const execPath = findIpfsExecutable('go', __dirname)
       expect(execPath).to.exist()
       expect(execPath).to.include('go-ipfs-dep/go-ipfs/ipfs')
       expect(fs.existsSync(execPath)).to.be.ok()
     })
 
     it('should find go executable', () => {
-      const execPath = findIpfsExecutable(true, __dirname)
+      const execPath = findIpfsExecutable('js', __dirname)
       expect(execPath).to.exist()
       expect(execPath).to.include('ipfs/src/cli/bin.js')
       expect(fs.existsSync(execPath)).to.be.ok()

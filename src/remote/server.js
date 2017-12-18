@@ -3,23 +3,26 @@
 const Hapi = require('hapi')
 const routes = require('./routes')
 
-let server = null
-exports.start = function start (port, cb) {
-  if (typeof port === 'function') {
-    cb = port
-    port = 9999
+class Server {
+  constructor (port) {
+    this.server = null
+    this.port = port || 9999
   }
 
-  port = port || 9999
+  start (cb) {
+    cb = cb || (() => {})
 
-  server = new Hapi.Server()
-  server.connection({ port, host: 'localhost', routes: { cors: true } })
+    this.server = new Hapi.Server()
+    this.server.connection({ port: this.port, host: 'localhost', routes: { cors: true } })
 
-  routes(server)
-  server.start(cb)
+    routes(this.server)
+    this.server.start(cb)
+  }
+
+  stop (cb) {
+    cb = cb || (() => {})
+    this.server.stop(cb)
+  }
 }
 
-exports.stop = function stop (cb) {
-  cb = cb || (() => {})
-  server.stop(cb)
-}
+module.exports = Server
