@@ -11,12 +11,12 @@ const install = require('./npm-installs')
 
 describe('node', () => {
   describe('cleanup', () => {
-    startStop(true)()
-    startStop(false)()
+    startStop('go')()
+    startStop('js')()
   })
 
   describe('install', () => {
-    install(true)()
-    install(false)()
+    install('go')()
+    install('js')()
   })
 })

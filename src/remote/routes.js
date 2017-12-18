@@ -1,7 +1,7 @@
 'use strict'
 
 const ipfsFactory = require('../local')
-const guid = require('guid')
+const hat = require('hat')
 const boom = require('boom')
 const utils = require('./utils')
 
@@ -24,7 +24,7 @@ module.exports = (server) => {
           return reply(boom.badRequest(err))
         }
 
-        const id = guid.raw()
+        const id = hat()
         nodes[id] = ipfsd.ctrl
 
         let api = null

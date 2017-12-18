@@ -79,8 +79,9 @@ df.spawn(function (err, ipfsd) {
 const DaemonFactory = require('ipfsd-ctl')
 
 const port = 9999
+const server = DaemonFactory.createServer(port)
 const df = DaemonFactory.create({remote: true, port})
-df.start(port, (err) => {
+server.start(port, (err) => {
   if (err) {
     throw err
   }
@@ -93,7 +94,7 @@ df.start(port, (err) => {
       ipfsCtrl.stopDaemon()
       server.stop()
     })
-  })  
+  })
 })
 ```
 
@@ -102,8 +103,9 @@ It's also possible to start the server from `.aegir` `pre` and `post` hooks.
 ```js
 'use strict'
 
-const server = require('./src').server
+const createServer = require('./src').createServer
 
+const server = createServer()
 module.exports = {
   karma: {
     files: [{
@@ -116,8 +118,8 @@ module.exports = {
   },
   hooks: {
     browser: {
-      pre: server.start,
-      post: server.stop
+      pre: server.start.bind(server),
+      post: server.stop.bind(server)
     }
   }
 }
@@ -129,20 +131,15 @@ module.exports = {
 
 #### Create a `DaemonFactory`
 
-```js
-const DemonFactory = require('ipfsd-ctl')
-const df = DemonFactory.create([opts])
-```
+> `DaemonFactory.create([options])` create a factory that will expose the `df.spawn` method
 
-> Create a factory that will expose the `df.spawn` method
-
-- `opts` - an optional object with the following properties
+- `options` - an optional object with the following properties
   - `remote` bool - indicates if the factory should spawn local or remote nodes. By default, local nodes are spawned in Node.js and remote nodes are spawned in Browser environments.
-  - `port` number - the port number to use for the remote factory. It should match the port on which `df.server` was started. Defaults to 9999.
+  - `port` number - the port number to use for the remote factory. It should match the port on which `DaemonFactory.server` was started. Defaults to 9999.
 
-> `df.server` the bundled HTTP server used by the remote controller.
+> `DaemonFactory.createServer` create an instance of the bundled HTTP server used by the remote controller.
 
-- exposes `start` and `stop` methods to start and stop the bundled http server that is required to run the remote controller.
+- exposes `start` and `stop` methods to start and stop the http server.
 
 #### Spawn a new daemon with `df.spawn`
 

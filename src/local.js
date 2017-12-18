@@ -8,6 +8,7 @@ const flatten = require('./utils').flatten
 const Node = require('./daemon')
 
 const defaultOptions = {
+  type: 'go',
   disposable: true,
   start: true,
   init: true
@@ -47,7 +48,7 @@ const IpfsDaemonController = {
    * Spawn an IPFS node, either js-ipfs or go-ipfs
    *
    * Options are:
-   * - `js` bool - spawn a js or go node (default go)
+   * - `type` string (default 'go') - the type of the daemon to spawn, can be either 'go' or 'js'
    * - `init` bool - should the node be initialized
    * - `start` bool - should the node be started
    * - `repoPath` string - the repository path to use for this node, ignored if node is disposable

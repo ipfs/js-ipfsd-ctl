@@ -1,9 +1,9 @@
 'use strict'
 
-const server = require('./server')
+const Server = require('./server')
 const remoteController = require('./client')
 
 module.exports = {
-  server,
+  Server,
   remoteController
 }

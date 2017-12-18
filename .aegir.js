@@ -1,7 +1,8 @@
 'use strict'
 
-const server = require('./src').server
+const createServer = require('./src').createServer
 
+const server = createServer()
 module.exports = {
   karma: {
     files: [{
@@ -14,8 +15,8 @@ module.exports = {
   },
   hooks: {
     browser: {
-      pre: server.start,
-      post: server.stop
+      pre: server.start.bind(server),
+      post: server.stop.bind(server)
     }
   }
 }
