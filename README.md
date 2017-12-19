@@ -146,21 +146,20 @@ module.exports = {
 
 `spawn([options], callback)`
 
-- `options` - is an optional object with various options and ipfs config parameters
+- `options` - is an optional object the following properties
   - `type` string (default 'go') - indicates which type of node to spawn
     - current valid values are `js` and `go`
   - `init` bool (default true) - should the node be initialized
   - `start` bool (default true) - should the node be started
   - `repoPath` string - the repository path to use for this node, ignored if node is disposable
-  - `disposable` bool - a new repo is created and initialized for each invocation
+  - `disposable` bool - a new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits
   - `args` - array of cmd line arguments to be passed to ipfs daemon
   - `config` - ipfs configuration options
   
  - `callback` - is a function with the signature `cb(err, ipfsd)` where:
    - `err` - is the error set if spawning the node is unsuccessful
-   - `ipfsd` - is an object with two properties: 
-     - `ctl` - an [ipfs-api](https://github.com/ipfs/js-ipfs-api) instance attached to the newly created ipfs node
-     - `ctrl` - an instance of a daemon controller object
+   - `ipfsd` - is the daemon controller instance: 
+     - `api` - a property of `ipfsd`, an instance of  [ipfs-api](https://github.com/ipfs/js-ipfs-api) attached to the newly created ipfs node
    
 ### IPFS Client (api)
 
@@ -236,7 +235,7 @@ First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent if the process has
 - `function()` callback - Called once the process is killed
 
 
-#### `daemonPid ()`
+#### `pid ()`
 
 > Get the pid of the `ipfs daemon` process.
 
