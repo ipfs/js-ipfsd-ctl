@@ -4,36 +4,32 @@
 const DaemonFactory = require('ipfsd-ctl')
 const df = DaemonFactory.create()
 
-df.spawn(function (err, ipfsd) {
+df.spawn((err, ipfsd) => {
   if (err) {
     throw err
   }
 
-  const ipfsCtl = ipfsd.ctl
-  const ipfsCtrl = ipfsd.ctrl
-  ipfsCtl.id(function (err, id) {
+  ipfsd.api.id((err, id) => {
     if (err) {
       throw err
     }
     console.log('alice')
     console.log(id)
-    ipfsCtrl.stopDaemon()
+    ipfsd.stop()
   })
 })
 
-df.spawn(function (err, ipfsd) {
+df.spawn((err, ipfsd) => {
   if (err) {
     throw err
   }
 
-  const ipfsCtl = ipfsd.ctl
-  const ipfsCtrl = ipfsd.ctrl
-  ipfsCtl.id(function (err, id) {
+  ipfsd.api.id((err, id) => {
     if (err) {
       throw err
     }
     console.log('bob')
     console.log(id)
-    ipfsCtrl.stopDaemon()
+    ipfsd.stop()
   })
 })

@@ -45,6 +45,7 @@ const createRemoteFactory = (host, port, secure) => {
       this._gwAddr = multiaddr(gwAddrs)
       this.initialized = false
       this.started = false
+      this.api = createApi(apiAddr, gwAddrs)
     }
 
     /**
@@ -122,9 +123,9 @@ const createRemoteFactory = (host, port, secure) => {
      * @param {function(Error)} cb
      * @returns {undefined}
      */
-    shutdown (cb) {
+    cleanup (cb) {
       request
-        .post(`${baseUrl}/shutdown`)
+        .post(`${baseUrl}/cleanup`)
         .query({ id: this._id })
         .end((err) => { cb(err) })
     }
@@ -136,7 +137,7 @@ const createRemoteFactory = (host, port, secure) => {
      * @param {function(Error, IpfsApi)} cb
      * @returns {undefined}
      */
-    startDaemon (flags, cb) {
+    start (flags, cb) {
       if (typeof flags === 'function') {
         cb = flags
         flags = {}
@@ -156,7 +157,8 @@ const createRemoteFactory = (host, port, secure) => {
           const apiAddr = res.body.api ? res.body.api.apiAddr : ''
           const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 
-          return cb(null, createApi(apiAddr, gatewayAddr))
+          this.api = createApi(apiAddr, gatewayAddr)
+          return cb(null, this.api)
         })
     }
 
@@ -166,7 +168,7 @@ const createRemoteFactory = (host, port, secure) => {
      * @param {function(Error)} cb
      * @returns {undefined}
      */
-    stopDaemon (cb) {
+    stop (cb) {
       request
         .post(`${baseUrl}/stop`)
         .query({ id: this._id })
@@ -209,7 +211,7 @@ const createRemoteFactory = (host, port, secure) => {
      * @param {Function} cb
      * @returns {number}
      */
-    daemonPid (cb) {
+    pid (cb) {
       request
         .get(`${baseUrl}/pid`)
         .query({ id: this._id })
@@ -309,7 +311,7 @@ const createRemoteFactory = (host, port, secure) => {
             apiAddr,
             gatewayAddr)
 
-          cb(null, { ctl: createApi(apiAddr, gatewayAddr), ctrl: node })
+          cb(null, node)
         })
     }
   }

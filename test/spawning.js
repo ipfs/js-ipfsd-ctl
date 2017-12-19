@@ -24,53 +24,51 @@ module.exports = (df, type) => {
       ? `js-ipfs version: ${require('ipfs/package.json').version}`
       : 'ipfs version 0.4.13'
 
-    it('prints the version', function (done) {
-      if (!isNode) {
-        this.skip()
-      }
-      df.version({ type }, (err, version) => {
-        expect(err).to.not.exist()
-        expect(version).to.be.eql(VERSION_STRING)
-        done()
-      })
-    })
-
     describe('daemon spawning', () => {
+      it('prints the version', function (done) {
+        if (!isNode) {
+          this.skip()
+        }
+        df.version({ type }, (err, version) => {
+          expect(err).to.not.exist()
+          expect(version).to.be.eql(VERSION_STRING)
+          done()
+        })
+      })
+
       describe('spawn a bare node', function () {
-        this.ipfsCtrl = null
-        this.ipfsCtl = null
+        this.ipfsd = null
 
         after(function (done) {
           this.timeout(20 * 1000)
-          this.ipfsCtrl.stopDaemon(done)
+          this.ipfsd.stop(done)
         })
 
         it('create node', function (done) {
           df.spawn({ type, init: false, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
-            expect(ipfsd.ctrl).to.exist()
-            expect(ipfsd.ctl).to.not.exist()
-            this.ipfsCtrl = ipfsd.ctrl
+            expect(ipfsd).to.exist()
+            expect(ipfsd.api).to.not.exist()
+            this.ipfsd = ipfsd
             done()
           })
         })
 
         it('init node', function (done) {
           this.timeout(20 * 1000)
-          this.ipfsCtrl.init((err) => {
+          this.ipfsd.init((err) => {
             expect(err).to.not.exist()
-            expect(this.ipfsCtrl.initialized).to.be.ok()
+            expect(this.ipfsd.initialized).to.be.ok()
             done()
           })
         })
 
         it('start node', function (done) {
           this.timeout(30 * 1000)
-          this.ipfsCtrl.startDaemon((err, ipfs) => {
-            this.ipfsCtl = ipfs
+          this.ipfsd.start((err, api) => {
             expect(err).to.not.exist()
-            expect(this.ipfsCtl).to.exist()
-            expect(this.ipfsCtl.id).to.exist()
+            expect(api).to.exist()
+            expect(api.id).to.exist()
             done()
           })
         })
@@ -79,32 +77,30 @@ module.exports = (df, type) => {
       })
 
       describe('spawn an initialized node', function () {
-        this.ipfsCtrl = null
-        this.ipfsCtl = null
+        this.ipfsd = null
 
         after(function (done) {
           this.timeout(20 * 1000)
-          this.ipfsCtrl.stopDaemon(done)
+          this.ipfsd.stop(done)
         })
 
         it('create node and init', function (done) {
           this.timeout(30 * 1000)
           df.spawn({ type, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
-            expect(ipfsd.ctrl).to.exist()
-            expect(ipfsd.ctl).to.not.exist()
-            this.ipfsCtrl = ipfsd.ctrl
+            expect(ipfsd).to.exist()
+            expect(ipfsd.api).to.not.exist()
+            this.ipfsd = ipfsd
             done()
           })
         })
 
         it('start node', function (done) {
           this.timeout(30 * 1000)
-          this.ipfsCtrl.startDaemon((err, ipfs) => {
-            this.ipfsCtl = ipfs
+          this.ipfsd.start((err, api) => {
             expect(err).to.not.exist()
-            expect(this.ipfsCtl).to.exist()
-            expect(this.ipfsCtl.id).to.exist()
+            expect(api).to.exist()
+            expect(api.id).to.exist()
             done()
           })
         })
@@ -113,23 +109,21 @@ module.exports = (df, type) => {
       })
 
       describe('spawn a node and attach api', () => {
-        this.ipfsCtrl = null
-        this.ipfsCtl = null
+        this.ipfsd = null
 
         after(function (done) {
           this.timeout(20 * 1000)
-          this.ipfsCtrl.stopDaemon(done)
+          this.ipfsd.stop(done)
         })
 
         it('create init and start node', function (done) {
           this.timeout(20 * 1000)
           df.spawn({ type }, (err, ipfsd) => {
             expect(err).to.not.exist()
-            expect(ipfsd.ctrl).to.exist()
-            expect(ipfsd.ctl).to.exist()
-            expect(ipfsd.ctl.id).to.exist()
-            this.ipfsCtrl = ipfsd.ctrl
-            this.ipfsCtl = ipfsd.ctl
+            expect(ipfsd).to.exist()
+            expect(ipfsd.api).to.exist()
+            expect(ipfsd.api.id).to.exist()
+            this.ipfsd = ipfsd
             done()
           })
         })
@@ -161,19 +155,19 @@ module.exports = (df, type) => {
             type
           }
 
-          let ipfsCtrl
+          let ipfsd
           async.waterfall([
             (cb) => df.spawn(options, cb),
-            (ipfsd, cb) => {
-              ipfsCtrl = ipfsd.ctrl
-              ipfsCtrl.getConfig('Addresses.API', (err, res) => {
+            (res, cb) => {
+              ipfsd = res
+              ipfsd.getConfig('Addresses.API', (err, res) => {
                 expect(err).to.not.exist()
                 expect(res).to.be.eql(addr)
                 cb()
               })
             },
             (cb) => {
-              ipfsCtrl.getConfig('Addresses.Swarm', (err, res) => {
+              ipfsd.getConfig('Addresses.Swarm', (err, res) => {
                 expect(err).to.not.exist()
                 expect(JSON.parse(res)).to.deep.eql([swarmAddr1, swarmAddr2])
                 cb()
@@ -181,29 +175,29 @@ module.exports = (df, type) => {
             }
           ], (err) => {
             expect(err).to.not.exist()
-            ipfsCtrl.stopDaemon(done)
+            ipfsd.stop(done)
           })
         })
       })
 
       describe('change config of a disposable node', () => {
-        let ipfsCtrl
+        let ipfsd
 
         before(function (done) {
           this.timeout(20 * 1000)
-          df.spawn({ type }, (err, ipfsd) => {
+          df.spawn({ type }, (err, res) => {
             if (err) {
               return done(err)
             }
-            ipfsCtrl = ipfsd.ctrl
+            ipfsd = res
             done()
           })
         })
 
-        after((done) => ipfsCtrl.stopDaemon(done))
+        after((done) => ipfsd.stop(done))
 
         it('Should return a config value', (done) => {
-          ipfsCtrl.getConfig('Bootstrap', (err, config) => {
+          ipfsd.getConfig('Bootstrap', (err, config) => {
             expect(err).to.not.exist()
             expect(config).to.exist()
             done()
@@ -211,7 +205,7 @@ module.exports = (df, type) => {
         })
 
         it('Should return the whole config', (done) => {
-          ipfsCtrl.getConfig((err, config) => {
+          ipfsd.getConfig((err, config) => {
             expect(err).to.not.exist()
             expect(config).to.exist()
             done()
@@ -220,8 +214,8 @@ module.exports = (df, type) => {
 
         it('Should set a config value', (done) => {
           async.series([
-            (cb) => ipfsCtrl.setConfig('Bootstrap', 'null', cb),
-            (cb) => ipfsCtrl.getConfig('Bootstrap', cb)
+            (cb) => ipfsd.setConfig('Bootstrap', 'null', cb),
+            (cb) => ipfsd.getConfig('Bootstrap', cb)
           ], (err, res) => {
             expect(err).to.not.exist()
             expect(res[1]).to.be.eql('null')
@@ -233,7 +227,7 @@ module.exports = (df, type) => {
           if (type) {
             this.skip() // js doesn't fail on invalid config
           } else {
-            ipfsCtrl.setConfig('Bootstrap', 'true', (err) => {
+            ipfsd.setConfig('Bootstrap', 'true', (err) => {
               expect(err.message).to.match(/failed to set config value/)
               done()
             })

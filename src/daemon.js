@@ -50,6 +50,7 @@ class Node {
     this._apiAddr = null
     this._gatewayAddr = null
     this._started = false
+    this.api = null
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
@@ -134,7 +135,7 @@ class Node {
     })
 
     if (this.disposable) {
-      shutdown.addHandler('disposable', 1, this.shutdown.bind(this))
+      shutdown.addHandler('disposable', 1, this.cleanup.bind(this))
     }
   }
 
@@ -146,7 +147,7 @@ class Node {
    * @param {function(Error)} callback
    * @returns {undefined}
    */
-  shutdown (callback) {
+  cleanup (callback) {
     if (this.clean || !this.disposable) {
       return callback()
     }
@@ -161,7 +162,7 @@ class Node {
    * @param {function(Error, IpfsApi)} callback
    * @returns {undefined}
    */
-  startDaemon (flags, callback) {
+  start (flags, callback) {
     if (typeof flags === 'function') {
       callback = flags
       flags = []
@@ -234,7 +235,7 @@ class Node {
    * @param {function(Error)} callback
    * @returns {undefined}
    */
-  stopDaemon (callback) {
+  stop (callback) {
     callback = callback || function noop () {}
 
     if (!this.subprocess) {
@@ -276,7 +277,7 @@ class Node {
    *
    * @returns {number}
    */
-  daemonPid () {
+  pid () {
     return this.subprocess && this.subprocess.pid
   }
 

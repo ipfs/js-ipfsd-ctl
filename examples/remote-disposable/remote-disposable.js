@@ -6,27 +6,25 @@
 
 const DaemonFactory = require('ipfsd-ctl')
 const df = DaemonFactory.create({ remote: true })
-const server = DaemonFactory.server
+const server = DaemonFactory.createServer()
 
 server.start((err) => {
   if (err) {
     throw err
   }
 
-  df.spawn(function (err, ipfsd) {
+  df.spawn((err, ipfsd) => {
     if (err) {
       throw err
     }
 
-    const ipfsCtl = ipfsd.ctl
-    const ipfsCtrl = ipfsd.ctrl
-    ipfsCtl.id(function (err, id) {
+    ipfsd.api.id((err, id) => {
       if (err) {
         throw err
       }
 
       console.log(id)
-      ipfsCtrl.stopDaemon(() => server.stop())
+      ipfsd.stop(() => server.stop())
     })
   })
 })

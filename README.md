@@ -61,11 +61,9 @@ const DaemonFactory = require('ipfsd-ctl')
 const df = DaemonFactory.create()
 
 df.spawn(function (err, ipfsd) {
-  const ipfsCtl = ipfsd.ctl
-  const ipfsCtrl = ipfsd.ctrl
-  ipfsCtl.id(function (err, id) {
+  ipfsd.api.id(function (err, id) {
     console.log(id)
-    ipfsCtrl.stopDaemon()
+    ipfsd.stop()
   })
 })
 ```
@@ -91,12 +89,9 @@ server.start((err) => {
       throw err
     }
 
-    const ipfsCtl = ipfsd.ctl
-    const ipfsCtrl = ipfsd.ctrl
-    ipfsCtl.id(function (err, id) {
+    ipfsd.api.id(function (err, id) {
       console.log(id)
-      ipfsCtrl.stopDaemon(() => process.exit(0))
-      server.stop()
+      ipfsd.stop(server.stop)
     })
   })
 })
@@ -167,14 +162,14 @@ module.exports = {
      - `ctl` - an [ipfs-api](https://github.com/ipfs/js-ipfs-api) instance attached to the newly created ipfs node
      - `ctrl` - an instance of a daemon controller object
    
-### IPFS Client (ctl)
+### IPFS Client (api)
 
 > An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api)
 
-This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsdCtrl.startDaemon()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`. 
+This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsdCtrl.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`. 
 
 
-### IPFS Daemon Controller (ctrl)
+### IPFS Daemon Controller (ipfsd)
 
 > The IPFS daemon controller that allows interacting with the spawned IPFS process
 
@@ -212,13 +207,13 @@ This instance is returned for each successfully started IPFS daemon, when either
   - `function (Error, Node)` callback - receives an instance of this Node on success or an instance of `Error` on failure
 
 
-#### `shutdown (callback)`
+#### `cleanup (callback)`
 
 > Delete the repo that was being used. If the node was marked as `disposable` this will be called automatically when the process is exited.
 
 - `function(Error)` callback
 
-#### `startDaemon (flags, callback)`
+#### `start (flags, callback)`
 
 > Start the daemon.
 
@@ -226,7 +221,7 @@ This instance is returned for each successfully started IPFS daemon, when either
 - `function(Error, IpfsApi)}` callback - function that receives an instance of `ipfs-api` on success or an instance of `Error` on failure
 
 
-#### `stopDaemon (callback)`
+#### `stop (callback)`
 
 > Stop the daemon.
 

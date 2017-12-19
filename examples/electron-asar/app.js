@@ -26,16 +26,16 @@ ipcMain.on('start', ({ sender }) => {
       throw err
     }
 
-    const ipfs = ipfsd.ctl
     console.log('get id')
     sender.send('message', 'get id')
-    ipfs.id(function (err, id) {
+    ipfsd.api.id((err, id) => {
       if (err) {
         sender.send('error', err)
         throw err
       }
       console.log('got id', id)
       sender.send('id', JSON.stringify(id))
+      ipfsd.stop()
     })
   })
 })
