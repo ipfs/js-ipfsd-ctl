@@ -80,18 +80,22 @@ const DaemonFactory = require('ipfsd-ctl')
 
 const port = 9999
 const server = DaemonFactory.createServer(port)
-const df = DaemonFactory.create({remote: true, port})
-server.start(port, (err) => {
+const df = DaemonFactory.create({ remote: true, port })
+server.start((err) => {
   if (err) {
     throw err
   }
-  
-  df.spawn(function (err, ipfsd) {
+
+  df.spawn((err, ipfsd) => {
+    if (err) {
+      throw err
+    }
+
     const ipfsCtl = ipfsd.ctl
     const ipfsCtrl = ipfsd.ctrl
     ipfsCtl.id(function (err, id) {
       console.log(id)
-      ipfsCtrl.stopDaemon()
+      ipfsCtrl.stopDaemon(() => process.exit(0))
       server.stop()
     })
   })
@@ -148,7 +152,8 @@ module.exports = {
 `spawn([options], callback)`
 
 - `options` - is an optional object with various options and ipfs config parameters
-  - `js` bool (default false) - spawn a js or go node (default go)
+  - `type` string (default 'go') - indicates which type of node to spawn
+    - current valid values are `js` and `go`
   - `init` bool (default true) - should the node be initialized
   - `start` bool (default true) - should the node be started
   - `repoPath` string - the repository path to use for this node, ignored if node is disposable

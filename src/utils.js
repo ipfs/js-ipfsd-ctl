@@ -6,6 +6,7 @@ const hat = require('hat')
 const os = require('os')
 const path = require('path')
 const exec = require('./exec')
+const safeParse = require('safe-json-parse/callback')
 
 const join = path.join
 
@@ -43,23 +44,11 @@ exports.flatten = (target) => {
   return output
 }
 
-function tryJsonParse (input, callback) {
-  let res
-  try {
-    res = JSON.parse(input)
-  } catch (err) {
-    return callback(err)
-  }
-  callback(null, res)
-}
-
-exports.tryJsonParse = tryJsonParse
-
 // Consistent error handling
 exports.parseConfig = (path, callback) => {
   async.waterfall([
     (cb) => fs.readFile(join(path, 'config'), cb),
-    (file, cb) => tryJsonParse(file.toString(), cb)
+    (file, cb) => safeParse(file.toString(), cb)
   ], callback)
 }
 

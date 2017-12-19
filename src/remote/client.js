@@ -31,7 +31,11 @@ const createRemoteFactory = (host, port, secure) => {
     port = 9999
   }
 
-  secure = secure || false
+  if (typeof host === 'number') {
+    port = host
+    host = 'localhost'
+  }
+
   const baseUrl = `${secure ? 'https://' : 'http://'}${host}:${port}`
 
   class Node {
