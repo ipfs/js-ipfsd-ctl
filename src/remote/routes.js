@@ -3,10 +3,16 @@
 const ipfsFactory = require('../local')
 const hat = require('hat')
 const boom = require('boom')
-const utils = require('./utils')
+const Joi = require('joi')
+const defaults = require('lodash.defaultsdeep')
 
-const parseQuery = utils.parseQuery
-const makeResponse = utils.makeResponse
+const config = {
+  validate: {
+    query: {
+      id: Joi.string().alphanum().required()
+    }
+  }
+}
 
 let nodes = {}
 module.exports = (server) => {
@@ -21,7 +27,7 @@ module.exports = (server) => {
       const payload = request.payload || {}
       ipfsFactory.spawn(payload.opts, (err, ipfsd) => {
         if (err) {
-          return reply(boom.badRequest(err))
+          return reply(boom.internal(err))
         }
 
         const id = hat()
@@ -34,7 +40,7 @@ module.exports = (server) => {
             gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : ''
           }
         }
-        reply(makeResponse(id, api))
+        reply({ id, api })
       })
     }
   })
@@ -44,11 +50,12 @@ module.exports = (server) => {
    */
   server.route({
     method: 'GET',
-    path: '/apiAddr',
+    path: '/api-addr',
     handler: (request, reply) => {
-      const id = parseQuery(request.query).id
-      reply(makeResponse(id, nodes[id].apiAddr()))
-    }
+      const id = request.query.id
+      reply({ apiAddr: nodes[id].apiAddr() })
+    },
+    config
   })
 
   /**
@@ -56,31 +63,32 @@ module.exports = (server) => {
    */
   server.route({
     method: 'GET',
-    path: '/getawayAddr',
+    path: '/getaway-addr',
     handler: (request, reply) => {
-      const id = parseQuery(request.query).id
-      reply(makeResponse(id, nodes[id].getawayAddr()))
-    }
+      const id = request.query.id
+      reply({ getawayAddr: nodes[id].getawayAddr() })
+    },
+    config
   })
 
   /**
    * Initialize a repo.
    **/
   server.route({
-    method: 'GET',
+    method: 'POST',
     path: '/init',
     handler: (request, reply) => {
-      const qr = parseQuery(request.query)
-      const id = qr.id
-      const initOpts = qr.initOpts || {}
-      nodes[id].init(initOpts, (err, node) => {
+      const id = request.query.id
+      const payload = request.payload || {}
+      nodes[id].init(payload.initOpts, (err, node) => {
         if (err) {
-          return reply(boom.badRequest(err))
+          return reply(boom.internal(err))
         }
 
-        reply(makeResponse(id, { initialized: node.initialized }))
+        reply({ initialized: node.initialized })
       })
-    }
+    },
+    config
   })
 
   /**
@@ -89,59 +97,64 @@ module.exports = (server) => {
    * automatically when the process is exited.
    **/
   server.route({
-    method: 'GET',
+    method: 'POST',
     path: '/shutdown',
     handler: (request, reply) => {
-      const id = parseQuery(request.query).id
-      nodes[id].shutdown((err, res) => {
+      const id = request.query.id
+      nodes[id].shutdown((err) => {
         if (err) {
-          return reply(boom.badRequest(err))
+          return reply(boom.internal(err))
         }
 
-        reply(makeResponse(id, res))
+        reply().code(200)
       })
-    }
+    },
+    config
   })
 
   /**
    * Start the daemon.
    **/
   server.route({
-    method: 'GET',
-    path: '/startDaemon',
+    method: 'POST',
+    path: '/start',
     handler: (request, reply) => {
-      const qr = parseQuery(request.query)
-      const id = qr.id
-      const flags = Object.values(qr.params ? qr.params.flags : {})
+      const id = request.query.id
+      const payload = request.payload || {}
+      const flags = payload.flags || []
       nodes[id].startDaemon(flags, (err) => {
         if (err) {
-          return reply(boom.badRequest(err))
+          return reply(boom.internal(err))
         }
 
-        reply(makeResponse(id, {
-          apiAddr: nodes[id].apiAddr.toString(),
-          gatewayAddr: nodes[id].gatewayAddr.toString()
-        }))
+        reply({
+          api: {
+            apiAddr: nodes[id].apiAddr.toString(),
+            gatewayAddr: nodes[id].gatewayAddr.toString()
+          }
+        })
       })
-    }
+    },
+    config
   })
 
   /**
    * Stop the daemon.
    */
   server.route({
-    method: 'GET',
-    path: '/stopDaemon',
+    method: 'POST',
+    path: '/stop',
     handler: (request, reply) => {
-      const id = parseQuery(request.query).id
-      nodes[id].stopDaemon((err, res) => {
+      const id = request.query.id
+      nodes[id].stopDaemon((err) => {
         if (err) {
-          return reply(boom.badRequest(err))
+          return reply(boom.internal(err))
         }
 
-        reply(makeResponse(id, res))
+        reply().code(200)
       })
-    }
+    },
+    config
   })
 
   /**
@@ -151,18 +164,19 @@ module.exports = (server) => {
    * if the process hasn't exited yet.
    */
   server.route({
-    method: 'GET',
-    path: '/killProcess',
+    method: 'POST',
+    path: '/kill',
     handler: (request, reply) => {
-      const id = parseQuery(request.query).id
-      nodes[id].killProcess((err, res) => {
+      const id = request.query.id
+      nodes[id].killProcess((err) => {
         if (err) {
-          return reply(boom.badRequest(err))
+          return reply(boom.internal(err))
         }
 
-        reply(makeResponse(id, res))
+        reply().code(200)
       })
-    }
+    },
+    config
   })
 
   /**
@@ -172,11 +186,12 @@ module.exports = (server) => {
    */
   server.route({
     method: 'GET',
-    path: '/daemonPid',
+    path: '/pid',
     handler: (request, reply) => {
-      const id = parseQuery(request.query).id
-      reply(makeResponse(id, nodes[id].daemonPid(nodes[id])))
-    }
+      const id = request.query.id
+      reply({ pid: nodes[id].daemonPid(nodes[id]) })
+    },
+    config
   })
 
   /**
@@ -186,57 +201,63 @@ module.exports = (server) => {
    */
   server.route({
     method: 'GET',
-    path: '/getConfig',
+    path: '/config',
     handler: (request, reply) => {
-      const qr = parseQuery(request.query)
-      const id = qr.id
-      const key = qr.params ? qr.params.key : null
-      nodes[id].getConfig(key, (err, res) => {
+      const id = request.query.id
+      const key = request.query.key
+      nodes[id].getConfig(key, (err, config) => {
         if (err) {
-          return reply(boom.badRequest(err))
+          return reply(boom.internal(err))
         }
 
-        reply(makeResponse(id, res))
+        reply({ config })
       })
-    }
+    },
+    config: defaults({}, {
+      validate: {
+        query: {
+          key: Joi.string().optional()
+        }
+      }
+    }, config)
   })
 
   /**
    * Set a config value.
    */
   server.route({
-    method: 'GET',
-    path: '/setConfig',
+    method: 'PUT',
+    path: '/config',
     handler: (request, reply) => {
-      const qr = parseQuery(request.query)
-      const id = qr.id
-      const key = qr.params ? qr.params.key : undefined
-      const val = qr.params ? qr.params.value : undefined
-      nodes[id].setConfig(key, val, (err, res) => {
+      const id = request.query.id
+      const replace = request.query.replace
+      const key = request.payload.key
+      const val = request.payload.value
+
+      if (replace) {
+        return nodes[id].replaceConf((err) => {
+          if (err) {
+            return reply(boom.internal(err))
+          }
+
+          reply().code(200)
+        })
+      }
+
+      nodes[id].setConfig(key, val, (err) => {
         if (err) {
-          return reply(boom.badRequest(err))
+          return reply(boom.internal(err))
         }
 
-        reply(makeResponse(id, res))
+        reply().code(200)
       })
-    }
-  })
-
-  /**
-   * Replace the configuration with a given file
-   **/
-  server.route({
-    method: 'GET',
-    path: '/replaceConf',
-    handler: (request, reply) => {
-      const id = parseQuery(request.query).id
-      nodes[id].replaceConf((err, res) => {
-        if (err) {
-          return reply(boom.badRequest(err))
+    },
+    config: defaults({}, {
+      validate: {
+        query: {
+          replace: Joi.boolean().optional()
         }
-
-        reply(null, makeResponse(id, res))
-      })
-    }
+      }
+    }, config)
   })
 }

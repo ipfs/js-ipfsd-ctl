@@ -17,10 +17,12 @@
   },
   "browser": {
     "./src/daemon.js": false,
+    "./src/remote/routes.js": false,
     "./src/exec.js": false,
     "hapi": false,
     "glob": false,
     "fs": false,
+    "joi": false,
     "stream": "readable-stream",
     "http": "stream-http"
   },
@@ -69,6 +71,7 @@
     "hapi": "^16.6.2",
     "hat": "0.0.3",
     "http-browserify": "^1.7.0",
+    "ipfs": "^0.27.5",
     "ipfs-api": "^17.2.0",
     "lodash.clonewith": "^4.5.0",
     "lodash.defaultsdeep": "^4.6.0",
@@ -78,23 +81,23 @@
     "once": "^1.4.0",
     "qs": "^6.5.1",
     "readable-stream": "^2.3.3",
-    "request": "^2.83.0",
     "rimraf": "^2.6.2",
     "shutdown": "^0.3.0",
     "stream-http": "^2.7.2",
     "subcomandante": "^1.0.5",
+    "superagent": "^3.8.2",
     "truthy": "0.0.1"
   },
   "devDependencies": {
     "aegir": "^12.2.0",
     "chai": "^4.1.2",
     "dirty-chai": "^2.0.1",
-    "ipfs": "~0.27.0",
     "is-running": "1.0.5",
     "mkdirp": "^0.5.1",
     "multihashes": "~0.4.12",
     "pre-commit": "^1.2.2",
-    "safe-buffer": "^5.1.1"
+    "safe-buffer": "^5.1.1",
+    "supertest": "^3.0.0"
   },
   "repository": {
     "type": "git",

@@ -1,12 +1,8 @@
 'use strict'
 
-const request = require('http')
+const request = require('superagent')
 const IpfsApi = require('ipfs-api')
 const multiaddr = require('multiaddr')
-const utils = require('./utils')
-
-const encodeParams = utils.encodeParams
-const getResponse = utils.getResponse
 
 function createApi (apiAddr, gwAddr) {
   let api
@@ -24,7 +20,7 @@ function createApi (apiAddr, gwAddr) {
   return api
 }
 
-const createRemoteFactory = (host, port) => {
+const createRemoteFactory = (host, port, secure) => {
   // create a client
 
   if (!host) {
@@ -34,6 +30,9 @@ const createRemoteFactory = (host, port) => {
   if (!port) {
     port = 9999
   }
+
+  secure = secure || false
+  const baseUrl = `${secure ? 'https://' : 'http://'}${host}:${port}`
 
   class Node {
     constructor (id, apiAddr, gwAddrs) {
@@ -96,15 +95,19 @@ const createRemoteFactory = (host, port) => {
         cb = initOpts
         initOpts = {}
       }
-      request.get({ host, port, path: `/init?${encodeParams(this._id, { initOpts })}` },
-        (res) => getResponse(res, (err, res) => {
+
+      request
+        .post(`${baseUrl}/init`)
+        .query({ id: this._id })
+        .send({ initOpts })
+        .end((err, res) => {
           if (err) {
             return cb(err)
           }
 
-          this.initialized = true
-          cb(null, res)
-        }))
+          this.initialized = res.body.initialized
+          cb(null, res.body)
+        })
     }
 
     /**
@@ -116,7 +119,10 @@ const createRemoteFactory = (host, port) => {
      * @returns {undefined}
      */
     shutdown (cb) {
-      request.get({ host, port, path: `/shutdown` }, (res) => { getResponse(res, cb) })
+      request
+        .post(`${baseUrl}/shutdown`)
+        .query({ id: this._id })
+        .end((err) => { cb(err) })
     }
 
     /**
@@ -131,20 +137,23 @@ const createRemoteFactory = (host, port) => {
         cb = flags
         flags = {}
       }
-      request.get({ host, port, path: `/startDaemon?${encodeParams(this._id, { flags })}` }, (res) => {
-        getResponse(res, (err, res) => {
+
+      request
+        .post(`${baseUrl}/start`)
+        .query({ id: this._id })
+        .send({ flags })
+        .end((err, res) => {
           if (err) {
             return cb(err)
           }
 
           this.started = true
 
-          const apiAddr = res.data ? res.data.apiAddr : ''
-          const gatewayAddr = res.data ? res.data.gatewayAddr : ''
+          const apiAddr = res.body.api ? res.body.api.apiAddr : ''
+          const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 
           return cb(null, createApi(apiAddr, gatewayAddr))
         })
-      })
     }
 
     /**
@@ -154,16 +163,16 @@ const createRemoteFactory = (host, port) => {
      * @returns {undefined}
      */
     stopDaemon (cb) {
-      request.get({ host, port, path: `/stopDaemon?${encodeParams(this._id)}` },
-        (res) => {
-          getResponse(res, (err) => {
-            if (err) {
-              return cb(err)
-            }
+      request
+        .post(`${baseUrl}/stop`)
+        .query({ id: this._id })
+        .end((err) => {
+          if (err) {
+            return cb(err)
+          }
 
-            this.started = false
-            cb(null)
-          })
+          this.started = false
+          cb(null)
         })
     }
 
@@ -177,8 +186,10 @@ const createRemoteFactory = (host, port) => {
      * @returns {undefined}
      */
     killProcess (cb) {
-      request.get({ host, port, path: `/killProcess` }, (res) => {
-        getResponse(res, (err) => {
+      request
+        .post(`${baseUrl}/kill`)
+        .query({ id: this._id })
+        .end((err) => {
           if (err) {
             return cb(err)
           }
@@ -186,7 +197,6 @@ const createRemoteFactory = (host, port) => {
           this.started = false
           cb(null)
         })
-      })
     }
 
     /**
@@ -196,16 +206,16 @@ const createRemoteFactory = (host, port) => {
      * @returns {number}
      */
     daemonPid (cb) {
-      request.get({ host, port, path: `/daemonPid` }, (res) => {
-        getResponse(res, (err, data) => {
+      request
+        .get(`${baseUrl}/pid`)
+        .query({ id: this._id })
+        .end((err, res) => {
           if (err) {
             return cb(err)
           }
 
-          this.started = false
-          cb(null, data)
+          cb(null, res.body.pid)
         })
-      })
     }
 
     /**
@@ -223,16 +233,18 @@ const createRemoteFactory = (host, port) => {
         key = null
       }
 
-      request.get({ host, port, path: `/getConfig?${encodeParams(this._id, { key })}` }, (res) => {
-        getResponse(res, (err, res) => {
+      const qr = { id: this._id }
+      qr.key = key || undefined
+      request
+        .get(`${baseUrl}/config`)
+        .query(qr)
+        .end((err, res) => {
           if (err) {
             return cb(err)
           }
 
-          this.started = false
-          cb(null, res.data)
+          cb(null, res.body.config)
         })
-      })
     }
 
     /**
@@ -244,16 +256,16 @@ const createRemoteFactory = (host, port) => {
      * @returns {undefined}
      */
     setConfig (key, value, cb) {
-      request.get({ host, port, path: `/setConfig?${encodeParams(this._id, { key, value })}` }, (res) => {
-        getResponse(res, (err, data) => {
+      request.put(`${baseUrl}/config`)
+        .send({ key, value })
+        .query({ id: this._id })
+        .end((err) => {
           if (err) {
             return cb(err)
           }
 
-          this.started = false
-          cb(null, data)
+          cb(null)
         })
-      })
     }
 
     /**
@@ -263,7 +275,6 @@ const createRemoteFactory = (host, port) => {
      * @param {function(Error)} cb
      * @returns {undefined}
      */
-
     replaceConf (file, cb) {
       cb(new Error('not implemented'))
     }
@@ -277,34 +288,25 @@ const createRemoteFactory = (host, port) => {
       }
 
       opts = opts || {}
-      const req = request.request({
-        host,
-        port,
-        method: 'POST',
-        path: `/spawn`,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }, (res) => {
-        getResponse(res, (err, res) => {
+      request
+        .post(`${baseUrl}/spawn`)
+        .send({ opts })
+        .query({ id: this._id })
+        .end((err, res) => {
           if (err) {
             return cb(err)
           }
 
-          const apiAddr = res.data ? res.data.apiAddr : ''
-          const gatewayAddr = res.data ? res.data.gatewayAddr : ''
+          const apiAddr = res.body.api ? res.body.api.apiAddr : ''
+          const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 
           const node = new Node(
-            res._id,
+            res.body.id,
             apiAddr,
             gatewayAddr)
 
           cb(null, { ctl: createApi(apiAddr, gatewayAddr), ctrl: node })
         })
-      })
-
-      req.write(JSON.stringify({ opts }))
-      req.end()
     }
   }
 }
