@@ -13,34 +13,30 @@ df.spawn((err, ipfsd) => {
     throw err
   }
 
-  const ipfsCtl = ipfsd.ctl
-  const ipfsCtrl = ipfsd.ctrl
-  ipfsCtl.id(function (err, id) {
+  ipfsd.api.id((err, id) => {
     if (err) {
       throw err
     }
 
     console.log('go-ipfs')
     console.log(id)
-    ipfsCtrl.stopDaemon()
+    ipfsd.stop()
   })
 })
 
 // start a js daemon
-df.spawn({ isJs: true }, (err, ipfsd) => {
+df.spawn({ type: 'js' }, (err, ipfsd) => {
   if (err) {
     throw err
   }
 
-  const ipfsCtl = ipfsd.ctl
-  const ipfsCtrl = ipfsd.ctrl
-  ipfsCtl.id(function (err, id) {
+  ipfsd.api.id((err, id) => {
     if (err) {
       throw err
     }
 
     console.log('js-ipfs')
     console.log(id)
-    ipfsCtrl.stopDaemon()
+    ipfsd.stop()
   })
 })

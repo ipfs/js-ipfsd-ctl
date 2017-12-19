@@ -31,7 +31,7 @@ module.exports = (server) => {
         }
 
         const id = hat()
-        nodes[id] = ipfsd.ctrl
+        nodes[id] = ipfsd
 
         let api = null
         if (nodes[id].started) {
@@ -98,10 +98,10 @@ module.exports = (server) => {
    **/
   server.route({
     method: 'POST',
-    path: '/shutdown',
+    path: '/cleanup',
     handler: (request, reply) => {
       const id = request.query.id
-      nodes[id].shutdown((err) => {
+      nodes[id].cleanup((err) => {
         if (err) {
           return reply(boom.internal(err))
         }
@@ -122,7 +122,7 @@ module.exports = (server) => {
       const id = request.query.id
       const payload = request.payload || {}
       const flags = payload.flags || []
-      nodes[id].startDaemon(flags, (err) => {
+      nodes[id].start(flags, (err) => {
         if (err) {
           return reply(boom.internal(err))
         }
@@ -146,7 +146,7 @@ module.exports = (server) => {
     path: '/stop',
     handler: (request, reply) => {
       const id = request.query.id
-      nodes[id].stopDaemon((err) => {
+      nodes[id].stop((err) => {
         if (err) {
           return reply(boom.internal(err))
         }
@@ -189,7 +189,7 @@ module.exports = (server) => {
     path: '/pid',
     handler: (request, reply) => {
       const id = request.query.id
-      reply({ pid: nodes[id].daemonPid(nodes[id]) })
+      reply({ pid: nodes[id].pid(nodes[id]) })
     },
     config
   })

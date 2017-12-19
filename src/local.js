@@ -68,7 +68,7 @@ const IpfsDaemonController = {
     }
 
     let options = {}
-    defaults(options, opts, defaultOptions)
+    options = defaults({}, opts, defaultOptions)
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
 
     if (!options.disposable) {
@@ -83,19 +83,19 @@ const IpfsDaemonController = {
     }
 
     options.config = flatten(opts.config)
-    defaults(options.config, options.config, defaultConfig)
+    options.config = defaults({}, options.config, defaultConfig)
 
     const node = new Node(options)
 
     waterfall([
       (cb) => options.init ? node.init(cb) : cb(null, node),
-      (node, cb) => options.start ? node.startDaemon(options.args, cb) : cb(null, null)
+      (node, cb) => options.start ? node.start(options.args, cb) : cb(null, null)
     ], (err, api) => {
       if (err) {
         return callback(err)
       }
 
-      callback(null, { ctl: api, ctrl: node })
+      callback(null, node)
     })
   }
 }

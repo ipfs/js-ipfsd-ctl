@@ -18,11 +18,11 @@ describe('ipfsd-ctl', () => {
 
   describe('Go daemon', () => {
     daemon(df, 'go')()
-    api(df, 'go')
+    api(df, 'go')()
   })
 
   describe('Js daemon', () => {
     daemon(df, 'js')()
-    api(df, 'js')
+    api(df, 'js')()
   })
 })
