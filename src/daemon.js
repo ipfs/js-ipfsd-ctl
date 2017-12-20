@@ -46,7 +46,6 @@ class Node {
     this.subprocess = null
     this.initialized = fs.existsSync(path)
     this.clean = true
-    this.env = this.path ? Object.assign({}, process.env, { IPFS_PATH: this.path }) : process.env
     this._apiAddr = null
     this._gatewayAddr = null
     this._started = false
@@ -91,6 +90,15 @@ class Node {
    */
   get started () {
     return this._started
+  }
+
+  /**
+   * Is the environment
+   * 
+   * @return {object}
+   */
+  get env () {
+    return this.path ? Object.assign({}, process.env, { IPFS_PATH: this.path }) : process.env
   }
 
   _run (args, opts, callback) {
