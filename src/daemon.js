@@ -94,7 +94,7 @@ class Node {
 
   /**
    * Is the environment
-   * 
+   *
    * @return {object}
    */
   get env () {
