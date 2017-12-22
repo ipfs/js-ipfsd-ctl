@@ -256,7 +256,7 @@ class Node {
   /**
    * Kill the `ipfs daemon` process.
    *
-   * First `SIGTERM` is sent, after 7.5 seconds `SIGKILL` is sent
+   * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
    * if the process hasn't exited yet.
    *
    * @param {function()} callback - Called when the process was killed.

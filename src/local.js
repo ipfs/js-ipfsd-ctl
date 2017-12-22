@@ -1,6 +1,7 @@
 'use strict'
 
 const defaults = require('lodash.defaultsdeep')
+const clone = require('lodash.clone')
 const waterfall = require('async/waterfall')
 const join = require('path').join
 const flatten = require('./utils').flatten
@@ -71,10 +72,12 @@ const IpfsDaemonController = {
     options = defaults({}, opts, defaultOptions)
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
 
+    options.config = flatten(opts.config)
     if (!options.disposable) {
-      delete defaultConfig['Addresses.Swarm']
-      delete defaultConfig['Addresses.API']
-      delete defaultConfig['Addresses.Gateway']
+      const nonDisposableConfig = clone(defaultConfig)
+      delete nonDisposableConfig['Addresses.Swarm']
+      delete nonDisposableConfig['Addresses.API']
+      delete nonDisposableConfig['Addresses.Gateway']
 
       options.init = false
       options.start = false
@@ -82,10 +85,10 @@ const IpfsDaemonController = {
       const defaultRepo = join(process.env.HOME || process.env.USERPROFILE,
         options.isJs ? '.jsipfs' : '.ipfs')
       options.repoPath = options.repoPath || (process.env.IPFS_PATH || defaultRepo)
+      options.config = defaults({}, options.config, {}, nonDisposableConfig)
+    } else {
+      options.config = defaults({}, options.config, {}, defaultConfig)
     }
-
-    options.config = flatten(opts.config)
-    options.config = defaults({}, options.config, defaultConfig)
 
     const node = new Node(options)
 
