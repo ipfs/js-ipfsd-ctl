@@ -7,10 +7,14 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
+const async = require('async')
 const fs = require('fs')
 const once = require('once')
 const path = require('path')
 const exec = require('../src/exec')
+
+const findIpfsExecutable = require('../src/utils').findIpfsExecutable
+const tempDir = require('../src/utils').tempDir
 
 const DaemonFactory = require('../src')
 const df = DaemonFactory.create()
@@ -20,7 +24,7 @@ module.exports = (type) => {
     describe('starting and stopping', () => {
       let ipfsd
 
-      describe(`create and init a node (ctlr)`, function () {
+      describe(`create and init a node (ipfsd)`, function () {
         this.timeout(20 * 1000)
         before((done) => {
           df.spawn({ type, init: true, start: false, disposable: true }, (err, daemon) => {
@@ -94,6 +98,119 @@ module.exports = (type) => {
           expect(stopped).to.equal(true)
           expect(fs.existsSync(path.join(ipfsd.path, 'repo.lock'))).to.not.be.ok()
           expect(fs.existsSync(path.join(ipfsd.path, 'api'))).to.not.be.ok()
+        })
+      })
+    })
+
+    describe('starting and stopping on custom exec path', () => {
+      let ipfsd
+
+      describe(`create and init a node (ipfsd) on custom exec path`, function () {
+        this.timeout(20 * 1000)
+        const exec = findIpfsExecutable(type)
+        before((done) => {
+          df.spawn({ type, exec }, (err, daemon) => {
+            expect(err).to.not.exist()
+            expect(daemon).to.exist()
+
+            ipfsd = daemon
+            done()
+          })
+        })
+
+        after((done) => ipfsd.stop(done))
+
+        it('should return a node', () => {
+          expect(ipfsd).to.exist()
+        })
+
+        it('ipfsd.exec should match exec', () => {
+          expect(ipfsd.exec).to.equal(exec)
+        })
+      })
+
+      describe(`should fail on invalid exec path`, function () {
+        this.timeout(20 * 1000)
+        const exec = '/invalid/exec/ipfs'
+        before((done) => {
+          df.spawn({
+            type,
+            init: false,
+            start: false,
+            exec
+          }, (err, daemon) => {
+            expect(err).to.not.exist()
+            expect(daemon).to.exist()
+
+            ipfsd = daemon
+            done()
+          })
+        })
+
+        it('should fail on init', (done) => {
+          ipfsd.init((err, node) => {
+            expect(err).to.exist()
+            expect(node).to.not.exist()
+            done()
+          })
+        })
+      })
+    })
+
+    describe('starting and stopping multiple times', () => {
+      let ipfsd
+
+      describe(`create and init a node (ipfsd)`, function () {
+        this.timeout(20 * 1000)
+        before((done) => {
+          async.series([
+            (cb) => df.spawn({
+              type,
+              init: false,
+              start: false,
+              disposable: false,
+              repoPath: tempDir(type)
+            }, (err, daemon) => {
+              expect(err).to.not.exist()
+              expect(daemon).to.exist()
+
+              ipfsd = daemon
+              cb()
+            }),
+            (cb) => ipfsd.init(cb),
+            (cb) => ipfsd.start(cb)
+          ], done)
+        })
+
+        it('should return a node', () => {
+          expect(ipfsd).to.exist()
+        })
+
+        it('daemon should not be running', () => {
+          expect(ipfsd.pid()).to.exist()
+        })
+
+        it('should stop', (done) => {
+          ipfsd.stop((err) => {
+            expect(err).to.not.exist()
+            expect(ipfsd.pid()).to.not.exist()
+            done()
+          })
+        })
+
+        it('should start', (done) => {
+          ipfsd.start((err) => {
+            expect(err).to.not.exist()
+            expect(ipfsd.pid()).to.exist()
+            done()
+          })
+        })
+
+        it('should stop and cleanup', (done) => {
+          ipfsd.stop((err) => {
+            expect(err).to.not.exist()
+            ipfsd.cleanup(done)
+          })
         })
       })
     })

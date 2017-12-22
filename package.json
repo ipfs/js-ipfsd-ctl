@@ -66,10 +66,7 @@
     "async": "^2.6.0",
     "boom": "^7.1.1",
     "detect-node": "^2.0.3",
-    "go-ipfs-dep": "0.4.13",
-    "hapi": "^16.6.2",
     "hat": "0.0.3",
-    "ipfs": "^0.27.5",
     "ipfs-api": "^17.2.5",
     "joi": "^13.0.2",
     "lodash.defaultsdeep": "^4.6.0",
@@ -84,7 +81,14 @@
     "superagent": "^3.8.2",
     "truthy": "0.0.1"
   },
+  "optionalDependencies": {
+    "ipfs": "^0.27.5",
+    "go-ipfs-dep": "0.4.13"
+  },
   "devDependencies": {
+    "hapi": "^16.6.2",
+    "ipfs": "^0.27.5",
+    "go-ipfs-dep": "0.4.13",
     "aegir": "^12.2.0",
     "chai": "^4.1.2",
     "dirty-chai": "^2.0.1",

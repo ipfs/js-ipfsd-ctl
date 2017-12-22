@@ -273,17 +273,6 @@ const createRemoteFactory = (host, port, secure) => {
           cb(null)
         })
     }
-
-    /**
-     * Replace the configuration with a given file
-     *
-     * @param {string} file - path to the new config file
-     * @param {function(Error)} cb
-     * @returns {undefined}
-     */
-    replaceConf (file, cb) {
-      cb(new Error('not implemented'))
-    }
   }
 
   return {

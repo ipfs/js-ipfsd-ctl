@@ -230,19 +230,8 @@ module.exports = (server) => {
     path: '/config',
     handler: (request, reply) => {
       const id = request.query.id
-      const replace = request.query.replace
       const key = request.payload.key
       const val = request.payload.value
-
-      if (replace) {
-        return nodes[id].replaceConf((err) => {
-          if (err) {
-            return reply(boom.internal(err))
-          }
-
-          reply().code(200)
-        })
-      }
 
       nodes[id].setConfig(key, val, (err) => {
         if (err) {
@@ -252,12 +241,6 @@ module.exports = (server) => {
         reply().code(200)
       })
     },
-    config: defaults({}, {
-      validate: {
-        query: {
-          replace: Joi.boolean().optional()
-        }
-      }
-    }, config)
+    config
   })
 }

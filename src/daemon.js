@@ -42,7 +42,7 @@ class Node {
     const tmpDir = tempDir(opts.type === 'js')
     this.path = this.opts.disposable ? tmpDir : (this.opts.repoPath || tmpDir)
     this.disposable = this.opts.disposable
-    this.exec = this.opts.executable || process.env.IPFS_EXEC || findIpfsExecutable(this.opts.type, rootPath)
+    this.exec = this.opts.exec || process.env.IPFS_EXEC || findIpfsExecutable(this.opts.type, rootPath)
     this.subprocess = null
     this.initialized = fs.existsSync(path)
     this.clean = true
@@ -156,7 +156,7 @@ class Node {
    * @returns {undefined}
    */
   cleanup (callback) {
-    if (this.clean || !this.disposable) {
+    if (this.clean) {
       return callback()
     }
 
@@ -332,21 +332,6 @@ class Node {
    */
   setConfig (key, value, callback) {
     setConfigValue(this, key, value, callback)
-  }
-
-  /**
-   * Replace the configuration with a given file
-   *
-   * @param {string} file - path to the new config file
-   * @param {function(Error)} callback
-   * @returns {undefined}
-   */
-  replaceConf (file, callback) {
-    this._run(
-      ['config', 'replace', file],
-      { env: this.env },
-      callback
-    )
   }
 
   /**

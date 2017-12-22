@@ -8,15 +8,11 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const path = require('path')
-const os = require('os')
+const fs = require('fs')
+const tempDir = require('../src/utils').tempDir
 const isNode = require('detect-node')
 
 const addRetrieveTests = require('./add-retrive')
-
-function tempDir (js) {
-  return path.join(os.tmpdir(), `${js ? 'jsipfs' : 'ipfs'}_${String(Math.random()).substr(2)}`)
-}
 
 module.exports = (df, type) => {
   return () => {
@@ -132,7 +128,6 @@ module.exports = (df, type) => {
       })
 
       describe('spawn a node and pass init options', () => {
-        const repoPath = tempDir(type === 'js')
         const addr = '/ip4/127.0.0.1/tcp/5678'
         const swarmAddr1 = '/ip4/127.0.0.1/tcp/35555/ws'
         const swarmAddr2 = '/ip4/127.0.0.1/tcp/35666'
@@ -150,8 +145,6 @@ module.exports = (df, type) => {
           this.timeout(20 * 1000)
           const options = {
             config,
-            repoPath,
-            init: true,
             type
           }
 
@@ -176,6 +169,51 @@ module.exports = (df, type) => {
           ], (err) => {
             expect(err).to.not.exist()
             ipfsd.stop(done)
+          })
+        })
+      })
+
+      describe('spawn a node on custom repo path', function () {
+        if (!isNode) {
+          return
+        }
+
+        this.ipfsd = null
+        it('allows passing custom repo path to spawn', function (done) {
+          this.timeout(20 * 1000)
+
+          const repoPath = tempDir(type)
+
+          const config = {
+            Addresses: {
+              Swarm: [
+                '/ip4/127.0.0.1/tcp/0/ws',
+                '/ip4/127.0.0.1/tcp/0'
+              ],
+              API: '/ip4/127.0.0.1/tcp/0'
+            }
+          }
+
+          async.series([
+            (cb) => df.spawn({ type, repoPath, disposable: false, config }, (err, node) => {
+              expect(err).to.not.exist()
+              this.ipfsd = node
+              cb()
+            }),
+            (cb) => this.ipfsd.init(cb),
+            (cb) => this.ipfsd.start(cb)
+          ], (err) => {
+            expect(err).to.not.exist()
+            expect(fs.existsSync(repoPath)).to.be.ok()
+            done()
+          })
+        })
+
+        addRetrieveTests()
+
+        after(function (done) {
+          this.ipfsd.stop(() => {
+            this.ipfsd.cleanup(done)
           })
         })
       })

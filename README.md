@@ -124,6 +124,10 @@ module.exports = {
 }
 ```
 
+## Disposable vs non Disposable nodes
+
+`ipfsd-ctl` can create two types of node controllers, `disposable` and `non-disposable`. A disposable node will be created on a temporary repo which will be optionally initialized and started (the default), as well cleaned up on process exit. A non-disposable node on the other hand, requires the user to initialize and start the node, as well as stop and cleanup after wards. Additionally, a non-disposable will allow you to pass a custom repo using the `repoPath` option, if the `repoPath` is not defined, it will use the default repo for the node type (`$HOME/.ipfs` or `$HOME/.jsipfs`). The `repoPath` parameter is ignored for disposable nodes, as there is a risk of deleting a live repo.
+
 ## API
 
 ### Daemon Factory
@@ -152,9 +156,10 @@ module.exports = {
   - `init` bool (default true) - should the node be initialized
   - `start` bool (default true) - should the node be started
   - `repoPath` string - the repository path to use for this node, ignored if node is disposable
-  - `disposable` bool - a new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits
+  - `disposable` bool (default false) - a new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits
   - `args` - array of cmd line arguments to be passed to ipfs daemon
   - `config` - ipfs configuration options
+  - `exec` - path to the desired IPFS executable to spawn, otherwise `ipfsd-ctl` will try to locate the correct one based on the `type`
   
  - `callback` - is a function with the signature `cb(err, ipfsd)` where:
    - `err` - is the error set if spawning the node is unsuccessful
