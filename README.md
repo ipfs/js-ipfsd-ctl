@@ -273,14 +273,6 @@ If no `key` is passed, the whole config is returned as an object.
 - `key` - the key to set 
 - `value` - the value to set the key to
 - `function(Error)` callback
-  
-
-#### `replaceConf (file, callback)`
-> Replace the configuration with a given file
-
-- `file` - path to the new config file
-- `function(Error)` callback
-
 
 #### `version (callback)`
 
