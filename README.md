@@ -130,7 +130,7 @@ module.exports = {
 
 ## IPFS executables
 
-`ipfsd-ctl` no longer installs go-ipfs nor js-ipfs dependencies, instead it expects them to be provided by the parent project. In order to be able to use both go and js daemons, please make sure that your project includes this two packages as dependencies.
+`ipfsd-ctl` no longer installs go-ipfs nor js-ipfs dependencies, instead it expects them to be provided by the parent project. In order to be able to use both go and js daemons, please make sure that your project includes these two npm packages as dependencies.
 
 - `ipfs` - the js-ipfs implementation
 - `go-ipfs-dep` - the packaged go-ipfs implementation
