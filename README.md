@@ -128,6 +128,15 @@ module.exports = {
 
 `ipfsd-ctl` can create two types of node controllers, `disposable` and `non-disposable`. A disposable node will be created on a temporary repo which will be optionally initialized and started (the default), as well cleaned up on process exit. A non-disposable node on the other hand, requires the user to initialize and start the node, as well as stop and cleanup after wards. Additionally, a non-disposable will allow you to pass a custom repo using the `repoPath` option, if the `repoPath` is not defined, it will use the default repo for the node type (`$HOME/.ipfs` or `$HOME/.jsipfs`). The `repoPath` parameter is ignored for disposable nodes, as there is a risk of deleting a live repo.
 
+## IPFS executables
+
+`ipfsd-ctl` no longer installs go-ipfs nor js-ipfs dependencies, instead it expects them to be provided by the parent project. In order to be able to use both go and js daemons, please make sure that your project includes this two packages as dependencies.
+
+- `ipfs` - the js-ipfs implementation
+- `go-ipfs-dep` - the packaged go-ipfs implementation
+
+It is also possible to provide an alternative executable when using `spawn` by setting the `exec` option to the path of the executable.
+
 ## API
 
 ### Daemon Factory
