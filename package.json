@@ -67,6 +67,7 @@
     "boom": "^7.1.1",
     "detect-node": "^2.0.3",
     "hat": "0.0.3",
+    "hapi": "^16.6.2",
     "ipfs-api": "^17.2.5",
     "joi": "^13.0.2",
     "lodash.clone": "^4.5.0",
@@ -83,7 +84,6 @@
     "truthy": "0.0.1"
   },
   "devDependencies": {
-    "hapi": "^16.6.2",
     "ipfs": "^0.27.5",
     "go-ipfs-dep": "0.4.13",
     "aegir": "^12.2.0",
