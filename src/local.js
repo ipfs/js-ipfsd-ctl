@@ -32,7 +32,7 @@ const defaultConfig = {
  *
  * @namespace IpfsDaemonController
  */
-const IpfsDaemonController = {
+class IpfsDaemonController {
   /**
    * Get the version of the currently used go-ipfs binary.
    *
@@ -41,9 +41,9 @@ const IpfsDaemonController = {
    * @param {function(Error, string)} callback
    * @returns {undefined}
    */
-  version (opts, callback) {
+  static version (opts, callback) {
     (new Node(opts)).version(callback)
-  },
+  }
 
   /**
    * Spawn an IPFS node, either js-ipfs or go-ipfs
@@ -62,7 +62,7 @@ const IpfsDaemonController = {
    * @param {Function} callback(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
    * @return {undefined}
    */
-  spawn (opts, callback) {
+  static spawn (opts, callback) {
     if (typeof opts === 'function') {
       callback = opts
       opts = defaultOptions
