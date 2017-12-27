@@ -4,9 +4,9 @@ const defaults = require('lodash.defaultsdeep')
 const clone = require('lodash.clone')
 const waterfall = require('async/waterfall')
 const join = require('path').join
-const flatten = require('./utils').flatten
 
-const Node = require('./daemon')
+const Node = require('./daemon-node')
+const ProcNode = require('./in-proc-node')
 
 const defaultOptions = {
   type: 'go',
@@ -16,23 +16,29 @@ const defaultOptions = {
 }
 
 const defaultConfig = {
-  'API.HTTPHeaders.Access-Control-Allow-Origin': ['*'],
-  'API.HTTPHeaders.Access-Control-Allow-Methods': [
-    'PUT',
-    'POST',
-    'GET'
-  ],
-  'Addresses.Swarm': [`/ip4/127.0.0.1/tcp/0`],
-  'Addresses.API': `/ip4/127.0.0.1/tcp/0`,
-  'Addresses.Gateway': `/ip4/127.0.0.1/tcp/0`
+  API: {
+    HTTPHeaders: {
+      'Access-Control-Allow-Origin': ['*'],
+      'Access-Control-Allow-Methods': [
+        'PUT',
+        'POST',
+        'GET'
+      ]
+    }
+  },
+  Addresses: {
+    Swarm: [`/ip4/127.0.0.1/tcp/0`],
+    API: `/ip4/127.0.0.1/tcp/0`,
+    Gateway: `/ip4/127.0.0.1/tcp/0`
+  }
 }
 
 /**
  * Control go-ipfs nodes directly from JavaScript.
  *
- * @namespace IpfsDaemonController
+ * @namespace DaemonController
  */
-class IpfsDaemonController {
+class DaemonController {
   /**
    * Get the version of the currently used go-ipfs binary.
    *
@@ -71,13 +77,9 @@ class IpfsDaemonController {
     let options = {}
     options = defaults({}, opts, defaultOptions)
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
-
-    options.config = flatten(opts.config)
     if (!options.disposable) {
       const nonDisposableConfig = clone(defaultConfig)
-      delete nonDisposableConfig['Addresses.Swarm']
-      delete nonDisposableConfig['Addresses.API']
-      delete nonDisposableConfig['Addresses.Gateway']
+      delete nonDisposableConfig['Addresses']
 
       options.init = false
       options.start = false
@@ -90,7 +92,16 @@ class IpfsDaemonController {
       options.config = defaults({}, options.config, {}, defaultConfig)
     }
 
-    const node = new Node(options)
+    let node
+    if (options.type === 'proc') {
+      if (typeof options.exec !== 'function') {
+        return callback(new Error(`'type' proc requires 'exec' to be a coderef`))
+      }
+
+      node = new ProcNode(options)
+    } else {
+      node = new Node(options)
+    }
 
     waterfall([
       (cb) => options.init ? node.init(cb) : cb(null, node),
@@ -105,4 +116,4 @@ class IpfsDaemonController {
   }
 }
 
-module.exports = IpfsDaemonController
+module.exports = DaemonController

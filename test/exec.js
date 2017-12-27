@@ -32,7 +32,7 @@ function psExpect (pid, expect, grace, callback) {
 
 function isRunningGrep (pattern, callback) {
   const cmd = 'ps aux'
-  cp.exec(cmd, (err, stdout, stderr) => {
+  cp.exec(cmd, { maxBuffer: 1024 * 500 }, (err, stdout, stderr) => {
     if (err) {
       return callback(err)
     }

@@ -4,6 +4,7 @@
 const daemon = require('./spawning')
 const api = require('./api')
 const DaemonFactory = require('../src')
+const IPFS = require('ipfs')
 
 describe('ipfsd-ctl', () => {
   const df = DaemonFactory.create()
@@ -24,5 +25,9 @@ describe('ipfsd-ctl', () => {
   describe('Js daemon', () => {
     daemon(df, 'js')()
     api(df, 'js')()
+  })
+
+  describe('In-process daemon', () => {
+    daemon(DaemonFactory.create({ remote: false }), 'proc', IPFS)()
   })
 })

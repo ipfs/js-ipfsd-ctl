@@ -16,8 +16,9 @@
     "coverage-publish": "aegir coverage -u"
   },
   "browser": {
-    "./src/daemon.js": false,
-    "./src/remote/routes.js": false,
+    "./src/utils/create-repo-nodejs.js": "./src/utils/create-repo-browser.js",
+    "./src/daemon-node.js": false,
+    "./src/remote-node/routes.js": false,
     "./src/exec.js": false,
     "hapi": false,
     "glob": false,

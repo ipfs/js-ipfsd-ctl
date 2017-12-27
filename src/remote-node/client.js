@@ -107,7 +107,7 @@ const createRemoteFactory = (host, port, secure) => {
         .send({ initOpts })
         .end((err, res) => {
           if (err) {
-            return cb(err)
+            return cb(new Error(err.response.body.message))
           }
 
           this.initialized = res.body.initialized
@@ -149,7 +149,7 @@ const createRemoteFactory = (host, port, secure) => {
         .send({ flags })
         .end((err, res) => {
           if (err) {
-            return cb(err)
+            return cb(new Error(err.response.body.message))
           }
 
           this.started = true
@@ -174,7 +174,7 @@ const createRemoteFactory = (host, port, secure) => {
         .query({ id: this._id })
         .end((err) => {
           if (err) {
-            return cb(err)
+            return cb(new Error(err.response.body.message))
           }
 
           this.started = false
@@ -197,7 +197,7 @@ const createRemoteFactory = (host, port, secure) => {
         .query({ id: this._id })
         .end((err) => {
           if (err) {
-            return cb(err)
+            return cb(new Error(err.response.body.message))
           }
 
           this.started = false
@@ -217,7 +217,7 @@ const createRemoteFactory = (host, port, secure) => {
         .query({ id: this._id })
         .end((err, res) => {
           if (err) {
-            return cb(err)
+            return cb(new Error(err.response.body.message))
           }
 
           cb(null, res.body.pid)
@@ -246,7 +246,7 @@ const createRemoteFactory = (host, port, secure) => {
         .query(qr)
         .end((err, res) => {
           if (err) {
-            return cb(err)
+            return cb(new Error(err.response.body.message))
           }
 
           cb(null, res.body.config)
@@ -267,7 +267,7 @@ const createRemoteFactory = (host, port, secure) => {
         .query({ id: this._id })
         .end((err) => {
           if (err) {
-            return cb(err)
+            return cb(new Error(err.response.body.message))
           }
 
           cb(null)
@@ -289,7 +289,7 @@ const createRemoteFactory = (host, port, secure) => {
         .query({ id: this._id })
         .end((err, res) => {
           if (err) {
-            return cb(err)
+            return cb(new Error(err.response.body.message))
           }
 
           const apiAddr = res.body.api ? res.body.api.apiAddr : ''

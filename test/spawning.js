@@ -14,7 +14,7 @@ const isNode = require('detect-node')
 
 const addRetrieveTests = require('./add-retrive')
 
-module.exports = (df, type) => {
+module.exports = (df, type, exec) => {
   return () => {
     const VERSION_STRING = type === 'js'
       ? `js-ipfs version: ${require('ipfs/package.json').version}`
@@ -22,10 +22,10 @@ module.exports = (df, type) => {
 
     describe('daemon spawning', () => {
       it('prints the version', function (done) {
-        if (!isNode) {
+        if (!isNode || type === 'proc') {
           this.skip()
         }
-        df.version({ type }, (err, version) => {
+        df.version({ type, exec }, (err, version) => {
           expect(err).to.not.exist()
           expect(version).to.be.eql(VERSION_STRING)
           done()
@@ -41,7 +41,7 @@ module.exports = (df, type) => {
         })
 
         it('create node', function (done) {
-          df.spawn({ type, init: false, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ type, exec, init: false, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd).to.exist()
             expect(ipfsd.api).to.not.exist()
@@ -82,7 +82,7 @@ module.exports = (df, type) => {
 
         it('create node and init', function (done) {
           this.timeout(30 * 1000)
-          df.spawn({ type, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ type, exec, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd).to.exist()
             expect(ipfsd.api).to.not.exist()
@@ -114,7 +114,7 @@ module.exports = (df, type) => {
 
         it('create init and start node', function (done) {
           this.timeout(20 * 1000)
-          df.spawn({ type }, (err, ipfsd) => {
+          df.spawn({ type, exec }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd).to.exist()
             expect(ipfsd.api).to.exist()
@@ -129,13 +129,11 @@ module.exports = (df, type) => {
 
       describe('spawn a node and pass init options', () => {
         const addr = '/ip4/127.0.0.1/tcp/5678'
-        const swarmAddr1 = '/ip4/127.0.0.1/tcp/35555/ws'
-        const swarmAddr2 = '/ip4/127.0.0.1/tcp/35666'
+        const swarmAddr1 = '/ip4/127.0.0.1/tcp/35666'
         const config = {
           Addresses: {
             Swarm: [
-              swarmAddr1,
-              swarmAddr2
+              swarmAddr1
             ],
             API: addr
           }
@@ -145,7 +143,8 @@ module.exports = (df, type) => {
           this.timeout(20 * 1000)
           const options = {
             config,
-            type
+            type,
+            exec
           }
 
           let ipfsd
@@ -162,7 +161,10 @@ module.exports = (df, type) => {
             (cb) => {
               ipfsd.getConfig('Addresses.Swarm', (err, res) => {
                 expect(err).to.not.exist()
-                expect(JSON.parse(res)).to.deep.eql([swarmAddr1, swarmAddr2])
+                if (typeof res === 'string') {
+                  res = JSON.parse(res)
+                }
+                expect(res).to.deep.eql([swarmAddr1])
                 cb()
               })
             }
@@ -195,7 +197,7 @@ module.exports = (df, type) => {
           }
 
           async.series([
-            (cb) => df.spawn({ type, repoPath, disposable: false, config }, (err, node) => {
+            (cb) => df.spawn({ type, exec, repoPath, disposable: false, config }, (err, node) => {
               expect(err).to.not.exist()
               this.ipfsd = node
               cb()
@@ -223,7 +225,7 @@ module.exports = (df, type) => {
 
         before(function (done) {
           this.timeout(20 * 1000)
-          df.spawn({ type }, (err, res) => {
+          df.spawn({ type, exec }, (err, res) => {
             if (err) {
               return done(err)
             }
@@ -262,11 +264,11 @@ module.exports = (df, type) => {
         })
 
         it('should give an error if setting an invalid config value', function (done) {
-          if (type) {
+          if (type !== 'go') {
             this.skip() // js doesn't fail on invalid config
           } else {
             ipfsd.setConfig('Bootstrap', 'true', (err) => {
-              expect(err.message).to.match(/failed to set config value/)
+              expect(err.message).to.match(/(?:Error: )?failed to set config value/mgi)
               done()
             })
           }

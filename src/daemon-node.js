@@ -10,6 +10,7 @@ const path = require('path')
 const once = require('once')
 const truthy = require('truthy')
 const utils = require('./utils')
+const flatten = require('./utils').flatten
 
 const tryJsonParse = utils.tryJsonParse
 const parseConfig = utils.parseConfig
@@ -38,6 +39,7 @@ class Node {
     const type = truthy(process.env.IPFS_TYPE)
 
     this.opts = opts || { type: type || 'go' }
+    this.opts.config = flatten(this.opts.config)
 
     const tmpDir = tempDir(opts.type === 'js')
     this.path = this.opts.disposable ? tmpDir : (this.opts.repoPath || tmpDir)

@@ -36,8 +36,8 @@ module.exports = (type) => {
           expect(err).to.not.exist()
 
           fs.writeFileSync(path.join(npm3Path, appName))
-          delete require.cache[require.resolve('../src/daemon.js')]
-          const Daemon = require('../src/daemon.js')
+          delete require.cache[require.resolve('../src/daemon-node.js')]
+          const Daemon = require('../src/daemon-node.js')
 
           const node = new Daemon({ type })
           expect(node.exec)
@@ -57,8 +57,8 @@ module.exports = (type) => {
           expect(err).to.not.exist()
 
           fs.writeFileSync(path.join(npm2Path, appName))
-          delete require.cache[require.resolve('../src/daemon.js')]
-          const Daemon = require('../src/daemon.js')
+          delete require.cache[require.resolve('../src/daemon-node.js')]
+          const Daemon = require('../src/daemon-node.js')
 
           const node = new Daemon({ type })
           expect(node.exec)

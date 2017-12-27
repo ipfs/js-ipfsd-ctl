@@ -1,6 +1,6 @@
 'use strict'
 
-const ipfsFactory = require('../local')
+const ipfsFactory = require('../daemon-ctrl')
 const hat = require('hat')
 const boom = require('boom')
 const Joi = require('joi')
@@ -27,7 +27,7 @@ module.exports = (server) => {
       const payload = request.payload || {}
       ipfsFactory.spawn(payload.opts, (err, ipfsd) => {
         if (err) {
-          return reply(boom.internal(err))
+          return reply(boom.badRequest(err))
         }
 
         const id = hat()
@@ -82,7 +82,7 @@ module.exports = (server) => {
       const payload = request.payload || {}
       nodes[id].init(payload.initOpts, (err, node) => {
         if (err) {
-          return reply(boom.internal(err))
+          return reply(boom.badRequest(err))
         }
 
         reply({ initialized: node.initialized })
@@ -103,7 +103,7 @@ module.exports = (server) => {
       const id = request.query.id
       nodes[id].cleanup((err) => {
         if (err) {
-          return reply(boom.internal(err))
+          return reply(boom.badRequest(err))
         }
 
         reply().code(200)
@@ -124,7 +124,7 @@ module.exports = (server) => {
       const flags = payload.flags || []
       nodes[id].start(flags, (err) => {
         if (err) {
-          return reply(boom.internal(err))
+          return reply(boom.badRequest(err))
         }
 
         reply({
@@ -148,7 +148,7 @@ module.exports = (server) => {
       const id = request.query.id
       nodes[id].stop((err) => {
         if (err) {
-          return reply(boom.internal(err))
+          return reply(boom.badRequest(err))
         }
 
         reply().code(200)
@@ -170,7 +170,7 @@ module.exports = (server) => {
       const id = request.query.id
       nodes[id].killProcess((err) => {
         if (err) {
-          return reply(boom.internal(err))
+          return reply(boom.badRequest(err))
         }
 
         reply().code(200)
@@ -207,7 +207,7 @@ module.exports = (server) => {
       const key = request.query.key
       nodes[id].getConfig(key, (err, config) => {
         if (err) {
-          return reply(boom.internal(err))
+          return reply(boom.badRequest(err))
         }
 
         reply({ config })
@@ -235,7 +235,7 @@ module.exports = (server) => {
 
       nodes[id].setConfig(key, val, (err) => {
         if (err) {
-          return reply(boom.internal(err))
+          return reply(boom.badRequest(err))
         }
 
         reply().code(200)

@@ -1,7 +1,7 @@
 'use strict'
 
-const localController = require('./local')
-const remote = require('./remote')
+const localController = require('./daemon-ctrl')
+const remote = require('./remote-node')
 const isNode = require('detect-node')
 const defaults = require('lodash.defaultsdeep')
 

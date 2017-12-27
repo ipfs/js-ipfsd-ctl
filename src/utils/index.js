@@ -5,12 +5,15 @@ const fs = require('fs')
 const hat = require('hat')
 const os = require('os')
 const path = require('path')
-const exec = require('./exec')
+const exec = require('../exec')
 const safeParse = require('safe-json-parse/callback')
+const createRepo = require('./create-repo-nodejs')
 
 const join = path.join
 
 const isWindows = os.platform() === 'win32'
+
+exports.createRepo = createRepo
 
 // taken from https://github.com/hughsk/flat
 exports.flatten = (target) => {
@@ -18,16 +21,16 @@ exports.flatten = (target) => {
   const step = (object, prev) => {
     object = object || {}
     Object.keys(object).forEach(function (key) {
-      var value = object[key]
-      var isarray = Array.isArray(value)
-      var type = Object.prototype.toString.call(value)
-      var isbuffer = Buffer.isBuffer(value)
-      var isobject = (
+      let value = object[key]
+      let isarray = Array.isArray(value)
+      let type = Object.prototype.toString.call(value)
+      let isbuffer = Buffer.isBuffer(value)
+      let isobject = (
         type === '[object Object]' ||
         type === '[object Array]'
       )
 
-      var newKey = prev
+      let newKey = prev
         ? prev + '.' + key
         : key
 
