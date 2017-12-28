@@ -128,14 +128,28 @@ module.exports = {
 
 `ipfsd-ctl` can create two types of node controllers, `disposable` and `non-disposable`. A disposable node will be created on a temporary repo which will be optionally initialized and started (the default), as well cleaned up on process exit. A non-disposable node on the other hand, requires the user to initialize and start the node, as well as stop and cleanup after wards. Additionally, a non-disposable will allow you to pass a custom repo using the `repoPath` option, if the `repoPath` is not defined, it will use the default repo for the node type (`$HOME/.ipfs` or `$HOME/.jsipfs`). The `repoPath` parameter is ignored for disposable nodes, as there is a risk of deleting a live repo.
 
-## IPFS executables
+## IPFS executable types
+
+`ipfsd-ctl` allows spawning different types of executables, such as:
+
+> `go`
+
+Invoking `df.spawn({type: 'go', exec: '<path to go executable or empty to allow ipfsd to find one automatically>'})` will spawn a `go-ipfs` node.
+
+> `js`
+
+Invoking `df.spawn({type: 'js', exec: '<path to js executable or empty to allow ipfsd to find one automatically>'})` will spawn a `js-ipfs` node.
+
+> `proc`
+
+Invoking `df.spawn({type: 'proc', exec: '<IPFS coderef>'})` will spawn an `in-process-ipfs` node using the provided ipfs coderef. Note that, `exec` is require if `type: 'proc'` is used.
+
+### IPFS executables
 
 `ipfsd-ctl` no longer installs go-ipfs nor js-ipfs dependencies, instead it expects them to be provided by the parent project. In order to be able to use both go and js daemons, please make sure that your project includes these two npm packages as dependencies.
 
 - `ipfs` - the js-ipfs implementation
 - `go-ipfs-dep` - the packaged go-ipfs implementation
-
-It is also possible to provide an alternative executable when using `spawn` by setting the `exec` option to the path of the executable.
 
 ## API
 
@@ -161,14 +175,14 @@ It is also possible to provide an alternative executable when using `spawn` by s
 
 - `options` - is an optional object the following properties
   - `type` string (default 'go') - indicates which type of node to spawn
-    - current valid values are `js` and `go`
+    - current valid values are `js`, `go` and `proc`
   - `init` bool (default true) - should the node be initialized
   - `start` bool (default true) - should the node be started
   - `repoPath` string - the repository path to use for this node, ignored if node is disposable
   - `disposable` bool (default false) - a new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits
   - `args` - array of cmd line arguments to be passed to ipfs daemon
   - `config` - ipfs configuration options
-  - `exec` - path to the desired IPFS executable to spawn, otherwise `ipfsd-ctl` will try to locate the correct one based on the `type`
+  - `exec` - path to the desired IPFS executable to spawn, otherwise `ipfsd-ctl` will try to locate the correct one based on the `type`. In the case of `proc` type, exec is required and expects an IPFS coderef
   
  - `callback` - is a function with the signature `cb(err, ipfsd)` where:
    - `err` - is the error set if spawning the node is unsuccessful
