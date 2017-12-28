@@ -21,6 +21,7 @@ class Node {
 
     const IPFS = this.opts.exec
 
+    this.opts.args = this.opts.args || []
     this.path = this.opts.repoPath
     this.repo = createRepo(this.path)
     this.disposable = this.opts.disposable
@@ -31,10 +32,15 @@ class Node {
     this.initialized = false
     this.api = null
 
+    this.opts.EXPERIMENTAL = { pubsub: false, sharding: false }
+    this.opts.EXPERIMENTAL.pubsub = (this.opts.args.indexOf('--enable-pubsub-experiment') > -1)
+    this.opts.EXPERIMENTAL.sharding = (this.opts.args.indexOf('--enable-sharding-experiment') > -1)
     this.exec = new IPFS({
       repo: this.repo,
       init: false,
-      start: false
+      start: false,
+      EXPERIMENTAL: this.opts.EXPERIMENTAL,
+      libp2p: this.opts.libp2p
     })
   }
 
@@ -189,7 +195,11 @@ class Node {
       }
 
       this._started = false
-      this.cleanup(callback)
+      if (this.disposable) {
+        return this.cleanup(callback)
+      }
+
+      return callback()
     })
   }
 

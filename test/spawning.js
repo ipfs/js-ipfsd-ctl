@@ -11,6 +11,7 @@ chai.use(dirtyChai)
 const fs = require('fs')
 const tempDir = require('../src/utils').tempDir
 const isNode = require('detect-node')
+const hat = require('hat')
 
 const addRetrieveTests = require('./add-retrive')
 
@@ -216,6 +217,41 @@ module.exports = (df, type, exec) => {
         after(function (done) {
           this.ipfsd.stop(() => {
             this.ipfsd.cleanup(done)
+          })
+        })
+      })
+
+      describe('spawn a node with custom arguments', function () {
+        if (!isNode && type !== 'proc') {
+          return
+        }
+
+        this.ipfsd = null
+        this.timeout(50 * 1000)
+        const topic = `test-topic-${hat()}`
+
+        before(function (done) {
+          df.spawn({ type, exec, args: ['--enable-pubsub-experiment'] }, (err, node) => {
+            expect(err).to.not.exist()
+            this.ipfsd = node
+            done()
+          })
+        })
+
+        after(function (done) { this.ipfsd.stop(done) })
+
+        it('should start with pubsub enabled', function (done) {
+          const handler = (msg) => {
+            expect(msg.data.toString()).to.equal('hi')
+            expect(msg).to.have.property('seqno')
+            expect(Buffer.isBuffer(msg.seqno)).to.eql(true)
+            expect(msg).to.have.property('topicIDs').eql([topic])
+            done()
+          }
+
+          this.ipfsd.api.pubsub.subscribe(topic, handler, (err) => {
+            expect(err).to.not.exist()
+            this.ipfsd.api.pubsub.publish(topic, Buffer.from('hi'))
           })
         })
       })
