@@ -142,7 +142,7 @@ Invoking `df.spawn({type: 'js', exec: '<path to js executable or empty to allow 
 
 > `proc`
 
-Invoking `df.spawn({type: 'proc', exec: '<IPFS coderef>'})` will spawn an `in-process-ipfs` node using the provided ipfs coderef. Note that, `exec` is require if `type: 'proc'` is used.
+Invoking `df.spawn({type: 'proc', exec: '<IPFS coderef>'})` will spawn an `in-process-ipfs` node using the provided code reference that implements the core IPFS API. Note that, `exec` is required if `type: 'proc'` is used.
 
 ### IPFS executables
 
