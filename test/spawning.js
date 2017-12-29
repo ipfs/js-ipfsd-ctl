@@ -141,11 +141,12 @@ module.exports = (df, type, exec) => {
         }
 
         it('allows passing ipfs config options to spawn', function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(60 * 1000)
+          
           const options = {
-            config,
-            type,
-            exec
+            config: config,
+            type: type,
+            exec: exec
           }
 
           let ipfsd
