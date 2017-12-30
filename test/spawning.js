@@ -142,7 +142,6 @@ module.exports = (df, type, exec) => {
 
         it('allows passing ipfs config options to spawn', function (done) {
           this.timeout(60 * 1000)
-          
           const options = {
             config: config,
             type: type,

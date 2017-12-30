@@ -87,9 +87,9 @@ class DaemonController {
       const defaultRepo = join(process.env.HOME || process.env.USERPROFILE,
         options.isJs ? '.jsipfs' : '.ipfs')
       options.repoPath = options.repoPath || (process.env.IPFS_PATH || defaultRepo)
-      options.config = defaults({}, options.config, {}, nonDisposableConfig)
+      options.config = defaults({}, options.config, nonDisposableConfig)
     } else {
-      options.config = defaults({}, options.config, {}, defaultConfig)
+      options.config = defaults({}, options.config, defaultConfig)
     }
 
     let node

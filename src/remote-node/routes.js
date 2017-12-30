@@ -1,6 +1,6 @@
 'use strict'
 
-const ipfsFactory = require('../daemon-ctrl')
+const DaemonFactory = require('../daemon-ctrl')
 const hat = require('hat')
 const boom = require('boom')
 const Joi = require('joi')
@@ -25,7 +25,7 @@ module.exports = (server) => {
     path: '/spawn',
     handler: (request, reply) => {
       const payload = request.payload || {}
-      ipfsFactory.spawn(payload.opts, (err, ipfsd) => {
+      DaemonFactory.spawn(payload.opts, (err, ipfsd) => {
         if (err) {
           return reply(boom.badRequest(err))
         }
@@ -53,7 +53,7 @@ module.exports = (server) => {
     path: '/api-addr',
     handler: (request, reply) => {
       const id = request.query.id
-      reply({ apiAddr: nodes[id].apiAddr() })
+      reply({ apiAddr: nodes[id].apiAddr.toString() })
     },
     config
   })
@@ -66,7 +66,7 @@ module.exports = (server) => {
     path: '/getaway-addr',
     handler: (request, reply) => {
       const id = request.query.id
-      reply({ getawayAddr: nodes[id].getawayAddr() })
+      reply({ getawayAddr: nodes[id].gatewayAddr.toString() })
     },
     config
   })
@@ -189,7 +189,7 @@ module.exports = (server) => {
     path: '/pid',
     handler: (request, reply) => {
       const id = request.query.id
-      reply({ pid: nodes[id].pid(nodes[id]) })
+      reply({ pid: nodes[id].pid })
     },
     config
   })
@@ -241,6 +241,14 @@ module.exports = (server) => {
         reply().code(200)
       })
     },
-    config
+    config: defaults({}, {
+      validate: {
+        payload: {
+          key: Joi.string(),
+          value: Joi.any()
+        }
+      }
+    }, config)
+
   })
 }

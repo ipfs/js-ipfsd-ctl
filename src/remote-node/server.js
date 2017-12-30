@@ -6,7 +6,7 @@ const routes = require('./routes')
 class Server {
   constructor (port) {
     this.server = null
-    this.port = port || 9999
+    this.port = typeof port === 'undefined' ? 9999 : port
   }
 
   start (cb) {
@@ -16,7 +16,13 @@ class Server {
     this.server.connection({ port: this.port, host: 'localhost', routes: { cors: true } })
 
     routes(this.server)
-    this.server.start(cb)
+    this.server.start((err) => {
+      if (err) {
+        return cb(err)
+      }
+
+      cb(null, this.server)
+    })
   }
 
   stop (cb) {

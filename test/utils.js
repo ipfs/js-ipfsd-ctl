@@ -12,9 +12,12 @@ const utils = require('../src/utils')
 const flatten = utils.flatten
 const tempDir = utils.tempDir
 const findIpfsExecutable = utils.findIpfsExecutable
+const createRepo = utils.createRepo
+
+const IPFSRepo = require('ipfs-repo')
 
 describe('utils', () => {
-  describe('flatten config', () => {
+  describe('.flatten', () => {
     it('should flatten', () => {
       expect(flatten({ a: { b: { c: [1, 2, 3] } } })).to.deep.equal({ 'a.b.c': [1, 2, 3] })
     })
@@ -28,7 +31,7 @@ describe('utils', () => {
     })
   })
 
-  describe('tmp dir', () => {
+  describe('.tempDir', () => {
     it('should create tmp directory path for go-ipfs', () => {
       const tmpDir = tempDir()
       expect(tmpDir).to.exist()
@@ -42,7 +45,7 @@ describe('utils', () => {
     })
   })
 
-  describe('find executable', () => {
+  describe('.findIpfsExecutable', () => {
     it('should find go executable', () => {
       const execPath = findIpfsExecutable('go', __dirname)
       expect(execPath).to.exist()
@@ -55,6 +58,25 @@ describe('utils', () => {
       expect(execPath).to.exist()
       expect(execPath).to.include('ipfs/src/cli/bin.js')
       expect(fs.existsSync(execPath)).to.be.ok()
+    })
+  })
+
+  describe('.createRepo', () => {
+    let repo = null
+    let repoPath = tempDir()
+    it('should create repo', () => {
+      repo = createRepo(repoPath)
+      expect(repo).to.exist()
+      expect(repo).to.be.instanceOf(IPFSRepo)
+      expect(fs.existsSync(repoPath)).to.be.ok()
+    })
+
+    it('should cleanup repo', (done) => {
+      repo.teardown((err) => {
+        expect(err).to.not.exist()
+        expect(!fs.existsSync(repoPath)).to.be.ok()
+        done()
+      })
     })
   })
 })

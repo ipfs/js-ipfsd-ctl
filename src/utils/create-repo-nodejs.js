@@ -1,11 +1,23 @@
 'use strict'
 
 const IPFSRepo = require('ipfs-repo')
-const clean = require('./clean')
 const os = require('os')
 const path = require('path')
 const hat = require('hat')
 const series = require('async/series')
+const rimraf = require('rimraf')
+const fs = require('fs')
+
+const clean = (dir) => {
+  try {
+    fs.accessSync(dir)
+  } catch (err) {
+    // Does not exist so all good
+    return
+  }
+
+  rimraf.sync(dir)
+}
 
 function createTempRepo (repoPath) {
   repoPath = repoPath || path.join(os.tmpdir(), '/ipfs-test-' + hat())

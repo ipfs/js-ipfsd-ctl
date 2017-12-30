@@ -51,7 +51,7 @@ npm install --save ipfsd-ctl
 
 IPFS daemons are already easy to start and stop, but this module is here to do it from JavaScript itself.
 
-### Local node
+### Local daemon (_Spawn from from Node.js_)
 
 ```js
 // Start a disposable node, and get access to the api
@@ -68,7 +68,7 @@ df.spawn(function (err, ipfsd) {
 })
 ```
 
-### Remote node
+### Remote node _(Spawn from a Browser or from a remote machine))
 
 ```js
 // Start a remote disposable node, and get access to the api
@@ -95,33 +95,6 @@ server.start((err) => {
     })
   })
 })
-```
-
-It's also possible to start the server from `.aegir` `pre` and `post` hooks. 
-
-```js
-'use strict'
-
-const createServer = require('./src').createServer
-
-const server = createServer()
-module.exports = {
-  karma: {
-    files: [{
-      pattern: 'test/fixtures/**/*',
-      watched: false,
-      served: true,
-      included: false
-    }],
-    singleRun: true
-  },
-  hooks: {
-    browser: {
-      pre: server.start.bind(server),
-      post: server.stop.bind(server)
-    }
-  }
-}
 ```
 
 ## Disposable vs non Disposable nodes
@@ -155,13 +128,15 @@ Invoking `df.spawn({type: 'proc', exec: require('ipfs')})` will spawn an `in-pro
 
 ### Daemon Factory
 
-#### Create a `DaemonFactory`
+#### Create a `DaemonFactory` - `const df = DaemonFactory.create([options])`
 
-> `DaemonFactory.create([options])` create a factory that will expose the `df.spawn` method
+> `DaemonFactory.create([options])` returns an object that will expose the `df.spawn` method
 
 - `options` - an optional object with the following properties
   - `remote` bool - indicates if the factory should spawn local or remote nodes. By default, local nodes are spawned in Node.js and remote nodes are spawned in Browser environments.
   - `port` number - the port number to use for the remote factory. It should match the port on which `DaemonFactory.server` was started. Defaults to 9999.
+
+#### Create a DaemonFactory Endpoint - `const server = DaemonFactory.createServer([options]) `
 
 > `DaemonFactory.createServer` create an instance of the bundled HTTP server used by the remote controller.
 
@@ -193,7 +168,7 @@ Invoking `df.spawn({type: 'proc', exec: require('ipfs')})` will spawn an `in-pro
 
 > An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api)
 
-This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsdCtrl.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`. 
+This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`. 
 
 
 ### IPFS Daemon Controller (ipfsd)

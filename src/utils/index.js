@@ -17,20 +17,20 @@ exports.createRepo = createRepo
 
 // taken from https://github.com/hughsk/flat
 exports.flatten = (target) => {
-  let output = {}
+  const output = {}
   const step = (object, prev) => {
     object = object || {}
     Object.keys(object).forEach(function (key) {
-      let value = object[key]
-      let isarray = Array.isArray(value)
-      let type = Object.prototype.toString.call(value)
-      let isbuffer = Buffer.isBuffer(value)
-      let isobject = (
+      const value = object[key]
+      const isarray = Array.isArray(value)
+      const type = Object.prototype.toString.call(value)
+      const isbuffer = Buffer.isBuffer(value)
+      const isobject = (
         type === '[object Object]' ||
         type === '[object Array]'
       )
 
-      let newKey = prev
+      const newKey = prev
         ? prev + '.' + key
         : key
 

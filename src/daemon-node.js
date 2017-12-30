@@ -275,6 +275,7 @@ class Node {
     subprocess.once('close', () => {
       clearTimeout(timeout)
       this.subprocess = null
+      this._started = false
       callback()
     })
 
@@ -285,10 +286,11 @@ class Node {
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @returns {number}
+   * @param {function()} callback - receives the pid
+   * @returns {undefined}
    */
-  pid () {
-    return this.subprocess && this.subprocess.pid
+  pid (callback) {
+    callback(this.subprocess && this.subprocess.pid)
   }
 
   /**

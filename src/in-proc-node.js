@@ -4,6 +4,7 @@ const createRepo = require('./utils').createRepo
 const multiaddr = require('multiaddr')
 const flatten = require('./utils').flatten
 const async = require('async')
+const defaults = require('lodash.defaultsdeep')
 
 /**
  * Controll a go-ipfs or js-ipfs node.
@@ -32,7 +33,17 @@ class Node {
     this.initialized = false
     this.api = null
 
-    this.opts.EXPERIMENTAL = { pubsub: false, sharding: false }
+    this.opts.EXPERIMENTAL = defaults({}, opts.EXPERIMENTAL, {
+      pubsub: false,
+      sharding: false,
+      relay: {
+        enabled: false,
+        hop: {
+          enabled: false
+        }
+      }
+    })
+
     this.opts.EXPERIMENTAL.pubsub = (this.opts.args.indexOf('--enable-pubsub-experiment') > -1)
     this.opts.EXPERIMENTAL.sharding = (this.opts.args.indexOf('--enable-sharding-experiment') > -1)
     this.exec = new IPFS({

@@ -107,7 +107,7 @@ const createRemoteFactory = (host, port, secure) => {
         .send({ initOpts })
         .end((err, res) => {
           if (err) {
-            return cb(new Error(err.response.body.message))
+            return cb(new Error(err.response ? err.response.body.message : err))
           }
 
           this.initialized = res.body.initialized
@@ -140,7 +140,7 @@ const createRemoteFactory = (host, port, secure) => {
     start (flags, cb) {
       if (typeof flags === 'function') {
         cb = flags
-        flags = {}
+        flags = []
       }
 
       request
@@ -149,7 +149,7 @@ const createRemoteFactory = (host, port, secure) => {
         .send({ flags })
         .end((err, res) => {
           if (err) {
-            return cb(new Error(err.response.body.message))
+            return cb(new Error(err.response ? err.response.body.message : err))
           }
 
           this.started = true
@@ -217,7 +217,7 @@ const createRemoteFactory = (host, port, secure) => {
         .query({ id: this._id })
         .end((err, res) => {
           if (err) {
-            return cb(new Error(err.response.body.message))
+            return cb(new Error(err.response ? err.response.body.message : err))
           }
 
           cb(null, res.body.pid)
@@ -246,7 +246,7 @@ const createRemoteFactory = (host, port, secure) => {
         .query(qr)
         .end((err, res) => {
           if (err) {
-            return cb(new Error(err.response.body.message))
+            return cb(new Error(err.response ? err.response.body.message : err))
           }
 
           cb(null, res.body.config)
@@ -267,7 +267,7 @@ const createRemoteFactory = (host, port, secure) => {
         .query({ id: this._id })
         .end((err) => {
           if (err) {
-            return cb(new Error(err.response.body.message))
+            return cb(new Error(err.response ? err.response.body.message : err))
           }
 
           cb(null)
@@ -286,10 +286,9 @@ const createRemoteFactory = (host, port, secure) => {
       request
         .post(`${baseUrl}/spawn`)
         .send({ opts })
-        .query({ id: this._id })
         .end((err, res) => {
           if (err) {
-            return cb(new Error(err.response.body.message))
+            return cb(new Error(err.response ? err.response.body.message : err))
           }
 
           const apiAddr = res.body.api ? res.body.api.apiAddr : ''

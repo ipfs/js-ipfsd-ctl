@@ -40,13 +40,15 @@ module.exports = (type) => {
           expect(ipfsd).to.exist()
         })
 
-        it('daemon should not be running', () => {
-          expect(ipfsd.pid()).to.not.exist()
+        it('daemon should not be running', (done) => {
+          ipfsd.pid((pid) => {
+            expect(pid).to.not.exist()
+            done()
+          })
         })
       })
 
       let pid
-
       describe('starting', () => {
         let api
 
@@ -55,12 +57,14 @@ module.exports = (type) => {
           ipfsd.start((err, ipfs) => {
             expect(err).to.not.exist()
 
-            pid = ipfsd.pid()
-            api = ipfs
+            ipfsd.pid((_pid) => {
+              pid = _pid
+              api = ipfs
 
-            // actually running?
-            done = once(done)
-            exec('kill', ['-0', pid], { cleanup: true }, () => done())
+              // actually running?
+              done = once(done)
+              exec('kill', ['-0', pid], { cleanup: true }, () => done())
+            })
           })
         })
 
@@ -91,13 +95,15 @@ module.exports = (type) => {
           }, 100)
         })
 
-        it('should be stopped', function () {
+        it('should be stopped', function (done) {
           this.timeout(30 * 1000) // shutdown grace period is already 10500
-
-          expect(ipfsd.pid()).to.not.exist()
-          expect(stopped).to.equal(true)
-          expect(fs.existsSync(path.join(ipfsd.path, 'repo.lock'))).to.not.be.ok()
-          expect(fs.existsSync(path.join(ipfsd.path, 'api'))).to.not.be.ok()
+          ipfsd.pid((pid) => {
+            expect(pid).to.not.exist()
+            expect(stopped).to.equal(true)
+            expect(fs.existsSync(path.join(ipfsd.path, 'repo.lock'))).to.not.be.ok()
+            expect(fs.existsSync(path.join(ipfsd.path, 'api'))).to.not.be.ok()
+            done()
+          })
         })
       })
     })
@@ -186,23 +192,30 @@ module.exports = (type) => {
           expect(ipfsd).to.exist()
         })
 
-        it('daemon should not be running', () => {
-          expect(ipfsd.pid()).to.exist()
+        it('daemon should not be running', (done) => {
+          ipfsd.pid((pid) => {
+            expect(pid).to.exist()
+            done()
+          })
         })
 
         it('should stop', (done) => {
           ipfsd.stop((err) => {
             expect(err).to.not.exist()
-            expect(ipfsd.pid()).to.not.exist()
-            done()
+            ipfsd.pid((pid) => {
+              expect(pid).to.not.exist()
+              done()
+            })
           })
         })
 
         it('should start', (done) => {
           ipfsd.start((err) => {
             expect(err).to.not.exist()
-            expect(ipfsd.pid()).to.exist()
-            done()
+            ipfsd.pid((pid) => {
+              expect(pid).to.exist()
+              done()
+            })
           })
         })
 
