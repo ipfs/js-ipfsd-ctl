@@ -2,4 +2,3 @@
 'use strict'
 
 require('./daemon')
-require('./remote/client')

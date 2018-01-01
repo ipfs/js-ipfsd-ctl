@@ -26,7 +26,7 @@ module.exports = (df, type, exec) => {
         if (!isNode || type === 'proc') {
           this.skip()
         }
-        df.version({ type, exec }, (err, version) => {
+        df.version({ exec }, (err, version) => {
           expect(err).to.not.exist()
           expect(version).to.be.eql(VERSION_STRING)
           done()
@@ -42,7 +42,7 @@ module.exports = (df, type, exec) => {
         })
 
         it('create node', function (done) {
-          df.spawn({ type, exec, init: false, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ exec, init: false, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd).to.exist()
             expect(ipfsd.api).to.not.exist()
@@ -83,7 +83,7 @@ module.exports = (df, type, exec) => {
 
         it('create node and init', function (done) {
           this.timeout(30 * 1000)
-          df.spawn({ type, exec, start: false, disposable: true }, (err, ipfsd) => {
+          df.spawn({ exec, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd).to.exist()
             expect(ipfsd.api).to.not.exist()
@@ -115,7 +115,7 @@ module.exports = (df, type, exec) => {
 
         it('create init and start node', function (done) {
           this.timeout(20 * 1000)
-          df.spawn({ type, exec }, (err, ipfsd) => {
+          df.spawn({ exec }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd).to.exist()
             expect(ipfsd.api).to.exist()
@@ -144,7 +144,6 @@ module.exports = (df, type, exec) => {
           this.timeout(60 * 1000)
           const options = {
             config: config,
-            type: type,
             exec: exec
           }
 
@@ -198,7 +197,7 @@ module.exports = (df, type, exec) => {
           }
 
           async.series([
-            (cb) => df.spawn({ type, exec, repoPath, disposable: false, config }, (err, node) => {
+            (cb) => df.spawn({ exec, repoPath, disposable: false, config }, (err, node) => {
               expect(err).to.not.exist()
               this.ipfsd = node
               cb()
@@ -231,7 +230,7 @@ module.exports = (df, type, exec) => {
         const topic = `test-topic-${hat()}`
 
         before(function (done) {
-          df.spawn({ type, exec, args: ['--enable-pubsub-experiment'] }, (err, node) => {
+          df.spawn({ exec, args: ['--enable-pubsub-experiment'] }, (err, node) => {
             expect(err).to.not.exist()
             this.ipfsd = node
             done()
@@ -261,7 +260,7 @@ module.exports = (df, type, exec) => {
 
         before(function (done) {
           this.timeout(20 * 1000)
-          df.spawn({ type, exec }, (err, res) => {
+          df.spawn({ exec }, (err, res) => {
             if (err) {
               return done(err)
             }

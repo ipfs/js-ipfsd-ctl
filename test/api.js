@@ -93,7 +93,7 @@ module.exports = (df, type) => {
     describe('validate api', () => {
       it('starts the daemon and returns valid API and gateway addresses', function (done) {
         this.timeout(20 * 1000)
-        df.spawn({ type, config }, (err, res) => {
+        df.spawn({ config }, (err, res) => {
           expect(err).to.not.exist()
           const ipfsd = res
 

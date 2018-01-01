@@ -7,8 +7,6 @@ const DaemonFactory = require('../src')
 const IPFS = require('ipfs')
 
 describe('ipfsd-ctl', () => {
-  const df = DaemonFactory.create()
-
   // clean up IPFS env
   afterEach(() => Object.keys(process.env)
     .forEach((key) => {
@@ -17,17 +15,19 @@ describe('ipfsd-ctl', () => {
       }
     }))
 
-  describe('Go daemon', () => {
+  describe.only('Go daemon', () => {
+    const df = DaemonFactory.create({ type: 'go' })
     daemon(df, 'go')()
     api(df, 'go')()
   })
 
   describe('Js daemon', () => {
+    const df = DaemonFactory.create({ type: 'js' })
     daemon(df, 'js')()
     api(df, 'js')()
   })
 
   describe('In-process daemon', () => {
-    daemon(DaemonFactory.create({ remote: false }), 'proc', IPFS)()
+    daemon(DaemonFactory.create({ remote: false, type: 'proc' }), 'proc', IPFS)()
   })
 })

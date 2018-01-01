@@ -39,6 +39,10 @@ const defaultConfig = {
  * @namespace DaemonController
  */
 class DaemonController {
+  constructor (type) {
+    this.type = type || 'go'
+  }
+
   /**
    * Get the version of the currently used go-ipfs binary.
    *
@@ -47,15 +51,17 @@ class DaemonController {
    * @param {function(Error, string)} callback
    * @returns {undefined}
    */
-  static version (opts, callback) {
-    (new Node(opts)).version(callback)
+  version (opts, callback) {
+    opts = opts || {}
+    opts.type = this.type
+    const node = new Node(opts)
+    node.version(callback)
   }
 
   /**
    * Spawn an IPFS node, either js-ipfs or go-ipfs
    *
    * Options are:
-   * - `type` string (default 'go') - the type of the daemon to spawn, can be either 'go' or 'js'
    * - `init` bool - should the node be initialized
    * - `start` bool - should the node be started
    * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
@@ -68,7 +74,7 @@ class DaemonController {
    * @param {Function} callback(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
    * @return {undefined}
    */
-  static spawn (opts, callback) {
+  spawn (opts, callback) {
     if (typeof opts === 'function') {
       callback = opts
       opts = defaultOptions
@@ -93,7 +99,8 @@ class DaemonController {
     }
 
     let node
-    if (options.type === 'proc') {
+    options.type = this.type
+    if (this.type === 'proc') {
       if (typeof options.exec !== 'function') {
         return callback(new Error(`'type' proc requires 'exec' to be a coderef`))
       }

@@ -1,6 +1,6 @@
 'use strict'
 
-const localController = require('./daemon-ctrl')
+const LocalController = require('./daemon-ctrl')
 const remote = require('./remote-node')
 const isNode = require('detect-node')
 const defaults = require('lodash.defaultsdeep')
@@ -9,11 +9,15 @@ class DaemonFactory {
   static create (opts) {
     const options = defaults({}, opts, { remote: !isNode })
 
-    if (options.remote) {
-      return remote.remoteController(options.port)
+    if (options.remote && options.type === 'proc') {
+      options.remote = false
     }
 
-    return localController
+    if (options.remote) {
+      return new remote.RemoteController(options)
+    }
+
+    return new LocalController(options.type)
   }
 
   static createServer (port) {

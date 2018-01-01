@@ -14,14 +14,14 @@ const proxyquire = require('proxyquire')
 const superagent = require('superagent')
 const mock = require('superagent-mocker')(superagent)
 
-const clientFactory = proxyquire('../../src/remote-node/client', {
+const ClientFactory = proxyquire('../../src/remote-node/client', {
   superagent: () => {
     return superagent
   }
 })
 
 describe('client', () => {
-  const client = clientFactory()
+  const client = new ClientFactory()
 
   let node = null
   describe('.spawn', () => {

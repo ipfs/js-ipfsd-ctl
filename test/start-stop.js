@@ -27,7 +27,7 @@ module.exports = (type) => {
       describe(`create and init a node (ipfsd)`, function () {
         this.timeout(20 * 1000)
         before((done) => {
-          df.spawn({ type, init: true, start: false, disposable: true }, (err, daemon) => {
+          df.spawn({ init: true, start: false, disposable: true }, (err, daemon) => {
             expect(err).to.not.exist()
             expect(daemon).to.exist()
 
@@ -115,7 +115,7 @@ module.exports = (type) => {
         this.timeout(20 * 1000)
         const exec = findIpfsExecutable(type)
         before((done) => {
-          df.spawn({ type, exec }, (err, daemon) => {
+          df.spawn({ exec }, (err, daemon) => {
             expect(err).to.not.exist()
             expect(daemon).to.exist()
 
@@ -140,7 +140,6 @@ module.exports = (type) => {
         const exec = '/invalid/exec/ipfs'
         before((done) => {
           df.spawn({
-            type,
             init: false,
             start: false,
             exec
@@ -171,7 +170,6 @@ module.exports = (type) => {
         before((done) => {
           async.series([
             (cb) => df.spawn({
-              type,
               init: false,
               start: false,
               disposable: false,
