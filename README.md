@@ -101,23 +101,7 @@ server.start((err) => {
 
 `ipfsd-ctl` can create two types of node controllers, `disposable` and `non-disposable`. A disposable node will be created on a temporary repo which will be optionally initialized and started (the default), as well cleaned up on process exit. A non-disposable node on the other hand, requires the user to initialize and start the node, as well as stop and cleanup after wards. Additionally, a non-disposable will allow you to pass a custom repo using the `repoPath` option, if the `repoPath` is not defined, it will use the default repo for the node type (`$HOME/.ipfs` or `$HOME/.jsipfs`). The `repoPath` parameter is ignored for disposable nodes, as there is a risk of deleting a live repo.
 
-## IPFS executable types
-
-`ipfsd-ctl` allows spawning different types of executables, such as:
-
-> `go`
-
-Invoking `df.spawn({type: 'go', exec: '<path to go executable or empty to allow ipfsd to find one automatically>'})` will spawn a `go-ipfs` node.
-
-> `js`
-
-Invoking `df.spawn({type: 'js', exec: '<path to js executable or empty to allow ipfsd to find one automatically>'})` will spawn a `js-ipfs` node.
-
-> `proc`
-
-Invoking `df.spawn({type: 'proc', exec: require('ipfs')})` will spawn an `in-process-ipfs` node using the provided code reference that implements the core IPFS API. Note that, `exec` is required if `type: 'proc'` is used.
-
-### IPFS executables
+## IPFS executables
 
 `ipfsd-ctl` no longer installs go-ipfs nor js-ipfs dependencies, instead it expects them to be provided by the parent project. In order to be able to use both go and js daemons, please make sure that your project includes these two npm packages as dependencies.
 
@@ -135,6 +119,25 @@ Invoking `df.spawn({type: 'proc', exec: require('ipfs')})` will spawn an `in-pro
 - `options` - an optional object with the following properties
   - `remote` bool - indicates if the factory should spawn local or remote nodes. By default, local nodes are spawned in Node.js and remote nodes are spawned in Browser environments.
   - `port` number - the port number to use for the remote factory. It should match the port on which `DaemonFactory.server` was started. Defaults to 9999.
+  - type - the daemon type to create with this factory. See the section bellow for the supported types
+  
+##### IPFS executable types
+
+`ipfsd-ctl` allows spawning different types of executables, such as:
+
+> `go`
+
+Invoking `df.create({type: 'go'})` will spawn a `go-ipfs` node.
+
+> `js`
+
+Invoking `df.create({type: 'js'})` will spawn a `js-ipfs` node.
+
+> `proc`
+
+Invoking `df.create({type: 'proc'})` will spawn an `in-process-ipfs` node using the provided code reference that implements the core IPFS API. Note that, `exec` option to `df.spawn()` is required if `type: 'proc'` is used.
+
+  
 
 #### Create a DaemonFactory Endpoint - `const server = DaemonFactory.createServer([options]) `
 
@@ -149,8 +152,6 @@ Invoking `df.spawn({type: 'proc', exec: require('ipfs')})` will spawn an `in-pro
 `spawn([options], callback)`
 
 - `options` - is an optional object the following properties
-  - `type` string (default 'go') - indicates which type of node to spawn
-    - current valid values are `js`, `go` and `proc`
   - `init` bool (default true) - should the node be initialized
   - `start` bool (default true) - should the node be started
   - `repoPath` string - the repository path to use for this node, ignored if node is disposable

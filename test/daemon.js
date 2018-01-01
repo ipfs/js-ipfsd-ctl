@@ -15,7 +15,7 @@ describe('ipfsd-ctl', () => {
       }
     }))
 
-  describe.only('Go daemon', () => {
+  describe('Go daemon', () => {
     const df = DaemonFactory.create({ type: 'go' })
     daemon(df, 'go')()
     api(df, 'go')()
