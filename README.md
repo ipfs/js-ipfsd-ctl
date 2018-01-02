@@ -141,7 +141,7 @@ Invoking `df.create({type: 'proc'})` will spawn an `in-process-ipfs` node using 
 
 #### Create a DaemonFactory Endpoint - `const server = DaemonFactory.createServer([options]) `
 
-> `DaemonFactory.createServer` create an instance of the bundled HTTP server used by the remote controller.
+> `DaemonFactory.createServer` create an instance of the bundled REST API used by the remote controller.
 
 - exposes `start` and `stop` methods to start and stop the http server.
 
@@ -163,14 +163,7 @@ Invoking `df.create({type: 'proc'})` will spawn an `in-process-ipfs` node using 
  - `callback` - is a function with the signature `cb(err, ipfsd)` where:
    - `err` - is the error set if spawning the node is unsuccessful
    - `ipfsd` - is the daemon controller instance: 
-     - `api` - a property of `ipfsd`, an instance of  [ipfs-api](https://github.com/ipfs/js-ipfs-api) attached to the newly created ipfs node
-   
-### IPFS Client (api)
-
-> An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api)
-
-This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`. 
-
+     - `api` - a property of `ipfsd`, an instance of  [ipfs-api](https://github.com/ipfs/js-ipfs-api) attached to the newly created ipfs node   
 
 ### IPFS Daemon Controller (ipfsd)
 
@@ -206,7 +199,7 @@ This instance is returned for each successfully started IPFS daemon, when either
 
 - `initOpts` (optional) - options object with the following entries
   - `keysize` (default 2048) - The bit size of the identiy key.
-  - `directory` (default IPFS_PATH) - The location of the repo.
+  - `directory` (default IPFS_PATH if defined, or ~/.ipfs for go-ipfs and ~/.jsipfs for js-ipfs) - The location of the repo.
   - `function (Error, Node)` callback - receives an instance of this Node on success or an instance of `Error` on failure
 
 
@@ -253,22 +246,29 @@ First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent if the process has
 If no `key` is passed, the whole config is returned as an object.
 
 - `key` (optional) - A specific config to retrieve.
-- `function(Error, (Object|string)` callback - function that reseives an object or string on success or an `Error` instance on failure
+- `function(Error, (Object|string)` callback - function that receives an object or string on success or an `Error` instance on failure
 
 
 #### `setConfig (key, value, callback)`
 
 > Set a config value.
 
-- `key` - the key to set 
-- `value` - the value to set the key to
-- `function(Error)` callback
+- `key` - the key of the config entry to change/set 
+- `value` - the config value to change/set
+- `function(Error)` callback - function that receives an `Error` instance on failure
+
 
 #### `version (callback)`
 
 > Get the version of ipfs
 
 - `function(Error, string)` callback
+   
+### IPFS Client (`ipfsd.api`)
+
+> An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api)
+
+This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`. 
    
 ### Packaging
 
