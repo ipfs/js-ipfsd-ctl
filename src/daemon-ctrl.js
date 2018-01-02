@@ -80,8 +80,7 @@ class DaemonController {
       opts = defaultOptions
     }
 
-    let options = {}
-    options = defaults({}, opts, defaultOptions)
+    const options = defaults({}, opts, defaultOptions)
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
     if (!options.disposable) {
       const nonDisposableConfig = clone(defaultConfig)
