@@ -31,7 +31,7 @@ module.exports = (df, type) => {
       let api
 
       before(function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(50 * 1000)
         df.spawn({ start: false, config }, (err, daemon) => {
           expect(err).to.not.exist()
           ipfsd = daemon
@@ -92,7 +92,7 @@ module.exports = (df, type) => {
 
     describe('validate api', () => {
       it('starts the daemon and returns valid API and gateway addresses', function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(50 * 1000)
         df.spawn({ config }, (err, res) => {
           expect(err).to.not.exist()
           const ipfsd = res

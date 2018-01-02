@@ -37,7 +37,7 @@ module.exports = (df, type, exec) => {
         this.ipfsd = null
 
         after(function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(50 * 1000)
           this.ipfsd.stop(done)
         })
 
@@ -52,7 +52,7 @@ module.exports = (df, type, exec) => {
         })
 
         it('init node', function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(50 * 1000)
           this.ipfsd.init((err) => {
             expect(err).to.not.exist()
             expect(this.ipfsd.initialized).to.be.ok()
@@ -61,7 +61,7 @@ module.exports = (df, type, exec) => {
         })
 
         it('start node', function (done) {
-          this.timeout(30 * 1000)
+          this.timeout(50 * 1000)
           this.ipfsd.start((err, api) => {
             expect(err).to.not.exist()
             expect(api).to.exist()
@@ -77,12 +77,12 @@ module.exports = (df, type, exec) => {
         this.ipfsd = null
 
         after(function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(50 * 1000)
           this.ipfsd.stop(done)
         })
 
         it('create node and init', function (done) {
-          this.timeout(30 * 1000)
+          this.timeout(50 * 1000)
           df.spawn({ exec, start: false, disposable: true }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd).to.exist()
@@ -93,7 +93,7 @@ module.exports = (df, type, exec) => {
         })
 
         it('start node', function (done) {
-          this.timeout(30 * 1000)
+          this.timeout(50 * 1000)
           this.ipfsd.start((err, api) => {
             expect(err).to.not.exist()
             expect(api).to.exist()
@@ -109,12 +109,12 @@ module.exports = (df, type, exec) => {
         this.ipfsd = null
 
         after(function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(50 * 1000)
           this.ipfsd.stop(done)
         })
 
         it('create init and start node', function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(50 * 1000)
           df.spawn({ exec }, (err, ipfsd) => {
             expect(err).to.not.exist()
             expect(ipfsd).to.exist()
@@ -182,7 +182,7 @@ module.exports = (df, type, exec) => {
 
         this.ipfsd = null
         it('allows passing custom repo path to spawn', function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(50 * 1000)
 
           const repoPath = tempDir(type)
 
@@ -259,7 +259,7 @@ module.exports = (df, type, exec) => {
         let ipfsd
 
         before(function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(50 * 1000)
           df.spawn({ exec }, (err, res) => {
             if (err) {
               return done(err)
