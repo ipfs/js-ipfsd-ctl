@@ -65,7 +65,8 @@ function makeCheck (n, done) {
 // I'm leaving it enabled for now. This does need a different approach for windows though.
 describe('exec', () => {
   // TODO: skip on windows for now
-  if (isWindows) {
+  // TODO: running under coverage messes up the process hierarchies
+  if (isWindows || process.env['COVERAGE']) {
     return
   }
 
