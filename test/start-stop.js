@@ -18,10 +18,10 @@ const findIpfsExecutable = require('../src/utils').findIpfsExecutable
 const tempDir = require('../src/utils').tempDir
 
 const DaemonFactory = require('../src')
-const df = DaemonFactory.create()
 
 module.exports = (type) => {
   return () => {
+    const df = DaemonFactory.create({type})
     describe('starting and stopping', () => {
       if (isWindows) {
         return
@@ -140,7 +140,7 @@ module.exports = (type) => {
 
       describe(`should fail on invalid exec path`, function () {
         this.timeout(20 * 1000)
-        const exec = path.join('/invalid/exec/ipfs')
+        const exec = path.join('invalid', 'exec', 'ipfs')
         before((done) => {
           df.spawn({
             init: false,
@@ -177,7 +177,7 @@ module.exports = (type) => {
               start: false,
               disposable: false,
               repoPath: tempDir(type)
-            }, (err, daemon) => {
+            }, (err, daemon) => {          
               expect(err).to.not.exist()
               expect(daemon).to.exist()
 
