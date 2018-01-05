@@ -3,7 +3,9 @@
   "private": true,
   "main": "./app.js",
   "dependencies": {
-    "ipfsd-ctl": "file:../.."
+    "ipfsd-ctl": "file:../..",
+    "go-ipfs-dep": "0.4.13",
+    "ipfs-repo": "^0.18.5"
   },
   "devDependencies": {
     "electron": "^1.7.6",
