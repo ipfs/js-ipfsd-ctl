@@ -18,8 +18,7 @@ const tempDir = utils.tempDir
 const findIpfsExecutable = utils.findIpfsExecutable
 const setConfigValue = utils.setConfigValue
 const configureNode = utils.configureNode
-
-const exec = require('./exec')
+const run = utils.run
 
 const GRACE_PERIOD = 10500 // amount of ms to wait before sigkill
 
@@ -103,10 +102,6 @@ class Node {
     return this.path ? Object.assign({}, process.env, { IPFS_PATH: this.path }) : process.env
   }
 
-  _run (args, opts, callback) {
-    return exec(this.exec, args, opts, callback)
-  }
-
   /**
    * Initialize a repo.
    *
@@ -128,7 +123,7 @@ class Node {
       this.path = initOpts.directory
     }
 
-    this._run(['init', '-b', keySize], { env: this.env }, (err, result) => {
+    run(this, ['init', '-b', keySize], { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)
       }
@@ -191,8 +186,7 @@ class Node {
       }
 
       let output = ''
-
-      this.subprocess = this._run(args, { env: this.env }, {
+      this.subprocess = run(this, args, { env: this.env }, {
         error: (err) => {
           // Only look at the last error
           const input = String(err)
@@ -312,7 +306,8 @@ class Node {
     }
 
     async.waterfall([
-      (cb) => this._run(
+      (cb) => run(
+        this,
         ['config', key],
         { env: this.env },
         cb
@@ -345,7 +340,7 @@ class Node {
    * @returns {undefined}
    */
   version (callback) {
-    this._run(['version'], { env: this.env }, callback)
+    run(this, ['version'], { env: this.env }, callback)
   }
 }
 

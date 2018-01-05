@@ -10,7 +10,6 @@ const safeParse = require('safe-json-parse/callback')
 const createRepo = require('./create-repo-nodejs')
 
 const join = path.join
-
 const isWindows = os.platform() === 'win32'
 
 exports.createRepo = createRepo
@@ -88,9 +87,22 @@ exports.findIpfsExecutable = (type, rootPath) => {
   throw new Error('Cannot find the IPFS executable')
 }
 
+function run (node, args, opts, callback) {
+  let executable = node.exec
+  if (isWindows && node.opts.type !== 'go') {
+    args = args || []
+    args.unshift(node.exec)
+    executable = process.execPath
+  }
+
+  return exec(executable, args, opts, callback)
+}
+
+exports.run = run
+
 function setConfigValue (node, key, value, callback) {
-  exec(
-    node.exec,
+  run(
+    node,
     ['config', key, value, '--json'],
     { env: node.env },
     callback

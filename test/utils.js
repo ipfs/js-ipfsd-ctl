@@ -8,6 +8,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const fs = require('fs')
+const path = require('path')
 const utils = require('../src/utils')
 const flatten = utils.flatten
 const tempDir = utils.tempDir
@@ -49,14 +50,14 @@ describe('utils', () => {
     it('should find go executable', () => {
       const execPath = findIpfsExecutable('go', __dirname)
       expect(execPath).to.exist()
-      expect(execPath).to.include('go-ipfs-dep/go-ipfs/ipfs')
+      expect(execPath).to.include(path.join('go-ipfs-dep', 'go-ipfs', 'ipfs'))
       expect(fs.existsSync(execPath)).to.be.ok()
     })
 
     it('should find go executable', () => {
       const execPath = findIpfsExecutable('js', __dirname)
       expect(execPath).to.exist()
-      expect(execPath).to.include('ipfs/src/cli/bin.js')
+      expect(execPath).to.include(path.join('ipfs', 'src', 'cli', 'bin.js'))
       expect(fs.existsSync(execPath)).to.be.ok()
     })
   })

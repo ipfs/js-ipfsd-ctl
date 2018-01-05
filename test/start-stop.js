@@ -9,10 +9,11 @@ chai.use(dirtyChai)
 
 const async = require('async')
 const fs = require('fs')
-const once = require('once')
 const path = require('path')
-const exec = require('../src/exec')
+const os = require('os')
+const isrunning = require('is-running')
 
+const isWindows = os.platform() === 'win32'
 const findIpfsExecutable = require('../src/utils').findIpfsExecutable
 const tempDir = require('../src/utils').tempDir
 
@@ -22,6 +23,10 @@ const df = DaemonFactory.create()
 module.exports = (type) => {
   return () => {
     describe('starting and stopping', () => {
+      if (isWindows) {
+        return
+      }
+
       let ipfsd
 
       describe(`create and init a node (ipfsd)`, function () {
@@ -53,7 +58,7 @@ module.exports = (type) => {
         let api
 
         before(function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(50 * 1000)
           ipfsd.start((err, ipfs) => {
             expect(err).to.not.exist()
 
@@ -62,8 +67,8 @@ module.exports = (type) => {
               api = ipfs
 
               // actually running?
-              done = once(done)
-              exec('kill', ['-0', pid], { cleanup: true }, () => done())
+              expect(isrunning(pid)).to.be.ok()
+              done()
             })
           })
         })
@@ -76,23 +81,14 @@ module.exports = (type) => {
       describe('stopping', () => {
         let stopped = false
 
-        before((done) => {
+        before(function (done) {
+          this.timeout(20 * 1000)
           ipfsd.stop((err) => {
             expect(err).to.not.exist()
+            expect(isrunning(pid)).to.not.be.ok()
             stopped = true
+            done()
           })
-
-          // make sure it's not still running
-          const poll = setInterval(() => {
-            exec('kill', ['-0', pid], { cleanup: true }, {
-              error () {
-                clearInterval(poll)
-                done()
-                // so it does not get called again
-                done = () => {}
-              }
-            })
-          }, 100)
         })
 
         it('should be stopped', function (done) {
@@ -137,7 +133,7 @@ module.exports = (type) => {
 
       describe(`should fail on invalid exec path`, function () {
         this.timeout(20 * 1000)
-        const exec = '/invalid/exec/ipfs'
+        const exec = path.join('/invalid/exec/ipfs')
         before((done) => {
           df.spawn({
             init: false,

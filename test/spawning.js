@@ -287,7 +287,8 @@ module.exports = (df, type, exec) => {
           })
         })
 
-        it('Should set a config value', (done) => {
+        it('Should set a config value', function (done) {
+          this.timeout(30 * 1000)
           async.series([
             (cb) => ipfsd.setConfig('Bootstrap', 'null', cb),
             (cb) => ipfsd.getConfig('Bootstrap', cb)
