@@ -85,9 +85,16 @@ module.exports = (type) => {
           this.timeout(20 * 1000)
           ipfsd.stop((err) => {
             expect(err).to.not.exist()
-            expect(isrunning(pid)).to.not.be.ok()
-            stopped = true
-            done()
+            let tries = 5
+            const interval = setInterval(() => {
+              const running = isrunning(pid)
+              if (!running || tries-- <= 0) {
+                clearInterval(interval)
+                expect(running).to.not.be.ok()
+                stopped = true
+                done()
+              }
+            }, 200)
           })
         })
 
