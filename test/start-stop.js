@@ -21,7 +21,7 @@ const DaemonFactory = require('../src')
 
 module.exports = (type) => {
   return () => {
-    const df = DaemonFactory.create({type})
+    const df = DaemonFactory.create({ type })
     describe('starting and stopping', () => {
       if (isWindows) {
         return
@@ -177,7 +177,7 @@ module.exports = (type) => {
               start: false,
               disposable: false,
               repoPath: tempDir(type)
-            }, (err, daemon) => {          
+            }, (err, daemon) => {
               expect(err).to.not.exist()
               expect(daemon).to.exist()
 
