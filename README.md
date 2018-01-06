@@ -10,7 +10,7 @@
 [![Appveyor CI](https://ci.appveyor.com/api/projects/status/4p9r12ch0jtthnha?svg=true)](https://ci.appveyor.com/project/wubalubadubdub/js-ipfsd-ctl-a9ywu)
 [![Dependency Status](https://david-dm.org/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfsd-ctl) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 
-> Control an ipfs node daemon using either Node.js or the browser
+> Control an IPFS daemon using JavaScript in Node.js or in the Browser.
 
 ```
                                                                     +-----+                                   
@@ -51,7 +51,7 @@ npm install --save ipfsd-ctl
 
 IPFS daemons are already easy to start and stop, but this module is here to do it from JavaScript itself.
 
-### Local daemon (_Spawn from from Node.js_)
+### Spawn an IPFS daemon from Node.js
 
 ```js
 // Start a disposable node, and get access to the api
@@ -72,7 +72,7 @@ df.spawn(function (err, ipfsd) {
 })
 ```
 
-### Remote node (_Spawn from a Browser or from a remote machine_)
+### Spawn an IPFS daemon from the Browser using the provided remote endpoint
 
 ```js
 // Start a remote disposable node, and get access to the api
@@ -113,11 +113,11 @@ server.start((err) => {
 
 ## API
 
-### Daemon Factory
+### Daemon Factory Class
 
-#### Create a `DaemonFactory` - `const df = DaemonFactory.create([options])`
+#### `DaemonFactory` - `const df = DaemonFactory.create([options])`
 
-> `DaemonFactory.create([options])` returns an object that will expose the `df.spawn` method
+`DaemonFactory.create([options])` returns an object that will expose the `df.spawn` method
 
 - `options` - an optional object with the following properties
   - `remote` bool - indicates if the factory should spawn local or remote nodes. By default, local nodes are spawned in Node.js and remote nodes are spawned in Browser environments.
@@ -131,17 +131,17 @@ server.start((err) => {
 - **`js`** - calling `DaemonFactory.create({type: 'js'})` will spawn a `js-ipfs` daemon.
 - **`proc`** - calling `DaemonFactory.create({type: 'proc', exec: require('ipfs') })` will spawn an `in process js-ipfs node` using the provided code reference that implements the core IPFS API. Note that, `exec` option to `df.spawn()` is required if `type: 'proc'` is used.
   
-#### Create a DaemonFactory Endpoint for remote spawning - `const server = DaemonFactory.createServer([options]) `
+#### DaemonFactory endpoint for remote spawning - `const server = DaemonFactory.createServer([options]) `
 
-> `DaemonFactory.createServer` create an instance of the bundled REST API used by the remote controller.
+`DaemonFactory.createServer` create an instance of the bundled REST API used by the remote controller.
 
-- exposes `start` and `stop` methods to start and stop the http server.
+- exposes `start` and `stop` methods to start and stop the http server endpoint.
 
 #### Spawn a new daemon with `df.spawn`
 
-> Spawn either a js-ipfs or go-ipfs node
+Spawn either a js-ipfs or go-ipfs daemon
 
-`spawn([options], callback)`
+`df.spawn([options], callback)`
 
 `options` is an optional object the following properties:
   - `init` bool (default true) - should the node be initialized
