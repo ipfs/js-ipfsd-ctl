@@ -39,8 +39,21 @@ const defaultConfig = {
  * @namespace DaemonController
  */
 class DaemonController {
-  constructor (type) {
-    this.type = type || 'go'
+  /**
+   * Create a DaemonController instance
+   *
+   * @param {Object} opts
+   *  - `type` string - one of 'go', 'js' or 'proc',
+   *  the type of the daemon to spawn
+   *  - `exec` string (optional) - the path of the daemon
+   *  executable or IPFS class in the case of `proc`
+   *
+   * @return {*}
+   */
+  constructor (opts) {
+    opts = opts || {}
+    this.type = opts.type || 'go'
+    this.exec = opts.exec
   }
 
   /**
@@ -84,7 +97,7 @@ class DaemonController {
     options.init = (typeof options.init !== 'undefined' ? options.init : true)
     if (!options.disposable) {
       const nonDisposableConfig = clone(defaultConfig)
-      delete nonDisposableConfig['Addresses']
+      delete nonDisposableConfig.Addresses
 
       options.init = false
       options.start = false
@@ -99,6 +112,7 @@ class DaemonController {
 
     let node
     options.type = this.type
+    options.exec = options.exec || this.exec
     if (this.type === 'proc') {
       if (typeof options.exec !== 'function') {
         return callback(new Error(`'type' proc requires 'exec' to be a coderef`))

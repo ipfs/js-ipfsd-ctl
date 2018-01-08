@@ -21,13 +21,7 @@ describe('ipfsd-ctl', () => {
     api(df, 'go')()
   })
 
-  describe('Js daemon', () => {
-    const df = DaemonFactory.create({ type: 'js' })
-    daemon(df, 'js')()
-    api(df, 'js')()
-  })
-
   describe('In-process daemon', () => {
-    daemon(DaemonFactory.create({ remote: false, type: 'proc' }), 'proc', IPFS)()
+    daemon(DaemonFactory.create({ remote: false, type: 'proc', exec: IPFS }), 'proc')()
   })
 })
