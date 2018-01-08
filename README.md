@@ -184,7 +184,7 @@ Initialize a repo.
   - `keysize` (default 2048) - The bit size of the identiy key.
   - `directory` (default IPFS_PATH if defined, or ~/.ipfs for go-ipfs and ~/.jsipfs for js-ipfs) - The location of the repo.
  
-`callback` is a function with the signature `function (Error, Node)` where `err` is an Error in case something goes wrong and `Node` is a ???.
+`callback` is a function with the signature `function (Error, ipfsd)` where `err` is an Error in case something goes wrong and `ipfsd` is the daemon controller instance.
 
 #### `ipfsd.cleanup(callback)`
 
