@@ -9,7 +9,7 @@ class DaemonFactory {
   static create (opts) {
     const options = defaults({}, opts, { remote: !isNode })
 
-    if (options.remote && options.type === 'proc') {
+    if (options.type === 'proc') {
       options.remote = false
     }
 

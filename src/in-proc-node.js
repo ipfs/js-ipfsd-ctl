@@ -190,7 +190,7 @@ class Node {
   /**
    * Stop the daemon.
    *
-   * @param {function(Error)} callback
+   * @param {function(Error)} [callback]
    * @returns {undefined}
    */
   stop (callback) {

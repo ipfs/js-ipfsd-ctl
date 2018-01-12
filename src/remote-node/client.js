@@ -148,10 +148,11 @@ class Node {
   /**
    * Stop the daemon.
    *
-   * @param {function(Error)} cb
+   * @param {function(Error)} [cb]
    * @returns {undefined}
    */
   stop (cb) {
+    cb = cb || (() => {})
     request
       .post(`${this.baseUrl}/stop`)
       .query({ id: this._id })
@@ -171,10 +172,11 @@ class Node {
    * First `SIGTERM` is sent, after 7.5 seconds `SIGKILL` is sent
    * if the process hasn't exited yet.
    *
-   * @param {function()} cb - Called when the process was killed.
+   * @param {function()} [cb] - Called when the process was killed.
    * @returns {undefined}
    */
   killProcess (cb) {
+    cb = cb || (() => {})
     request
       .post(`${this.baseUrl}/kill`)
       .query({ id: this._id })
@@ -219,11 +221,11 @@ class Node {
   getConfig (key, cb) {
     if (typeof key === 'function') {
       cb = key
-      key = null
+      key = undefined
     }
 
     const qr = { id: this._id }
-    qr.key = key || undefined
+    qr.key = key
     request
       .get(`${this.baseUrl}/config`)
       .query(qr)

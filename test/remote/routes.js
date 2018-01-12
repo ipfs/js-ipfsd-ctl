@@ -43,6 +43,7 @@ const routes = proxyquire('../../src/remote-node/routes', {
       node.stop = (cb) => {
         node.killProcess(cb)
       }
+
       node.killProcess = (cb) => {
         node.started = false
         cb()

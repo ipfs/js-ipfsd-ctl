@@ -100,9 +100,9 @@ module.exports = (df, type) => {
           // Check for props in daemon
           expect(ipfsd).to.have.property('apiAddr')
           expect(ipfsd).to.have.property('gatewayAddr')
-          expect(ipfsd.apiAddr).to.not.equal(null)
+          expect(ipfsd.apiAddr).to.not.be.null()
           expect(multiaddr.isMultiaddr(ipfsd.apiAddr)).to.equal(true)
-          expect(ipfsd.gatewayAddr).to.not.equal(null)
+          expect(ipfsd.gatewayAddr).to.not.be.null()
           expect(multiaddr.isMultiaddr(ipfsd.gatewayAddr)).to.equal(true)
 
           // Check for props in ipfs-api instance

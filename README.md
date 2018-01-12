@@ -131,7 +131,7 @@ server.start((err) => {
 - **`js`** - calling `DaemonFactory.create({type: 'js'})` will spawn a `js-ipfs` daemon.
 - **`proc`** - calling `DaemonFactory.create({type: 'proc', exec: require('ipfs') })` will spawn an `in process js-ipfs node` using the provided code reference that implements the core IPFS API. Note that, `exec` option to `df.spawn()` is required if `type: 'proc'` is used.
   
-#### DaemonFactory endpoint for remote spawning - `const server = DaemonFactory.createServer([options]) `
+#### DaemonFactory endpoint for remote spawning - `const server = `DaemonFactory.createServer([options]) `
 
 `DaemonFactory.createServer` create an instance of the bundled REST API used by the remote controller.
 
@@ -162,7 +162,7 @@ The IPFS daemon controller (`ipfsd`) allows you to interact with the spawned IPF
 
 #### `ipfsd.apiAddr` (getter)
 
-Get the address (multiaddr) of connected IPFS API. Returns a multiaddr,
+Get the address (multiaddr) of connected IPFS API. Returns a multiaddr
 
 #### `ipfsd.gatewayAddr` (getter)
 
@@ -170,7 +170,7 @@ Get the address (multiaddr) of connected IPFS HTTP Gateway. Returns a multiaddr.
 
 #### `ipfsd.repoPath` (getter)
 
-Get the current repo path. Returns string
+Get the current repo path. Returns string.
 
 #### `ipfsd.started` (getter)
 
@@ -181,7 +181,7 @@ Is the node started. Returns a boolean.
 Initialize a repo. 
 
 `initOpts` (optional) is an object with the following properties:
-  - `keysize` (default 2048) - The bit size of the identiy key.
+  - `keysize` (default 2048) - The bit size of the identity key.
   - `directory` (default IPFS_PATH if defined, or ~/.ipfs for go-ipfs and ~/.jsipfs for js-ipfs) - The location of the repo.
  
 `callback` is a function with the signature `function (Error, ipfsd)` where `err` is an Error in case something goes wrong and `ipfsd` is the daemon controller instance.
@@ -198,16 +198,16 @@ Start the daemon.
 
 `flags` - Flags array to be passed to the `ipfs daemon` command.
 
-`callback` is a function with the signature `function(err, ipfsApi)}` that receives an instance of `ipfs-api` on success or an instance of `Error` on failure
+`callback` is a function with the signature `function(err, ipfsApi)` that receives an instance of `ipfs-api` on success or an instance of `Error` on failure
 
 
-#### `ipfsd.stop(callback)`
+#### `ipfsd.stop([callback])`
 
 Stop the daemon.
 
 `callback` is a function with the signature `function(err)` callback - function that receives an instance of `Error` on failure
 
-#### `ipfsd.killProcess (callback)`
+#### `ipfsd.killProcess([callback])`
 
 Kill the `ipfs daemon` process.
 
@@ -215,19 +215,19 @@ First a `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent if the process h
 
 `callback` is a function with the signature `function()` called once the process is killed
 
-#### `ipfsd.pid ()`
+#### `ipfsd.pid()`
 
 Get the pid of the `ipfs daemon` process. Returns the pid number
 
-#### `ipfsd.getConfig(key, callback)`
+#### `ipfsd.getConfig([key], callback)`
 
 Returns the output of an `ipfs config` command. If no `key` is passed, the whole config is returned as an object.
 
 `key` (optional) - A specific config to retrieve.
 
-`callback` is a function with the signature `function(err, (Object|string)` that receives an object or string on success or an `Error` instance on failure
+`callback` is a function with the signature `function(err, (Object|string))` that receives an object or string on success or an `Error` instance on failure
 
-#### `ipfsd.setConfig (key, value, callback)`
+#### `ipfsd.setConfig(key, value, callback)`
 
 Set a config value.
 
@@ -251,7 +251,7 @@ This instance is returned for each successfully started IPFS daemon, when either
    
 ### Packaging
 
-`ipfsd-ctl` can be packaged in Electron applications, but the ipfs binary has to be excluded from asar (Electron Archives),
+`ipfsd-ctl` can be packaged in Electron applications, but the ipfs binary has to be excluded from asar (Electron Archives).
 [read more about unpack files from asar](https://electron.atom.io/docs/tutorial/application-packaging/#adding-unpacked-files-in-asar-archive).
 
 `ipfsd-ctl` will try to detect if used from within an `app.asar` archive and tries to resolve ipfs from `app.asar.unpacked`. The ipfs binary is part of the `go-ipfs-dep` module.

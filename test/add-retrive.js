@@ -42,14 +42,5 @@ module.exports = () => {
       expect(this.ipfsd.api).to.have.property('apiHost')
       expect(this.ipfsd.api).to.have.property('apiPort')
     })
-
-    it('should be able to store objects', () => {
-      expect(store)
-        .to.equal('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
-    })
-
-    it('should be able to retrieve objects', () => {
-      expect(retrieve.toString()).to.equal('blorb')
-    })
   })
 }
