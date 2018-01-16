@@ -1,120 +1,28 @@
 'use strict'
 
-const os = require('os')
-const join = require('path').join
+const LocalController = require('./daemon-ctrl')
+const remote = require('./remote-node')
+const isNode = require('detect-node')
+const defaults = require('lodash.defaultsdeep')
 
-const Node = require('./daemon')
+class DaemonFactory {
+  static create (opts) {
+    const options = defaults({}, opts, { remote: !isNode })
 
-// Note how defaultOptions are Addresses.Swarm and not Addresses: { Swarm : <> }
-const defaultOptions = {
-  'Addresses.Swarm': ['/ip4/0.0.0.0/tcp/0'],
-  'Addresses.Gateway': '',
-  'Addresses.API': '/ip4/127.0.0.1/tcp/0',
-  disposable: true,
-  init: true
-}
-
-function tempDir () {
-  return join(os.tmpdir(), `ipfs_${String(Math.random()).substr(2)}`)
-}
-
-/**
- * Control go-ipfs nodes directly from JavaScript.
- *
- * @namespace IpfsDaemonController
- */
-const IpfsDaemonController = {
-  /**
-   * Get the version of the currently used go-ipfs binary.
-   *
-   * @memberof IpfsDaemonController
-   * @param {function(Error, string)} callback
-   * @returns {undefined}
-   */
-  version (callback) {
-    (new Node()).version(callback)
-  },
-
-  /**
-   * Create a new local node.
-   *
-   * @memberof IpfsDaemonController
-   * @param {string} [path] - Location of the repo. Defaults to `$IPFS_PATH`, or `$HOME/.ipfs`, or `$USER_PROFILE/.ipfs`.
-   * @param {Object} [opts={}]
-   * @param {function(Error, Node)} callback
-   * @returns {undefined}
-   */
-  local (path, opts, callback) {
-    if (typeof opts === 'function') {
-      callback = opts
-      opts = {}
+    if (options.type === 'proc') {
+      options.remote = false
     }
 
-    if (!callback) {
-      callback = path
-      path = process.env.IPFS_PATH ||
-        join(process.env.HOME ||
-          process.env.USERPROFILE, '.ipfs')
+    if (options.remote) {
+      return new remote.RemoteController(options)
     }
 
-    process.nextTick(() => callback(null, new Node(path, opts)))
-  },
+    return new LocalController(options)
+  }
 
-  /**
-   * Create a new disposable node.
-   * This means the repo is created in a temporary location and cleaned up on process exit.
-   *
-   * @memberof IpfsDaemonController
-   * @param {Object} [opts={}]
-   * @param {function(Error, Node)} callback
-   * @returns {undefined}
-   */
-  disposable (opts, callback) {
-    if (typeof opts === 'function') {
-      callback = opts
-      opts = defaultOptions
-    }
-
-    let options = {}
-    Object.assign(options, defaultOptions, opts || {})
-
-    const repoPath = options.repoPath || tempDir()
-    const disposable = options.disposable
-    delete options.disposable
-    delete options.repoPath
-
-    const node = new Node(repoPath, options, disposable)
-
-    if (typeof options.init === 'boolean' &&
-      options.init === false) {
-      process.nextTick(() => callback(null, node))
-    } else {
-      node.init((err) => callback(err, node))
-    }
-  },
-
-  /**
-   * Create a new disposable node and already started the daemon.
-   *
-   * @memberof IpfsDaemonController
-   * @param {Object} [opts={}]
-   * @param {function(Error, Node)} callback
-   * @returns {undefined}
-   */
-  disposableApi (opts, callback) {
-    if (typeof opts === 'function') {
-      callback = opts
-      opts = defaultOptions
-    }
-
-    this.disposable(opts, (err, node) => {
-      if (err) {
-        return callback(err)
-      }
-
-      node.startDaemon(callback)
-    })
+  static createServer (port) {
+    return new remote.Server(port)
   }
 }
 
-module.exports = IpfsDaemonController
+module.exports = DaemonFactory

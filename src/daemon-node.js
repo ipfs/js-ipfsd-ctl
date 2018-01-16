@@ -7,101 +7,50 @@ const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const shutdown = require('shutdown')
 const path = require('path')
-const join = path.join
 const once = require('once')
-const os = require('os')
-const isWindows = os.platform() === 'win32'
+const truthy = require('truthy')
+const utils = require('./utils')
+const flatten = require('./utils').flatten
 
-const exec = require('./exec')
+const tryJsonParse = utils.tryJsonParse
+const parseConfig = utils.parseConfig
+const tempDir = utils.tempDir
+const findIpfsExecutable = utils.findIpfsExecutable
+const setConfigValue = utils.setConfigValue
+const configureNode = utils.configureNode
+const run = utils.run
 
-const ipfsDefaultPath = findIpfsExecutable()
-
-const GRACE_PERIOD = 7500 // amount of ms to wait before sigkill
-
-function findIpfsExecutable () {
-  const rootPath = process.env.testpath ? process.env.testpath : __dirname
-
-  let appRoot = path.join(rootPath, '..')
-  // If inside <appname>.asar try to load from .asar.unpacked
-  // this only works if asar was built with
-  // asar --unpack-dir=node_modules/go-ipfs-dep/* (not tested)
-  // or
-  // electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep
-  if (appRoot.includes(`.asar${path.sep}`)) {
-    appRoot = appRoot.replace(`.asar${path.sep}`, `.asar.unpacked${path.sep}`)
-  }
-  const appName = isWindows ? 'ipfs.exe' : 'ipfs'
-  const depPath = path.join('go-ipfs-dep', 'go-ipfs', appName)
-  const npm3Path = path.join(appRoot, '../', depPath)
-  const npm2Path = path.join(appRoot, 'node_modules', depPath)
-
-  if (fs.existsSync(npm3Path)) {
-    return npm3Path
-  }
-  if (fs.existsSync(npm2Path)) {
-    return npm2Path
-  }
-
-  throw new Error('Cannot find the IPFS executable')
-}
-
-function setConfigValue (node, key, value, callback) {
-  exec(
-    node.exec,
-    ['config', key, value, '--json'],
-    { env: node.env },
-    callback
-  )
-}
-
-function configureNode (node, conf, callback) {
-  async.eachOfSeries(conf, (value, key, cb) => {
-    setConfigValue(node, key, JSON.stringify(value), cb)
-  }, callback)
-}
-
-function tryJsonParse (input, callback) {
-  let res
-  try {
-    res = JSON.parse(input)
-  } catch (err) {
-    return callback(err)
-  }
-  callback(null, res)
-}
-
-// Consistent error handling
-function parseConfig (path, callback) {
-  async.waterfall([
-    (cb) => fs.readFile(join(path, 'config'), cb),
-    (file, cb) => tryJsonParse(file.toString(), cb)
-  ], callback)
-}
+const GRACE_PERIOD = 10500 // amount of ms to wait before sigkill
 
 /**
- * Controll a go-ipfs node.
+ * Controll a go-ipfs or js-ipfs node.
  */
 class Node {
   /**
    * Create a new node.
    *
-   * @param {string} path
    * @param {Object} [opts]
    * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
-   * @param {boolean} [disposable=false] - Should this be a temporary node.
    * @returns {Node}
    */
-  constructor (path, opts, disposable) {
-    this.path = path
-    this.opts = opts || {}
-    this.exec = process.env.IPFS_EXEC || ipfsDefaultPath
+  constructor (opts) {
+    const rootPath = process.env.testpath ? process.env.testpath : __dirname
+    const type = truthy(process.env.IPFS_TYPE)
+
+    this.opts = opts || { type: type || 'go' }
+    this.opts.config = flatten(this.opts.config)
+
+    const tmpDir = tempDir(opts.type === 'js')
+    this.path = this.opts.disposable ? tmpDir : (this.opts.repoPath || tmpDir)
+    this.disposable = this.opts.disposable
+    this.exec = this.opts.exec || process.env.IPFS_EXEC || findIpfsExecutable(this.opts.type, rootPath)
     this.subprocess = null
     this.initialized = fs.existsSync(path)
     this.clean = true
-    this.env = Object.assign({}, process.env, { IPFS_PATH: path })
-    this.disposable = disposable
     this._apiAddr = null
     this._gatewayAddr = null
+    this._started = false
+    this.api = null
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
@@ -126,8 +75,31 @@ class Node {
     return this._gatewayAddr
   }
 
-  _run (args, opts, callback) {
-    return exec(this.exec, args, opts, callback)
+  /**
+   * Get the current repo path
+   *
+   * @return {string}
+   */
+  get repoPath () {
+    return this.path
+  }
+
+  /**
+   * Is the node started
+   *
+   * @return {boolean}
+   */
+  get started () {
+    return this._started
+  }
+
+  /**
+   * Is the environment
+   *
+   * @return {object}
+   */
+  get env () {
+    return this.path ? Object.assign({}, process.env, { IPFS_PATH: this.path }) : process.env
   }
 
   /**
@@ -149,15 +121,14 @@ class Node {
 
     if (initOpts.directory && initOpts.directory !== this.path) {
       this.path = initOpts.directory
-      this.env.IPFS_PATH = this.path
     }
 
-    this._run(['init', '-b', keySize], { env: this.env }, (err, result) => {
+    run(this, ['init', '-b', keySize], { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)
       }
 
-      configureNode(this, this.opts, (err) => {
+      configureNode(this, this.opts.config, (err) => {
         if (err) {
           return callback(err)
         }
@@ -169,7 +140,7 @@ class Node {
     })
 
     if (this.disposable) {
-      shutdown.addHandler('disposable', 1, this.shutdown.bind(this))
+      shutdown.addHandler('disposable', 1, this.cleanup.bind(this))
     }
   }
 
@@ -181,8 +152,8 @@ class Node {
    * @param {function(Error)} callback
    * @returns {undefined}
    */
-  shutdown (callback) {
-    if (this.clean || !this.disposable) {
+  cleanup (callback) {
+    if (this.clean) {
       return callback()
     }
 
@@ -196,7 +167,7 @@ class Node {
    * @param {function(Error, IpfsApi)} callback
    * @returns {undefined}
    */
-  startDaemon (flags, callback) {
+  start (flags, callback) {
     if (typeof flags === 'function') {
       callback = flags
       flags = []
@@ -205,21 +176,9 @@ class Node {
       flags = []
     }
 
-    const args = ['daemon'].concat(flags)
+    const args = ['daemon'].concat(flags || [])
 
     callback = once(callback)
-
-    // Check if there were explicit options to want or not want. Otherwise,
-    // assume values will be in the local daemon config
-    // TODO: This should check the local daemon config
-    const want = {
-      gateway: typeof this.opts['Addresses.Gateway'] === 'string'
-        ? this.opts['Addresses.Gateway'].length > 0
-        : true,
-      api: typeof this.opts['Addresses.API'] === 'string'
-        ? this.opts['Addresses.API'].length > 0
-        : true
-    }
 
     parseConfig(this.path, (err, conf) => {
       if (err) {
@@ -227,9 +186,7 @@ class Node {
       }
 
       let output = ''
-      let returned = false
-
-      this.subprocess = this._run(args, { env: this.env }, {
+      this.subprocess = run(this, args, { env: this.env }, {
         error: (err) => {
           // Only look at the last error
           const input = String(err)
@@ -238,7 +195,7 @@ class Node {
             .filter(Boolean)
             .slice(-1)[0] || ''
 
-          if (input.match('daemon is running')) {
+          if (input.match(/(?:daemon is running|Daemon is ready)/)) {
             // we're good
             return callback(null, this.api)
           }
@@ -250,31 +207,26 @@ class Node {
         data: (data) => {
           output += String(data)
 
-          const apiMatch = want.api
-            ? output.trim().match(/API server listening on (.*)/)
-            : true
+          const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
+          const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
 
-          const gwMatch = want.gateway
-            ? output.trim().match(/Gateway (.*) listening on (.*)/)
-            : true
+          if (apiMatch && apiMatch.length > 0) {
+            this._apiAddr = multiaddr(apiMatch[1])
+            this.api = ipfs(apiMatch[1])
+            this.api.apiHost = this.apiAddr.nodeAddress().address
+            this.api.apiPort = this.apiAddr.nodeAddress().port
+          }
 
-          if (apiMatch && gwMatch && !returned) {
-            returned = true
+          if (gwMatch && gwMatch.length > 0) {
+            this._gatewayAddr = multiaddr(gwMatch[1])
+            this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+            this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+          }
 
-            if (want.api) {
-              this._apiAddr = multiaddr(apiMatch[1])
-              this.api = ipfs(apiMatch[1])
-              this.api.apiHost = this.apiAddr.nodeAddress().address
-              this.api.apiPort = this.apiAddr.nodeAddress().port
-            }
-
-            if (want.gateway) {
-              this._gatewayAddr = multiaddr(gwMatch[2])
-              this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-              this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
-            }
-
-            callback(null, this.api)
+          if (output.match(/(?:daemon is running|Daemon is ready)/)) {
+            // we're good
+            this._started = true
+            return callback(null, this.api)
           }
         }
       })
@@ -287,7 +239,7 @@ class Node {
    * @param {function(Error)} callback
    * @returns {undefined}
    */
-  stopDaemon (callback) {
+  stop (callback) {
     callback = callback || function noop () {}
 
     if (!this.subprocess) {
@@ -300,7 +252,7 @@ class Node {
   /**
    * Kill the `ipfs daemon` process.
    *
-   * First `SIGTERM` is sent, after 7.5 seconds `SIGKILL` is sent
+   * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
    * if the process hasn't exited yet.
    *
    * @param {function()} callback - Called when the process was killed.
@@ -317,6 +269,7 @@ class Node {
     subprocess.once('close', () => {
       clearTimeout(timeout)
       this.subprocess = null
+      this._started = false
       callback()
     })
 
@@ -327,10 +280,11 @@ class Node {
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @returns {number}
+   * @param {function()} callback - receives the pid
+   * @returns {undefined}
    */
-  daemonPid () {
-    return this.subprocess && this.subprocess.pid
+  pid (callback) {
+    callback(this.subprocess && this.subprocess.pid)
   }
 
   /**
@@ -347,9 +301,13 @@ class Node {
       callback = key
       key = 'show'
     }
+    if (!key) {
+      key = 'show'
+    }
 
     async.waterfall([
-      (cb) => this._run(
+      (cb) => run(
+        this,
         ['config', key],
         { env: this.env },
         cb
@@ -372,26 +330,7 @@ class Node {
    * @returns {undefined}
    */
   setConfig (key, value, callback) {
-    this._run(
-      ['config', key, value, '--json'],
-      { env: this.env },
-      callback
-    )
-  }
-
-  /**
-   * Replace the configuration with a given file
-   *
-   * @param {string} file - path to the new config file
-   * @param {function(Error)} callback
-   * @returns {undefined}
-   */
-  replaceConf (file, callback) {
-    this._run(
-      ['config', 'replace', file],
-      { env: this.env },
-      callback
-    )
+    setConfigValue(this, key, value, callback)
   }
 
   /**
@@ -401,7 +340,7 @@ class Node {
    * @returns {undefined}
    */
   version (callback) {
-    this._run(['version'], { env: this.env }, callback)
+    run(this, ['version'], { env: this.env }, callback)
   }
 }
 

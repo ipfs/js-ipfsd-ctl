@@ -8,6 +8,10 @@ const cp = require('child_process')
 const path = require('path')
 const exec = require('../src/exec')
 
+const os = require('os')
+
+const isWindows = os.platform() === 'win32'
+
 const survivor = path.join(__dirname, 'survivor')
 
 function token () {
@@ -28,7 +32,7 @@ function psExpect (pid, expect, grace, callback) {
 
 function isRunningGrep (pattern, callback) {
   const cmd = 'ps aux'
-  cp.exec(cmd, (err, stdout, stderr) => {
+  cp.exec(cmd, { maxBuffer: 1024 * 500 }, (err, stdout, stderr) => {
     if (err) {
       return callback(err)
     }
@@ -57,7 +61,15 @@ function makeCheck (n, done) {
 // exiting as it once was when the test was designed
 // - [ ] Need test vector or figure out why tail changed
 // Ref: https://github.com/ipfs/js-ipfsd-ctl/pull/160#issuecomment-325669206
-describe.skip('exec', () => {
+// UPDATE: 12/06/2017 - `tail` seems to work fine on all ci systems.
+// I'm leaving it enabled for now. This does need a different approach for windows though.
+describe('exec', () => {
+  // TODO: skip on windows for now
+  // TODO: running under coverage messes up the process hierarchies
+  if (isWindows || process.env['COVERAGE']) {
+    return
+  }
+
   it('SIGTERM kills hang', (done) => {
     const tok = token()
 

@@ -1,0 +1,14 @@
+{
+  "name": "local-disposable",
+  "version": "1.0.0",
+  "description": "",
+  "main": "local-disposable.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ipfsd-ctl": "file:../.."
+  },
+  "author": "",
+  "license": "MIT"
+}
