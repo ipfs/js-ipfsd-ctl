@@ -75,7 +75,7 @@
     "joi": "^13.0.2",
     "lodash.clone": "^4.5.0",
     "lodash.defaultsdeep": "^4.6.0",
-    "multiaddr": "^3.0.1",
+    "multiaddr": "^3.0.2",
     "once": "^1.4.0",
     "readable-stream": "^2.3.3",
     "rimraf": "^2.6.2",

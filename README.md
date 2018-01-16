@@ -215,9 +215,11 @@ First a `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent if the process h
 
 `callback` is a function with the signature `function()` called once the process is killed
 
-#### `ipfsd.pid()`
+#### `ipfsd.pid(callback)`
 
 Get the pid of the `ipfs daemon` process. Returns the pid number
+
+`callback` is a function with the signature `function(err, pid)` that receives the `pid` of the running daemon or an `Error` instance on failure
 
 #### `ipfsd.getConfig([key], callback)`
 
