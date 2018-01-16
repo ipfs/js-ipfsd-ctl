@@ -1,3 +1,13 @@
+<a name="0.26.1"></a>
+## [0.26.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.26.0...v0.26.1) (2018-01-16)
+
+
+### Features
+
+* Complete revamp! Spawn js/go daemons locally or remote (from the browser) ([#176](https://github.com/ipfs/js-ipfsd-ctl/issues/176)) ([1cfbd08](https://github.com/ipfs/js-ipfsd-ctl/commit/1cfbd08))
+
+
+
 <a name="0.26.0"></a>
 # [0.26.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.25.1...v0.26.0) (2017-12-01)
 
