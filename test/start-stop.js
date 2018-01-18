@@ -45,6 +45,14 @@ module.exports = (type) => {
           expect(ipfsd).to.exist()
         })
 
+        it('daemon exec path should match type', () => {
+          let execPath = type === 'js'
+            ? 'ipfs/src/cli/bin.js'
+            : 'go-ipfs-dep/go-ipfs/ipfs'
+
+          expect(ipfsd.exec).to.have.string(execPath)
+        })
+
         it('daemon should not be running', (done) => {
           ipfsd.pid((pid) => {
             expect(pid).to.not.exist()
