@@ -1,3 +1,13 @@
+<a name="0.27.1"></a>
+## [0.27.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.27.0...v0.27.1) (2018-01-21)
+
+
+### Bug Fixes
+
+* make sure exec matches the passed node type ([#184](https://github.com/ipfs/js-ipfsd-ctl/issues/184)) ([89e9059](https://github.com/ipfs/js-ipfsd-ctl/commit/89e9059))
+
+
+
 <a name="0.27.0"></a>
 # [0.27.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.26.1...v0.27.0) (2018-01-16)
 
