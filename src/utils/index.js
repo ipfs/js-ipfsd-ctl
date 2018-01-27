@@ -89,7 +89,7 @@ exports.findIpfsExecutable = (type, rootPath) => {
 
 function run (node, args, opts, callback) {
   let executable = node.exec
-  if (isWindows && node.opts.type !== 'go') {
+  if (isWindows && executable.endsWith('.js')) {
     args = args || []
     args.unshift(node.exec)
     executable = process.execPath
