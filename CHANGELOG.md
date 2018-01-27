@@ -1,3 +1,13 @@
+<a name="0.27.2"></a>
+## [0.27.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.27.1...v0.27.2) (2018-01-27)
+
+
+### Features
+
+* support for passphrase for js-ipfs daemons ([3bc94c1](https://github.com/ipfs/js-ipfsd-ctl/commit/3bc94c1))
+
+
+
 <a name="0.27.1"></a>
 ## [0.27.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.27.0...v0.27.1) (2018-01-21)
 
