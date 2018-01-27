@@ -44,12 +44,23 @@ class Node {
       }
     })
 
-    this.opts.EXPERIMENTAL.pubsub = (this.opts.args.indexOf('--enable-pubsub-experiment') > -1)
-    this.opts.EXPERIMENTAL.sharding = (this.opts.args.indexOf('--enable-sharding-experiment') > -1)
+    this.opts.args.forEach((arg) => {
+      if (arg === '--enable-pubsub-experiment') {
+        this.opts.EXPERIMENTAL.pubsub = true
+      } else if (arg === '--enable-sharding-experiment') {
+        this.opts.EXPERIMENTAL.sharding = true
+      } else if (arg.startsWith('--pass')) {
+        this.opts.pass = arg.split(' ').slice(1).join(' ')
+      } else {
+        // TODO: maybe throw!
+        throw new Error('Unkown argument ' + arg)
+      }
+    })
     this.exec = new IPFS({
       repo: this.repo,
       init: false,
       start: false,
+      pass: this.opts.pass,
       EXPERIMENTAL: this.opts.EXPERIMENTAL,
       libp2p: this.opts.libp2p
     })
