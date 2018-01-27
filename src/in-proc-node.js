@@ -52,7 +52,6 @@ class Node {
       } else if (arg.startsWith('--pass')) {
         this.opts.pass = arg.split(' ').slice(1).join(' ')
       } else {
-        // TODO: maybe throw!
         throw new Error('Unkown argument ' + arg)
       }
     })
