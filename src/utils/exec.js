@@ -1,6 +1,6 @@
 'use strict'
 
-const run = require('subcomandante')
+const run = require('./subcomandante-lite')
 const once = require('once')
 const debug = require('debug')
 const log = debug('ipfsd-ctl:exec')
