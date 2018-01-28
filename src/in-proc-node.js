@@ -141,6 +141,7 @@ class Node {
         }
 
         this.initialized = true
+        this.clean = false
         callback(null, this)
       })
     })

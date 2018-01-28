@@ -28,6 +28,7 @@ module.exports = (type) => {
       }
 
       let ipfsd
+      let repoPath
 
       describe(`create and init a node (ipfsd)`, function () {
         this.timeout(50 * 1000)
@@ -37,6 +38,7 @@ module.exports = (type) => {
             expect(daemon).to.exist()
 
             ipfsd = daemon
+            repoPath = ipfsd.path
             done()
           })
         })
@@ -88,7 +90,6 @@ module.exports = (type) => {
 
       describe('stopping', () => {
         let stopped = false
-
         before(function (done) {
           this.timeout(20 * 1000)
           ipfsd.stop((err) => {
@@ -115,6 +116,10 @@ module.exports = (type) => {
             expect(fs.existsSync(path.join(ipfsd.path, 'api'))).to.not.be.ok()
             done()
           })
+        })
+
+        it('repo should cleaned up', () => {
+          expect(fs.existsSync(repoPath)).to.not.be.ok()
         })
       })
     })

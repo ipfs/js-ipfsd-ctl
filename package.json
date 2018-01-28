@@ -79,7 +79,6 @@
     "readable-stream": "^2.3.3",
     "rimraf": "^2.6.2",
     "safe-json-parse": "^4.0.0",
-    "shutdown": "^0.3.0",
     "ipfs-api": "^17.3.0",
     "stream-http": "^2.7.2",
     "subcomandante": "^1.0.5",

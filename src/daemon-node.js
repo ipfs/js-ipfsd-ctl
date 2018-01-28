@@ -5,7 +5,6 @@ const async = require('async')
 const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
-const shutdown = require('shutdown')
 const path = require('path')
 const once = require('once')
 const truthy = require('truthy')
@@ -142,10 +141,6 @@ class Node {
         callback(null, this)
       })
     })
-
-    if (this.disposable) {
-      shutdown.addHandler('disposable', 1, this.cleanup.bind(this))
-    }
   }
 
   /**
@@ -161,6 +156,7 @@ class Node {
       return callback()
     }
 
+    this.clean = true
     rimraf(this.path, callback)
   }
 
@@ -250,6 +246,7 @@ class Node {
       return callback()
     }
 
+
     this.killProcess(callback)
   }
 
@@ -270,10 +267,15 @@ class Node {
       callback()
     }, GRACE_PERIOD)
 
+    const disposable = this.disposable
+    const clean = this.cleanup.bind(this)
     subprocess.once('close', () => {
       clearTimeout(timeout)
       this.subprocess = null
       this._started = false
+      if (disposable) {
+        return clean(callback)
+      }
       callback()
     })
 
