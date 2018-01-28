@@ -15,9 +15,9 @@ function removeChild (child) {
 function killAll () {
   debug('killing all children')
   let child
-  while((child = children.shift()) !== undefined) {
+  while ((child = children.shift()) !== undefined) {
     debug(child.pid, 'killing')
-    child.kill();
+    child.kill()
   }
 }
 
@@ -30,14 +30,14 @@ function run (cmd, args, opts) {
   const child = runner.execFile(cmd, args, opts)
   debug(child.pid, 'new')
 
-  children.push(child);
+  children.push(child)
   child.once('error', () => {
     debug(child.pid, 'error')
     removeChild(child)
   })
   child.once('exit', () => {
     debug(child.pid, 'exit')
-    removeChild(child);
+    removeChild(child)
   })
   return child
 }
