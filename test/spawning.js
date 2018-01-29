@@ -192,7 +192,8 @@ module.exports = (df, type, exec) => {
                 '/ip4/127.0.0.1/tcp/0/ws',
                 '/ip4/127.0.0.1/tcp/0'
               ],
-              API: '/ip4/127.0.0.1/tcp/0'
+              API: '/ip4/127.0.0.1/tcp/0',
+              Gateway: '/ip4/127.0.0.1/tcp/0'
             }
           }
 
