@@ -186,10 +186,17 @@ module.exports = (type) => {
         before((done) => {
           async.series([
             (cb) => df.spawn({
-              init: false,
-              start: false,
+              init: true,
+              start: true,
               disposable: false,
-              repoPath: tempDir(type)
+              repoPath: tempDir(type),
+              config: {
+                Addresses: {
+                  Swarm: [`/ip4/127.0.0.1/tcp/0`],
+                  API: `/ip4/127.0.0.1/tcp/0`,
+                  Gateway: `/ip4/127.0.0.1/tcp/0`
+                }
+              }
             }, (err, daemon) => {
               expect(err).to.not.exist()
               expect(daemon).to.exist()

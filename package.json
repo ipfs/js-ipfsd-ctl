@@ -86,7 +86,7 @@
     "truthy": "0.0.1"
   },
   "devDependencies": {
-    "aegir": "^12.2.0",
+    "aegir": "^12.4.0",
     "chai": "^4.1.2",
     "detect-port": "^1.2.2",
     "dirty-chai": "^2.0.1",
