@@ -16,8 +16,8 @@ const isWindows = os.platform() === 'win32'
 
 module.exports = (df, type) => {
   return () => {
-    const API_PORT = type === 'js' ? '5102' : '5101'
-    const GW_PORT = type === 'js' ? '9190' : '8180'
+    const API_PORT = '5101'
+    const GW_PORT = '8180'
 
     const config = {
       Addresses: {
