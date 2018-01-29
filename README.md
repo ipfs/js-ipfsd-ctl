@@ -183,6 +183,7 @@ Initialize a repo.
 `initOpts` (optional) is an object with the following properties:
   - `keysize` (default 2048) - The bit size of the identity key.
   - `directory` (default IPFS_PATH if defined, or ~/.ipfs for go-ipfs and ~/.jsipfs for js-ipfs) - The location of the repo.
+  - `pass` (optional) - The passphrase of the key chain.
  
 `callback` is a function with the signature `function (Error, ipfsd)` where `err` is an Error in case something goes wrong and `ipfsd` is the daemon controller instance.
 

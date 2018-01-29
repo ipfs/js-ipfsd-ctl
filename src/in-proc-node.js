@@ -116,6 +116,7 @@ class Node {
    * @param {Object} [initOpts={}]
    * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
    * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
+   * @param {string} [initOpts.pass] - The passphrase of the keychain.
    * @param {function (Error, Node)} callback
    * @returns {undefined}
    */
