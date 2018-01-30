@@ -108,6 +108,7 @@ class Node {
    * @param {Object} [initOpts={}]
    * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
    * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
+   * @param {string} [initOpts.pass] - The passphrase of the keychain.
    * @param {function (Error, Node)} callback
    * @returns {undefined}
    */
@@ -117,13 +118,16 @@ class Node {
       initOpts = {}
     }
 
-    const keySize = initOpts.keysize || 2048
-
     if (initOpts.directory && initOpts.directory !== this.path) {
       this.path = initOpts.directory
     }
 
-    run(this, ['init', '-b', keySize], { env: this.env }, (err, result) => {
+    const args = ['init', '-b', initOpts.keysize || 2048]
+    if (initOpts.pass) {
+      args.push('--pass')
+      args.push('"' + initOpts.pass + '"')
+    }
+    run(this, args, { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)
       }
