@@ -1,3 +1,13 @@
+<a name="0.27.3"></a>
+## [0.27.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.27.2...v0.27.3) (2018-01-30)
+
+
+### Features
+
+* add passphrase to init options ([#197](https://github.com/ipfs/js-ipfsd-ctl/issues/197)) ([7cf6384](https://github.com/ipfs/js-ipfsd-ctl/commit/7cf6384))
+
+
+
 <a name="0.27.2"></a>
 ## [0.27.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.27.1...v0.27.2) (2018-01-27)
 
