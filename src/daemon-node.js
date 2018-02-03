@@ -246,7 +246,6 @@ class Node {
       return callback()
     }
 
-
     this.killProcess(callback)
   }
 
