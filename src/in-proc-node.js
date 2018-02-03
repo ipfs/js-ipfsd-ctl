@@ -129,7 +129,7 @@ class Node {
       initOpts = {}
     }
 
-    initOpts.bits = initOpts.keysize || (typeof global.it === 'function') ? 512 : 1024
+    initOpts.bits = initOpts.keysize || (typeof global.it === 'function') ? 512 : 2048
     this.exec.init(initOpts, (err) => {
       if (err) {
         return callback(err)
