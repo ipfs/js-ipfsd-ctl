@@ -67,6 +67,7 @@
   "dependencies": {
     "async": "^2.6.0",
     "boom": "^7.1.1",
+    "debug": "^3.1.0",
     "detect-node": "^2.0.3",
     "hapi": "^16.6.2",
     "hat": "0.0.3",
@@ -79,6 +80,7 @@
     "readable-stream": "^2.3.3",
     "rimraf": "^2.6.2",
     "safe-json-parse": "^4.0.0",
+    "shutdown": "^0.3.0",
     "ipfs-api": "^17.3.0",
     "stream-http": "^2.7.2",
     "subcomandante": "^1.0.5",

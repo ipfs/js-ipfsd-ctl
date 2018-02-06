@@ -10,6 +10,7 @@ const once = require('once')
 const truthy = require('truthy')
 const utils = require('./utils')
 const flatten = require('./utils').flatten
+const debug = require('debug')('ipfsd-ctl:deamon-node')
 
 const tryJsonParse = utils.tryJsonParse
 const parseConfig = utils.parseConfig
@@ -262,6 +263,7 @@ class Node {
     // need a local var for the closure, as we clear the var.
     const subprocess = this.subprocess
     const timeout = setTimeout(() => {
+      debug('kill timeout, using SIGKILL', subprocess.pid)
       subprocess.kill('SIGKILL')
       callback()
     }, GRACE_PERIOD)
@@ -269,6 +271,7 @@ class Node {
     const disposable = this.disposable
     const clean = this.cleanup.bind(this)
     subprocess.once('close', () => {
+      debug('killed', subprocess.pid)
       clearTimeout(timeout)
       this.subprocess = null
       this._started = false
@@ -278,6 +281,7 @@ class Node {
       callback()
     })
 
+    debug('killing', subprocess.pid)
     subprocess.kill('SIGTERM')
     this.subprocess = null
   }

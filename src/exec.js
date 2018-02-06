@@ -2,6 +2,8 @@
 
 const run = require('subcomandante')
 const once = require('once')
+const debug = require('debug')('ipfsd-ctl:exec')
+const path = require('path')
 
 function exec (cmd, args, opts, handlers) {
   opts = opts || {}
@@ -47,6 +49,7 @@ function exec (cmd, args, opts, handlers) {
     })
   }
 
+  debug(path.basename(cmd), args.join(' '))
   const command = run(cmd, args, opts)
 
   if (listeners.data) {
