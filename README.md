@@ -147,7 +147,7 @@ Spawn either a js-ipfs or go-ipfs daemon
   - `init` bool (default true) - should the node be initialized
   - `start` bool (default true) - should the node be started
   - `repoPath` string - the repository path to use for this node, ignored if node is disposable
-  - `disposable` bool (default false) - a new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits
+  - `disposable` bool (default true) - a new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits
   - `args` - array of cmd line arguments to be passed to ipfs daemon
   - `config` - ipfs configuration options
 
