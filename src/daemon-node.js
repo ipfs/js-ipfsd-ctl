@@ -106,11 +106,14 @@ class Node {
    * Initialize a repo.
    *
    * @param {Object} [initOpts={}]
-   * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
+   * @param {number} [initOpts.keysize=2048] - The bit size of the identity key.
    * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
    * @param {string} [initOpts.pass] - The passphrase of the keychain.
    * @param {function (Error, Node)} callback
    * @returns {undefined}
+   *
+   * If running in a test, then a smaller default keysize is used to
+   * improve speed over security.
    */
   init (initOpts, callback) {
     if (!callback) {
@@ -122,7 +125,16 @@ class Node {
       this.path = initOpts.directory
     }
 
-    const args = ['init', '-b', initOpts.keysize || 2048]
+    let keysize = initOpts.keysize
+    if (!keysize) {
+      if (typeof global.it === 'function') {
+        keysize = this.opts.type === 'go' ? 1024 : 512
+      } else {
+        keysize = 2048
+      }
+    }
+
+    const args = ['init', '-b', keysize]
     if (initOpts.pass) {
       args.push('--pass')
       args.push('"' + initOpts.pass + '"')
