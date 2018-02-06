@@ -16,8 +16,8 @@ const isWindows = os.platform() === 'win32'
 
 module.exports = (df, type) => {
   return () => {
-    const API_PORT = type === 'js' ? '5002' : '5001'
-    const GW_PORT = type === 'js' ? '9090' : '8080'
+    const API_PORT = '5101'
+    const GW_PORT = '8180'
 
     const config = {
       Addresses: {
@@ -93,9 +93,9 @@ module.exports = (df, type) => {
     describe('validate api', () => {
       it('starts the daemon and returns valid API and gateway addresses', function (done) {
         this.timeout(50 * 1000)
-        df.spawn({ config }, (err, res) => {
+        df.spawn({ config }, (err, _ipfsd) => {
           expect(err).to.not.exist()
-          const ipfsd = res
+          const ipfsd = _ipfsd
 
           // Check for props in daemon
           expect(ipfsd).to.have.property('apiAddr')
