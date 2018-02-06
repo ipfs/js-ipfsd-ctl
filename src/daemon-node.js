@@ -5,7 +5,6 @@ const async = require('async')
 const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
-const shutdown = require('shutdown')
 const path = require('path')
 const once = require('once')
 const truthy = require('truthy')
@@ -109,6 +108,7 @@ class Node {
    * @param {Object} [initOpts={}]
    * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
    * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
+   * @param {string} [initOpts.pass] - The passphrase of the keychain.
    * @param {function (Error, Node)} callback
    * @returns {undefined}
    */
@@ -118,13 +118,16 @@ class Node {
       initOpts = {}
     }
 
-    const keySize = initOpts.keysize || 2048
-
     if (initOpts.directory && initOpts.directory !== this.path) {
       this.path = initOpts.directory
     }
 
-    run(this, ['init', '-b', keySize], { env: this.env }, (err, result) => {
+    const args = ['init', '-b', initOpts.keysize || 2048]
+    if (initOpts.pass) {
+      args.push('--pass')
+      args.push('"' + initOpts.pass + '"')
+    }
+    run(this, args, { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)
       }
@@ -139,10 +142,6 @@ class Node {
         callback(null, this)
       })
     })
-
-    if (this.disposable) {
-      shutdown.addHandler('disposable', 1, this.cleanup.bind(this))
-    }
   }
 
   /**
@@ -158,6 +157,7 @@ class Node {
       return callback()
     }
 
+    this.clean = true
     rimraf(this.path, callback)
   }
 
@@ -268,11 +268,16 @@ class Node {
       callback()
     }, GRACE_PERIOD)
 
+    const disposable = this.disposable
+    const clean = this.cleanup.bind(this)
     subprocess.once('close', () => {
       debug('killed', subprocess.pid)
       clearTimeout(timeout)
       this.subprocess = null
       this._started = false
+      if (disposable) {
+        return clean(callback)
+      }
       callback()
     })
 

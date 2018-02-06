@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.27.2",
+  "version": "0.27.3",
   "description": "simple controls for an ipfs node",
   "main": "src/index.js",
   "scripts": {
@@ -71,7 +71,6 @@
     "detect-node": "^2.0.3",
     "hapi": "^16.6.2",
     "hat": "0.0.3",
-    "ipfs-api": "^17.3.0",
     "ipfs-repo": "^0.18.5",
     "joi": "^13.0.2",
     "lodash.clone": "^4.5.0",
@@ -82,13 +81,14 @@
     "rimraf": "^2.6.2",
     "safe-json-parse": "^4.0.0",
     "shutdown": "^0.3.0",
+    "ipfs-api": "^17.3.0",
     "stream-http": "^2.7.2",
     "subcomandante": "^1.0.5",
     "superagent": "^3.8.2",
     "truthy": "0.0.1"
   },
   "devDependencies": {
-    "aegir": "^12.2.0",
+    "aegir": "^12.4.0",
     "chai": "^4.1.2",
     "detect-port": "^1.2.2",
     "dirty-chai": "^2.0.1",
