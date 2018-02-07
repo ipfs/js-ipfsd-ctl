@@ -3,7 +3,6 @@
 'use strict'
 
 require('./npm-install.node')
-require('./start-stop.node')
 // require('./daemon')
 // require('./exec')
 // require('./utils')

@@ -22,6 +22,7 @@
     "joi": false,
     "stream": "readable-stream",
     "http": "stream-http",
+    "./test/utils/df-config-nodejs.js": "./test/utils/df-config-browser.js",
     "./src/repo/create-nodejs.js": "./src/utils/create-browser.js",
     "./src/daemon-factory.js": false,
     "./src/remote/server.js": false,

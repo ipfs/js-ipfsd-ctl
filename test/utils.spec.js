@@ -65,6 +65,7 @@ describe('utils', () => {
   describe('.createRepo', () => {
     let repo = null
     let repoPath = tempDir()
+
     it('should create repo', () => {
       repo = createRepo(repoPath)
       expect(repo).to.exist()

@@ -2,7 +2,8 @@
 
 const createServer = require('./src').createServer
 
-const server = createServer()
+const server = createServer({ port: 25000 })
+
 module.exports = {
   karma: {
     files: [{
