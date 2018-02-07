@@ -5,9 +5,9 @@ const fs = require('fs')
 const hat = require('hat')
 const os = require('os')
 const path = require('path')
-const exec = require('../exec')
+const exec = require('./exec')
 const safeParse = require('safe-json-parse/callback')
-const createRepo = require('./create-repo-nodejs')
+const createRepo = require('./repo/create-nodejs')
 
 const join = path.join
 const isWindows = os.platform() === 'win32'

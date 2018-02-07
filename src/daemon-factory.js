@@ -38,7 +38,7 @@ const defaultConfig = {
  *
  * @namespace DaemonController
  */
-class DaemonController {
+class DaemonFactory {
   /**
    * Create a DaemonController instance
    *
@@ -137,4 +137,4 @@ class DaemonController {
   }
 }
 
-module.exports = DaemonController
+module.exports = DaemonFactory

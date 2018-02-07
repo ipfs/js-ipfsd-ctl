@@ -23,9 +23,9 @@ const run = utils.run
 const GRACE_PERIOD = 10500 // amount of ms to wait before sigkill
 
 /**
- * Controll a go-ipfs or js-ipfs node.
+ * Control a go-ipfs or js-ipfs daemon.
  */
-class Node {
+class Daemon {
   /**
    * Create a new node.
    *
@@ -353,4 +353,4 @@ class Node {
   }
 }
 
-module.exports = Node
+module.exports = Daemon

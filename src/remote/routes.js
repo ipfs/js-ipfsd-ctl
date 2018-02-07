@@ -1,6 +1,6 @@
 'use strict'
 
-const CtrlFactory = require('../daemon-ctrl')
+const DaemonFactory = require('../daemon-factory')
 const hat = require('hat')
 const boom = require('boom')
 const Joi = require('joi')
@@ -25,8 +25,8 @@ module.exports = (server) => {
     path: '/spawn',
     handler: (request, reply) => {
       const payload = request.payload || {}
-      const ctrl = new CtrlFactory({ type: payload.type })
-      ctrl.spawn(payload.opts, (err, ipfsd) => {
+      const df = new DaemonFactory({ type: payload.type })
+      df.spawn(payload.opts, (err, ipfsd) => {
         if (err) {
           return reply(boom.badRequest(err))
         }
@@ -250,6 +250,5 @@ module.exports = (server) => {
         }
       }
     }, config)
-
   })
 }
