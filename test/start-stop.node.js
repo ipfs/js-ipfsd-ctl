@@ -22,9 +22,14 @@ const dfBaseConfig = require('./utils/df-config-nodejs')
 
 const types = ['js', 'go']
 
+const exec = {
+  'js': 'ipfs/src/cli/bin.js',
+  'go': 'go-ipfs-dep/go-ipfs/ipfs'
+}
+
 types.forEach((type) => {
   describe(`${type} daemon`, () => {
-    const dfConfig = Object.assign(dfBaseConfig, { type: type })
+    const dfConfig = Object.assign({}, dfBaseConfig, { type: type })
 
     describe('start and stop', () => {
       if (isWindows) { return }
@@ -57,13 +62,10 @@ types.forEach((type) => {
         expect(ipfsd).to.exist()
       })
 
-      // TODO fix this test
-      it.skip('daemon exec path should match type', () => {
-        let execPath = type === 'js'
-          ? 'ipfs/src/cli/bin.js'
-          : 'go-ipfs-dep/go-ipfs/ipfs'
+      it('daemon exec path should match type', () => {
+        let execPath = exec[type]
 
-        expect(ipfsd.exec).to.have.string(execPath)
+        expect(ipfsd.exec).to.include.string(execPath)
       })
 
       it('daemon should not be running', (done) => {
