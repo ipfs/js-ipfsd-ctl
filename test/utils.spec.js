@@ -19,15 +19,16 @@ const IPFSRepo = require('ipfs-repo')
 describe('utils', () => {
   describe('.flatten', () => {
     it('should flatten', () => {
-      expect(flatten({ a: { b: { c: [1, 2, 3] } } })).to.deep.equal({ 'a.b.c': [1, 2, 3] })
+      expect(flatten({ a: { b: { c: [1, 2, 3] } } }))
+        .to.eql({ 'a.b.c': [1, 2, 3] })
     })
 
     it('should handle nulls', () => {
-      expect(flatten(null)).to.deep.equal({})
+      expect(flatten(null)).to.eql({})
     })
 
     it('should handle undefined', () => {
-      expect(flatten(undefined)).to.deep.equal({})
+      expect(flatten(undefined)).to.eql({})
     })
   })
 
