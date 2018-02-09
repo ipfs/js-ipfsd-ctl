@@ -22,10 +22,11 @@ const tests = [
   { type: 'proc', exec: JSIPFS }
 ]
 
+const jsVersion = require('ipfs/package.json').version
 const versions = {
-  js: `js-ipfs version: ${require('ipfs/package.json').version}`,
+  js: `js-ipfs version: ${jsVersion}`,
   go: `ipfs version ${require('go-ipfs-dep/package.json').version}`,
-  proc: '0.27.7'
+  proc: jsVersion
 }
 
 describe('Spawn options', () => {
