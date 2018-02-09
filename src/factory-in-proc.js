@@ -47,8 +47,11 @@ class FactoryInProc {
       callback = options
       options = {}
     }
-    const IPFS = options.exec
-    new IPFS().version(options, callback)
+    const IPFS = this.exec
+    new IPFS().version((err, _version) => {
+      if (err) { callback(err) }
+      callback(null, _version)
+    })
   }
 
   /**

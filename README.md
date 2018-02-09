@@ -131,6 +131,18 @@ Spawn the daemon
 
 **example:** See [Usage](#usage)
 
+#### Get daemon with `f.version(callback)`
+
+Get the version without spawning a daemon
+
+- `callback` - is a function with the signature `function(err, version)`, where version might be one of the following:
+    - if `type` is 'go' a version string like `ipfs version <version number>`
+    - if `type` is 'js' a version string like `js-ipfs version: <version number>`
+     - if `type` is 'proc' an object with the following properties:
+        - version - the ipfs version
+        - repo - the repo version
+        - commit - the commit hash for this version
+
 ### Remote endpoint - `const server = `IPFSFactory.createServer([options]) `
 
 `IPFSFactory.createServer` starts a IPFSFactory endpoint.

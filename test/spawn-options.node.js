@@ -13,6 +13,7 @@ const isNode = require('detect-node')
 const hat = require('hat')
 const DaemonFactory = require('../src')
 const tempDir = require('../src/utils/tmp-dir')
+const daemonConfig = require('../src/defaults/config')
 const JSIPFS = require('ipfs')
 
 const tests = [
@@ -21,12 +22,15 @@ const tests = [
   { type: 'proc', exec: JSIPFS }
 ]
 
+const versions = {
+  'js': `js-ipfs version: ${require('ipfs/package.json').version}`,
+  'go': `ipfs version ${require('go-ipfs-dep/package.json').version}`,
+  'proc': '0.27.7'
+}
+
 describe('Spawn options', () => {
   tests.forEach((dfOpts) => describe(`${dfOpts.type}`, () => {
-    // TODO pick this from go-ipfs-dep, otherwise test will keep breaking
-    const VERSION_STRING = dfOpts.type === 'js'
-      ? `js-ipfs version: ${require('ipfs/package.json').version}`
-      : 'ipfs version 0.4.13'
+    const VERSION_STRING = versions[dfOpts.type]
     let df
 
     before(() => {
@@ -35,11 +39,9 @@ describe('Spawn options', () => {
 
     // TODO document this method on the readme
     it('df.version', function (done) {
-      // TODO: Why can't this print the version as well??
-      if (!isNode || dfOpts.type === 'proc') { this.skip() }
-
       df.version((err, version) => {
         expect(err).to.not.exist()
+        if (dfOpts.type === 'proc') {version = version.version}
         expect(version).to.be.eql(VERSION_STRING)
         done()
       })
@@ -53,6 +55,7 @@ describe('Spawn options', () => {
         repoPath = tempDir(dfOpts.type === 'js')
         it('df.spawn', (done) => {
           const options = {
+            config: daemonConfig,
             repoPath: repoPath,
             init: false,
             start: false,
@@ -101,7 +104,7 @@ describe('Spawn options', () => {
       describe('spawn from a initialized repo', () => {
         let ipfsd
 
-        // TODO: figure out why inproc IPFS refuses
+        // TODO: figure out why `proc` IPFS refuses
         // to start with a provided repo
         // `Error: Not able to start from state: uninitalized`
         if (dfOpts.type === 'proc') { return }
@@ -110,6 +113,7 @@ describe('Spawn options', () => {
           this.timeout(20 * 1000)
 
           const options = {
+            config: daemonConfig,
             repoPath: repoPath,
             init: false,
             start: false,
