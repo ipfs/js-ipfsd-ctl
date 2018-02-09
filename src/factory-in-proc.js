@@ -18,7 +18,7 @@ class FactoryInProc {
   /**
    * Create a FactoryInProc
    *
-   * @param {Object} opts
+   * @param {Object} options
    *  - `type` string - one of 'go', 'js' or 'proc',
    *  the type of the daemon to spawn
    *  - `exec` string (optional) - the path of the daemon
@@ -48,7 +48,7 @@ class FactoryInProc {
       options = {}
     }
     const IPFS = this.exec
-    new IPFS().version((err, _version) => {
+    new IPFS(options).version((err, _version) => {
       if (err) { callback(err) }
       callback(null, _version)
     })

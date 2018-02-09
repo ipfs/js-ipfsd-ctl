@@ -17,7 +17,7 @@ const defaultOptions = require('./defaults/options')
 class FactoryDaemon {
   /**
    *
-   * @param {Object} opts
+   * @param {Object} options
    *  - `type` string - 'go' or 'js'
    *  - `exec` string (optional) - the path of the daemon executable
    * @return {*}

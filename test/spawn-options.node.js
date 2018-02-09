@@ -23,9 +23,9 @@ const tests = [
 ]
 
 const versions = {
-  'js': `js-ipfs version: ${require('ipfs/package.json').version}`,
-  'go': `ipfs version ${require('go-ipfs-dep/package.json').version}`,
-  'proc': '0.27.7'
+  js: `js-ipfs version: ${require('ipfs/package.json').version}`,
+  go: `ipfs version ${require('go-ipfs-dep/package.json').version}`,
+  proc: '0.27.7'
 }
 
 describe('Spawn options', () => {
@@ -41,7 +41,7 @@ describe('Spawn options', () => {
     it('df.version', function (done) {
       df.version((err, version) => {
         expect(err).to.not.exist()
-        if (dfOpts.type === 'proc') {version = version.version}
+        if (dfOpts.type === 'proc') { version = version.version }
         expect(version).to.be.eql(VERSION_STRING)
         done()
       })

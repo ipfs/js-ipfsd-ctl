@@ -23,8 +23,8 @@ const dfBaseConfig = require('./utils/df-config-nodejs')
 const types = ['js', 'go']
 
 const exec = {
-  'js': 'ipfs/src/cli/bin.js',
-  'go': 'go-ipfs-dep/go-ipfs/ipfs'
+  js: 'ipfs/src/cli/bin.js',
+  go: 'go-ipfs-dep/go-ipfs/ipfs'
 }
 
 types.forEach((type) => {

@@ -13,7 +13,6 @@ const os = require('os')
 const path = require('path')
 const DaemonFactory = require('../src')
 
-const isNode = require('detect-node')
 const isWindows = os.platform() === 'win32'
 
 const tests = [
