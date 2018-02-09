@@ -74,7 +74,7 @@ types.forEach((type) => {
       })
 
       it('.start', function (done) {
-        this.timeout(50 * 1000)
+        this.timeout(20 * 1000)
 
         ipfsd.start((err, ipfs) => {
           expect(err).to.not.exist()

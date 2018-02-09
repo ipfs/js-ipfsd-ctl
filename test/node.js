@@ -4,7 +4,7 @@
 
 require('./exec.node')
 require('./npm-install.node')
-// require('./remote')
+require('./remote')
 
 // TODO: convert all below into .spec (node + browser)
 require('./spawn-options.node')

@@ -14,7 +14,7 @@ const proxyquire = require('proxyquire')
 const superagent = require('superagent')
 const mock = require('superagent-mocker')(superagent)
 
-const ClientFactory = proxyquire('../../src/remote-node/client', {
+const ClientFactory = proxyquire('../../src/remote/daemon-factory-client', {
   superagent: () => {
     return superagent
   }

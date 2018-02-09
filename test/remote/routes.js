@@ -10,68 +10,57 @@ const proxyquire = require('proxyquire')
 const multiaddr = require('multiaddr')
 
 const Hapi = require('hapi')
-const routes = proxyquire('../../src/remote-node/routes', {
-  '../daemon-ctrl': class {
-    spawn (ops, cb) {
-      const node = {}
-      node.apiAddr = multiaddr('/ip4/127.0.0.1/tcp/5001')
-      node.gatewayAddr = multiaddr('/ip4/127.0.0.1/tcp/8080')
-      node.started = false
 
-      node.init = (opts, cb) => {
-        cb(null, node)
-      }
-
-      node.cleanup = (cb) => {
-        cb()
-      }
-
-      node.start = (_, cb) => {
-        node.started = true
-
-        const api = {}
-        api.apiHost = node.apiAddr.nodeAddress().address
-        api.apiPort = node.apiAddr.nodeAddress().port
-
-        api.gatewayHost = node.gatewayAddr.nodeAddress().address
-        api.gatewayPort = node.gatewayAddr.nodeAddress().port
-
-        node.api = api
-        cb(null, api)
-      }
-
-      node.stop = (cb) => {
-        node.killProcess(cb)
-      }
-
-      node.killProcess = (cb) => {
+const routes = proxyquire(
+  '../../src/remote/routes',
+  {
+    '../daemon-factory': class {
+      spawn (ops, cb) {
+        const node = {}
+        node.apiAddr = multiaddr('/ip4/127.0.0.1/tcp/5001')
+        node.gatewayAddr = multiaddr('/ip4/127.0.0.1/tcp/8080')
         node.started = false
-        cb()
-      }
 
-      node.pid = (cb) => {
-        cb(null, 1)
-      }
+        node.init = (opts, cb) => cb(null, node)
+        node.cleanup = (cb) => cb()
 
-      node.getConfig = (key, cb) => {
-        cb(null, { foo: 'bar' })
-      }
+        node.start = (_, cb) => {
+          node.started = true
 
-      node.setConfig = (key, val, cb) => {
-        cb()
-      }
+          const api = {}
+          api.apiHost = node.apiAddr.nodeAddress().address
+          api.apiPort = node.apiAddr.nodeAddress().port
 
-      node.start(null, () => {
-        cb(null, node)
-      })
+          api.gatewayHost = node.gatewayAddr.nodeAddress().address
+          api.gatewayPort = node.gatewayAddr.nodeAddress().port
+
+          node.api = api
+          cb(null, api)
+        }
+
+        node.stop = (cb) => node.killProcess(cb)
+
+        node.killProcess = (cb) => {
+          node.started = false
+          cb()
+        }
+
+        node.pid = (cb) => cb(null, 1)
+        node.getConfig = (key, cb) => cb(null, { foo: 'bar' })
+        node.setConfig = (key, val, cb) => cb()
+
+        node.start(null, () => cb(null, node))
+      }
     }
   }
-})
+)
 
 describe('routes', () => {
   let id
-  const server = new Hapi.Server()
+  let server
+
   before(() => {
+    server = new Hapi.Server()
     server.connection()
     routes(server)
   })

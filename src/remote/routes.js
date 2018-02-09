@@ -26,6 +26,7 @@ module.exports = (server) => {
     handler: (request, reply) => {
       const payload = request.payload || {}
       const df = new DaemonFactory({ type: payload.type })
+
       df.spawn(payload.opts, (err, ipfsd) => {
         if (err) {
           return reply(boom.badRequest(err))
@@ -41,7 +42,7 @@ module.exports = (server) => {
             gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : ''
           }
         }
-        reply({ id, api })
+        reply({ id: id, api: api })
       })
     }
   })
