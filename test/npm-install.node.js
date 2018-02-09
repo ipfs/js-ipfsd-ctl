@@ -53,8 +53,8 @@ types.forEach((type) => {
         expect(err).to.not.exist()
 
         fs.writeFileSync(path.join(npm3Path, appName))
-        delete require.cache[require.resolve('../src/daemon-node.js')]
-        const Daemon = require('../src/daemon-node.js')
+        delete require.cache[require.resolve('../src/ipfsd-daemon.js')]
+        const Daemon = require('../src/ipfsd-daemon.js')
 
         const node = new Daemon({ type })
         expect(node.exec)
@@ -75,8 +75,8 @@ types.forEach((type) => {
         expect(err).to.not.exist()
 
         fs.writeFileSync(path.join(npm2Path, appName))
-        delete require.cache[require.resolve('../src/daemon-node.js')]
-        const Daemon = require('../src/daemon-node.js')
+        delete require.cache[require.resolve('../src/ipfsd-daemon.js')]
+        const Daemon = require('../src/ipfsd-daemon.js')
 
         const node = new Daemon({ type })
         expect(node.exec)

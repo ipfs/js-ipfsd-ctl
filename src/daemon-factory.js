@@ -3,44 +3,21 @@
 const defaults = require('lodash.defaultsdeep')
 const clone = require('lodash.clone')
 const waterfall = require('async/waterfall')
-const join = require('path').join
+const path = require('path')
 
-const Node = require('./daemon-node')
-const ProcNode = require('./in-proc-node')
-
-const defaultOptions = {
-  type: 'go',
-  disposable: true,
-  start: true,
-  init: true
-}
-
-const defaultConfig = {
-  API: {
-    HTTPHeaders: {
-      'Access-Control-Allow-Origin': ['*'],
-      'Access-Control-Allow-Methods': [
-        'PUT',
-        'POST',
-        'GET'
-      ]
-    }
-  },
-  Addresses: {
-    Swarm: [`/ip4/127.0.0.1/tcp/0`],
-    API: `/ip4/127.0.0.1/tcp/0`,
-    Gateway: `/ip4/127.0.0.1/tcp/0`
-  }
-}
+const Daemon = require('./ipfsd-daemon')
+const Node = require('./ipfsd-node')
+const defaultConfig = require('./defaults/config')
+const defaultOptions = require('./defaults/options')
 
 /**
- * Control go-ipfs nodes directly from JavaScript.
+ * Spawn IPFS Daemons (either JS or Go) and/or JSIPFS instances (in process) directly from JavaScript
  *
- * @namespace DaemonController
+ * @namespace DaemonFactory
  */
 class DaemonFactory {
   /**
-   * Create a DaemonController instance
+   * Create a DaemonFactory
    *
    * @param {Object} opts
    *  - `type` string - one of 'go', 'js' or 'proc',
@@ -50,25 +27,31 @@ class DaemonFactory {
    *
    * @return {*}
    */
-  constructor (opts) {
-    opts = opts || {}
-    this.type = opts.type || 'go'
-    this.exec = opts.exec
+  constructor (options) {
+    options = Object.assign({ type: 'go' }, options)
+    this.type = options.type
+    this.exec = options.exec
   }
 
   /**
    * Get the version of the currently used go-ipfs binary.
    *
    * @memberof IpfsDaemonController
-   * @param {Object} [opts={}]
+   * @param {Object} [options={}]
    * @param {function(Error, string)} callback
    * @returns {undefined}
    */
-  version (opts, callback) {
-    opts = opts || {}
-    opts.type = this.type
-    const node = new Node(opts)
-    node.version(callback)
+  version (options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+    }
+    options = Object.assign({}, options, { type: this.type })
+    // TODO: (1) this should check to see if it is looking for Go or JS
+    // TODO: (2) This spawns a whole daemon just to get his version? There is
+    // a way to get the version while the daemon is offline...
+    const d = new Daemon(options)
+    d.version(callback)
   }
 
   /**
@@ -103,8 +86,11 @@ class DaemonFactory {
       options.init = false
       options.start = false
 
-      const defaultRepo = join(process.env.HOME || process.env.USERPROFILE,
-        options.isJs ? '.jsipfs' : '.ipfs')
+      const defaultRepo = path.join(
+        process.env.HOME || process.env.USERPROFILE,
+        options.isJs ? '.jsipfs' : '.ipfs'
+      )
+
       options.repoPath = options.repoPath || (process.env.IPFS_PATH || defaultRepo)
       options.config = defaults({}, options.config, nonDisposableConfig)
     } else {
@@ -119,18 +105,20 @@ class DaemonFactory {
         return callback(new Error(`'type' proc requires 'exec' to be a coderef`))
       }
 
-      node = new ProcNode(options)
-    } else {
       node = new Node(options)
+    } else {
+      node = new Daemon(options)
     }
 
     waterfall([
-      (cb) => options.init ? node.init(cb) : cb(null, node),
-      (node, cb) => options.start ? node.start(options.args, cb) : cb(null, null)
+      (cb) => options.init
+        ? node.init(cb)
+        : cb(null, node),
+      (node, cb) => options.start
+        ? node.start(options.args, cb)
+        : cb()
     ], (err) => {
-      if (err) {
-        return callback(err)
-      }
+      if (err) { return callback(err) }
 
       callback(null, node)
     })

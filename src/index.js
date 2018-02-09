@@ -14,11 +14,9 @@ exports.create = (opts) => {
 
   if (options.type === 'proc') { options.remote = false }
 
-  if (options.remote) {
-    return new RemoteDaemonFactory(options)
-  } else {
-    return new LocalDaemonFactory(options)
-  }
+  return options.remote
+    ? new RemoteDaemonFactory(options)
+    : new LocalDaemonFactory(options)
 }
 
 exports.createServer = (port) => {

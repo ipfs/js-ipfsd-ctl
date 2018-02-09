@@ -7,7 +7,7 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-describe('should add and retrieve content', function () {
+describe('should add and retrieve content', () => {
   const blorb = Buffer.from('blorb')
 
   let store

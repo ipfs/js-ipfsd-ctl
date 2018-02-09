@@ -9,11 +9,10 @@ chai.use(dirtyChai)
 
 const fs = require('fs')
 const path = require('path')
-const utils = require('../src/utils')
-const flatten = utils.flatten
-const tempDir = utils.tempDir
-const findIpfsExecutable = utils.findIpfsExecutable
-const createRepo = utils.createRepo
+const flatten = require('../src/utils/flatten')
+const tempDir = require('../src/utils/tmp-dir')
+const findIpfsExecutable = require('../src/utils/find-ipfs-executable')
+const createRepo = require('../src/utils/repo/create-nodejs')
 
 const IPFSRepo = require('ipfs-repo')
 

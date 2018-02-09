@@ -2,9 +2,11 @@
 
 'use strict'
 
+require('./exec.node')
 require('./npm-install.node')
-// require('./daemon')
-// require('./exec')
+require('./spawn-options.node')
+require('./add-retrieve.node')
+// require('./api.node')
 // require('./utils')
 // require('./remote/routes')
 // require('./remote/client')
