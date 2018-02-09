@@ -17,17 +17,20 @@
     "coverage-publish": "aegir coverage -u"
   },
   "browser": {
+    "./test/utils/df-config-nodejs.js": "./test/utils/df-config-browser.js",
     "hapi": false,
     "glob": false,
     "fs": false,
     "joi": false,
     "stream": "readable-stream",
     "http": "stream-http",
-    "./test/utils/df-config-nodejs.js": "./test/utils/df-config-browser.js",
-    "./src/utils/repo/create-nodejs.js": "./src/utils/repo/create-browser.js",
-    "./src/daemon-factory.js": false,
+    "./src/factory-daemon.js": false,
+    "./src/ipfsd-daemon.js": false,
     "./src/remote/server.js": false,
-    "./src/utils/exec.js": false
+    "./src/remote/routes.js": false,
+    "./src/utils/repo/create-nodejs.js": "./src/utils/repo/create-browser.js",
+    "./src/utils/exec.js": false,
+    "./src/utils/run.js": false
   },
   "engines": {
     "node": ">=6.0.0",

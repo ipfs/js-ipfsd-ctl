@@ -5,8 +5,10 @@ const routes = require('./routes')
 
 class Server {
   constructor (options) {
+    options = options || { port: 9999 }
+
     this.server = null
-    this.port = typeof options.port === 'undefined' ? 9999 : options.port
+    this.port = options.port
   }
 
   start (cb) {

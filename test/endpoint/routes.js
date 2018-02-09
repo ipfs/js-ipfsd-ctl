@@ -12,9 +12,9 @@ const multiaddr = require('multiaddr')
 const Hapi = require('hapi')
 
 const routes = proxyquire(
-  '../../src/remote/routes',
+  '../../src/endpoint/routes',
   {
-    '../daemon-factory': class {
+    '../factory-daemon': class {
       spawn (ops, cb) {
         const node = {}
         node.apiAddr = multiaddr('/ip4/127.0.0.1/tcp/5001')

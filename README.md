@@ -38,10 +38,10 @@ IPFS daemons are already easy to start and stop, but this module is here to do i
 // Start a disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const DaemonFactory = require('ipfsd-ctl')
-const df = DaemonFactory.create()
+const IPFSFactory = require('ipfsd-ctl')
+const f = IPFSFactory.create()
 
-df.spawn(function (err, ipfsd) {
+f.spawn(function (err, ipfsd) {
   if (err) { throw err }
   
   ipfsd.api.id(function (err, id) {
@@ -59,16 +59,16 @@ df.spawn(function (err, ipfsd) {
 // Start a remote disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const DaemonFactory = require('ipfsd-ctl')
+const IPFSFactory = require('ipfsd-ctl')
 
 const port = 9999
-const server = DaemonFactory.createServer(port)
-const df = DaemonFactory.create({ remote: true, port: port })
+const server = IPFSFactory.createServer(port)
+const f = IPFSFactory.create({ remote: true, port: port })
 
 server.start((err) => {
   if (err) { throw err }
 
-  df.spawn((err, ipfsd) => {
+  f.spawn((err, ipfsd) => {
     if (err) { throw err }
 
     ipfsd.api.id(function (err, id) {
@@ -97,9 +97,9 @@ Install one or both of the following modules:
 
 ## API
 
-### `DaemonFactory` - `const df = DaemonFactory.create([options])`
+### `IPFSFactory` - `const f = IPFSFactory.create([options])`
 
-`DaemonFactory.create([options])` returns an object that will expose the `df.spawn` method
+`IPFSFactory.create([options])` returns an object that will expose the `df.spawn` method
 
 - `options` - optional object with:
   - `remote` bool - use remote endpoint to spawn the nodes.
@@ -112,7 +112,7 @@ Install one or both of the following modules:
 
 **example:** See [Usage](#usage)
 
-#### Spawn a daemon with `df.spawn([options], callback)`
+#### Spawn a daemon with `f.spawn([options], callback)`
 
 Spawn the daemon
 
@@ -131,15 +131,15 @@ Spawn the daemon
 
 **example:** See [Usage](#usage)
 
-### Remote endpoint - `const server = `DaemonFactory.createServer([options]) `
+### Remote endpoint - `const server = `IPFSFactory.createServer([options]) `
 
-`DaemonFactory.createServer` starts a DaemonFactory endpoint.
+`IPFSFactory.createServer` starts a IPFSFactory endpoint.
 
 **example:** 
 ```
-const DaemonFactory = require('ipfsd-ctl')
+const IPFSFactory = require('ipfsd-ctl')
 
-const server = DaemonFactory.createServer({ port: 12345 })
+const server = IPFSFactory.createServer({ port: 12345 })
 
 server.start((err) => {
   if (err) { throw err }
@@ -262,6 +262,41 @@ electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep
 ```
 
 See [electron asar example](https://github.com/ipfs/js-ipfsd-ctl/tree/master/examples/electron-asar/)
+
+## Development
+
+Project structure:
+
+```
+src
+├── defaults
+│   ├── config.json
+│   └── options.json
+├── endpoint                    # endpoint to support remote spawning
+│   ├── routes.js
+│   └── server.js
+├── factory-client.js           # IPFS Factories: client (remote), daemon (go or js) and in-proc (js)
+├── factory-daemon.js
+├── factory-in-proc.js
+├── index.js
+├── ipfsd-client.js             # ipfsd (Daemon Controller): client (remote), daemon (go or js), in-proc (js)
+├── ipfsd-daemon.js
+├── ipfsd-in-proc.js
+└── utils                       # Utils used by the Factories and Daemon Controllers
+    ├── configure-node.js
+    ├── exec.js
+    ├── find-ipfs-executable.js
+    ├── flatten.js
+    ├── parse-config.js
+    ├── repo
+    │   ├── create-browser.js
+    │   └── create-nodejs.js
+    ├── run.js
+    ├── set-config-value.js
+    └── tmp-dir.js
+
+4 directories, 21 files
+```
 
 ## Contribute
 

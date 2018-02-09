@@ -6,28 +6,26 @@ const waterfall = require('async/waterfall')
 const path = require('path')
 
 const Daemon = require('./ipfsd-daemon')
-const Node = require('./ipfsd-node')
 const defaultConfig = require('./defaults/config')
 const defaultOptions = require('./defaults/options')
 
 /**
- * Spawn IPFS Daemons (either JS or Go) and/or JSIPFS instances (in process) directly from JavaScript
+ * Spawn IPFS Daemons (either JS or Go)
  *
- * @namespace DaemonFactory
+ * @namespace FactoryDaemon
  */
-class DaemonFactory {
+class FactoryDaemon {
   /**
-   * Create a DaemonFactory
    *
    * @param {Object} opts
-   *  - `type` string - one of 'go', 'js' or 'proc',
-   *  the type of the daemon to spawn
-   *  - `exec` string (optional) - the path of the daemon
-   *  executable or IPFS class in the case of `proc`
-   *
+   *  - `type` string - 'go' or 'js'
+   *  - `exec` string (optional) - the path of the daemon executable
    * @return {*}
    */
   constructor (options) {
+    if (options && options.type === 'proc') {
+      throw new Error('This Factory does not know how to spawn in proc nodes')
+    }
     options = Object.assign({ type: 'go' }, options)
     this.type = options.type
     this.exec = options.exec
@@ -36,7 +34,7 @@ class DaemonFactory {
   /**
    * Get the version of the currently used go-ipfs binary.
    *
-   * @memberof IpfsDaemonController
+   * @memberof FactoryDaemon
    * @param {Object} [options={}]
    * @param {function(Error, string)} callback
    * @returns {undefined}
@@ -100,15 +98,8 @@ class DaemonFactory {
     let node
     options.type = this.type
     options.exec = options.exec || this.exec
-    if (this.type === 'proc') {
-      if (typeof options.exec !== 'function') {
-        return callback(new Error(`'type' proc requires 'exec' to be a coderef`))
-      }
 
-      node = new Node(options)
-    } else {
-      node = new Daemon(options)
-    }
+    node = new Daemon(options)
 
     waterfall([
       (cb) => options.init
@@ -125,4 +116,4 @@ class DaemonFactory {
   }
 }
 
-module.exports = DaemonFactory
+module.exports = FactoryDaemon

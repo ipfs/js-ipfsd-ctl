@@ -6,7 +6,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
-const DaemonFactory = require('../src')
+const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
 
 const tests = [
@@ -20,11 +20,11 @@ describe('data can be put and fetched', () => {
     let ipfsd
 
     before(function (done) {
-      this.timeout(10 * 1000)
+      this.timeout(20 * 1000)
 
-      const df = DaemonFactory.create(dfOpts)
+      const f = IPFSFactory.create(dfOpts)
 
-      df.spawn((err, _ipfsd) => {
+      f.spawn((err, _ipfsd) => {
         expect(err).to.not.exist()
         expect(_ipfsd).to.exist()
         expect(_ipfsd.api).to.exist()

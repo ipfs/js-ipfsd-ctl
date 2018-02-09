@@ -1,9 +1,12 @@
 'use strict'
 
 const request = require('superagent')
-const DaemonClient = require('./daemon-client')
+const DaemonClient = require('./ipfsd-client')
 
-class DaemonFactoryClient {
+/*
+ * Exposes the same Factory API but uses a remote endpoint to create the Daemons/Nodes
+ */
+class FactoryClient {
   constructor (opts) {
     opts = opts || {}
     if (!opts.host) {
@@ -55,4 +58,4 @@ class DaemonFactoryClient {
   }
 }
 
-module.exports = DaemonFactoryClient
+module.exports = FactoryClient

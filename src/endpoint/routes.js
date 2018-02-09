@@ -1,10 +1,10 @@
 'use strict'
 
-const DaemonFactory = require('../daemon-factory')
 const hat = require('hat')
 const boom = require('boom')
 const Joi = require('joi')
 const defaults = require('lodash.defaultsdeep')
+const FactoryDaemon = require('../factory-daemon')
 
 const config = {
   validate: {
@@ -25,9 +25,11 @@ module.exports = (server) => {
     path: '/spawn',
     handler: (request, reply) => {
       const payload = request.payload || {}
-      const df = new DaemonFactory({ type: payload.type })
 
-      df.spawn(payload.opts, (err, ipfsd) => {
+      // TODO: use the ../src/index.js so that the right Factory is picked
+      const f = new FactoryDaemon({ type: payload.type })
+
+      f.spawn(payload.opts, (err, ipfsd) => {
         if (err) {
           return reply(boom.badRequest(err))
         }

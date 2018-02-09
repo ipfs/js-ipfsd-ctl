@@ -6,7 +6,7 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const Server = require('../../src/remote/server')
+const Server = require('../../src/endpoint/server')
 const portUsed = require('detect-port')
 
 describe('server', () => {

@@ -16,7 +16,7 @@ const isrunning = require('is-running')
 const isWindows = os.platform() === 'win32'
 const findIpfsExecutable = require('../src/utils/find-ipfs-executable')
 const tempDir = require('../src/utils/tmp-dir')
-const DaemonFactory = require('../src')
+const IPFSFactory = require('../src')
 
 const dfBaseConfig = require('./utils/df-config-nodejs')
 
@@ -37,7 +37,7 @@ types.forEach((type) => {
 
       before(function (done) {
         this.timeout(20 * 1000)
-        const df = DaemonFactory.create(dfConfig)
+        const df = IPFSFactory.create(dfConfig)
 
         df.spawn({
           init: true,
