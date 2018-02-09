@@ -45,7 +45,7 @@ describe('ipfsd.api for Daemons', () => {
       // TODO: fix on Windows
       // - https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
       // - https://github.com/ipfs/js-ipfs-api/issues/408
-      if (isWindows || !isNode) { return this.skip() }
+      if (isWindows) { return this.skip() }
 
       let ipfsd
       let api
@@ -105,7 +105,7 @@ describe('ipfsd.api for Daemons', () => {
     })
 
     it('check if API and Gateway addrs are correct', function (done) {
-      this.timeout(20 * 1000)
+      this.timeout(30 * 1000)
 
       df.spawn({ config: config }, (err, _ipfsd) => {
         expect(err).to.not.exist()

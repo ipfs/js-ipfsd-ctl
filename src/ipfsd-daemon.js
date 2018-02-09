@@ -12,6 +12,8 @@ const flatten = require('./utils/flatten')
 const debug = require('debug')
 const log = debug('ipfsd-ctl:daemon')
 
+const safeParse = require('safe-json-parse/callback')
+
 const parseConfig = require('./utils/parse-config')
 const tmpDir = require('./utils/tmp-dir')
 const findIpfsExecutable = require('./utils/find-ipfs-executable')
@@ -327,8 +329,7 @@ class Daemon {
       ),
       (config, cb) => {
         if (!key) {
-          // TODO: this function didn't exist on the original codebase
-          // return tryJsonParse(config, cb)
+          return safeParse(config, cb)
         }
         cb(null, config.trim())
       }

@@ -33,16 +33,8 @@ describe('Spawn options', () => {
       df = DaemonFactory.create(dfOpts)
     })
 
-    // TODO: why does ipfsd-ctl polute the env variables?
-    // clean up IPFS env
-    afterEach(() => Object.keys(process.env).forEach((key) => {
-      if (key.includes('IPFS')) {
-        delete process.env[key]
-      }
-    }))
-
     // TODO document this method on the readme
-    it('df.version', (done) => {
+    it('df.version', function (done) {
       // TODO: Why can't this print the version as well??
       if (!isNode || dfOpts.type === 'proc') { this.skip() }
 
@@ -53,92 +45,103 @@ describe('Spawn options', () => {
       })
     })
 
-    describe('init and start manually', function () {
-      let ipfsd
+    describe('init and start', () => {
+      let repoPath
+      describe('init and start manually', function () {
+        let ipfsd
 
-      it('df.spawn', (done) => {
-        const options = {
-          init: false,
-          start: false,
-          disposable: true
-        }
+        repoPath = tempDir(dfOpts.type === 'js')
+        it('df.spawn', (done) => {
+          const options = {
+            repoPath: repoPath,
+            init: false,
+            start: false,
+            disposable: false
+          }
 
-        df.spawn(options, (err, _ipfsd) => {
-          expect(err).to.not.exist()
-          expect(_ipfsd).to.exist()
-          expect(_ipfsd.api).to.not.exist()
+          df.spawn(options, (err, _ipfsd) => {
+            expect(err).to.not.exist()
+            expect(_ipfsd).to.exist()
+            expect(_ipfsd.api).to.not.exist()
 
-          ipfsd = _ipfsd
-          done()
+            ipfsd = _ipfsd
+            repoPath = _ipfsd.path
+            done()
+          })
+        })
+
+        it('ipfsd.init', function (done) {
+          this.timeout(30 * 1000)
+
+          ipfsd.init((err) => {
+            expect(err).to.not.exist()
+            expect(ipfsd.initialized).to.be.ok()
+            done()
+          })
+        })
+
+        it('ipfsd.start', function (done) {
+          this.timeout(10 * 1000)
+
+          ipfsd.start((err, api) => {
+            expect(err).to.not.exist()
+            expect(api).to.exist()
+            expect(api.id).to.exist()
+            done()
+          })
+        })
+
+        it('ipfsd.stop', function (done) {
+          this.timeout(10 * 1000)
+
+          ipfsd.stop(done)
         })
       })
 
-      it('ipfsd.init', function (done) {
-        this.timeout(10 * 1000)
+      describe('spawn from a initialized repo', () => {
+        let ipfsd
 
-        ipfsd.init((err) => {
-          expect(err).to.not.exist()
-          expect(ipfsd.initialized).to.be.ok()
-          done()
+        // TODO: figure out why inproc IPFS refuses
+        // to start with a provided repo
+        // `Error: Not able to start from state: uninitalized`
+        if (dfOpts.type === 'proc') { return }
+
+        it('df.spawn', function (done) {
+          this.timeout(20 * 1000)
+
+          const options = {
+            repoPath: repoPath,
+            init: false,
+            start: false,
+            disposable: false
+          }
+
+          df.spawn(options, (err, _ipfsd) => {
+            expect(err).to.not.exist()
+            expect(_ipfsd).to.exist()
+            expect(_ipfsd.api).to.not.exist()
+
+            ipfsd = _ipfsd
+            done()
+          })
         })
-      })
 
-      it('ipfsd.start', function (done) {
-        this.timeout(10 * 1000)
+        it('start node', function (done) {
+          this.timeout(20 * 1000)
 
-        ipfsd.start((err, api) => {
-          expect(err).to.not.exist()
-          expect(api).to.exist()
-          expect(api.id).to.exist()
-          done()
+          ipfsd.start((err, api) => {
+            expect(err).to.not.exist()
+            expect(api).to.exist()
+            expect(api.id).to.exist()
+            done()
+          })
         })
-      })
 
-      it('ipfsd.stop', function (done) {
-        this.timeout(10 * 1000)
+        it('ipfsd.stop', function (done) {
+          this.timeout(20 * 1000)
 
-        ipfsd.stop(done)
-      })
-    })
-
-    describe('spawn from a initialized repo', () => {
-      let ipfsd
-
-      // TODO this test is not making sense. If the repo is initialized, why
-      // are we passing disposable: true??
-      it('df.spawn', function (done) {
-        this.timeout(20 * 1000)
-
-        const options = {
-          start: false,
-          disposable: true
-        }
-
-        df.spawn(options, (err, _ipfsd) => {
-          expect(err).to.not.exist()
-          expect(_ipfsd).to.exist()
-          expect(_ipfsd.api).to.not.exist()
-
-          ipfsd = _ipfsd
-          done()
+          ipfsd.stop(done)
         })
-      })
-
-      it('start node', function (done) {
-        this.timeout(20 * 1000)
-
-        ipfsd.start((err, api) => {
-          expect(err).to.not.exist()
-          expect(api).to.exist()
-          expect(api.id).to.exist()
-          done()
-        })
-      })
-
-      it('ipfsd.stop', function (done) {
-        this.timeout(20 * 1000)
-
-        ipfsd.stop(done)
       })
     })
 
@@ -195,7 +198,7 @@ describe('Spawn options', () => {
             expect(err).to.not.exist()
 
             // TODO why would this not be always the same type?
-            if (typeof res === 'string') {
+            if (typeof config === 'string') {
               config = JSON.parse(config)
             }
             expect(config).to.eql([swarmAddr1])
@@ -218,8 +221,7 @@ describe('Spawn options', () => {
       it('allows passing custom repo path to spawn', function (done) {
         this.timeout(50 * 1000)
 
-        const repoPath = tempDir(dfOpts)
-
+        const repoPath = tempDir(dfOpts.type === 'js')
         const config = {
           Addresses: {
             Swarm: [
@@ -232,6 +234,9 @@ describe('Spawn options', () => {
         }
 
         const options = {
+          disposable: false,
+          init: false,
+          start: false,
           repoPath: repoPath,
           config: config
         }
@@ -265,7 +270,9 @@ describe('Spawn options', () => {
 
       let ipfsd
 
-      it('spawn with pubsub', (done) => {
+      it('spawn with pubsub', function (done) {
+        this.timeout(30 * 1000)
+
         const options = {
           args: ['--enable-pubsub-experiment']
         }
@@ -295,7 +302,8 @@ describe('Spawn options', () => {
         })
       })
 
-      it('ipfsd.stop', (done) => {
+      it('ipfsd.stop', function (done) {
+        this.timeout(10 * 1000)
         ipfsd.stop(done)
       })
     })

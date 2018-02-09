@@ -130,12 +130,12 @@ types.forEach((type) => {
         expect(fs.existsSync(repoPath)).to.not.be.ok()
       })
 
-      it('.start with flags', (done) => {
+      it('.start with flags', function (done) {
         // TODO js-ipfs doesn't fail on unrecognized args. Think what should be
         // the desired behaviour
         if (type === 'js') { return this.skip() }
 
-        const df = DaemonFactory.create(dfConfig)
+        const df = IPFSFactory.create(dfConfig)
 
         df.spawn({ start: false }, (err, ipfsd) => {
           expect(err).to.not.exist()
@@ -157,7 +157,7 @@ types.forEach((type) => {
       before(function (done) {
         this.timeout(20 * 1000)
 
-        const df = DaemonFactory.create(dfConfig)
+        const df = IPFSFactory.create(dfConfig)
         exec = findIpfsExecutable(type)
 
         df.spawn({ exec }, (err, daemon) => {
@@ -183,7 +183,7 @@ types.forEach((type) => {
         this.timeout(20 * 1000)
 
         before((done) => {
-          const df = DaemonFactory.create(dfConfig)
+          const df = IPFSFactory.create(dfConfig)
           const exec = path.join('invalid', 'exec', 'ipfs')
 
           df.spawn({ init: false, start: false, exec: exec }, (err, daemon) => {
@@ -211,7 +211,7 @@ types.forEach((type) => {
       before(function (done) {
         this.timeout(20 * 1000)
 
-        const df = DaemonFactory.create(dfConfig)
+        const df = IPFSFactory.create(dfConfig)
 
         async.series([
           (cb) => df.spawn({

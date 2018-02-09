@@ -47,7 +47,8 @@ class FactoryInProc {
       callback = options
       options = {}
     }
-    // TODO create this method
+    const IPFS = options.exec
+    new IPFS().version(options, callback)
   }
 
   /**
