@@ -131,7 +131,7 @@ Spawn the daemon
 
 **example:** See [Usage](#usage)
 
-#### Get daemon with `f.version(callback)`
+#### Get daemon version with `f.version(callback)`
 
 Get the version without spawning a daemon
 
