@@ -8,6 +8,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const fs = require('fs')
+const isNode = require('detect-node')
 const path = require('path')
 const flatten = require('../src/utils/flatten')
 const tempDir = require('../src/utils/tmp-dir')
@@ -46,39 +47,41 @@ describe('utils', () => {
     })
   })
 
-  describe('.findIpfsExecutable', () => {
-    it('should find go executable', () => {
-      const execPath = findIpfsExecutable('go', __dirname)
-      expect(execPath).to.exist()
-      expect(execPath).to.include(path.join('go-ipfs-dep', 'go-ipfs', 'ipfs'))
-      expect(fs.existsSync(execPath)).to.be.ok()
-    })
+  if (isNode) {
+    describe('.findIpfsExecutable', () => {
+      it('should find go executable', () => {
+        const execPath = findIpfsExecutable('go', __dirname)
+        expect(execPath).to.exist()
+        expect(execPath).to.include(path.join('go-ipfs-dep', 'go-ipfs', 'ipfs'))
+        expect(fs.existsSync(execPath)).to.be.ok()
+      })
 
-    it('should find go executable', () => {
-      const execPath = findIpfsExecutable('js', __dirname)
-      expect(execPath).to.exist()
-      expect(execPath).to.include(path.join('ipfs', 'src', 'cli', 'bin.js'))
-      expect(fs.existsSync(execPath)).to.be.ok()
-    })
-  })
-
-  describe('.createRepo', () => {
-    let repo = null
-    let repoPath = tempDir()
-
-    it('should create repo', () => {
-      repo = createRepo(repoPath)
-      expect(repo).to.exist()
-      expect(repo).to.be.instanceOf(IPFSRepo)
-      expect(fs.existsSync(repoPath)).to.be.ok()
-    })
-
-    it('should cleanup repo', (done) => {
-      repo.teardown((err) => {
-        expect(err).to.not.exist()
-        expect(!fs.existsSync(repoPath)).to.be.ok()
-        done()
+      it('should find go executable', () => {
+        const execPath = findIpfsExecutable('js', __dirname)
+        expect(execPath).to.exist()
+        expect(execPath).to.include(path.join('ipfs', 'src', 'cli', 'bin.js'))
+        expect(fs.existsSync(execPath)).to.be.ok()
       })
     })
-  })
+
+    describe('.createRepo', () => {
+      let repo = null
+      let repoPath = tempDir()
+
+      it('should create repo', () => {
+        repo = createRepo(repoPath)
+        expect(repo).to.exist()
+        expect(repo).to.be.instanceOf(IPFSRepo)
+        expect(fs.existsSync(repoPath)).to.be.ok()
+      })
+
+      it('should cleanup repo', (done) => {
+        repo.teardown((err) => {
+          expect(err).to.not.exist()
+          expect(!fs.existsSync(repoPath)).to.be.ok()
+          done()
+        })
+      })
+    })
+  }
 })

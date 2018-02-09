@@ -19,6 +19,9 @@ exports.create = (opts) => {
     : new LocalDaemonFactory(options)
 }
 
-exports.createServer = (port) => {
-  return new RemoteServer(port)
+exports.createServer = (options) => {
+  if (typeof options === 'number') {
+    options = { port: options }
+  }
+  return new RemoteServer(options)
 }
