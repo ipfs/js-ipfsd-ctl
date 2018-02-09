@@ -129,6 +129,25 @@ types.forEach((type) => {
       it('repo should cleaned up', () => {
         expect(fs.existsSync(repoPath)).to.not.be.ok()
       })
+
+      it('.start with flags', (done) => {
+        // TODO js-ipfs doesn't fail on unrecognized args. Think what should be
+        // the desired behaviour
+        if (type === 'js') { return this.skip() }
+
+        const df = DaemonFactory.create(dfConfig)
+
+        df.spawn({ start: false }, (err, ipfsd) => {
+          expect(err).to.not.exist()
+          ipfsd.start(['--should-not-exist'], (err) => {
+            expect(err).to.exist()
+            expect(err.message)
+              .to.match(/Unrecognized option 'should-not-exist'/)
+
+            done()
+          })
+        })
+      })
     })
 
     describe('start and stop with custom exec path', () => {
