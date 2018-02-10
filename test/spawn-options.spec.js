@@ -53,11 +53,16 @@ describe('Spawn options', () => {
       let repoPath
 
       describe('init and start manually', () => {
-        // TODO fix these for the browser
-        if (!isNode) { return }
         let ipfsd
 
-        repoPath = tempDir(fOpts.type === 'js')
+        before((done) => {
+          f.tmpDir(fOpts.type, (err, tmpDir) => {
+            expect(err).to.not.exist()
+            repoPath = tmpDir
+            done()
+          })
+        })
+
         it('f.spawn', (done) => {
           const options = {
             config: daemonConfig,
@@ -73,7 +78,7 @@ describe('Spawn options', () => {
             expect(_ipfsd.api).to.not.exist()
 
             ipfsd = _ipfsd
-            repoPath = _ipfsd.path
+            repoPath = _ipfsd.repoPath
             done()
           })
         })

@@ -34,6 +34,27 @@ class FactoryClient {
   }
 
   /**
+   * Utility method to get a temporary directory
+   * useful in browsers to be able to generate temp
+   * repos manually
+   *
+   * @param {String} type - the type of the node
+   * @param {function(Error, string)} callback
+   * @returns {undefined}
+   */
+  tmpDir (type, callback) {
+    request
+      .get(`${this.baseUrl}/util/tmp-dir`)
+      .end((err, res) => {
+        if (err) {
+          return callback(new Error(err.response ? err.response.body.message : err))
+        }
+
+        callback(null, res.body.tmpDir)
+      })
+  }
+
+  /**
    * Get the version of the IPFS Daemon.
    *
    * @memberof FactoryDaemon

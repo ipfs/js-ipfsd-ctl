@@ -4,10 +4,13 @@ const defaults = require('lodash.defaultsdeep')
 const clone = require('lodash.clone')
 const waterfall = require('async/waterfall')
 const path = require('path')
+const tmpDir = require('./utils/tmp-dir')
 
 const Node = require('./ipfsd-in-proc')
 const defaultConfig = require('./defaults/config')
 const defaultOptions = require('./defaults/options')
+
+// TODO extract common functionality into base class
 
 /**
  * Spawn JSIPFS instances (aka in process nodes)
@@ -32,6 +35,21 @@ class FactoryInProc {
     }
     this.type = options.type
     this.exec = options.exec
+  }
+
+  /**
+   * Utility method to get a temporary directory
+   * useful in browsers to be able to generate temp
+   * repos manually
+   *
+   * *Here for completeness*
+   *
+   * @param {string} type - the type of the node
+   * @param {function(Error, string)} callback
+   * @returns {undefined}
+   */
+  tmpDir (type, callback) {
+    callback(null, tmpDir(type === 'js'))
   }
 
   /**

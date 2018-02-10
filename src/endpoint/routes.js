@@ -5,6 +5,7 @@ const boom = require('boom')
 const Joi = require('joi')
 const defaults = require('lodash.defaultsdeep')
 const FactoryDaemon = require('../factory-daemon')
+const tmpDir = require('../utils/tmp-dir')
 
 const config = {
   validate: {
@@ -16,6 +17,15 @@ const config = {
 
 let nodes = {}
 module.exports = (server) => {
+  server.route({
+    method: 'GET',
+    path: '/util/tmp-dir',
+    handler: (request, reply) => {
+      const type = request.query.type || 'go'
+      reply({ tmpDir: tmpDir(type === 'js') })
+    }
+  })
+
   server.route({
     method: 'GET',
     path: '/version',
