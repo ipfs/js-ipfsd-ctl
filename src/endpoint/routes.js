@@ -16,6 +16,23 @@ const config = {
 
 let nodes = {}
 module.exports = (server) => {
+  server.route({
+    method: 'GET',
+    path: '/version',
+    handler: (request, reply) => {
+      const type = request.query.type || 'go'
+
+      // TODO: use the ../src/index.js so that the right Factory is picked
+      const f = new FactoryDaemon({ type: type })
+      f.version((err, version) => {
+        if (err) {
+          return reply(boom.badRequest(err))
+        }
+        reply({ version: version })
+      })
+    }
+  })
+
   /**
    * Spawn an IPFS node
    * The repo is created in a temporary location and cleaned up on process exit.

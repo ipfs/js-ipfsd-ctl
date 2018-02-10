@@ -26,7 +26,7 @@ class FactoryDaemon {
     if (options && options.type === 'proc') {
       throw new Error('This Factory does not know how to spawn in proc nodes')
     }
-    options = Object.assign({ type: 'go' }, options)
+    options = Object.assign({}, { type: 'go' }, options)
     this.type = options.type
     this.exec = options.exec
   }
@@ -44,7 +44,7 @@ class FactoryDaemon {
       callback = options
       options = {}
     }
-    options = Object.assign({}, options, { type: this.type })
+    options = Object.assign({}, options, { type: this.type, exec: this.exec })
     // TODO: (1) this should check to see if it is looking for Go or JS
     // TODO: (2) This spawns a whole daemon just to get his version? There is
     // a way to get the version while the daemon is offline...

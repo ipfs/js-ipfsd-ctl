@@ -40,10 +40,8 @@ describe('Spawn options', () => {
 
     // TODO document this method on the readme
     it('f.version', function (done) {
-      // TODO needs to be implemented in factory-client
-      if (!isNode) { return this.skip() }
-
-      f.version((err, version) => {
+      this.timeout(30 * 1000)
+      f.version({ type: fOpts.type }, (err, version) => {
         expect(err).to.not.exist()
         if (fOpts.type === 'proc') { version = version.version }
         expect(version).to.be.eql(VERSION_STRING)

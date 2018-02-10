@@ -44,9 +44,20 @@ class FactoryClient {
   version (options, callback) {
     if (typeof options === 'function') {
       callback = options
-      options = {}
+      options = undefined
     }
-    // TODO implement this method
+
+    options = options || { type: this.type }
+    request
+      .get(`${this.baseUrl}/version`)
+      .query(options)
+      .end((err, res) => {
+        if (err) {
+          return callback(new Error(err.response ? err.response.body.message : err))
+        }
+
+        callback(null, res.body.version)
+      })
   }
 
   spawn (opts, callback) {

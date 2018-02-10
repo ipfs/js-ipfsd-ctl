@@ -38,7 +38,6 @@ describe('data can be put and fetched', () => {
 
     after(function (done) {
       this.timeout(20 * 1000)
-
       ipfsd.stop(done)
     })
 

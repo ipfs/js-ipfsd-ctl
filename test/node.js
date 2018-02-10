@@ -6,6 +6,3 @@ require('./exec.node')
 require('./npm-install.node')
 require('./start-stop.node')
 require('./endpoint')
-
-// TODO: convert all below into .spec (node + browser)
-require('./api.node')
