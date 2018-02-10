@@ -9,10 +9,10 @@ chai.use(dirtyChai)
 
 const series = require('async/series')
 const multiaddr = require('multiaddr')
-const os = require('os')
 const path = require('path')
 const DaemonFactory = require('../src')
 
+const os = require('os')
 const isWindows = os.platform() === 'win32'
 
 const tests = [

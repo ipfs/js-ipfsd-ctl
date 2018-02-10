@@ -11,7 +11,7 @@ chai.use(dirtyChai)
 const fs = require('fs')
 const isNode = require('detect-node')
 const hat = require('hat')
-const DaemonFactory = require('../src')
+const IPFSFactory = require('../src')
 const tempDir = require('../src/utils/tmp-dir')
 const daemonConfig = require('../src/defaults/config')
 const JSIPFS = require('ipfs')
@@ -30,19 +30,22 @@ const versions = {
 }
 
 describe('Spawn options', () => {
-  tests.forEach((dfOpts) => describe(`${dfOpts.type}`, () => {
-    const VERSION_STRING = versions[dfOpts.type]
-    let df
+  tests.forEach((fOpts) => describe(`${fOpts.type}`, () => {
+    const VERSION_STRING = versions[fOpts.type]
+    let f
 
     before(() => {
-      df = DaemonFactory.create(dfOpts)
+      f = IPFSFactory.create(fOpts)
     })
 
     // TODO document this method on the readme
-    it('df.version', function (done) {
-      df.version((err, version) => {
+    it('f.version', function (done) {
+      // TODO needs to be implemented in factory-client
+      if (!isNode) { return this.skip() }
+
+      f.version((err, version) => {
         expect(err).to.not.exist()
-        if (dfOpts.type === 'proc') { version = version.version }
+        if (fOpts.type === 'proc') { version = version.version }
         expect(version).to.be.eql(VERSION_STRING)
         done()
       })
@@ -50,11 +53,14 @@ describe('Spawn options', () => {
 
     describe('init and start', () => {
       let repoPath
-      describe('init and start manually', function () {
+
+      describe('init and start manually', () => {
+        // TODO fix these for the browser
+        if (!isNode) { return }
         let ipfsd
 
-        repoPath = tempDir(dfOpts.type === 'js')
-        it('df.spawn', (done) => {
+        repoPath = tempDir(fOpts.type === 'js')
+        it('f.spawn', (done) => {
           const options = {
             config: daemonConfig,
             repoPath: repoPath,
@@ -63,7 +69,7 @@ describe('Spawn options', () => {
             disposable: false
           }
 
-          df.spawn(options, (err, _ipfsd) => {
+          f.spawn(options, (err, _ipfsd) => {
             expect(err).to.not.exist()
             expect(_ipfsd).to.exist()
             expect(_ipfsd.api).to.not.exist()
@@ -108,9 +114,9 @@ describe('Spawn options', () => {
         // TODO: figure out why `proc` IPFS refuses
         // to start with a provided repo
         // `Error: Not able to start from state: uninitalized`
-        if (dfOpts.type === 'proc') { return }
+        if (fOpts.type === 'proc') { return }
 
-        it('df.spawn', function (done) {
+        it('f.spawn', function (done) {
           this.timeout(20 * 1000)
 
           const options = {
@@ -121,7 +127,7 @@ describe('Spawn options', () => {
             disposable: false
           }
 
-          df.spawn(options, (err, _ipfsd) => {
+          f.spawn(options, (err, _ipfsd) => {
             expect(err).to.not.exist()
             expect(_ipfsd).to.exist()
             expect(_ipfsd.api).to.not.exist()
@@ -157,7 +163,7 @@ describe('Spawn options', () => {
       it('create init and start node', function (done) {
         this.timeout(20 * 1000)
 
-        df.spawn((err, _ipfsd) => {
+        f.spawn((err, _ipfsd) => {
           expect(err).to.not.exist()
           expect(_ipfsd).to.exist()
           expect(_ipfsd.api).to.exist()
@@ -177,7 +183,7 @@ describe('Spawn options', () => {
 
     describe('custom init options', () => {
       it('custom config', function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(40 * 1000)
 
         const addr = '/ip4/127.0.0.1/tcp/5678'
         const swarmAddr1 = '/ip4/127.0.0.1/tcp/35666'
@@ -193,7 +199,7 @@ describe('Spawn options', () => {
         const options = { config: config }
 
         waterfall([
-          (cb) => df.spawn(options, cb),
+          (cb) => f.spawn(options, cb),
           (ipfsd, cb) => ipfsd.getConfig('Addresses.API', (err, config) => {
             expect(err).to.not.exist()
             expect(config).to.eql(addr)
@@ -226,7 +232,7 @@ describe('Spawn options', () => {
       it('allows passing custom repo path to spawn', function (done) {
         this.timeout(50 * 1000)
 
-        const repoPath = tempDir(dfOpts.type === 'js')
+        const repoPath = tempDir(fOpts.type === 'js')
         const config = {
           Addresses: {
             Swarm: [
@@ -247,7 +253,7 @@ describe('Spawn options', () => {
         }
 
         series([
-          (cb) => df.spawn(options, (err, _ipfsd) => {
+          (cb) => f.spawn(options, (err, _ipfsd) => {
             expect(err).to.not.exist()
             ipfsd = _ipfsd
             cb()
@@ -260,7 +266,10 @@ describe('Spawn options', () => {
           }
         ], (err) => {
           expect(err).to.not.exist()
-          expect(fs.existsSync(repoPath)).to.be.ok()
+          if (isNode) {
+            // We can only check if it really got created when run in Node.js
+            expect(fs.existsSync(repoPath)).to.be.ok()
+          }
           done()
         })
       })
@@ -270,8 +279,8 @@ describe('Spawn options', () => {
       })
     })
 
-    describe('df.spawn with args', () => {
-      if (!isNode && dfOpts.type !== 'proc') { return this.skip() }
+    describe('f.spawn with args', () => {
+      if (!isNode && fOpts.type !== 'proc') { return }
 
       let ipfsd
 
@@ -282,7 +291,7 @@ describe('Spawn options', () => {
           args: ['--enable-pubsub-experiment']
         }
 
-        df.spawn(options, (err, _ipfsd) => {
+        f.spawn(options, (err, _ipfsd) => {
           expect(err).to.not.exist()
           ipfsd = _ipfsd
           done()
@@ -318,7 +327,7 @@ describe('Spawn options', () => {
 
       before(function (done) {
         this.timeout(50 * 1000)
-        df.spawn((err, _ipfsd) => {
+        f.spawn((err, _ipfsd) => {
           expect(err).to.not.exist()
           ipfsd = _ipfsd
           done()
@@ -360,7 +369,7 @@ describe('Spawn options', () => {
 
       it('error on invalid config', function (done) {
         // TODO: fix this - js doesn't fail on invalid config
-        if (dfOpts.type !== 'go') { return this.skip() }
+        if (fOpts.type !== 'go') { return this.skip() }
 
         ipfsd.setConfig('Bootstrap', 'true', (err) => {
           expect(err.message)

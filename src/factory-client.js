@@ -33,6 +33,22 @@ class FactoryClient {
     this.baseUrl = `${opts.secure ? 'https://' : 'http://'}${this.host}:${this.port}`
   }
 
+  /**
+   * Get the version of the IPFS Daemon.
+   *
+   * @memberof FactoryDaemon
+   * @param {Object} [options={}]
+   * @param {function(Error, string)} callback
+   * @returns {undefined}
+   */
+  version (options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+    }
+    // TODO implement this method
+  }
+
   spawn (opts, callback) {
     if (typeof opts === 'function') {
       callback = opts
