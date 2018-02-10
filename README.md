@@ -17,7 +17,7 @@
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
-- [Packageing](#packaging)
+- [Packaging](#packaging)
 - [Contribute](#contribute)
 - [License](#license)
 

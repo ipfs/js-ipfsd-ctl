@@ -49,7 +49,7 @@ describe('Spawn options', () => {
       })
     })
 
-    describe('init and start', () => {
+    describe.only('init and start', () => {
       let repoPath
 
       describe('init and start manually', () => {
@@ -116,6 +116,8 @@ describe('Spawn options', () => {
 
         it('f.spawn', function (done) {
           this.timeout(20 * 1000)
+
+          console.dir(repoPath)
 
           const options = {
             config: daemonConfig,
