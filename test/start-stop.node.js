@@ -132,9 +132,9 @@ types.forEach((type) => {
         expect(fs.existsSync(repoPath)).to.not.be.ok()
       })
 
-      it('.start with flags', function (done) {
-        // TODO js-ipfs doesn't fail on unrecognized args. Think what should be
-        // the desired behaviour
+      it('fail on start with non supported flags', function (done) {
+        // TODO js-ipfs doesn't fail on unrecognized args.
+        // Decided what should be the desired behaviour
         if (type === 'js') { return this.skip() }
 
         const df = IPFSFactory.create(dfConfig)
