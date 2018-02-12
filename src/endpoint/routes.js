@@ -7,7 +7,7 @@ const defaults = require('lodash.defaultsdeep')
 const FactoryDaemon = require('../factory-daemon')
 const tmpDir = require('../utils/tmp-dir')
 
-const config = {
+const routeConfig = {
   validate: {
     query: {
       id: Joi.string().alphanum().required()
@@ -16,13 +16,16 @@ const config = {
 }
 
 let nodes = {}
+
 module.exports = (server) => {
   server.route({
     method: 'GET',
     path: '/util/tmp-dir',
     handler: (request, reply) => {
       const type = request.query.type || 'go'
-      reply({ tmpDir: tmpDir(type === 'js') })
+      const path = tmpDir(type === 'js')
+
+      reply({ tmpDir: path })
     }
   })
 
@@ -56,7 +59,7 @@ module.exports = (server) => {
       // TODO: use the ../src/index.js so that the right Factory is picked
       const f = new FactoryDaemon({ type: payload.type })
 
-      f.spawn(payload.opts, (err, ipfsd) => {
+      f.spawn(payload.options, (err, ipfsd) => {
         if (err) {
           return reply(boom.badRequest(err))
         }
@@ -65,16 +68,73 @@ module.exports = (server) => {
         nodes[id] = ipfsd
 
         let api = null
+
         if (nodes[id].started) {
           api = {
-            apiAddr: nodes[id].apiAddr ? nodes[id].apiAddr.toString() : '',
-            gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : ''
+            apiAddr: nodes[id].apiAddr
+              ? nodes[id].apiAddr.toString()
+              : '',
+            gatewayAddr: nodes[id].gatewayAddr
+              ? nodes[id].gatewayAddr.toString()
+              : ''
           }
         }
+
         reply({ id: id, api: api })
       })
     }
   })
+
+  /**
+   * Initialize a repo.
+   **/
+  server.route({
+    method: 'POST',
+    path: '/init',
+    handler: (request, reply) => {
+      const id = request.query.id
+
+      const payload = request.payload || {}
+
+      nodes[id].init(payload.initOpts, (err, node) => {
+        if (err) {
+          return reply(boom.badRequest(err))
+        }
+
+        reply({ initialized: node.initialized })
+      })
+    },
+    config: routeConfig
+  })
+
+  /**
+   * Start the daemon.
+   **/
+  server.route({
+    method: 'POST',
+    path: '/start',
+    handler: (request, reply) => {
+      const id = request.query.id
+
+      const payload = request.payload || {}
+      const flags = payload.flags || []
+
+      nodes[id].start(flags, (err) => {
+        if (err) {
+          return reply(boom.badRequest(err))
+        }
+
+        reply({
+          api: {
+            apiAddr: nodes[id].apiAddr.toString(),
+            gatewayAddr: nodes[id].gatewayAddr.toString()
+          }
+        })
+      })
+    },
+    config: routeConfig
+  })
+
 
   /**
    * Get the address of connected IPFS API.
@@ -84,9 +144,10 @@ module.exports = (server) => {
     path: '/api-addr',
     handler: (request, reply) => {
       const id = request.query.id
+
       reply({ apiAddr: nodes[id].apiAddr.toString() })
     },
-    config
+    config: routeConfig
   })
 
   /**
@@ -99,27 +160,7 @@ module.exports = (server) => {
       const id = request.query.id
       reply({ getawayAddr: nodes[id].gatewayAddr.toString() })
     },
-    config
-  })
-
-  /**
-   * Initialize a repo.
-   **/
-  server.route({
-    method: 'POST',
-    path: '/init',
-    handler: (request, reply) => {
-      const id = request.query.id
-      const payload = request.payload || {}
-      nodes[id].init(payload.initOpts, (err, node) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
-
-        reply({ initialized: node.initialized })
-      })
-    },
-    config
+    config: routeConfig
   })
 
   /**
@@ -140,33 +181,7 @@ module.exports = (server) => {
         reply().code(200)
       })
     },
-    config
-  })
-
-  /**
-   * Start the daemon.
-   **/
-  server.route({
-    method: 'POST',
-    path: '/start',
-    handler: (request, reply) => {
-      const id = request.query.id
-      const payload = request.payload || {}
-      const flags = payload.flags || []
-      nodes[id].start(flags, (err) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
-
-        reply({
-          api: {
-            apiAddr: nodes[id].apiAddr.toString(),
-            gatewayAddr: nodes[id].gatewayAddr.toString()
-          }
-        })
-      })
-    },
-    config
+    config: routeConfig
   })
 
   /**
@@ -185,7 +200,7 @@ module.exports = (server) => {
         reply().code(200)
       })
     },
-    config
+    config: routeConfig
   })
 
   /**
@@ -207,7 +222,7 @@ module.exports = (server) => {
         reply().code(200)
       })
     },
-    config
+    config: routeConfig
   })
 
   /**
@@ -220,9 +235,10 @@ module.exports = (server) => {
     path: '/pid',
     handler: (request, reply) => {
       const id = request.query.id
+
       reply({ pid: nodes[id].pid })
     },
-    config
+    config: routeConfig
   })
 
   /**
@@ -241,7 +257,7 @@ module.exports = (server) => {
           return reply(boom.badRequest(err))
         }
 
-        reply({ config })
+        reply({ config: config })
       })
     },
     config: defaults({}, {
@@ -250,7 +266,7 @@ module.exports = (server) => {
           key: Joi.string().optional()
         }
       }
-    }, config)
+    }, routeConfig)
   })
 
   /**
@@ -279,6 +295,6 @@ module.exports = (server) => {
           value: Joi.any()
         }
       }
-    }, config)
+    }, routeConfig)
   })
 }

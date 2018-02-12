@@ -12,7 +12,6 @@ const fs = require('fs')
 const isNode = require('detect-node')
 const hat = require('hat')
 const IPFSFactory = require('../src')
-const tempDir = require('../src/utils/tmp-dir')
 const JSIPFS = require('ipfs')
 
 const tests = [
@@ -28,7 +27,7 @@ const versions = {
   proc: jsVersion
 }
 
-describe('Spawn options', () => {
+describe.only('Spawn options', () => {
   tests.forEach((fOpts) => describe(`${fOpts.type}`, () => {
     const VERSION_STRING = versions[fOpts.type]
     let f
@@ -50,15 +49,17 @@ describe('Spawn options', () => {
     })
 
     describe('init and start', () => {
-      let repoPath
+      let prevRepoPath
 
       describe('init and start manually', () => {
         let ipfsd
+        let repoPath
 
         before((done) => {
           f.tmpDir(fOpts.type, (err, tmpDir) => {
             expect(err).to.not.exist()
             repoPath = tmpDir
+            prevRepoPath = repoPath
             done()
           })
         })
@@ -111,18 +112,18 @@ describe('Spawn options', () => {
       })
 
       describe('spawn from a initialized repo', () => {
-        let ipfsd
-
         // TODO: figure out why `proc` IPFS refuses
         // to start with a provided repo
         // `Error: Not able to start from state: uninitalized`
         if (fOpts.type === 'proc') { return }
 
+        let ipfsd
+
         it('f.spawn', function (done) {
           this.timeout(20 * 1000)
 
           const options = {
-            repoPath: repoPath,
+            repoPath: prevRepoPath,
             init: false,
             start: false,
             disposable: false
@@ -138,7 +139,7 @@ describe('Spawn options', () => {
           })
         })
 
-        it('start node', function (done) {
+        it('ipfsd.start', function (done) {
           this.timeout(20 * 1000)
 
           ipfsd.start((err, api) => {
@@ -229,11 +230,18 @@ describe('Spawn options', () => {
       if (!isNode) { return }
 
       let ipfsd
+      let repoPath
+
+      before((done) => {
+        f.tmpDir(fOpts.type, (err, tmpDir) => {
+          expect(err).to.not.exist()
+          repoPath = tmpDir
+          done()
+        })
+      })
 
       it('allows passing custom repo path to spawn', function (done) {
         this.timeout(50 * 1000)
-
-        const repoPath = tempDir(fOpts.type === 'js')
 
         const config = {
           Addresses: {

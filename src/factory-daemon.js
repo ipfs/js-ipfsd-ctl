@@ -1,6 +1,6 @@
 'use strict'
 
-const defaults = require('lodash.defaultsdeep')
+const defaultsDeep = require('lodash.defaultsdeep')
 const clone = require('lodash.clone')
 const waterfall = require('async/waterfall')
 const path = require('path')
@@ -83,19 +83,19 @@ class FactoryDaemon {
    * - `exec` string (optional) - path to the desired IPFS executable to spawn,
    * this will override the `exec` set when creating the daemon controller factory instance
    *
-   * @param {Object} [opts={}] - various config options and ipfs config parameters
+   * @param {Object} [options={}] - various config options and ipfs config parameters
    * @param {Function} callback(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
    * @return {undefined}
    */
-  spawn (opts, callback) {
-    if (typeof opts === 'function') {
-      callback = opts
-      opts = defaultOptions
+  spawn (options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
     }
 
     // TODO this options parsing is daunting. Refactor and move to a separate
     // func documenting what it is trying to do.
-    const options = defaults({}, opts, defaultOptions)
+    options = defaultsDeep({}, options, defaultOptions)
 
     options.init = typeof options.init !== 'undefined'
       ? options.init
@@ -103,7 +103,8 @@ class FactoryDaemon {
 
     if (!options.disposable) {
       const nonDisposableConfig = clone(defaultConfig)
-      delete nonDisposableConfig.Addresses
+      // TODO Why delete these?
+      // delete nonDisposableConfig.Addresses
 
       options.init = false
       options.start = false
@@ -117,9 +118,9 @@ class FactoryDaemon {
 
       options.repoPath = options.repoPath ||
         (process.env.IPFS_PATH || defaultRepo)
-      options.config = defaults({}, options.config, nonDisposableConfig)
+      options.config = defaultsDeep({}, options.config, nonDisposableConfig)
     } else {
-      options.config = defaults({}, options.config, defaultConfig)
+      options.config = defaultsDeep({}, options.config, defaultConfig)
     }
 
     options.type = this.type

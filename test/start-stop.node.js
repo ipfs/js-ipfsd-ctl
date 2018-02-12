@@ -42,9 +42,10 @@ types.forEach((type) => {
 
       before(function (done) {
         this.timeout(20 * 1000)
-        const df = IPFSFactory.create(dfConfig)
 
-        df.spawn({
+        const f = IPFSFactory.create(dfConfig)
+
+        f.spawn({
           init: true,
           start: false,
           disposable: true
@@ -85,7 +86,6 @@ types.forEach((type) => {
             pid = _pid
             api = ipfs
 
-            // actually running?
             expect(isrunning(pid)).to.be.ok()
             done()
           })
