@@ -135,7 +135,6 @@ module.exports = (server) => {
     config: routeConfig
   })
 
-
   /**
    * Get the address of connected IPFS API.
    */
