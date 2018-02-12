@@ -112,7 +112,7 @@ class FactoryInProc {
       options.start = false
 
       const defaultRepo = path.join(
-        process.env.HOME || process.env.USERPROFILE,
+        process.env.HOME || process.env.USERPROFILE || '',
         options.isJs ? '.jsipfs' : '.ipfs'
       )
 
