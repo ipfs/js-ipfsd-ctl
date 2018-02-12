@@ -40,10 +40,10 @@ describe('ipfsd.api for Daemons', () => {
     })
 
     it('test the ipfsd.api', function (done) {
+      this.timeout(40 * 1000)
+
       // TODO skip in browser - can we avoid using file system operations here?
       if (!isNode) { this.skip() }
-
-      this.timeout(20 * 1000)
 
       // TODO: fix on Windows
       // - https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190

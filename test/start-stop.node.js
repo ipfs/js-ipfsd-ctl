@@ -211,12 +211,12 @@ types.forEach((type) => {
       let ipfsd
 
       before(function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(40 * 1000)
 
-        const df = IPFSFactory.create(dfConfig)
+        const f = IPFSFactory.create(dfConfig)
 
         async.series([
-          (cb) => df.spawn({
+          (cb) => f.spawn({
             init: true,
             start: true,
             disposable: false,
