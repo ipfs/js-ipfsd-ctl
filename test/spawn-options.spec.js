@@ -27,7 +27,7 @@ const versions = {
   proc: jsVersion
 }
 
-describe.only('Spawn options', () => {
+describe('Spawn options', () => {
   tests.forEach((fOpts) => describe(`${fOpts.type}`, () => {
     const VERSION_STRING = versions[fOpts.type]
     let f
