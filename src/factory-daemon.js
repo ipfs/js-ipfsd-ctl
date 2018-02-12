@@ -93,8 +93,14 @@ class FactoryDaemon {
       opts = defaultOptions
     }
 
+    // TODO this options parsing is daunting. Refactor and move to a separate
+    // func documenting what it is trying to do.
     const options = defaults({}, opts, defaultOptions)
-    options.init = (typeof options.init !== 'undefined' ? options.init : true)
+
+    options.init = typeof options.init !== 'undefined'
+      ? options.init
+      : true
+
     if (!options.disposable) {
       const nonDisposableConfig = clone(defaultConfig)
       delete nonDisposableConfig.Addresses
@@ -104,20 +110,22 @@ class FactoryDaemon {
 
       const defaultRepo = path.join(
         process.env.HOME || process.env.USERPROFILE,
-        options.isJs ? '.jsipfs' : '.ipfs'
+        options.isJs
+          ? '.jsipfs'
+          : '.ipfs'
       )
 
-      options.repoPath = options.repoPath || (process.env.IPFS_PATH || defaultRepo)
+      options.repoPath = options.repoPath ||
+        (process.env.IPFS_PATH || defaultRepo)
       options.config = defaults({}, options.config, nonDisposableConfig)
     } else {
       options.config = defaults({}, options.config, defaultConfig)
     }
 
-    let node
     options.type = this.type
     options.exec = options.exec || this.exec
 
-    node = new Daemon(options)
+    const node = new Daemon(options)
 
     waterfall([
       (cb) => options.init

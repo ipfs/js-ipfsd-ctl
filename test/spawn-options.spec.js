@@ -13,7 +13,6 @@ const isNode = require('detect-node')
 const hat = require('hat')
 const IPFSFactory = require('../src')
 const tempDir = require('../src/utils/tmp-dir')
-const daemonConfig = require('../src/defaults/config')
 const JSIPFS = require('ipfs')
 
 const tests = [
@@ -40,7 +39,8 @@ describe('Spawn options', () => {
 
     // TODO document this method on the readme
     it('f.version', function (done) {
-      this.timeout(30 * 1000)
+      this.timeout(20 * 1000)
+
       f.version({ type: fOpts.type }, (err, version) => {
         expect(err).to.not.exist()
         if (fOpts.type === 'proc') { version = version.version }
@@ -49,7 +49,7 @@ describe('Spawn options', () => {
       })
     })
 
-    describe.only('init and start', () => {
+    describe('init and start', () => {
       let repoPath
 
       describe('init and start manually', () => {
@@ -65,7 +65,6 @@ describe('Spawn options', () => {
 
         it('f.spawn', (done) => {
           const options = {
-            config: daemonConfig,
             repoPath: repoPath,
             init: false,
             start: false,
@@ -84,7 +83,7 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.init', function (done) {
-          this.timeout(30 * 1000)
+          this.timeout(20 * 1000)
 
           ipfsd.init((err) => {
             expect(err).to.not.exist()
@@ -94,7 +93,7 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.start', function (done) {
-          this.timeout(10 * 1000)
+          this.timeout(20 * 1000)
 
           ipfsd.start((err, api) => {
             expect(err).to.not.exist()
@@ -122,10 +121,7 @@ describe('Spawn options', () => {
         it('f.spawn', function (done) {
           this.timeout(20 * 1000)
 
-          console.dir(repoPath)
-
           const options = {
-            config: daemonConfig,
             repoPath: repoPath,
             init: false,
             start: false,
@@ -238,6 +234,7 @@ describe('Spawn options', () => {
         this.timeout(50 * 1000)
 
         const repoPath = tempDir(fOpts.type === 'js')
+
         const config = {
           Addresses: {
             Swarm: [
