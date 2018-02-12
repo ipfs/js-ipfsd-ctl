@@ -252,7 +252,7 @@ types.forEach((type) => {
       })
 
       it('.stop', function (done) {
-        this.timeout(20 * 100)
+        this.timeout(20 * 1000)
 
         ipfsd.stop((err) => {
           expect(err).to.not.exist()
@@ -264,7 +264,8 @@ types.forEach((type) => {
       })
 
       it('.start', function (done) {
-        this.timeout(20 * 100)
+        this.timeout(20 * 1000)
+
         ipfsd.start((err) => {
           expect(err).to.not.exist()
           ipfsd.pid((pid) => {
