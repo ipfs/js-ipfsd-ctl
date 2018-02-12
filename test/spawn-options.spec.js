@@ -162,7 +162,7 @@ describe('Spawn options', () => {
       let ipfsd
 
       it('create init and start node', function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(30 * 1000)
 
         f.spawn((err, _ipfsd) => {
           expect(err).to.not.exist()
@@ -176,7 +176,7 @@ describe('Spawn options', () => {
       })
 
       it('ipfsd.stop', function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(30 * 1000)
 
         ipfsd.stop(done)
       })
