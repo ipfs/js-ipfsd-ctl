@@ -17,7 +17,6 @@
     "coverage-publish": "aegir coverage -u"
   },
   "browser": {
-    "./test/utils/df-config-nodejs.js": "./test/utils/df-config-browser.js",
     "hapi": false,
     "glob": false,
     "fs": false,
@@ -32,7 +31,8 @@
     "./src/factory-daemon.js": false,
     "./src/ipfsd-daemon.js": false,
     "./src/endpoint/server.js": false,
-    "./src/endpoint/routes.js": false
+    "./src/endpoint/routes.js": false,
+    "./test/utils/df-config-nodejs.js": "./test/utils/df-config-browser.js"
   },
   "engines": {
     "node": ">=6.0.0",

@@ -9,23 +9,24 @@ chai.use(dirtyChai)
 const Server = require('../../src/endpoint/server')
 const portUsed = require('detect-port')
 
-describe('server', () => {
+describe('endpoint server', () => {
   let server
 
-  it('.start', (done) => {
-    server = new Server()
+  it('.start', function (done) {
+    this.timeout(10 * 1000)
+    server = new Server({ port: 12345 })
 
     server.start((err) => {
       expect(err).to.not.exist()
-      portUsed(9999, (err, port) => {
+      portUsed(12345, (err, port) => {
         expect(err).to.not.exist()
-        expect(port).to.not.equal(9999)
+        expect(port).to.not.equal(12345)
         done()
       })
     })
   })
 
-  it('should stop', (done) => {
+  it('.stop', (done) => {
     server.stop(done)
   })
 })
