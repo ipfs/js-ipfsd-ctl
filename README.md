@@ -1,16 +1,17 @@
-# ipfsd-ctl
+# ipfsd-ctl, the IPFS Factory.
 
-[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
+[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://protocol.ai)
 [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
-[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+[![standard-readme](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 [![Coverage Status](https://coveralls.io/repos/github/ipfs/js-ipfsd-ctl/badge.svg?branch=master)](https://coveralls.io/github/ipfs/js-ipfsd-ctl?branch=master)
 [![Travis CI](https://travis-ci.org/ipfs/js-ipfsd-ctl.svg?branch=master)](https://travis-ci.org/ipfs/js-ipfsd-ctl)
 [![Circle CI](https://circleci.com/gh/ipfs/js-ipfsd-ctl.svg?style=svg)](https://circleci.com/gh/ipfs/js-ipfsd-ctl)
 [![Appveyor CI](https://ci.appveyor.com/api/projects/status/4p9r12ch0jtthnha?svg=true)](https://ci.appveyor.com/project/wubalubadubdub/js-ipfsd-ctl-a9ywu)
-[![Dependency Status](https://david-dm.org/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfsd-ctl) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
+[![Dependency Status](https://david-dm.org/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfsd-ctl)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 
-> Spawn IPFS daemons using JavaScript in Node.js or in the Browser.
+> Spawn IPFS daemons using JavaScript!
 
 ## Table of Contents
 
@@ -23,16 +24,13 @@
 
 ## Install
 
-Install:
 ```sh
 npm install --save ipfsd-ctl
 ```
 
 ## Usage
 
-IPFS daemons are already easy to start and stop, but this module is here to do it from JavaScript itself.
-
-### Spawn an IPFS daemon from Node.js
+**Spawn an IPFS daemon from Node.js**
 
 ```js
 // Start a disposable node, and get access to the api
@@ -53,7 +51,7 @@ f.spawn(function (err, ipfsd) {
 })
 ```
 
-### Spawn an IPFS daemon from the Browser using the provided remote endpoint
+**Spawn an IPFS daemon from the Browser using the provided remote endpoint**
 
 ```js
 // Start a remote disposable node, and get access to the api
