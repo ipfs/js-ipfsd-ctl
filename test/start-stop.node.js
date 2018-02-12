@@ -251,7 +251,9 @@ types.forEach((type) => {
         })
       })
 
-      it('should stop', (done) => {
+      it('.stop', function (done) {
+        this.timeout(20 * 100)
+
         ipfsd.stop((err) => {
           expect(err).to.not.exist()
           ipfsd.pid((pid) => {
@@ -261,7 +263,8 @@ types.forEach((type) => {
         })
       })
 
-      it('should start', (done) => {
+      it('.start', function (done) {
+        this.timeout(20 * 100)
         ipfsd.start((err) => {
           expect(err).to.not.exist()
           ipfsd.pid((pid) => {
@@ -271,7 +274,9 @@ types.forEach((type) => {
         })
       })
 
-      it('should stop and cleanup', (done) => {
+      it('.stop and cleanup', function (done) {
+        this.timeout(20 * 1000)
+
         ipfsd.stop((err) => {
           expect(err).to.not.exist()
           ipfsd.cleanup(done)
