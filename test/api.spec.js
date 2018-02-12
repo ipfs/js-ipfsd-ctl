@@ -55,7 +55,7 @@ describe('ipfsd.api for Daemons', () => {
 
       series([
         (cb) => {
-          df.spawn({ start: false, config }, (err, _ipfsd) => {
+          df.spawn({ start: false, config: config }, (err, _ipfsd) => {
             expect(err).to.not.exist()
             ipfsd = _ipfsd
             ipfsd.start((err, _api) => {
