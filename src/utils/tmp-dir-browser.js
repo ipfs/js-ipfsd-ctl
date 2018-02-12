@@ -4,7 +4,7 @@ const hat = require('hat')
 
 module.exports = (isJs) => {
   return (isJs
-    ? 'ipfs_'
-    : 'jsipfs_'
+    ? 'jsipfs_'
+    : 'ipfs_'
   ) + hat()
 }

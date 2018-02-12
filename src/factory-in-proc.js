@@ -49,7 +49,7 @@ class FactoryInProc {
    * @returns {undefined}
    */
   tmpDir (type, callback) {
-    callback(null, tmpDir(type === 'js'))
+    callback(null, tmpDir(true))
   }
 
   /**
