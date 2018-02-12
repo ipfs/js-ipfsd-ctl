@@ -24,13 +24,15 @@
     "joi": false,
     "stream": "readable-stream",
     "http": "stream-http",
+    "./src/utils/repo/create-nodejs.js": "./src/utils/repo/create-browser.js",
+    "./src/utils/exec.js": false,
+    "./src/utils/find-ipfs-executable.js": false,
+    "./src/utils/tmp-dir.js": false,
+    "./src/utils/run.js": false,
     "./src/factory-daemon.js": false,
     "./src/ipfsd-daemon.js": false,
     "./src/endpoint/server.js": false,
-    "./src/endpoint/routes.js": false,
-    "./src/utils/repo/create-nodejs.js": "./src/utils/repo/create-browser.js",
-    "./src/utils/exec.js": false,
-    "./src/utils/run.js": false
+    "./src/endpoint/routes.js": false
   },
   "engines": {
     "node": ">=6.0.0",

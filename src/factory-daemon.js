@@ -50,7 +50,7 @@ class FactoryDaemon {
   }
 
   /**
-   * Get the version of the currently used go-ipfs binary.
+   * Get the version of the IPFS Daemon.
    *
    * @memberof FactoryDaemon
    * @param {Object} [options={}]
