@@ -2,7 +2,7 @@
 
 const defaults = require('lodash.defaultsdeep')
 const clone = require('lodash.clone')
-const waterfall = require('async/waterfall')
+const series = require('async/series')
 const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
 
@@ -101,9 +101,12 @@ class FactoryInProc {
       ? options.init
       : true
 
-    if (!options.disposable) {
+    if (options.disposable) {
+      options.config = defaults({}, options.config, defaultConfig)
+    } else {
       const nonDisposableConfig = clone(defaultConfig)
-      delete nonDisposableConfig.Addresses
+      // TODO why delete the addrs here???
+      // delete nonDisposableConfig.Addresses
 
       options.init = false
       options.start = false
@@ -115,11 +118,8 @@ class FactoryInProc {
 
       options.repoPath = options.repoPath || (process.env.IPFS_PATH || defaultRepo)
       options.config = defaults({}, options.config, nonDisposableConfig)
-    } else {
-      options.config = defaults({}, options.config, defaultConfig)
     }
 
-    let node
     options.type = this.type
     options.exec = options.exec || this.exec
 
@@ -127,20 +127,16 @@ class FactoryInProc {
       return callback(new Error(`'type' proc requires 'exec' to be a coderef`))
     }
 
-    node = new Node(options)
+    const node = new Node(options)
 
-    waterfall([
+    series([
       (cb) => options.init
         ? node.init(cb)
-        : cb(null, node),
-      (node, cb) => options.start
+        : cb(),
+      (cb) => options.start
         ? node.start(options.args, cb)
         : cb()
-    ], (err) => {
-      if (err) { return callback(err) }
-
-      callback(null, node)
-    })
+    ], (err) => callback(err, node))
   }
 }
 
