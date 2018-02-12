@@ -1,3 +1,19 @@
+<a name="0.28.0"></a>
+# [0.28.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.27.3...v0.28.0) (2018-02-12)
+
+
+### Bug Fixes
+
+* make sure repo is being properly cleaned up ([#196](https://github.com/ipfs/js-ipfsd-ctl/issues/196)) ([4e8b8db](https://github.com/ipfs/js-ipfsd-ctl/commit/4e8b8db))
+
+
+### Features
+
+* add logging for debug ([#195](https://github.com/ipfs/js-ipfsd-ctl/issues/195)) ([86b0ab0](https://github.com/ipfs/js-ipfsd-ctl/commit/86b0ab0))
+* the big refactor! ([#200](https://github.com/ipfs/js-ipfsd-ctl/issues/200)) ([adbef1b](https://github.com/ipfs/js-ipfsd-ctl/commit/adbef1b))
+
+
+
 <a name="0.27.3"></a>
 ## [0.27.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.27.2...v0.27.3) (2018-01-30)
 

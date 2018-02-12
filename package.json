@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.27.3",
+  "version": "0.28.0",
   "description": "Spawn IPFS Daemons, JS or Go",
   "main": "src/index.js",
   "scripts": {
