@@ -14,7 +14,7 @@ const proxyquire = require('proxyquire')
 const superagent = require('superagent')
 const mock = require('superagent-mocker')(superagent)
 
-const ClientFactory = proxyquire('../../src/remote-node/client', {
+const ClientFactory = proxyquire('../../src/factory-client', {
   superagent: () => {
     return superagent
   }
@@ -32,7 +32,7 @@ describe('client', () => {
 
       it('should handle valid request', (done) => {
         mock.post('http://localhost:9999/spawn', (req) => {
-          expect(req.body.opts.opt1).to.equal('hello!')
+          expect(req.body.options.opt1).to.equal('hello!')
           return {
             body: {
               id: hat(),

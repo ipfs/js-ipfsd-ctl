@@ -2,19 +2,20 @@
 
 const run = require('subcomandante')
 const once = require('once')
-const debug = require('debug')('ipfsd-ctl:exec')
+const debug = require('debug')
+const log = debug('ipfsd-ctl:exec')
+
 const path = require('path')
 
-function exec (cmd, args, opts, handlers) {
+function exec (cmd, args, opts, handlers, callback) {
   opts = opts || {}
   let err = ''
   let result = ''
-  let callback
 
-  // Handy method if we just want the result and err
-  // returned in a callback
+  // Handy method if we just want the result and err returned in a callback
   if (typeof handlers === 'function') {
     callback = once(handlers)
+
     handlers = {
       error: callback,
       data (data) {
@@ -49,7 +50,7 @@ function exec (cmd, args, opts, handlers) {
     })
   }
 
-  debug(path.basename(cmd), args.join(' '))
+  log(path.basename(cmd), args.join(' '))
   const command = run(cmd, args, opts)
 
   if (listeners.data) {

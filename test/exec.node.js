@@ -6,7 +6,7 @@ const expect = require('chai').expect
 const isrunning = require('is-running')
 const cp = require('child_process')
 const path = require('path')
-const exec = require('../src/exec')
+const exec = require('../src/utils/exec')
 
 const os = require('os')
 

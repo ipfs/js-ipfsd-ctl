@@ -1,66 +1,45 @@
-# ipfsd-ctl
+# ipfsd-ctl, the IPFS Factory.
 
-[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://ipn.io)
+[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://protocol.ai)
 [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
-[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+[![standard-readme](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 [![Coverage Status](https://coveralls.io/repos/github/ipfs/js-ipfsd-ctl/badge.svg?branch=master)](https://coveralls.io/github/ipfs/js-ipfsd-ctl?branch=master)
 [![Travis CI](https://travis-ci.org/ipfs/js-ipfsd-ctl.svg?branch=master)](https://travis-ci.org/ipfs/js-ipfsd-ctl)
 [![Circle CI](https://circleci.com/gh/ipfs/js-ipfsd-ctl.svg?style=svg)](https://circleci.com/gh/ipfs/js-ipfsd-ctl)
 [![Appveyor CI](https://ci.appveyor.com/api/projects/status/4p9r12ch0jtthnha?svg=true)](https://ci.appveyor.com/project/wubalubadubdub/js-ipfsd-ctl-a9ywu)
-[![Dependency Status](https://david-dm.org/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfsd-ctl) [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
+[![Dependency Status](https://david-dm.org/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfsd-ctl)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 
-> Control an IPFS daemon using JavaScript in Node.js or in the Browser.
-
-```
-                                                                    +-----+                                   
-                                                                    |  H  |                                   
-                                                                    |  T  |                                   
-    +-----------------------------+                                 |  T  |                                   
-    |           Node.js           |  +-----------------------+      |  P  |    +-----------------------------+
-    |                             |  |                       |      |     |    |          BROWSER            |
-    | +-----------------------+   |  |       IPFS Daemon     |      |  S  |    |                             |
-    | |   Local Daemon Ctrl   |   |  |                       |      |  E  |    |   +----------------------+  |
-    | |                       +-------                       --------  R  -----|---- Remote Daemon Ctrl   |  |
-    | +-----------------------+   |  +-----|-----------|-----+      |  V  |    |   |                      |  |
-    |                             |        |           |            |  E  |    |   +----------------------+  |
-    | +-----------------------+   |        |           |            |  R  |    |                             |
-    | |       IPFS API        |   |        |           |            +-----+    |   +----------------------+  |
-    | |                       -------------+           |                       |   |     IPFS API         |  |
-    | +-----------------------+   |                    +-----------------------|----                      |  |
-    |                             |                                            |   +----------------------+  |
-    +-----------------------------+                                            +-----------------------------+
-```
+> Spawn IPFS daemons using JavaScript!
 
 ## Table of Contents
 
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
+- [Packaging](#packaging)
 - [Contribute](#contribute)
 - [License](#license)
 
 ## Install
 
-Install:
 ```sh
 npm install --save ipfsd-ctl
 ```
 
 ## Usage
 
-IPFS daemons are already easy to start and stop, but this module is here to do it from JavaScript itself.
-
-### Spawn an IPFS daemon from Node.js
+**Spawn an IPFS daemon from Node.js**
 
 ```js
 // Start a disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const DaemonFactory = require('ipfsd-ctl')
-const df = DaemonFactory.create()
+const IPFSFactory = require('ipfsd-ctl')
+const f = IPFSFactory.create()
 
-df.spawn(function (err, ipfsd) {
+f.spawn(function (err, ipfsd) {
   if (err) { throw err }
   
   ipfsd.api.id(function (err, id) {
@@ -72,22 +51,22 @@ df.spawn(function (err, ipfsd) {
 })
 ```
 
-### Spawn an IPFS daemon from the Browser using the provided remote endpoint
+**Spawn an IPFS daemon from the Browser using the provided remote endpoint**
 
 ```js
 // Start a remote disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const DaemonFactory = require('ipfsd-ctl')
+const IPFSFactory = require('ipfsd-ctl')
 
 const port = 9999
-const server = DaemonFactory.createServer(port)
-const df = DaemonFactory.create({ remote: true, port: port })
+const server = IPFSFactory.createServer(port)
+const f = IPFSFactory.create({ remote: true, port: port })
 
 server.start((err) => {
   if (err) { throw err }
 
-  df.spawn((err, ipfsd) => {
+  f.spawn((err, ipfsd) => {
     if (err) { throw err }
 
     ipfsd.api.id(function (err, id) {
@@ -102,48 +81,40 @@ server.start((err) => {
 
 ## Disposable vs non Disposable nodes
 
-`ipfsd-ctl` can create two types of node controllers, `disposable` and `non-disposable`. A disposable node will be created on a temporary repo which will be optionally initialized and started (the default), as well cleaned up on process exit. A non-disposable node on the other hand, requires the user to initialize and start the node, as well as stop and cleanup after wards. Additionally, a non-disposable will allow you to pass a custom repo using the `repoPath` option, if the `repoPath` is not defined, it will use the default repo for the node type (`$HOME/.ipfs` or `$HOME/.jsipfs`). The `repoPath` parameter is ignored for disposable nodes, as there is a risk of deleting a live repo.
+`ipfsd-ctl` can spawn `disposable` and `non-disposable` daemons.
 
-## IPFS executables
+- `disposable`- Creates on a temporary repo which will be optionally initialized and started (the default), as well cleaned up on process exit. Great for tests.
+- `non-disposable` - Requires the user to initialize and start the node, as well as stop and cleanup after wards. Additionally, a non-disposable will allow you to pass a custom repo using the `repoPath` option, if the `repoPath` is not defined, it will use the default repo for the node type (`$HOME/.ipfs` or `$HOME/.jsipfs`). The `repoPath` parameter is ignored for disposable nodes, as there is a risk of deleting a live repo.
 
-`ipfsd-ctl` no longer installs go-ipfs nor js-ipfs dependencies, instead it expects them to be provided by the parent project. In order to be able to use both go and js daemons, please make sure that your project includes these two npm packages as dependencies.
+## Batteries not included. Bring your own IPFS executable.
 
-- `ipfs` - the js-ipfs implementation
-- `go-ipfs-dep` - the packaged go-ipfs implementation
+Install one or both of the following modules:
+
+- `ipfs` - `> npm i ipfs` - If you want to spawn js-ipfs nodes and/or daemons.
+- `go-ipfs-dep` - `> npm i go-ipfs-dep` - If you want to spwan go-ipfs daemons.
 
 ## API
 
-### Daemon Factory Class
+### `IPFSFactory` - `const f = IPFSFactory.create([options])`
 
-#### `DaemonFactory` - `const df = DaemonFactory.create([options])`
+`IPFSFactory.create([options])` returns an object that will expose the `df.spawn` method
 
-`DaemonFactory.create([options])` returns an object that will expose the `df.spawn` method
+- `options` - optional object with:
+  - `remote` bool - use remote endpoint to spawn the nodes.
+  - `port` number - remote endpoint point. Defaults to 9999.
+  - `exec` - IPFS executable path. `ipfsd-ctl` will attempt to locate it by default. If you desire to spawn js-ipfs instances in the same process, pass the ref to the module instead (e.g `exec: require('ipfs')`)
+  - `type` - the daemon type, see below the options
+    - `go` - spawn go-ipfs daemon
+    - `js` - spawn js-ipfs daemon
+    - `proc` - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `DaemonFactory.create({type: 'proc', exec: require('ipfs') })`.
 
-- `options` - an optional object with the following properties
-  - `remote` bool - indicates if the factory should spawn local or remote nodes. By default, local nodes are spawned in Node.js and remote nodes are spawned in Browser environments.
-  - `port` number - the port number to use for the remote factory. It should match the port on which `DaemonFactory.server` was started. Defaults to 9999.
-  - `type` - the daemon type to create with this factory. See the section bellow for the supported types
-  - `exec` - path to the desired IPFS executable to spawn, otherwise `ipfsd-ctl` will try to locate the correct one based on the `type`. In the case of `proc` type, exec is required and expects an IPFS coderef.
-  
-`ipfsd-ctl` allows spawning different IPFS implementations, such as:
+**example:** See [Usage](#usage)
 
-- **`go`** - calling `DaemonFactory.create({type: 'go'})` will spawn a `go-ipfs` daemon.
-- **`js`** - calling `DaemonFactory.create({type: 'js'})` will spawn a `js-ipfs` daemon.
-- **`proc`** - calling `DaemonFactory.create({type: 'proc', exec: require('ipfs') })` will spawn an `in process js-ipfs node` using the provided code reference that implements the core IPFS API. Note that, `exec` option to `df.spawn()` is required if `type: 'proc'` is used.
-  
-#### DaemonFactory endpoint for remote spawning - `const server = `DaemonFactory.createServer([options]) `
+#### Spawn a daemon with `f.spawn([options], callback)`
 
-`DaemonFactory.createServer` create an instance of the bundled REST API used by the remote controller.
+Spawn the daemon
 
-- exposes `start` and `stop` methods to start and stop the http server endpoint.
-
-#### Spawn a new daemon with `df.spawn`
-
-Spawn either a js-ipfs or go-ipfs daemon
-
-`df.spawn([options], callback)`
-
-`options` is an optional object the following properties:
+- `options` is an optional object the following properties:
   - `init` bool (default true) - should the node be initialized
   - `start` bool (default true) - should the node be started
   - `repoPath` string - the repository path to use for this node, ignored if node is disposable
@@ -151,12 +122,49 @@ Spawn either a js-ipfs or go-ipfs daemon
   - `args` - array of cmd line arguments to be passed to ipfs daemon
   - `config` - ipfs configuration options
 
-`callback` - is a function with the signature `function (err, ipfsd)` where:
+- `callback` - is a function with the signature `function (err, ipfsd)` where:
   - `err` - is the error set if spawning the node is unsuccessful
   - `ipfsd` - is the daemon controller instance: 
     - `api` - a property of `ipfsd`, an instance of  [ipfs-api](https://github.com/ipfs/js-ipfs-api) attached to the newly created ipfs node   
 
-### IPFS Daemon Controller (`ipfsd`)
+**example:** See [Usage](#usage)
+
+#### Get daemon version with `f.version(callback)`
+
+Get the version without spawning a daemon
+
+- `callback` - is a function with the signature `function(err, version)`, where version might be one of the following:
+    - if `type` is 'go' a version string like `ipfs version <version number>`
+    - if `type` is 'js' a version string like `js-ipfs version: <version number>`
+     - if `type` is 'proc' an object with the following properties:
+        - version - the ipfs version
+        - repo - the repo version
+        - commit - the commit hash for this version
+
+### Remote endpoint - `const server = `IPFSFactory.createServer([options]) `
+
+`IPFSFactory.createServer` starts a IPFSFactory endpoint.
+
+**example:** 
+```
+const IPFSFactory = require('ipfsd-ctl')
+
+const server = IPFSFactory.createServer({ port: 12345 })
+
+server.start((err) => {
+  if (err) { throw err }
+
+  console.log('endpoint is running')
+
+  server.stop((err) => {
+    if (err) { throw err }
+
+    console.log('endpoint has stopped')
+  })
+})
+```
+
+### IPFS Daemon Controller - `ipfsd`
 
 The IPFS daemon controller (`ipfsd`) allows you to interact with the spawned IPFS daemon.
 
@@ -246,13 +254,13 @@ Get the version of ipfs
 
 `callback` is a function with the signature `function(err, version)`
    
-### IPFS Client (`ipfsd.api`)
+### IPFS HTTP Client  - `ipfsd.api`
 
 An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api) that is used to interact with the daemon.
 
-This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`. 
+This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`.
    
-### Packaging
+## Packaging
 
 `ipfsd-ctl` can be packaged in Electron applications, but the ipfs binary has to be excluded from asar (Electron Archives).
 [read more about unpack files from asar](https://electron.atom.io/docs/tutorial/application-packaging/#adding-unpacked-files-in-asar-archive).
@@ -264,6 +272,41 @@ electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep
 ```
 
 See [electron asar example](https://github.com/ipfs/js-ipfsd-ctl/tree/master/examples/electron-asar/)
+
+## Development
+
+Project structure:
+
+```
+src
+├── defaults
+│   ├── config.json
+│   └── options.json
+├── endpoint                    # endpoint to support remote spawning
+│   ├── routes.js
+│   └── server.js
+├── factory-client.js           # IPFS Factories: client (remote), daemon (go or js) and in-proc (js)
+├── factory-daemon.js
+├── factory-in-proc.js
+├── index.js
+├── ipfsd-client.js             # ipfsd (Daemon Controller): client (remote), daemon (go or js), in-proc (js)
+├── ipfsd-daemon.js
+├── ipfsd-in-proc.js
+└── utils                       # Utils used by the Factories and Daemon Controllers
+    ├── configure-node.js
+    ├── exec.js
+    ├── find-ipfs-executable.js
+    ├── flatten.js
+    ├── parse-config.js
+    ├── repo
+    │   ├── create-browser.js
+    │   └── create-nodejs.js
+    ├── run.js
+    ├── set-config-value.js
+    └── tmp-dir.js
+
+4 directories, 21 files
+```
 
 ## Contribute
 

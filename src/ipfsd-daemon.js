@@ -1,31 +1,32 @@
 'use strict'
 
 const fs = require('fs')
-const async = require('async')
+const waterfall = require('async/waterfall')
 const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const path = require('path')
 const once = require('once')
 const truthy = require('truthy')
-const utils = require('./utils')
-const flatten = require('./utils').flatten
-const debug = require('debug')('ipfsd-ctl:deamon-node')
+const flatten = require('./utils/flatten')
+const debug = require('debug')
+const log = debug('ipfsd-ctl:daemon')
 
-const tryJsonParse = utils.tryJsonParse
-const parseConfig = utils.parseConfig
-const tempDir = utils.tempDir
-const findIpfsExecutable = utils.findIpfsExecutable
-const setConfigValue = utils.setConfigValue
-const configureNode = utils.configureNode
-const run = utils.run
+const safeParse = require('safe-json-parse/callback')
+
+const parseConfig = require('./utils/parse-config')
+const tmpDir = require('./utils/tmp-dir')
+const findIpfsExecutable = require('./utils/find-ipfs-executable')
+const setConfigValue = require('./utils/set-config-value')
+const configureNode = require('./utils/configure-node')
+const run = require('./utils/run')
 
 const GRACE_PERIOD = 10500 // amount of ms to wait before sigkill
 
 /**
- * Controll a go-ipfs or js-ipfs node.
+ * ipfsd for a go-ipfs or js-ipfs daemon
  */
-class Node {
+class Daemon {
   /**
    * Create a new node.
    *
@@ -34,14 +35,19 @@ class Node {
    * @returns {Node}
    */
   constructor (opts) {
-    const rootPath = process.env.testpath ? process.env.testpath : __dirname
+    const rootPath = process.env.testpath
+      ? process.env.testpath
+      : __dirname
+
     const type = truthy(process.env.IPFS_TYPE)
 
     this.opts = opts || { type: type || 'go' }
     this.opts.config = flatten(this.opts.config)
 
-    const tmpDir = tempDir(opts.type === 'js')
-    this.path = this.opts.disposable ? tmpDir : (this.opts.repoPath || tmpDir)
+    const td = tmpDir(opts.type === 'js')
+    this.path = this.opts.disposable
+      ? td
+      : (this.opts.repoPath || td)
     this.disposable = this.opts.disposable
     this.exec = this.opts.exec || process.env.IPFS_EXEC || findIpfsExecutable(this.opts.type, rootPath)
     this.subprocess = null
@@ -263,7 +269,7 @@ class Node {
     // need a local var for the closure, as we clear the var.
     const subprocess = this.subprocess
     const timeout = setTimeout(() => {
-      debug('kill timeout, using SIGKILL', subprocess.pid)
+      log('kill timeout, using SIGKILL', subprocess.pid)
       subprocess.kill('SIGKILL')
       callback()
     }, GRACE_PERIOD)
@@ -271,7 +277,7 @@ class Node {
     const disposable = this.disposable
     const clean = this.cleanup.bind(this)
     subprocess.once('close', () => {
-      debug('killed', subprocess.pid)
+      log('killed', subprocess.pid)
       clearTimeout(timeout)
       this.subprocess = null
       this._started = false
@@ -281,7 +287,7 @@ class Node {
       callback()
     })
 
-    debug('killing', subprocess.pid)
+    log('killing', subprocess.pid)
     subprocess.kill('SIGTERM')
     this.subprocess = null
   }
@@ -314,7 +320,7 @@ class Node {
       key = 'show'
     }
 
-    async.waterfall([
+    waterfall([
       (cb) => run(
         this,
         ['config', key],
@@ -323,7 +329,7 @@ class Node {
       ),
       (config, cb) => {
         if (!key) {
-          return tryJsonParse(config, cb)
+          return safeParse(config, cb)
         }
         cb(null, config.trim())
       }
@@ -353,4 +359,4 @@ class Node {
   }
 }
 
-module.exports = Node
+module.exports = Daemon

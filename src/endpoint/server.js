@@ -4,18 +4,28 @@ const Hapi = require('hapi')
 const routes = require('./routes')
 
 class Server {
-  constructor (port) {
+  constructor (options) {
+    options = options || { port: 9999 }
+
     this.server = null
-    this.port = typeof port === 'undefined' ? 9999 : port
+    this.port = options.port
   }
 
   start (cb) {
     cb = cb || (() => {})
 
     this.server = new Hapi.Server()
-    this.server.connection({ port: this.port, host: 'localhost', routes: { cors: true } })
+
+    this.server.connection({
+      port: this.port,
+      host: 'localhost',
+      routes: {
+        cors: true
+      }
+    })
 
     routes(this.server)
+
     this.server.start((err) => {
       if (err) {
         return cb(err)
@@ -27,6 +37,7 @@ class Server {
 
   stop (cb) {
     cb = cb || (() => {})
+
     this.server.stop(cb)
   }
 }

@@ -1,13 +1,13 @@
 'use strict'
 
-const createRepo = require('./utils').createRepo
+const eachOf = require('async/eachOf')
 const multiaddr = require('multiaddr')
-const flatten = require('./utils').flatten
-const async = require('async')
 const defaults = require('lodash.defaultsdeep')
+const createRepo = require('./utils/repo/create-nodejs')
+const flatten = require('./utils/flatten')
 
 /**
- * Controll a go-ipfs or js-ipfs node.
+ * ipfsd for a js-ipfs instance (aka in-process IPFS node)
  */
 class Node {
   /**
@@ -133,7 +133,7 @@ class Node {
       }
 
       const conf = flatten(this.opts.config)
-      async.eachOf(conf, (val, key, cb) => {
+      eachOf(conf, (val, key, cb) => {
         this.setConfig(key, val, cb)
       }, (err) => {
         if (err) {
