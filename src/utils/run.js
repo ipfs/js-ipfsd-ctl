@@ -13,5 +13,8 @@ module.exports = (node, args, opts, callback) => {
     executable = process.execPath
   }
 
+  // Don't pass on arguments that were passed into the node executable
+  opts.execArgv = []
+
   return exec(executable, args, opts, callback)
 }
