@@ -74,7 +74,8 @@ class FactoryDaemon {
    * Spawn an IPFS node, either js-ipfs or go-ipfs
    *
    * Options are:
-   * - `init` bool - should the node be initialized
+   * - `init` {bool|Object} - should the node be initialized
+   *  - if `init` is an Object, it is expected to be of the form `{keySize: <bits>}`
    * - `start` bool - should the node be started
    * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
    * - `disposable` bool - a new repo is created and initialized for each invocation

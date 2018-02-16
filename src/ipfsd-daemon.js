@@ -57,6 +57,14 @@ class Daemon {
     this._gatewayAddr = null
     this._started = false
     this.api = null
+    this.keySize = null
+
+    this.keySize = process.env.IPFS_KEYSIZE
+
+    // option takes precedence over env variable
+    if (typeof this.opts.init === 'Object') {
+      this.keySize = this.opts.init.keySize
+    }
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
@@ -128,11 +136,19 @@ class Daemon {
       this.path = initOpts.directory
     }
 
-    const args = ['init', '-b', initOpts.keysize || 2048]
+    const keySize = initOpts.keysize ? initOpts.keysize : this.keySize
+    const args = ['init']
+    // do not just set a default keysize,
+    // in case we decide to change it at
+    // the daemon level in the future
+    if (keySize) {
+      args.concat(['-b', keySize])
+    }
     if (initOpts.pass) {
       args.push('--pass')
       args.push('"' + initOpts.pass + '"')
     }
+    log(`initializing with keysize: ${keySize}`)
     run(this, args, { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)

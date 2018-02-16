@@ -32,6 +32,7 @@ class Node {
     this._started = false
     this.initialized = false
     this.api = null
+    this.keySize = null
 
     this.opts.EXPERIMENTAL = defaults({}, opts.EXPERIMENTAL, {
       pubsub: false,
@@ -55,6 +56,14 @@ class Node {
         throw new Error('Unkown argument ' + arg)
       }
     })
+
+    // option takes precedence over env variable
+    if (typeof this.opts.init === 'Object') {
+      this.keySize = this.opts.init.keySize
+    } else if (process.env.IPFS_KEYSIZE) {
+      this.keySize = process.env.IPFS_KEYSIZE
+    }
+
     this.exec = new IPFS({
       repo: this.repo,
       init: false,
@@ -126,7 +135,13 @@ class Node {
       initOpts = {}
     }
 
-    initOpts.bits = initOpts.keysize || 2048
+    const keySize = initOpts.keysize ? initOpts.keysize : this.keySize
+    // do not just set a default keysize,
+    // in case we decide to change it at
+    // the daemon level in the future
+    if (keySize) {
+      initOpts.bits = keySize
+    }
     this.exec.init(initOpts, (err) => {
       if (err) {
         return callback(err)

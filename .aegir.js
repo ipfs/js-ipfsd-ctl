@@ -3,7 +3,6 @@
 const createServer = require('./src').createServer
 
 const server = createServer() // using defaults
-
 module.exports = {
   karma: {
     files: [{
