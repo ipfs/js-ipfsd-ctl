@@ -62,7 +62,7 @@ class Daemon {
     this.keySize = process.env.IPFS_KEYSIZE
 
     // option takes precedence over env variable
-    if (typeof this.opts.init === 'Object') {
+    if (typeof this.opts.init === 'object') {
       this.keySize = this.opts.init.keySize
     }
 
