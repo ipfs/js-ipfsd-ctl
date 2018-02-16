@@ -77,7 +77,7 @@ class FactoryInProc {
    *
    * Options are:
    * - `init` {bool|Object} - should the node be initialized
-   *  - if `init` is an Object, it is expected to be of the form `{keySize: <bits>}`
+   * - `initOpts` Object, it is expected to be of the form `{bits: <size>}`, which sets the desired key size
    * - `start` bool - should the node be started
    * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
    * - `disposable` bool - a new repo is created and initialized for each invocation

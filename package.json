@@ -7,13 +7,13 @@
     "lint": "aegir lint",
     "docs": "aegir docs",
     "build": "aegir build",
-    "test": "aegir test -t node -t browser --no-cors",
-    "test:node": "aegir test -t node",
-    "test:browser": "aegir test -t browser --no-cors",
+    "test": "IPFS_KEYSIZE=1024 aegir test -t node -t browser --no-cors",
+    "test:node": "IPFS_KEYSIZE=1024 aegir test -t node",
+    "test:browser": "IPFS_KEYSIZE=1024 aegir test -t browser --no-cors",
     "release": "aegir release",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
-    "coverage": "COVERAGE=true aegir coverage --timeout 50000",
+    "coverage": "IPFS_KEYSIZE=1024 COVERAGE=true aegir coverage --timeout 50000",
     "coverage-publish": "aegir coverage -u"
   },
   "browser": {

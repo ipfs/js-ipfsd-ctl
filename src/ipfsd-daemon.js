@@ -57,14 +57,9 @@ class Daemon {
     this._gatewayAddr = null
     this._started = false
     this.api = null
-    this.keySize = null
+    this.bits = null
 
-    this.keySize = process.env.IPFS_KEYSIZE
-
-    // option takes precedence over env variable
-    if (typeof this.opts.init === 'object') {
-      this.keySize = this.opts.init.keySize
-    }
+    this.bits = this.opts.initOpts ? this.opts.initOpts.bits : process.env.IPFS_KEYSIZE
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
@@ -120,7 +115,7 @@ class Daemon {
    * Initialize a repo.
    *
    * @param {Object} [initOpts={}]
-   * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
+   * @param {number} [initOpts.bits=2048] - The bit size of the identiy key.
    * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
    * @param {string} [initOpts.pass] - The passphrase of the keychain.
    * @param {function (Error, Node)} callback
@@ -136,19 +131,19 @@ class Daemon {
       this.path = initOpts.directory
     }
 
-    const keySize = initOpts.keysize ? initOpts.keysize : this.keySize
+    const bits = initOpts.bits ? initOpts.bits : this.bits
     const args = ['init']
     // do not just set a default keysize,
     // in case we decide to change it at
     // the daemon level in the future
-    if (keySize) {
-      args.concat(['-b', keySize])
+    if (bits) {
+      args.concat(['-b', bits])
     }
     if (initOpts.pass) {
       args.push('--pass')
       args.push('"' + initOpts.pass + '"')
     }
-    log(`initializing with keysize: ${keySize}`)
+    log(`initializing with keysize: ${bits}`)
     run(this, args, { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)

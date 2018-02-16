@@ -183,7 +183,7 @@ describe('Spawn options', () => {
       })
     })
 
-    describe('custom init options', () => {
+    describe('custom config options', () => {
       it('custom config', function (done) {
         this.timeout(40 * 1000)
 

@@ -32,7 +32,7 @@ class Node {
     this._started = false
     this.initialized = false
     this.api = null
-    this.keySize = null
+    this.bits = null
 
     this.opts.EXPERIMENTAL = defaults({}, opts.EXPERIMENTAL, {
       pubsub: false,
@@ -57,12 +57,7 @@ class Node {
       }
     })
 
-    // option takes precedence over env variable
-    if (typeof this.opts.init === 'object') {
-      this.keySize = this.opts.init.keySize
-    } else if (process.env.IPFS_KEYSIZE) {
-      this.keySize = process.env.IPFS_KEYSIZE
-    }
+    this.bits = this.opts.initOpts ? this.opts.initOpts.bits : process.env.IPFS_KEYSIZE
 
     this.exec = new IPFS({
       repo: this.repo,
@@ -123,7 +118,7 @@ class Node {
    * Initialize a repo.
    *
    * @param {Object} [initOpts={}]
-   * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
+   * @param {number} [initOpts.bits=2048] - The bit size of the identiy key.
    * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
    * @param {string} [initOpts.pass] - The passphrase of the keychain.
    * @param {function (Error, Node)} callback
@@ -135,12 +130,12 @@ class Node {
       initOpts = {}
     }
 
-    const keySize = initOpts.keysize ? initOpts.keysize : this.keySize
+    const bits = initOpts.keysize ? initOpts.bits : this.bits
     // do not just set a default keysize,
     // in case we decide to change it at
     // the daemon level in the future
-    if (keySize) {
-      initOpts.bits = keySize
+    if (bits) {
+      initOpts.bits = bits
     }
     this.exec.init(initOpts, (err) => {
       if (err) {
