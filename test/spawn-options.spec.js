@@ -13,6 +13,9 @@ const isNode = require('detect-node')
 const hat = require('hat')
 const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
+const os = require('os')
+
+const isWindows = os.platform() === 'win32'
 
 const tests = [
   { type: 'go' },
@@ -112,6 +115,9 @@ describe('Spawn options', () => {
       })
 
       describe('spawn from a initialized repo', () => {
+        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
+        if (isWindows) { return }
+
         // TODO: figure out why `proc` IPFS refuses
         // to start with a provided repo
         // `Error: Not able to start from state: uninitalized`

@@ -211,7 +211,7 @@ types.forEach((type) => {
     })
 
     describe('start and stop multiple times', () => {
-      // TODO: wont work on windows until we get /shutdown implemented in js-ipfs
+      // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
       if (isWindows) { return }
 
       let ipfsd
