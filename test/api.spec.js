@@ -37,7 +37,7 @@ describe('ipfsd.api for Daemons', () => {
     })
 
     it('test the ipfsd.api', function (done) {
-      this.timeout(80 * 1000)
+      this.timeout(20 * 1000)
 
       // TODO skip in browser - can we avoid using file system operations here?
       if (!isNode) { return this.skip() }
@@ -104,7 +104,7 @@ describe('ipfsd.api for Daemons', () => {
     })
 
     it('check if API and Gateway addrs are correct', function (done) {
-      this.timeout(80 * 1000)
+      this.timeout(20 * 1000)
 
       df.spawn({
         config: config,
