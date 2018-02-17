@@ -12,7 +12,6 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const isrunning = require('is-running')
-const JSIPFS = require('ipfs')
 
 const isWindows = os.platform() === 'win32'
 const findIpfsExecutable = require('../src/utils/find-ipfs-executable')
@@ -212,6 +211,9 @@ types.forEach((type) => {
     })
 
     describe('start and stop multiple times', () => {
+      // TODO: wont work on windows until we get /shutdown implemented in js-ipfs
+      if (isWindows) { return }
+
       let ipfsd
 
       before(function (done) {

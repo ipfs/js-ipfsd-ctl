@@ -286,8 +286,9 @@ class Node {
   /**
    * Replace the current config with the provided one
    *
-   * @param config
-   * @param callback
+   * @param {object} config
+   * @param {function(Error)} callback
+   * @return {undefined}
    */
   replaceConfig (config, callback) {
     this.exec.config.replace(config, callback)

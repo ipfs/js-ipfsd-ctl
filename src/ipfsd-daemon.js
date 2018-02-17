@@ -361,8 +361,9 @@ class Daemon {
   /**
    * Replace the current config with the provided one
    *
-   * @param config
-   * @param callback
+   * @param {object} config
+   * @param {function(Error)} callback
+   * @return {undefined}
    */
   replaceConfig (config, callback) {
     const tmpFile = path.join(os.tmpdir(), hat())
