@@ -30,7 +30,9 @@ const versions = {
   proc: jsVersion
 }
 
-describe('Spawn options', () => {
+describe('Spawn options', function () {
+  this.timeout(80 * 1000)
+
   tests.forEach((fOpts) => describe(`${fOpts.type}`, () => {
     const VERSION_STRING = versions[fOpts.type]
     let f
@@ -41,7 +43,7 @@ describe('Spawn options', () => {
 
     // TODO document this method on the readme
     it('f.version', function (done) {
-      this.timeout(20 * 1000)
+      this.timeout(80 * 1000)
 
       f.version({ type: fOpts.type }, (err, version) => {
         expect(err).to.not.exist()
@@ -88,7 +90,7 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.init', function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(80 * 1000)
 
           ipfsd.init((err) => {
             expect(err).to.not.exist()
@@ -98,7 +100,7 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.start', function (done) {
-          this.timeout(20 * 1000)
+          this.timeout(80 * 1000)
 
           ipfsd.start((err, api) => {
             expect(err).to.not.exist()
@@ -109,7 +111,7 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.stop', function (done) {
-          this.timeout(10 * 1000)
+          this.timeout(80 * 1000)
 
           ipfsd.stop(done)
         })
@@ -124,10 +126,7 @@ describe('Spawn options', () => {
         let ipfsd
 
         it('f.spawn', function (done) {
-          // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-          if (isWindows) { this.skip() }
-
-          this.timeout(20 * 1000)
+          this.timeout(80 * 1000)
 
           const options = {
             repoPath: prevRepoPath,
@@ -147,10 +146,7 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.start', function (done) {
-          // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-          if (isWindows) { this.skip() }
-
-          this.timeout(20 * 1000)
+          this.timeout(80 * 1000)
 
           ipfsd.start((err, api) => {
             expect(err).to.not.exist()
@@ -161,10 +157,7 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.stop', function (done) {
-          // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-          if (isWindows) { this.skip() }
-
-          this.timeout(20 * 1000)
+          this.timeout(80 * 1000)
 
           ipfsd.stop(done)
         })
@@ -176,7 +169,7 @@ describe('Spawn options', () => {
       let ipfsd
 
       it('create init and start node', function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(80 * 1000)
 
         f.spawn({ initOptions: { bits: fOpts.bits } },
           (err, _ipfsd) => {
@@ -191,7 +184,7 @@ describe('Spawn options', () => {
       })
 
       it('ipfsd.stop', function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(80 * 1000)
 
         ipfsd.stop(done)
       })
@@ -199,7 +192,7 @@ describe('Spawn options', () => {
 
     describe('custom config options', () => {
       it('custom config', function (done) {
-        this.timeout(30 * 1000)
+        this.timeout(80 * 1000)
 
         const addr = '/ip4/127.0.0.1/tcp/5678'
         const swarmAddr1 = '/ip4/127.0.0.1/tcp/35666'
@@ -256,7 +249,7 @@ describe('Spawn options', () => {
       })
 
       it('allows passing custom repo path to spawn', function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(80 * 1000)
 
         const config = {
           Addresses: {
@@ -311,7 +304,7 @@ describe('Spawn options', () => {
       let ipfsd
 
       it('spawn with pubsub', function (done) {
-        this.timeout(30 * 1000)
+        this.timeout(80 * 1000)
 
         const options = {
           args: ['--enable-pubsub-experiment'],
@@ -344,7 +337,7 @@ describe('Spawn options', () => {
       })
 
       it('ipfsd.stop', function (done) {
-        this.timeout(10 * 1000)
+        this.timeout(80 * 1000)
         ipfsd.stop(done)
       })
     })
@@ -353,7 +346,7 @@ describe('Spawn options', () => {
       let ipfsd
 
       before(function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(80 * 1000)
         f.spawn({ initOptions: { bits: fOpts.bits } },
           (err, _ipfsd) => {
             expect(err).to.not.exist()
@@ -384,7 +377,7 @@ describe('Spawn options', () => {
       })
 
       it('Should set a config value', function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(80 * 1000)
 
         series([
           (cb) => ipfsd.setConfig('Bootstrap', 'null', cb),
