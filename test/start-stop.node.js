@@ -40,7 +40,7 @@ tests.forEach((fOpts) => {
       let stopped = false
 
       before(function (done) {
-        this.timeout(80 * 1000)
+        this.timeout(20 * 1000)
 
         const f = IPFSFactory.create(dfConfig)
 
@@ -77,7 +77,7 @@ tests.forEach((fOpts) => {
       })
 
       it('.start', function (done) {
-        this.timeout(80 * 1000)
+        this.timeout(20 * 1000)
 
         ipfsd.start((err, ipfs) => {
           expect(err).to.not.exist()
@@ -97,7 +97,7 @@ tests.forEach((fOpts) => {
       })
 
       it('.stop', function (done) {
-        this.timeout(80 * 1000)
+        this.timeout(20 * 1000)
 
         ipfsd.stop((err) => {
           expect(err).to.not.exist()
@@ -117,7 +117,7 @@ tests.forEach((fOpts) => {
 
       it('is stopped', function (done) {
         // shutdown grace period is already 10500
-        this.timeout(80 * 1000)
+        this.timeout(20 * 1000)
 
         ipfsd.pid((pid) => {
           expect(pid).to.not.exist()
@@ -133,7 +133,6 @@ tests.forEach((fOpts) => {
       })
 
       it('fail on start with non supported flags', function (done) {
-        this.timeout(80 * 1000)
         // TODO js-ipfs doesn't fail on unrecognized args.
         // Decided what should be the desired behaviour
         if (fOpts.type === 'js') { return this.skip() }
@@ -161,7 +160,7 @@ tests.forEach((fOpts) => {
       let exec
 
       before(function (done) {
-        this.timeout(80 * 1000)
+        this.timeout(20 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
         exec = findIpfsExecutable(fOpts.type)
@@ -190,7 +189,7 @@ tests.forEach((fOpts) => {
     })
 
     describe('should fail on invalid exec path', function () {
-      this.timeout(80 * 1000)
+      this.timeout(20 * 1000)
 
       let ipfsd
       before((done) => {
@@ -226,7 +225,7 @@ tests.forEach((fOpts) => {
       let ipfsd
 
       before(function (done) {
-        this.timeout(80 * 1000)
+        this.timeout(20 * 1000)
 
         const f = IPFSFactory.create(dfConfig)
 
@@ -268,7 +267,7 @@ tests.forEach((fOpts) => {
       })
 
       it('.stop', function (done) {
-        this.timeout(80 * 1000)
+        this.timeout(20 * 1000)
 
         ipfsd.stop((err) => {
           expect(err).to.not.exist()
@@ -280,7 +279,7 @@ tests.forEach((fOpts) => {
       })
 
       it('.start', function (done) {
-        this.timeout(80 * 1000)
+        this.timeout(20 * 1000)
 
         ipfsd.start((err) => {
           expect(err).to.not.exist()
@@ -292,7 +291,7 @@ tests.forEach((fOpts) => {
       })
 
       it('.stop and cleanup', function (done) {
-        this.timeout(80 * 1000)
+        this.timeout(20 * 1000)
 
         ipfsd.stop((err) => {
           expect(err).to.not.exist()
