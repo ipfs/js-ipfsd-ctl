@@ -270,36 +270,40 @@ class Daemon {
   /**
    * Kill the `ipfs daemon` process.
    *
-   * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
-   * if the process hasn't exited yet.
+   * If the HTTP API is established, then send 'shutdown' command; otherwise,
+   * process.kill(`SIGTERM`) is used.  In either case, if the process
+   * does not exit after 10.5 seconds then a `SIGKILL` is used.
    *
    * @param {function()} callback - Called when the process was killed.
    * @returns {undefined}
    */
   killProcess (callback) {
     // need a local var for the closure, as we clear the var.
+    const self = this
     const subprocess = this.subprocess
     const timeout = setTimeout(() => {
       log('kill timeout, using SIGKILL', subprocess.pid)
       subprocess.kill('SIGKILL')
-      callback()
     }, GRACE_PERIOD)
 
-    const disposable = this.disposable
-    const clean = this.cleanup.bind(this)
-    subprocess.once('close', () => {
+    subprocess.once('exit', () => {
       log('killed', subprocess.pid)
       clearTimeout(timeout)
-      this.subprocess = null
-      this._started = false
-      if (disposable) {
-        return clean(callback)
+      self.subprocess = null
+      self._started = false
+      if (self.disposable) {
+        return self.cleanup(callback)
       }
-      callback()
+      setImmediate(callback)
     })
 
-    log('killing', subprocess.pid)
-    subprocess.kill('SIGTERM')
+    if (this.api) {
+      log('kill via api', subprocess.pid)
+      this.api.shutdown(() => null)
+    } else {
+      log('killing', subprocess.pid)
+      subprocess.kill('SIGTERM')
+    }
     this.subprocess = null
   }
 

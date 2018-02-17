@@ -43,7 +43,7 @@ describe('ipfsd.api for Daemons', () => {
       this.timeout(20 * 1000)
 
       // TODO skip in browser - can we avoid using file system operations here?
-      if (!isNode) { this.skip() }
+      if (!isNode) { return this.skip() }
 
       // TODO: fix on Windows
       // - https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
