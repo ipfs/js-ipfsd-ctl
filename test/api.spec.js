@@ -11,10 +11,7 @@ const series = require('async/series')
 const multiaddr = require('multiaddr')
 const path = require('path')
 const DaemonFactory = require('../src')
-const os = require('os')
-
 const isNode = require('detect-node')
-const isWindows = os.platform() === 'win32'
 
 const tests = [
   { type: 'go' },
@@ -40,15 +37,14 @@ describe('ipfsd.api for Daemons', () => {
     })
 
     it('test the ipfsd.api', function (done) {
+<<<<<<< HEAD
       this.timeout(20 * 1000)
+=======
+      this.timeout(80 * 1000)
+>>>>>>> test: work on windows
 
       // TODO skip in browser - can we avoid using file system operations here?
       if (!isNode) { return this.skip() }
-
-      // TODO: fix on Windows
-      // - https://github.com/ipfs/js-ipfsd-ctl/pull/155#issuecomment-326970190
-      // - https://github.com/ipfs/js-ipfs-api/issues/408
-      if (isWindows) { return this.skip() }
 
       let ipfsd
       let api
@@ -112,7 +108,11 @@ describe('ipfsd.api for Daemons', () => {
     })
 
     it('check if API and Gateway addrs are correct', function (done) {
+<<<<<<< HEAD
       this.timeout(20 * 1000)
+=======
+      this.timeout(80 * 1000)
+>>>>>>> test: work on windows
 
       df.spawn({
         config: config,
