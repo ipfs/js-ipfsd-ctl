@@ -12,6 +12,7 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const isrunning = require('is-running')
+const JSIPFS = require('ipfs')
 
 const isWindows = os.platform() === 'win32'
 const findIpfsExecutable = require('../src/utils/find-ipfs-executable')
@@ -180,29 +181,32 @@ types.forEach((type) => {
       it('ipfsd.exec should match exec', () => {
         expect(ipfsd.exec).to.equal(exec)
       })
+    })
 
-      describe('should fail on invalid exec path', function () {
-        this.timeout(20 * 1000)
+    describe('should fail on invalid exec path', function () {
+      this.timeout(20 * 1000)
 
-        before((done) => {
-          const df = IPFSFactory.create(dfConfig)
-          const exec = path.join('invalid', 'exec', 'ipfs')
+      let ipfsd
+      before((done) => {
+        const df = IPFSFactory.create(dfConfig)
+        const exec = path.join('invalid', 'exec', 'ipfs')
 
-          df.spawn({ init: false, start: false, exec: exec }, (err, daemon) => {
-            expect(err).to.not.exist()
-            expect(daemon).to.exist()
+        df.spawn({ init: false, start: false, exec: exec }, (err, daemon) => {
+          expect(err).to.not.exist()
+          expect(daemon).to.exist()
 
-            ipfsd = daemon
-            done()
-          })
+          ipfsd = daemon
+          done()
         })
+      })
 
-        it('should fail on init', (done) => {
-          ipfsd.init((err, node) => {
-            expect(err).to.exist()
-            expect(node).to.not.exist()
-            done()
-          })
+      after((done) => ipfsd.stop(done))
+
+      it('should fail on init', (done) => {
+        ipfsd.init((err, node) => {
+          expect(err).to.exist()
+          expect(node).to.not.exist()
+          done()
         })
       })
     })
@@ -217,8 +221,8 @@ types.forEach((type) => {
 
         async.series([
           (cb) => f.spawn({
-            init: true,
-            start: true,
+            init: false,
+            start: false,
             disposable: false,
             repoPath: tempDir(type),
             config: {
@@ -244,7 +248,7 @@ types.forEach((type) => {
         expect(ipfsd).to.exist()
       })
 
-      it('daemon should not be running', (done) => {
+      it('daemon should be running', (done) => {
         ipfsd.pid((pid) => {
           expect(pid).to.exist()
           done()

@@ -2,23 +2,26 @@
 
 const fs = require('fs')
 const waterfall = require('async/waterfall')
+const series = require('async/series')
 const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const path = require('path')
 const once = require('once')
 const truthy = require('truthy')
-const flatten = require('./utils/flatten')
+const defaults = require('lodash.defaults')
 const debug = require('debug')
+const os = require('os')
+const hat = require('hat')
 const log = debug('ipfsd-ctl:daemon')
 
 const safeParse = require('safe-json-parse/callback')
+const safeStringify = require('safe-json-stringify')
 
 const parseConfig = require('./utils/parse-config')
 const tmpDir = require('./utils/tmp-dir')
 const findIpfsExecutable = require('./utils/find-ipfs-executable')
 const setConfigValue = require('./utils/set-config-value')
-const configureNode = require('./utils/configure-node')
 const run = require('./utils/run')
 
 const GRACE_PERIOD = 10500 // amount of ms to wait before sigkill
@@ -42,8 +45,6 @@ class Daemon {
     const type = truthy(process.env.IPFS_TYPE)
 
     this.opts = opts || { type: type || 'go' }
-    this.opts.config = flatten(this.opts.config)
-
     const td = tmpDir(opts.type === 'js')
     this.path = this.opts.disposable
       ? td
@@ -57,8 +58,6 @@ class Daemon {
     this._gatewayAddr = null
     this._started = false
     this.api = null
-    this.bits = null
-
     this.bits = this.opts.initOpts ? this.opts.initOpts.bits : process.env.IPFS_KEYSIZE
 
     if (this.opts.env) {
@@ -149,14 +148,14 @@ class Daemon {
         return callback(err)
       }
 
-      configureNode(this, this.opts.config, (err) => {
-        if (err) {
-          return callback(err)
-        }
-
+      waterfall([
+        (cb) => this.getConfig(cb),
+        (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
+      ], (err) => {
+        if (err) { return callback }
         this.clean = false
         this.initialized = true
-        callback(null, this)
+        return callback(null, this)
       })
     })
   }
@@ -339,7 +338,7 @@ class Daemon {
         cb
       ),
       (config, cb) => {
-        if (!key) {
+        if (key === 'show') {
           return safeParse(config, cb)
         }
         cb(null, config.trim())
@@ -357,6 +356,32 @@ class Daemon {
    */
   setConfig (key, value, callback) {
     setConfigValue(this, key, value, callback)
+  }
+
+  /**
+   * Replace the current config with the provided one
+   *
+   * @param config
+   * @param callback
+   */
+  replaceConfig (config, callback) {
+    const tmpFile = path.join(os.tmpdir(), hat())
+    // I wanted to use streams here, but js-ipfs doesn't
+    // read from stdin when providing '-' (or piping) like
+    // go-ipfs, and adding it right now seems like a fair
+    // bit of work, so we're using tmp file for now - not ideal...
+    series([
+      (cb) => fs.writeFile(tmpFile, safeStringify(config), cb),
+      (cb) => run(
+        this,
+        ['config', 'replace', `${tmpFile}`],
+        { env: this.env },
+        cb
+      )
+    ], (err) => {
+      if (err) { return callback(err) }
+      fs.unlink(tmpFile, callback)
+    })
   }
 
   /**

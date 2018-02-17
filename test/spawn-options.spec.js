@@ -215,6 +215,7 @@ describe('Spawn options', () => {
               config = JSON.parse(config)
             }
             expect(config).to.eql([swarmAddr1])
+            // expect(config).to.include(swarmAddr1)
             cb(null, ipfsd)
           })
         ], (err, ipfsd) => {
@@ -344,7 +345,8 @@ describe('Spawn options', () => {
         })
       })
 
-      after((done) => {
+      after(function (done) {
+        this.timeout(50 * 1000)
         ipfsd.stop(done)
       })
 

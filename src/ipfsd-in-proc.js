@@ -1,10 +1,10 @@
 'use strict'
 
-const eachOf = require('async/eachOf')
 const multiaddr = require('multiaddr')
-const defaults = require('lodash.defaultsdeep')
+const defaultsDeep = require('lodash.defaultsdeep')
 const createRepo = require('./utils/repo/create-nodejs')
-const flatten = require('./utils/flatten')
+const defaults = require('lodash.defaults')
+const waterfall = require('async/waterfall')
 
 /**
  * ipfsd for a js-ipfs instance (aka in-process IPFS node)
@@ -32,9 +32,9 @@ class Node {
     this._started = false
     this.initialized = false
     this.api = null
-    this.bits = null
+    this.bits = this.opts.initOpts ? this.opts.initOpts.bits : process.env.IPFS_KEYSIZE
 
-    this.opts.EXPERIMENTAL = defaults({}, opts.EXPERIMENTAL, {
+    this.opts.EXPERIMENTAL = defaultsDeep({}, opts.EXPERIMENTAL, {
       pubsub: false,
       sharding: false,
       relay: {
@@ -56,8 +56,6 @@ class Node {
         throw new Error('Unkown argument ' + arg)
       }
     })
-
-    this.bits = this.opts.initOpts ? this.opts.initOpts.bits : process.env.IPFS_KEYSIZE
 
     this.exec = new IPFS({
       repo: this.repo,
@@ -142,17 +140,14 @@ class Node {
         return callback(err)
       }
 
-      const conf = flatten(this.opts.config)
-      eachOf(conf, (val, key, cb) => {
-        this.setConfig(key, val, cb)
-      }, (err) => {
-        if (err) {
-          return callback(err)
-        }
-
-        this.initialized = true
+      waterfall([
+        (cb) => this.getConfig(cb),
+        (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
+      ], (err) => {
+        if (err) { return callback }
         this.clean = false
-        callback(null, this)
+        this.initialized = true
+        return callback(null, this)
       })
     })
   }
@@ -286,6 +281,16 @@ class Node {
    */
   setConfig (key, value, callback) {
     this.exec.config.set(key, value, callback)
+  }
+
+  /**
+   * Replace the current config with the provided one
+   *
+   * @param config
+   * @param callback
+   */
+  replaceConfig (config, callback) {
+    this.exec.config.replace(config, callback)
   }
 
   /**
