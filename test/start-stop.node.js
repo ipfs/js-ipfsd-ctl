@@ -117,7 +117,7 @@ tests.forEach((fOpts) => {
 
       it('is stopped', function (done) {
         // shutdown grace period is already 10500
-        this.timeout(20 * 1000)
+        this.timeout(80 * 1000)
 
         ipfsd.pid((pid) => {
           expect(pid).to.not.exist()
@@ -160,7 +160,7 @@ tests.forEach((fOpts) => {
       let exec
 
       before(function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(80 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
         exec = findIpfsExecutable(fOpts.type)
@@ -189,7 +189,7 @@ tests.forEach((fOpts) => {
     })
 
     describe('should fail on invalid exec path', function () {
-      this.timeout(20 * 1000)
+      this.timeout(80 * 1000)
 
       let ipfsd
       before((done) => {
@@ -225,7 +225,7 @@ tests.forEach((fOpts) => {
       let ipfsd
 
       before(function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(80 * 1000)
 
         const f = IPFSFactory.create(dfConfig)
 
