@@ -97,7 +97,7 @@ describe('client', () => {
           }
         })
 
-        node.init({ initOptions: { bits: 512 } }, (err) => {
+        node.init({ bits: 512 }, (err) => {
           expect(err).to.not.exist()
           expect(node.initialized).to.be.ok()
           done()

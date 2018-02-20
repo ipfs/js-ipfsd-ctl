@@ -55,7 +55,11 @@ describe('ipfsd.api for Daemons', () => {
 
       series([
         (cb) => {
-          df.spawn({ start: false, config: config }, (err, _ipfsd) => {
+          df.spawn({
+            start: false,
+            config: config,
+            initOptions: { bits: 1024 }
+          }, (err, _ipfsd) => {
             expect(err).to.not.exist()
             ipfsd = _ipfsd
             ipfsd.start((err, _api) => {
@@ -110,7 +114,10 @@ describe('ipfsd.api for Daemons', () => {
     it('check if API and Gateway addrs are correct', function (done) {
       this.timeout(30 * 1000)
 
-      df.spawn({ config: config }, (err, _ipfsd) => {
+      df.spawn({
+        config: config,
+        initOptions: { bits: 1024 }
+      }, (err, _ipfsd) => {
         expect(err).to.not.exist()
         const ipfsd = _ipfsd
 

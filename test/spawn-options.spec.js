@@ -89,11 +89,12 @@ describe('Spawn options', () => {
         it('ipfsd.init', function (done) {
           this.timeout(20 * 1000)
 
-          ipfsd.init((err) => {
-            expect(err).to.not.exist()
-            expect(ipfsd.initialized).to.be.ok()
-            done()
-          })
+          ipfsd.init({ bits: 1024 },
+            (err) => {
+              expect(err).to.not.exist()
+              expect(ipfsd.initialized).to.be.ok()
+              done()
+            })
         })
 
         it('ipfsd.start', function (done) {
@@ -171,7 +172,9 @@ describe('Spawn options', () => {
       it('create init and start node', function (done) {
         this.timeout(30 * 1000)
 
-        f.spawn((err, _ipfsd) => {
+        f.spawn({
+          initOptions: { bits: 1024 }
+        }, (err, _ipfsd) => {
           expect(err).to.not.exist()
           expect(_ipfsd).to.exist()
           expect(_ipfsd.api).to.exist()
@@ -204,7 +207,7 @@ describe('Spawn options', () => {
           }
         }
 
-        const options = { config: config }
+        const options = { config: config, initOptions: { bits: 1024 } }
 
         waterfall([
           (cb) => f.spawn(options, cb),
@@ -276,7 +279,7 @@ describe('Spawn options', () => {
             cb()
           }),
           (cb) => {
-            ipfsd.init(cb)
+            ipfsd.init({ bits: 1024 }, cb)
           },
           (cb) => {
             ipfsd.start(cb)
@@ -305,7 +308,8 @@ describe('Spawn options', () => {
         this.timeout(30 * 1000)
 
         const options = {
-          args: ['--enable-pubsub-experiment']
+          args: ['--enable-pubsub-experiment'],
+          initOptions: { bits: 1024 }
         }
 
         f.spawn(options, (err, _ipfsd) => {
@@ -344,7 +348,9 @@ describe('Spawn options', () => {
 
       before(function (done) {
         this.timeout(50 * 1000)
-        f.spawn((err, _ipfsd) => {
+        f.spawn({
+          initOptions: { bits: 1024 }
+        }, (err, _ipfsd) => {
           expect(err).to.not.exist()
           ipfsd = _ipfsd
           done()

@@ -5,6 +5,9 @@ const defaultsDeep = require('lodash.defaultsdeep')
 const createRepo = require('./utils/repo/create-nodejs')
 const defaults = require('lodash.defaults')
 const waterfall = require('async/waterfall')
+const debug = require('debug')
+
+const log = debug('ipfsd-ctl:in-proc')
 
 /**
  * ipfsd for a js-ipfs instance (aka in-process IPFS node)
@@ -32,7 +35,7 @@ class Node {
     this._started = false
     this.initialized = false
     this.api = null
-    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : process.env.IPFS_KEYSIZE
+    this.bits = process.env.IPFS_KEYSIZE || (this.opts.initOptions ? this.opts.initOptions.bits : null)
 
     this.opts.EXPERIMENTAL = defaultsDeep({}, opts.EXPERIMENTAL, {
       pubsub: false,
@@ -134,6 +137,7 @@ class Node {
     // the daemon level in the future
     if (bits) {
       initOptions.bits = bits
+      log(`initializing with keysize: ${bits}`)
     }
     this.exec.init(initOptions, (err) => {
       if (err) {

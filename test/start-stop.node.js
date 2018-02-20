@@ -48,7 +48,8 @@ types.forEach((type) => {
         f.spawn({
           init: true,
           start: false,
-          disposable: true
+          disposable: true,
+          initOptions: { bits: 1024 }
         }, (err, _ipfsd) => {
           expect(err).to.not.exist()
           expect(_ipfsd).to.exist()
@@ -139,7 +140,10 @@ types.forEach((type) => {
 
         const df = IPFSFactory.create(dfConfig)
 
-        df.spawn({ start: false }, (err, ipfsd) => {
+        df.spawn({
+          start: false,
+          initOptions: { bits: 1024 }
+        }, (err, ipfsd) => {
           expect(err).to.not.exist()
           ipfsd.start(['--should-not-exist'], (err) => {
             expect(err).to.exist()
@@ -162,7 +166,10 @@ types.forEach((type) => {
         const df = IPFSFactory.create(dfConfig)
         exec = findIpfsExecutable(type)
 
-        df.spawn({ exec }, (err, daemon) => {
+        df.spawn({
+          exec,
+          initOptions: { bits: 1024 }
+        }, (err, daemon) => {
           expect(err).to.not.exist()
           expect(daemon).to.exist()
 
@@ -190,7 +197,11 @@ types.forEach((type) => {
         const df = IPFSFactory.create(dfConfig)
         const exec = path.join('invalid', 'exec', 'ipfs')
 
-        df.spawn({ init: false, start: false, exec: exec }, (err, daemon) => {
+        df.spawn({
+          init: false,
+          start: false,
+          exec: exec
+        }, (err, daemon) => {
           expect(err).to.not.exist()
           expect(daemon).to.exist()
 
@@ -202,11 +213,12 @@ types.forEach((type) => {
       after((done) => ipfsd.stop(done))
 
       it('should fail on init', (done) => {
-        ipfsd.init((err, node) => {
-          expect(err).to.exist()
-          expect(node).to.not.exist()
-          done()
-        })
+        ipfsd.init({ bits: 1024 },
+          (err, node) => {
+            expect(err).to.exist()
+            expect(node).to.not.exist()
+            done()
+          })
       })
     })
 
@@ -241,7 +253,9 @@ types.forEach((type) => {
             ipfsd = daemon
             cb()
           }),
-          (cb) => ipfsd.init(cb),
+          (cb) => ipfsd.init({
+            initOptions: { bits: 1024 }
+          }, cb),
           (cb) => ipfsd.start(cb)
         ], done)
       })

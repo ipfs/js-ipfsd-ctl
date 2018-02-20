@@ -25,7 +25,9 @@ describe('data can be put and fetched', () => {
 
       const f = IPFSFactory.create(dfOpts)
 
-      f.spawn((err, _ipfsd) => {
+      f.spawn({
+        initOptions: { bits: 1024 }
+      }, (err, _ipfsd) => {
         expect(err).to.not.exist()
         expect(_ipfsd).to.exist()
         expect(_ipfsd.api).to.exist()

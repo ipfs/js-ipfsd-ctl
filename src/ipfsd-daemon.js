@@ -58,7 +58,7 @@ class Daemon {
     this._gatewayAddr = null
     this._started = false
     this.api = null
-    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : process.env.IPFS_KEYSIZE
+    this.bits = process.env.IPFS_KEYSIZE || (this.opts.initOptions ? this.opts.initOptions.bits : null)
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
@@ -137,12 +137,12 @@ class Daemon {
     // the daemon level in the future
     if (bits) {
       args.concat(['-b', bits])
+      log(`initializing with keysize: ${bits}`)
     }
     if (initOptions.pass) {
       args.push('--pass')
       args.push('"' + initOptions.pass + '"')
     }
-    log(`initializing with keysize: ${bits}`)
     run(this, args, { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)
