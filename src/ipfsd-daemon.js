@@ -58,7 +58,7 @@ class Daemon {
     this._gatewayAddr = null
     this._started = false
     this.api = null
-    this.bits = this.opts.initOpts ? this.opts.initOpts.bits : process.env.IPFS_KEYSIZE
+    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : process.env.IPFS_KEYSIZE
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
@@ -113,24 +113,24 @@ class Daemon {
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOpts={}]
-   * @param {number} [initOpts.bits=2048] - The bit size of the identiy key.
-   * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
-   * @param {string} [initOpts.pass] - The passphrase of the keychain.
+   * @param {Object} [initOptions={}]
+   * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
+   * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
+   * @param {string} [initOptions.pass] - The passphrase of the keychain.
    * @param {function (Error, Node)} callback
    * @returns {undefined}
    */
-  init (initOpts, callback) {
+  init (initOptions, callback) {
     if (!callback) {
-      callback = initOpts
-      initOpts = {}
+      callback = initOptions
+      initOptions = {}
     }
 
-    if (initOpts.directory && initOpts.directory !== this.path) {
-      this.path = initOpts.directory
+    if (initOptions.directory && initOptions.directory !== this.path) {
+      this.path = initOptions.directory
     }
 
-    const bits = initOpts.bits ? initOpts.bits : this.bits
+    const bits = initOptions.bits || this.bits
     const args = ['init']
     // do not just set a default keysize,
     // in case we decide to change it at
@@ -138,9 +138,9 @@ class Daemon {
     if (bits) {
       args.concat(['-b', bits])
     }
-    if (initOpts.pass) {
+    if (initOptions.pass) {
       args.push('--pass')
-      args.push('"' + initOpts.pass + '"')
+      args.push('"' + initOptions.pass + '"')
     }
     log(`initializing with keysize: ${bits}`)
     run(this, args, { env: this.env }, (err, result) => {
@@ -148,14 +148,15 @@ class Daemon {
         return callback(err)
       }
 
+      const self = this
       waterfall([
         (cb) => this.getConfig(cb),
         (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
       ], (err) => {
-        if (err) { return callback }
-        this.clean = false
-        this.initialized = true
-        return callback(null, this)
+        if (err) { return callback(err) }
+        self.clean = false
+        self.initialized = true
+        return callback()
       })
     })
   }

@@ -116,7 +116,7 @@ Spawn the daemon
 
 - `options` is an optional object the following properties:
   - `init` bool (default true) or Object - should the node be initialized
-    - if `init` is an Object, it is expected to be of the form `{keySize: <bits>}`, this will set the `keysize` to initialize the daemon with
+  - `initOptions` object - should be of the form `{bits: <size>}`, which sets the desired key size
   - `start` bool (default true) - should the node be started
   - `repoPath` string - the repository path to use for this node, ignored if node is disposable
   - `disposable` bool (default true) - a new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits

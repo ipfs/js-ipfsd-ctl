@@ -2,7 +2,7 @@
 
 const defaultsDeep = require('lodash.defaultsdeep')
 const clone = require('lodash.clone')
-const waterfall = require('async/waterfall')
+const series = require('async/series')
 const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
 
@@ -75,7 +75,7 @@ class FactoryDaemon {
    *
    * Options are:
    * - `init` bool - should the node be initialized
-   * - `initOpts` Object, it is expected to be of the form `{bits: <size>}`, which sets the desired key size
+   * - `initOptions` Object, it is expected to be of the form `{bits: <size>}`, which sets the desired key size
    * - `start` bool - should the node be started
    * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
    * - `disposable` bool - a new repo is created and initialized for each invocation
@@ -129,11 +129,11 @@ class FactoryDaemon {
 
     const node = new Daemon(options)
 
-    waterfall([
+    series([
       (cb) => options.init
         ? node.init(cb)
         : cb(null, node),
-      (node, cb) => options.start
+      (cb) => options.start
         ? node.start(options.args, cb)
         : cb()
     ], (err) => {
