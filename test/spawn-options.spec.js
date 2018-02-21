@@ -199,7 +199,7 @@ describe('Spawn options', () => {
 
     describe('custom config options', () => {
       it('custom config', function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(30 * 1000)
 
         const addr = '/ip4/127.0.0.1/tcp/5678'
         const swarmAddr1 = '/ip4/127.0.0.1/tcp/35666'
