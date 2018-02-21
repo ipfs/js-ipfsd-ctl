@@ -13,9 +13,6 @@ const isNode = require('detect-node')
 const hat = require('hat')
 const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
-const os = require('os')
-
-const isWindows = os.platform() === 'win32'
 
 const tests = [
   { type: 'go', bits: 1024 },

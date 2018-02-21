@@ -257,16 +257,10 @@ tests.forEach((fOpts) => {
       })
 
       it('should return a node', function () {
-        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-        if (isWindows) { this.skip() }
-
         expect(ipfsd).to.exist()
       })
 
       it('daemon should be running', function (done) {
-        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-        if (isWindows) { this.skip() }
-
         ipfsd.pid((pid) => {
           expect(pid).to.exist()
           done()
@@ -286,10 +280,7 @@ tests.forEach((fOpts) => {
       })
 
       it('.start', function (done) {
-        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-        if (isWindows) { this.skip() }
-
-        this.timeout(20 * 1000)
+        this.timeout(80 * 1000)
 
         ipfsd.start((err) => {
           expect(err).to.not.exist()
