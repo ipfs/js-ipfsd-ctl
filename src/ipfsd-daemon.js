@@ -58,7 +58,7 @@ class Daemon {
     this._gatewayAddr = null
     this._started = false
     this.api = null
-    this.bits = process.env.IPFS_KEYSIZE || (this.opts.initOptions ? this.opts.initOptions.bits : null)
+    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
@@ -121,7 +121,7 @@ class Daemon {
    * @returns {undefined}
    */
   init (initOptions, callback) {
-    if (!callback) {
+    if (typeof initOptions === 'function') {
       callback = initOptions
       initOptions = {}
     }
@@ -368,10 +368,9 @@ class Daemon {
    */
   replaceConfig (config, callback) {
     const tmpFile = path.join(os.tmpdir(), hat())
-    // I wanted to use streams here, but js-ipfs doesn't
-    // read from stdin when providing '-' (or piping) like
-    // go-ipfs, and adding it right now seems like a fair
-    // bit of work, so we're using tmp file for now - not ideal...
+    // TODO: we're using tmp file here until
+    // https://github.com/ipfs/js-ipfs/pull/785
+    // is ready
     series([
       (cb) => fs.writeFile(tmpFile, safeStringify(config), cb),
       (cb) => run(

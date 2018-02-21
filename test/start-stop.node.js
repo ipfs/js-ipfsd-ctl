@@ -20,16 +20,19 @@ const IPFSFactory = require('../src')
 
 const dfBaseConfig = require('./utils/df-config-nodejs')
 
-const types = ['js', 'go']
+const tests = [
+  { type: 'go', bits: 1024 },
+  { type: 'js', bits: 512 }
+]
 
 const exec = {
   js: 'ipfs/src/cli/bin.js',
   go: 'go-ipfs-dep/go-ipfs/ipfs'
 }
 
-types.forEach((type) => {
-  describe(`${type} daemon`, () => {
-    const dfConfig = Object.assign({}, dfBaseConfig, { type: type })
+tests.forEach((fOpts) => {
+  describe(`${fOpts.type} daemon`, () => {
+    const dfConfig = Object.assign({}, dfBaseConfig, { type: fOpts.type })
 
     describe('start and stop', () => {
       if (isWindows) { return }
@@ -49,7 +52,7 @@ types.forEach((type) => {
           init: true,
           start: false,
           disposable: true,
-          initOptions: { bits: 1024 }
+          initOptions: { bits: fOpts.bits }
         }, (err, _ipfsd) => {
           expect(err).to.not.exist()
           expect(_ipfsd).to.exist()
@@ -65,7 +68,7 @@ types.forEach((type) => {
       })
 
       it('daemon exec path should match type', () => {
-        let execPath = exec[type]
+        let execPath = exec[fOpts.type]
 
         expect(ipfsd.exec).to.include.string(execPath)
       })
@@ -118,7 +121,7 @@ types.forEach((type) => {
 
       it('is stopped', function (done) {
         // shutdown grace period is already 10500
-        this.timeout(30 * 1000)
+        this.timeout(20 * 1000)
 
         ipfsd.pid((pid) => {
           expect(pid).to.not.exist()
@@ -136,13 +139,13 @@ types.forEach((type) => {
       it('fail on start with non supported flags', function (done) {
         // TODO js-ipfs doesn't fail on unrecognized args.
         // Decided what should be the desired behaviour
-        if (type === 'js') { return this.skip() }
+        if (fOpts.type === 'js') { return this.skip() }
 
         const df = IPFSFactory.create(dfConfig)
 
         df.spawn({
           start: false,
-          initOptions: { bits: 1024 }
+          initOptions: { bits: fOpts.bits }
         }, (err, ipfsd) => {
           expect(err).to.not.exist()
           ipfsd.start(['--should-not-exist'], (err) => {
@@ -161,14 +164,14 @@ types.forEach((type) => {
       let exec
 
       before(function (done) {
-        this.timeout(30 * 1000)
+        this.timeout(20 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
-        exec = findIpfsExecutable(type)
+        exec = findIpfsExecutable(fOpts.type)
 
         df.spawn({
           exec,
-          initOptions: { bits: 1024 }
+          initOptions: { bits: fOpts.bits }
         }, (err, daemon) => {
           expect(err).to.not.exist()
           expect(daemon).to.exist()
@@ -200,7 +203,8 @@ types.forEach((type) => {
         df.spawn({
           init: false,
           start: false,
-          exec: exec
+          exec: exec,
+          initOptions: { bits: fOpts.bits }
         }, (err, daemon) => {
           expect(err).to.not.exist()
           expect(daemon).to.exist()
@@ -213,23 +217,19 @@ types.forEach((type) => {
       after((done) => ipfsd.stop(done))
 
       it('should fail on init', (done) => {
-        ipfsd.init({ bits: 1024 },
-          (err, node) => {
-            expect(err).to.exist()
-            expect(node).to.not.exist()
-            done()
-          })
+        ipfsd.init((err, node) => {
+          expect(err).to.exist()
+          expect(node).to.not.exist()
+          done()
+        })
       })
     })
 
     describe('start and stop multiple times', () => {
-      // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-      if (isWindows) { return }
-
       let ipfsd
 
       before(function (done) {
-        this.timeout(40 * 1000)
+        this.timeout(20 * 1000)
 
         const f = IPFSFactory.create(dfConfig)
 
@@ -238,7 +238,8 @@ types.forEach((type) => {
             init: false,
             start: false,
             disposable: false,
-            repoPath: tempDir(type),
+            repoPath: tempDir(fOpts.type),
+            initOptions: { bits: fOpts.bits },
             config: {
               Addresses: {
                 Swarm: [`/ip4/127.0.0.1/tcp/0`],
@@ -253,18 +254,22 @@ types.forEach((type) => {
             ipfsd = daemon
             cb()
           }),
-          (cb) => ipfsd.init({
-            initOptions: { bits: 1024 }
-          }, cb),
+          (cb) => ipfsd.init(cb),
           (cb) => ipfsd.start(cb)
         ], done)
       })
 
-      it('should return a node', () => {
+      it('should return a node', function () {
+        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
+        if (isWindows) { this.skip() }
+
         expect(ipfsd).to.exist()
       })
 
-      it('daemon should be running', (done) => {
+      it('daemon should be running', function (done) {
+        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
+        if (isWindows) { this.skip() }
+
         ipfsd.pid((pid) => {
           expect(pid).to.exist()
           done()
@@ -272,6 +277,9 @@ types.forEach((type) => {
       })
 
       it('.stop', function (done) {
+        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
+        if (isWindows) { this.skip() }
+
         this.timeout(20 * 1000)
 
         ipfsd.stop((err) => {
@@ -284,6 +292,9 @@ types.forEach((type) => {
       })
 
       it('.start', function (done) {
+        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
+        if (isWindows) { this.skip() }
+
         this.timeout(20 * 1000)
 
         ipfsd.start((err) => {
@@ -296,6 +307,9 @@ types.forEach((type) => {
       })
 
       it('.stop and cleanup', function (done) {
+        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
+        if (isWindows) { this.skip() }
+
         this.timeout(20 * 1000)
 
         ipfsd.stop((err) => {

@@ -35,7 +35,7 @@ class Node {
     this._started = false
     this.initialized = false
     this.api = null
-    this.bits = process.env.IPFS_KEYSIZE || (this.opts.initOptions ? this.opts.initOptions.bits : null)
+    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
 
     this.opts.EXPERIMENTAL = defaultsDeep({}, opts.EXPERIMENTAL, {
       pubsub: false,
@@ -126,7 +126,7 @@ class Node {
    * @returns {undefined}
    */
   init (initOptions, callback) {
-    if (!callback) {
+    if (typeof initOptions === 'function') {
       callback = initOptions
       initOptions = {}
     }

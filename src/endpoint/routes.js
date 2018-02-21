@@ -101,7 +101,7 @@ module.exports = (server) => {
           return reply(boom.badRequest(err))
         }
 
-        reply({ initialized: true })
+        reply({ initialized: nodes[id].initialized })
       })
     },
     config: routeConfig

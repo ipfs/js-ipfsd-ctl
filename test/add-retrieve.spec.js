@@ -11,8 +11,8 @@ const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
 
 const tests = [
-  { type: 'go' },
-  { type: 'js' },
+  { type: 'go', bits: 1024 },
+  { type: 'js', bits: 512 },
   { type: 'proc', exec: JSIPFS }
 ]
 
@@ -21,13 +21,11 @@ describe('data can be put and fetched', () => {
     let ipfsd
 
     before(function (done) {
-      this.timeout(30 * 1000)
+      this.timeout(20 * 1000)
 
       const f = IPFSFactory.create(dfOpts)
 
-      f.spawn({
-        initOptions: { bits: 1024 }
-      }, (err, _ipfsd) => {
+      f.spawn({ initOptions: { bits: dfOpts.bits } }, (err, _ipfsd) => {
         expect(err).to.not.exist()
         expect(_ipfsd).to.exist()
         expect(_ipfsd.api).to.exist()
@@ -39,12 +37,12 @@ describe('data can be put and fetched', () => {
     })
 
     after(function (done) {
-      this.timeout(30 * 1000)
+      this.timeout(20 * 1000)
       ipfsd.stop(done)
     })
 
     it('put and fetch a block', function (done) {
-      this.timeout(30 * 1000)
+      this.timeout(20 * 1000)
 
       const data = Buffer.from('blorb')
 
