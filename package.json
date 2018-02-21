@@ -78,7 +78,7 @@
     "detect-node": "^2.0.3",
     "hapi": "^16.6.2",
     "hat": "0.0.3",
-    "ipfs-api": "^17.3.0",
+    "ipfs-api": "^18.1.1",
     "ipfs-repo": "^0.18.5",
     "joi": "^13.0.2",
     "lodash.clone": "^4.5.0",
