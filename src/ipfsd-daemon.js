@@ -2,23 +2,26 @@
 
 const fs = require('fs')
 const waterfall = require('async/waterfall')
+const series = require('async/series')
 const ipfs = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const path = require('path')
 const once = require('once')
 const truthy = require('truthy')
-const flatten = require('./utils/flatten')
+const defaults = require('lodash.defaults')
 const debug = require('debug')
+const os = require('os')
+const hat = require('hat')
 const log = debug('ipfsd-ctl:daemon')
 
 const safeParse = require('safe-json-parse/callback')
+const safeStringify = require('safe-json-stringify')
 
 const parseConfig = require('./utils/parse-config')
 const tmpDir = require('./utils/tmp-dir')
 const findIpfsExecutable = require('./utils/find-ipfs-executable')
 const setConfigValue = require('./utils/set-config-value')
-const configureNode = require('./utils/configure-node')
 const run = require('./utils/run')
 
 const GRACE_PERIOD = 10500 // amount of ms to wait before sigkill
@@ -42,8 +45,6 @@ class Daemon {
     const type = truthy(process.env.IPFS_TYPE)
 
     this.opts = opts || { type: type || 'go' }
-    this.opts.config = flatten(this.opts.config)
-
     const td = tmpDir(opts.type === 'js')
     this.path = this.opts.disposable
       ? td
@@ -57,6 +58,7 @@ class Daemon {
     this._gatewayAddr = null
     this._started = false
     this.api = null
+    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
 
     if (this.opts.env) {
       Object.assign(this.env, this.opts.env)
@@ -111,41 +113,50 @@ class Daemon {
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOpts={}]
-   * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
-   * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
-   * @param {string} [initOpts.pass] - The passphrase of the keychain.
+   * @param {Object} [initOptions={}]
+   * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
+   * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
+   * @param {string} [initOptions.pass] - The passphrase of the keychain.
    * @param {function (Error, Node)} callback
    * @returns {undefined}
    */
-  init (initOpts, callback) {
-    if (!callback) {
-      callback = initOpts
-      initOpts = {}
+  init (initOptions, callback) {
+    if (typeof initOptions === 'function') {
+      callback = initOptions
+      initOptions = {}
     }
 
-    if (initOpts.directory && initOpts.directory !== this.path) {
-      this.path = initOpts.directory
+    if (initOptions.directory && initOptions.directory !== this.path) {
+      this.path = initOptions.directory
     }
 
-    const args = ['init', '-b', initOpts.keysize || 2048]
-    if (initOpts.pass) {
+    const bits = initOptions.bits || this.bits
+    const args = ['init']
+    // do not just set a default keysize,
+    // in case we decide to change it at
+    // the daemon level in the future
+    if (bits) {
+      args.concat(['-b', bits])
+      log(`initializing with keysize: ${bits}`)
+    }
+    if (initOptions.pass) {
       args.push('--pass')
-      args.push('"' + initOpts.pass + '"')
+      args.push('"' + initOptions.pass + '"')
     }
     run(this, args, { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)
       }
 
-      configureNode(this, this.opts.config, (err) => {
-        if (err) {
-          return callback(err)
-        }
-
-        this.clean = false
-        this.initialized = true
-        callback(null, this)
+      const self = this
+      waterfall([
+        (cb) => this.getConfig(cb),
+        (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
+      ], (err) => {
+        if (err) { return callback(err) }
+        self.clean = false
+        self.initialized = true
+        return callback()
       })
     })
   }
@@ -328,7 +339,7 @@ class Daemon {
         cb
       ),
       (config, cb) => {
-        if (!key) {
+        if (key === 'show') {
           return safeParse(config, cb)
         }
         cb(null, config.trim())
@@ -346,6 +357,32 @@ class Daemon {
    */
   setConfig (key, value, callback) {
     setConfigValue(this, key, value, callback)
+  }
+
+  /**
+   * Replace the current config with the provided one
+   *
+   * @param {object} config
+   * @param {function(Error)} callback
+   * @return {undefined}
+   */
+  replaceConfig (config, callback) {
+    const tmpFile = path.join(os.tmpdir(), hat())
+    // TODO: we're using tmp file here until
+    // https://github.com/ipfs/js-ipfs/pull/785
+    // is ready
+    series([
+      (cb) => fs.writeFile(tmpFile, safeStringify(config), cb),
+      (cb) => run(
+        this,
+        ['config', 'replace', `${tmpFile}`],
+        { env: this.env },
+        cb
+      )
+    ], (err) => {
+      if (err) { return callback(err) }
+      fs.unlink(tmpFile, callback)
+    })
   }
 
   /**

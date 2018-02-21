@@ -96,12 +96,12 @@ module.exports = (server) => {
 
       const payload = request.payload || {}
 
-      nodes[id].init(payload.initOpts, (err, node) => {
+      nodes[id].init(payload.initOpts, (err) => {
         if (err) {
           return reply(boom.badRequest(err))
         }
 
-        reply({ initialized: node.initialized })
+        reply({ initialized: nodes[id].initialized })
       })
     },
     config: routeConfig

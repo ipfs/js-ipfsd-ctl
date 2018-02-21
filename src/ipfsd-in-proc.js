@@ -1,10 +1,13 @@
 'use strict'
 
-const eachOf = require('async/eachOf')
 const multiaddr = require('multiaddr')
-const defaults = require('lodash.defaultsdeep')
+const defaultsDeep = require('lodash.defaultsdeep')
 const createRepo = require('./utils/repo/create-nodejs')
-const flatten = require('./utils/flatten')
+const defaults = require('lodash.defaults')
+const waterfall = require('async/waterfall')
+const debug = require('debug')
+
+const log = debug('ipfsd-ctl:in-proc')
 
 /**
  * ipfsd for a js-ipfs instance (aka in-process IPFS node)
@@ -32,8 +35,9 @@ class Node {
     this._started = false
     this.initialized = false
     this.api = null
+    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
 
-    this.opts.EXPERIMENTAL = defaults({}, opts.EXPERIMENTAL, {
+    this.opts.EXPERIMENTAL = defaultsDeep({}, opts.EXPERIMENTAL, {
       pubsub: false,
       sharding: false,
       relay: {
@@ -55,6 +59,7 @@ class Node {
         throw new Error('Unkown argument ' + arg)
       }
     })
+
     this.exec = new IPFS({
       repo: this.repo,
       init: false,
@@ -113,36 +118,41 @@ class Node {
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOpts={}]
-   * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
-   * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
-   * @param {string} [initOpts.pass] - The passphrase of the keychain.
+   * @param {Object} [initOptions={}]
+   * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
+   * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
+   * @param {string} [initOptions.pass] - The passphrase of the keychain.
    * @param {function (Error, Node)} callback
    * @returns {undefined}
    */
-  init (initOpts, callback) {
-    if (!callback) {
-      callback = initOpts
-      initOpts = {}
+  init (initOptions, callback) {
+    if (typeof initOptions === 'function') {
+      callback = initOptions
+      initOptions = {}
     }
 
-    initOpts.bits = initOpts.keysize || 2048
-    this.exec.init(initOpts, (err) => {
+    const bits = initOptions.keysize ? initOptions.bits : this.bits
+    // do not just set a default keysize,
+    // in case we decide to change it at
+    // the daemon level in the future
+    if (bits) {
+      initOptions.bits = bits
+      log(`initializing with keysize: ${bits}`)
+    }
+    this.exec.init(initOptions, (err) => {
       if (err) {
         return callback(err)
       }
 
-      const conf = flatten(this.opts.config)
-      eachOf(conf, (val, key, cb) => {
-        this.setConfig(key, val, cb)
-      }, (err) => {
-        if (err) {
-          return callback(err)
-        }
-
-        this.initialized = true
-        this.clean = false
-        callback(null, this)
+      const self = this
+      waterfall([
+        (cb) => this.getConfig(cb),
+        (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
+      ], (err) => {
+        if (err) { return callback }
+        self.clean = false
+        self.initialized = true
+        return callback()
       })
     })
   }
@@ -276,6 +286,17 @@ class Node {
    */
   setConfig (key, value, callback) {
     this.exec.config.set(key, value, callback)
+  }
+
+  /**
+   * Replace the current config with the provided one
+   *
+   * @param {object} config
+   * @param {function(Error)} callback
+   * @return {undefined}
+   */
+  replaceConfig (config, callback) {
+    this.exec.config.replace(config, callback)
   }
 
   /**

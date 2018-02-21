@@ -89,7 +89,6 @@ describe('client', () => {
       it('should handle valid request', (done) => {
         mock.post('http://localhost:9999/init', (req) => {
           expect(req.query.id).to.exist()
-          expect(req.body.initOpts.initOpt1).to.equal('hello!')
 
           return {
             body: {
@@ -98,9 +97,9 @@ describe('client', () => {
           }
         })
 
-        node.init({ initOpt1: 'hello!' }, (err, res) => {
+        node.init({ bits: 512 }, (err) => {
           expect(err).to.not.exist()
-          expect(res.initialized).to.be.ok()
+          expect(node.initialized).to.be.ok()
           done()
         })
       })

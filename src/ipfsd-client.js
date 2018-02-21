@@ -94,7 +94,7 @@ class DaemonClient {
         }
 
         this.initialized = res.body.initialized
-        cb(null, res.body)
+        cb()
       })
   }
 

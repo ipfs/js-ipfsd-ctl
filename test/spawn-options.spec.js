@@ -13,11 +13,14 @@ const isNode = require('detect-node')
 const hat = require('hat')
 const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
+const os = require('os')
+
+const isWindows = os.platform() === 'win32'
 
 const tests = [
-  { type: 'go' },
-  { type: 'js' },
-  { type: 'proc', exec: JSIPFS }
+  { type: 'go', bits: 1024 },
+  { type: 'js', bits: 512 },
+  { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
 const jsVersion = require('ipfs/package.json').version
@@ -69,7 +72,8 @@ describe('Spawn options', () => {
             repoPath: repoPath,
             init: false,
             start: false,
-            disposable: false
+            disposable: false,
+            initOptions: { bits: fOpts.bits }
           }
 
           f.spawn(options, (err, _ipfsd) => {
@@ -120,6 +124,9 @@ describe('Spawn options', () => {
         let ipfsd
 
         it('f.spawn', function (done) {
+          // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
+          if (isWindows) { this.skip() }
+
           this.timeout(20 * 1000)
 
           const options = {
@@ -140,6 +147,9 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.start', function (done) {
+          // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
+          if (isWindows) { this.skip() }
+
           this.timeout(20 * 1000)
 
           ipfsd.start((err, api) => {
@@ -151,6 +161,9 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.stop', function (done) {
+          // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
+          if (isWindows) { this.skip() }
+
           this.timeout(20 * 1000)
 
           ipfsd.stop(done)
@@ -163,29 +176,30 @@ describe('Spawn options', () => {
       let ipfsd
 
       it('create init and start node', function (done) {
-        this.timeout(30 * 1000)
+        this.timeout(20 * 1000)
 
-        f.spawn((err, _ipfsd) => {
-          expect(err).to.not.exist()
-          expect(_ipfsd).to.exist()
-          expect(_ipfsd.api).to.exist()
-          expect(_ipfsd.api.id).to.exist()
+        f.spawn({ initOptions: { bits: fOpts.bits } },
+          (err, _ipfsd) => {
+            expect(err).to.not.exist()
+            expect(_ipfsd).to.exist()
+            expect(_ipfsd.api).to.exist()
+            expect(_ipfsd.api.id).to.exist()
 
-          ipfsd = _ipfsd
-          done()
-        })
+            ipfsd = _ipfsd
+            done()
+          })
       })
 
       it('ipfsd.stop', function (done) {
-        this.timeout(30 * 1000)
+        this.timeout(20 * 1000)
 
         ipfsd.stop(done)
       })
     })
 
-    describe('custom init options', () => {
+    describe('custom config options', () => {
       it('custom config', function (done) {
-        this.timeout(40 * 1000)
+        this.timeout(30 * 1000)
 
         const addr = '/ip4/127.0.0.1/tcp/5678'
         const swarmAddr1 = '/ip4/127.0.0.1/tcp/35666'
@@ -198,7 +212,7 @@ describe('Spawn options', () => {
           }
         }
 
-        const options = { config: config }
+        const options = { config: config, initOptions: { bits: fOpts.bits } }
 
         waterfall([
           (cb) => f.spawn(options, cb),
@@ -215,6 +229,7 @@ describe('Spawn options', () => {
               config = JSON.parse(config)
             }
             expect(config).to.eql([swarmAddr1])
+            // expect(config).to.include(swarmAddr1)
             cb(null, ipfsd)
           })
         ], (err, ipfsd) => {
@@ -241,7 +256,7 @@ describe('Spawn options', () => {
       })
 
       it('allows passing custom repo path to spawn', function (done) {
-        this.timeout(50 * 1000)
+        this.timeout(20 * 1000)
 
         const config = {
           Addresses: {
@@ -259,7 +274,8 @@ describe('Spawn options', () => {
           init: false,
           start: false,
           repoPath: repoPath,
-          config: config
+          config: config,
+          initOptions: { bits: fOpts.bits }
         }
 
         series([
@@ -298,7 +314,8 @@ describe('Spawn options', () => {
         this.timeout(30 * 1000)
 
         const options = {
-          args: ['--enable-pubsub-experiment']
+          args: ['--enable-pubsub-experiment'],
+          initOptions: { bits: fOpts.bits }
         }
 
         f.spawn(options, (err, _ipfsd) => {
@@ -336,15 +353,17 @@ describe('Spawn options', () => {
       let ipfsd
 
       before(function (done) {
-        this.timeout(50 * 1000)
-        f.spawn((err, _ipfsd) => {
-          expect(err).to.not.exist()
-          ipfsd = _ipfsd
-          done()
-        })
+        this.timeout(20 * 1000)
+        f.spawn({ initOptions: { bits: fOpts.bits } },
+          (err, _ipfsd) => {
+            expect(err).to.not.exist()
+            ipfsd = _ipfsd
+            done()
+          })
       })
 
-      after((done) => {
+      after(function (done) {
+        this.timeout(20 * 1000)
         ipfsd.stop(done)
       })
 
