@@ -13,7 +13,7 @@ const JSIPFS = require('ipfs')
 const tests = [
   { type: 'go', bits: 1024 },
   { type: 'js', bits: 512 },
-  { type: 'proc', exec: JSIPFS }
+  { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
 describe('data can be put and fetched', () => {
