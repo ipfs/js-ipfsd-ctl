@@ -20,7 +20,7 @@ const isWindows = os.platform() === 'win32'
 const tests = [
   { type: 'go', bits: 1024 },
   { type: 'js', bits: 512 },
-  { type: 'proc', exec: JSIPFS }
+  { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
 const jsVersion = require('ipfs/package.json').version
@@ -125,7 +125,7 @@ describe('Spawn options', () => {
 
         it('f.spawn', function (done) {
           // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-          if (isWindows) { return }
+          if (isWindows) { this.skip() }
 
           this.timeout(20 * 1000)
 
@@ -148,7 +148,7 @@ describe('Spawn options', () => {
 
         it('ipfsd.start', function (done) {
           // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-          if (isWindows) { return }
+          if (isWindows) { this.skip() }
 
           this.timeout(20 * 1000)
 
@@ -162,7 +162,7 @@ describe('Spawn options', () => {
 
         it('ipfsd.stop', function (done) {
           // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-          if (isWindows) { return }
+          if (isWindows) { this.skip() }
 
           this.timeout(20 * 1000)
 
