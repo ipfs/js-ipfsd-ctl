@@ -1,3 +1,18 @@
+<a name="0.29.0"></a>
+# [0.29.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.28.0...v0.29.0) (2018-02-21)
+
+
+### Bug Fixes
+
+* don't pass on arguments from node executable ([cf794cd](https://github.com/ipfs/js-ipfsd-ctl/commit/cf794cd)), closes [#202](https://github.com/ipfs/js-ipfsd-ctl/issues/202)
+
+
+### Features
+
+* add keysize through an option to spawn ([#203](https://github.com/ipfs/js-ipfsd-ctl/issues/203)) ([151303c](https://github.com/ipfs/js-ipfsd-ctl/commit/151303c))
+
+
+
 <a name="0.28.0"></a>
 # [0.28.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.27.3...v0.28.0) (2018-02-12)
 
