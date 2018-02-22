@@ -5,7 +5,7 @@ const routes = require('./routes')
 
 class Server {
   constructor (options) {
-    options = options || { port: 9999 }
+    options = options || { port: 30000 }
 
     this.server = null
     this.port = options.port
