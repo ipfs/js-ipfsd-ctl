@@ -10,7 +10,7 @@ class FactoryClient {
   constructor (options) {
     options = options || {}
     if (!options.host) { options.host = 'localhost' }
-    if (!options.port) { options.port = 9999 }
+    if (!options.port) { options.port = 43134 }
     if (typeof options.host === 'number') {
       options.port = options.host
       options.host = 'localhost'
