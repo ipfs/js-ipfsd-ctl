@@ -1,3 +1,13 @@
+<a name="0.29.1"></a>
+## [0.29.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.29.0...v0.29.1) (2018-02-23)
+
+
+### Bug Fixes
+
+* pick a non used port ([4fdb071](https://github.com/ipfs/js-ipfsd-ctl/commit/4fdb071))
+
+
+
 <a name="0.29.0"></a>
 # [0.29.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.28.0...v0.29.0) (2018-02-21)
 
