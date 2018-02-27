@@ -52,7 +52,7 @@ class Daemon {
     this.disposable = this.opts.disposable
     this.exec = this.opts.exec || process.env.IPFS_EXEC || findIpfsExecutable(this.opts.type, rootPath)
     this.subprocess = null
-    this.initialized = fs.existsSync(path)
+    this.initialized = fs.existsSync(this.path)
     this.clean = true
     this._apiAddr = null
     this._gatewayAddr = null
