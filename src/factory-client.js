@@ -95,7 +95,13 @@ class FactoryClient {
         const apiAddr = res.body.api ? res.body.api.apiAddr : ''
         const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 
-        const ipfsd = new DaemonClient(this.baseUrl, res.body.id, apiAddr, gatewayAddr)
+        const ipfsd = new DaemonClient(
+          this.baseUrl,
+          res.body.id,
+          res.body.initialized,
+          apiAddr,
+          gatewayAddr
+        )
 
         callback(null, ipfsd)
       })
