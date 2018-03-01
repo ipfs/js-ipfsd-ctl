@@ -104,7 +104,7 @@
     "detect-port": "^1.2.2",
     "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "0.4.13",
-    "ipfs": "github:ipfs/js-ipfs",
+    "ipfs": "~0.28.0",
     "is-running": "1.0.5",
     "mkdirp": "^0.5.1",
     "pre-commit": "^1.2.2",

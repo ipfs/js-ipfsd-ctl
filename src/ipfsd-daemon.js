@@ -282,7 +282,7 @@ class Daemon {
     const self = this
     const subprocess = this.subprocess
     const timeout = setTimeout(() => {
-      log('kill timeout, using SIGKILL.', subprocess.pid)
+      log('kill timeout, using SIGKILL', subprocess.pid)
       subprocess.kill('SIGKILL')
     }, GRACE_PERIOD)
 
