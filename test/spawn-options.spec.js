@@ -138,7 +138,8 @@ describe('Spawn options', function () {
             expect(_ipfsd).to.exist()
             expect(_ipfsd.api).to.not.exist()
 
-            // proc nodes don't reuse initialized repos
+            // TODO proc nodes don't reuse initialized repos
+            // but they should: https://github.com/ipfs/js-ipfsd-ctl/issues/214
             if (fOpts.type !== 'proc') {
               expect(_ipfsd.initialized).to.eql(true)
             }
