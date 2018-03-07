@@ -1,5 +1,6 @@
 'use strict'
 
+const fs = require('fs')
 const multiaddr = require('multiaddr')
 const defaultsDeep = require('lodash.defaultsdeep')
 const createRepo = require('./utils/repo/create-nodejs')
@@ -33,11 +34,11 @@ class Node extends EventEmitter {
     this.path = this.opts.repoPath
     this.repo = createRepo(this.path)
     this.disposable = this.opts.disposable
+    this.initialized = fs.existsSync(this.path)
     this.clean = true
     this._apiAddr = null
     this._gatewayAddr = null
     this._started = false
-    this.initialized = false
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
 

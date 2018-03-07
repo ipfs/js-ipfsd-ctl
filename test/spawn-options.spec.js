@@ -115,11 +115,6 @@ describe('Spawn options', function () {
       })
 
       describe('spawn from an initialized repo', () => {
-        // TODO: figure out why `proc` IPFS refuses
-        // to start with a provided repo
-        // `Error: Not able to start from state: uninitalized`
-        if (fOpts.type === 'proc') { return }
-
         let ipfsd
 
         it('f.spawn', function (done) {
@@ -135,14 +130,11 @@ describe('Spawn options', function () {
           f.spawn(options, (err, _ipfsd) => {
             expect(err).to.not.exist()
             expect(_ipfsd).to.exist()
-            expect(_ipfsd.api).to.not.exist()
 
             ipfsd = _ipfsd
-            // TODO proc nodes don't reuse initialized repos
-            // but they should: https://github.com/ipfs/js-ipfsd-ctl/issues/214
-            if (fOpts.type !== 'proc') {
-              expect(_ipfsd.initialized).to.eql(true)
-            }
+
+            expect(ipfsd.api).to.not.exist()
+            expect(ipfsd.initialized).to.eql(true)
 
             done()
           })
