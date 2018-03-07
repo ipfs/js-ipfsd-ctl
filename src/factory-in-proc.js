@@ -128,16 +128,28 @@ class FactoryInProc {
     }
 
     const node = new Node(options)
-    node.once('ready', () => {
-      series([
-        (cb) => options.init
-          ? node.init(cb)
-          : cb(),
-        (cb) => options.start
-          ? node.start(options.args, cb)
-          : cb()
-      ], (err) => callback(err, node))
-    })
+
+    series([
+      (cb) => node.exec.once('ready', cb),
+      (cb) => {
+        try {
+          node.repo._isInitialized(() => {
+            node.initialized = true
+            cb()
+          })
+        } catch (err) {
+          // errors if not initialized
+          node.initialized = false
+          cb()
+        }
+      },
+      (cb) => options.init
+        ? node.init(cb)
+        : cb(),
+      (cb) => options.start
+        ? node.start(options.args, cb)
+        : cb()
+    ], (err) => callback(err, node))
   }
 }
 
