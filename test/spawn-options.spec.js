@@ -28,7 +28,7 @@ const versions = {
 }
 
 describe('Spawn options', function () {
-  this.timeout(80 * 1000)
+  this.timeout(20 * 1000)
 
   tests.forEach((fOpts) => describe(`${fOpts.type}`, () => {
     const VERSION_STRING = versions[fOpts.type]
@@ -40,7 +40,7 @@ describe('Spawn options', function () {
 
     // TODO document this method on the readme
     it('f.version', function (done) {
-      this.timeout(80 * 1000)
+      this.timeout(20 * 1000)
 
       f.version({ type: fOpts.type }, (err, version) => {
         expect(err).to.not.exist()
@@ -87,7 +87,7 @@ describe('Spawn options', function () {
         })
 
         it('ipfsd.init', function (done) {
-          this.timeout(80 * 1000)
+          this.timeout(20 * 1000)
 
           ipfsd.init((err) => {
             expect(err).to.not.exist()
@@ -97,7 +97,7 @@ describe('Spawn options', function () {
         })
 
         it('ipfsd.start', function (done) {
-          this.timeout(80 * 1000)
+          this.timeout(20 * 1000)
 
           ipfsd.start((err, api) => {
             expect(err).to.not.exist()
@@ -108,7 +108,7 @@ describe('Spawn options', function () {
         })
 
         it('ipfsd.stop', function (done) {
-          this.timeout(80 * 1000)
+          this.timeout(20 * 1000)
 
           ipfsd.stop(done)
         })
