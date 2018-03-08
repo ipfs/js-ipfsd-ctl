@@ -66,7 +66,7 @@ class FactoryInProc {
       options = {}
     }
 
-    const IPFS = this.exec // otherwise lit barfs
+    const IPFS = this.exec // otherwise lint barfs
     const ipfs = new IPFS(options)
     ipfs.once('ready', () => {
       ipfs.version((err, _version) => {
