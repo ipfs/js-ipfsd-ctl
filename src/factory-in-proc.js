@@ -70,7 +70,7 @@ class FactoryInProc {
     const ipfs = new IPFS(options)
     ipfs.once('ready', () => {
       ipfs.version((err, _version) => {
-        if (err) { callback(err) }
+        if (err) { return callback(err) }
         callback(null, _version)
       })
     })

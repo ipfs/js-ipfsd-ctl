@@ -279,7 +279,6 @@ class Daemon {
    */
   killProcess (callback) {
     // need a local var for the closure, as we clear the var.
-    const self = this
     const subprocess = this.subprocess
     const timeout = setTimeout(() => {
       log('kill timeout, using SIGKILL', subprocess.pid)
@@ -289,10 +288,10 @@ class Daemon {
     subprocess.once('exit', () => {
       log('killed', subprocess.pid)
       clearTimeout(timeout)
-      self.subprocess = null
-      self._started = false
-      if (self.disposable) {
-        return self.cleanup(callback)
+      this.subprocess = null
+      this._started = false
+      if (this.disposable) {
+        return this.cleanup(callback)
       }
       setImmediate(callback)
     })
