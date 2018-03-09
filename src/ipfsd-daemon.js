@@ -148,14 +148,13 @@ class Daemon {
         return callback(err)
       }
 
-      const self = this
       waterfall([
         (cb) => this.getConfig(cb),
         (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
       ], (err) => {
         if (err) { return callback(err) }
-        self.clean = false
-        self.initialized = true
+        this.clean = false
+        this.initialized = true
         return callback()
       })
     })
