@@ -130,7 +130,7 @@ class FactoryInProc {
     const node = new Node(options)
 
     series([
-      (cb) => node.exec.once('ready', cb),
+      (cb) => node.once('ready', cb),
       (cb) => node.repo._isInitialized(err => {
         // if err exists, repo failed to find config or the ipfs-repo package
         // version is different than that of the existing repo.

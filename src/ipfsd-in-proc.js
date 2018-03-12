@@ -154,7 +154,7 @@ class Node extends EventEmitter {
         (cb) => this.getConfig(cb),
         (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
       ], (err) => {
-        if (err) { return callback }
+        if (err) { return callback(err) }
         self.clean = false
         self.initialized = true
         return callback()
