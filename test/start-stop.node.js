@@ -40,7 +40,7 @@ tests.forEach((fOpts) => {
       let stopped = false
 
       before(function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(50 * 1000)
 
         const f = IPFSFactory.create(dfConfig)
 
@@ -160,7 +160,7 @@ tests.forEach((fOpts) => {
       let exec
 
       before(function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(50 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
         exec = findIpfsExecutable(fOpts.type)
