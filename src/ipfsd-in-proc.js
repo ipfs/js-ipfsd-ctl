@@ -73,7 +73,7 @@ class Node extends EventEmitter {
       libp2p: this.opts.libp2p
     })
 
-    this.exec.once('ready', () => setImmediate(() => this.emit('ready')))
+    this.exec.once('ready', () => this.emit('ready'))
   }
 
   /**
