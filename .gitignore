@@ -38,3 +38,6 @@ dist
 docs
 
 .idea
+
+.nyc_output
+.vscode

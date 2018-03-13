@@ -40,9 +40,9 @@ describe('Spawn options', function () {
 
     // TODO document this method on the readme
     it('f.version', function (done) {
-      this.timeout(20 * 1000)
+      this.timeout(80 * 1000)
 
-      f.version({ type: fOpts.type }, (err, version) => {
+      f.version({ type: fOpts.type, exec: fOpts.exec }, (err, version) => {
         expect(err).to.not.exist()
         if (fOpts.type === 'proc') { version = version.version }
         expect(version).to.be.eql(VERSION_STRING)

@@ -6,13 +6,16 @@ const createRepo = require('./utils/repo/create-nodejs')
 const defaults = require('lodash.defaults')
 const waterfall = require('async/waterfall')
 const debug = require('debug')
+const EventEmitter = require('events')
 
 const log = debug('ipfsd-ctl:in-proc')
+
+let IPFS = null
 
 /**
  * ipfsd for a js-ipfs instance (aka in-process IPFS node)
  */
-class Node {
+class Node extends EventEmitter {
   /**
    * Create a new node.
    *
@@ -21,9 +24,10 @@ class Node {
    * @returns {Node}
    */
   constructor (opts) {
+    super()
     this.opts = opts || {}
 
-    const IPFS = this.opts.exec
+    IPFS = this.opts.exec
 
     this.opts.args = this.opts.args || []
     this.path = this.opts.repoPath
@@ -68,6 +72,8 @@ class Node {
       EXPERIMENTAL: this.opts.EXPERIMENTAL,
       libp2p: this.opts.libp2p
     })
+
+    this.exec.once('ready', () => setImmediate(() => this.emit('ready')))
   }
 
   /**
@@ -306,7 +312,10 @@ class Node {
    * @returns {undefined}
    */
   version (callback) {
-    this.exec.version(callback)
+    this.exec.version((err, _version) => {
+      if (err) { return callback(err) }
+      callback(null, _version)
+    })
   }
 }
 
