@@ -312,10 +312,7 @@ class Node extends EventEmitter {
    * @returns {undefined}
    */
   version (callback) {
-    this.exec.version((err, _version) => {
-      if (err) { return callback(err) }
-      callback(null, _version)
-    })
+    this.exec.version(callback)
   }
 }
 
