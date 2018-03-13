@@ -68,10 +68,7 @@ class FactoryInProc {
 
     const node = new Node(options)
     node.once('ready', () => {
-      node.init((err) => {
-        if (err) { return callback(err) }
-        node.version(callback)
-      })
+      node.version(callback)
     })
   }
 
