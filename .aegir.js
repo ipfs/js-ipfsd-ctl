@@ -11,7 +11,7 @@ module.exports = {
       served: true,
       included: false
     }],
-    singleRun: false
+    singleRun: true
   },
   hooks: {
     browser: {
