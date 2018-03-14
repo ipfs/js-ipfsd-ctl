@@ -1,3 +1,13 @@
+<a name="0.30.0"></a>
+# [0.30.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.29.1...v0.30.0) (2018-03-14)
+
+
+### Features
+
+* graceful stop, fix stop for Windows ([#205](https://github.com/ipfs/js-ipfsd-ctl/issues/205)) ([359dd62](https://github.com/ipfs/js-ipfsd-ctl/commit/359dd62))
+
+
+
 <a name="0.29.1"></a>
 ## [0.29.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.29.0...v0.29.1) (2018-02-23)
 
