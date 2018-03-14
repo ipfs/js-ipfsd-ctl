@@ -136,8 +136,8 @@ class Daemon {
     // in case we decide to change it at
     // the daemon level in the future
     if (bits) {
-      args.concat(['-b', bits])
-      log(`initializing with keysize: ${bits}`)
+      args.push('-b')
+      args.push(bits)
     }
     if (initOptions.pass) {
       args.push('--pass')
