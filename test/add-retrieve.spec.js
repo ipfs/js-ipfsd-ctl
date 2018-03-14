@@ -21,7 +21,7 @@ describe('data can be put and fetched', () => {
     let ipfsd
 
     before(function (done) {
-      this.timeout(20 * 1000)
+      this.timeout(30 * 1000)
 
       const f = IPFSFactory.create(dfOpts)
 

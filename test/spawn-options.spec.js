@@ -13,9 +13,6 @@ const isNode = require('detect-node')
 const hat = require('hat')
 const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
-const os = require('os')
-
-const isWindows = os.platform() === 'win32'
 
 const tests = [
   { type: 'go', bits: 1024 },
@@ -30,7 +27,9 @@ const versions = {
   proc: jsVersion
 }
 
-describe('Spawn options', () => {
+describe('Spawn options', function () {
+  this.timeout(20 * 1000)
+
   tests.forEach((fOpts) => describe(`${fOpts.type}`, () => {
     const VERSION_STRING = versions[fOpts.type]
     let f
@@ -43,7 +42,7 @@ describe('Spawn options', () => {
     it('f.version', function (done) {
       this.timeout(20 * 1000)
 
-      f.version({ type: fOpts.type }, (err, version) => {
+      f.version({ type: fOpts.type, exec: fOpts.exec }, (err, version) => {
         expect(err).to.not.exist()
         if (fOpts.type === 'proc') { version = version.version }
         expect(version).to.be.eql(VERSION_STRING)
@@ -109,7 +108,7 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.stop', function (done) {
-          this.timeout(10 * 1000)
+          this.timeout(20 * 1000)
 
           ipfsd.stop(done)
         })
@@ -124,9 +123,6 @@ describe('Spawn options', () => {
         let ipfsd
 
         it('f.spawn', function (done) {
-          // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-          if (isWindows) { this.skip() }
-
           this.timeout(20 * 1000)
 
           const options = {
@@ -147,9 +143,6 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.start', function (done) {
-          // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-          if (isWindows) { this.skip() }
-
           this.timeout(20 * 1000)
 
           ipfsd.start((err, api) => {
@@ -161,9 +154,6 @@ describe('Spawn options', () => {
         })
 
         it('ipfsd.stop', function (done) {
-          // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-          if (isWindows) { this.skip() }
-
           this.timeout(20 * 1000)
 
           ipfsd.stop(done)
@@ -199,7 +189,7 @@ describe('Spawn options', () => {
 
     describe('custom config options', () => {
       it('custom config', function (done) {
-        this.timeout(30 * 1000)
+        this.timeout(50 * 1000)
 
         const addr = '/ip4/127.0.0.1/tcp/5678'
         const swarmAddr1 = '/ip4/127.0.0.1/tcp/35666'
@@ -311,7 +301,7 @@ describe('Spawn options', () => {
       let ipfsd
 
       it('spawn with pubsub', function (done) {
-        this.timeout(30 * 1000)
+        this.timeout(20 * 1000)
 
         const options = {
           args: ['--enable-pubsub-experiment'],
@@ -344,7 +334,7 @@ describe('Spawn options', () => {
       })
 
       it('ipfsd.stop', function (done) {
-        this.timeout(10 * 1000)
+        this.timeout(20 * 1000)
         ipfsd.stop(done)
       })
     })

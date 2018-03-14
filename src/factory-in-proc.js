@@ -65,10 +65,10 @@ class FactoryInProc {
       callback = options
       options = {}
     }
-    const IPFS = this.exec
-    new IPFS(options).version((err, _version) => {
-      if (err) { callback(err) }
-      callback(null, _version)
+
+    const node = new Node(options)
+    node.once('ready', () => {
+      node.version(callback)
     })
   }
 
@@ -97,7 +97,6 @@ class FactoryInProc {
     }
 
     const options = defaults({}, opts, defaultOptions)
-
     options.init = typeof options.init !== 'undefined'
       ? options.init
       : true
@@ -129,15 +128,16 @@ class FactoryInProc {
     }
 
     const node = new Node(options)
-
-    series([
-      (cb) => options.init
-        ? node.init(cb)
-        : cb(),
-      (cb) => options.start
-        ? node.start(options.args, cb)
-        : cb()
-    ], (err) => callback(err, node))
+    node.once('ready', () => {
+      series([
+        (cb) => options.init
+          ? node.init(cb)
+          : cb(),
+        (cb) => options.start
+          ? node.start(options.args, cb)
+          : cb()
+      ], (err) => callback(err, node))
+    })
   }
 }
 

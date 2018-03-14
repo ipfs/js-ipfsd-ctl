@@ -148,14 +148,13 @@ class Daemon {
         return callback(err)
       }
 
-      const self = this
       waterfall([
         (cb) => this.getConfig(cb),
         (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
       ], (err) => {
         if (err) { return callback(err) }
-        self.clean = false
-        self.initialized = true
+        this.clean = false
+        this.initialized = true
         return callback()
       })
     })
@@ -270,8 +269,9 @@ class Daemon {
   /**
    * Kill the `ipfs daemon` process.
    *
-   * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
-   * if the process hasn't exited yet.
+   * If the HTTP API is established, then send 'shutdown' command; otherwise,
+   * process.kill(`SIGTERM`) is used.  In either case, if the process
+   * does not exit after 10.5 seconds then a `SIGKILL` is used.
    *
    * @param {function()} callback - Called when the process was killed.
    * @returns {undefined}
@@ -282,24 +282,26 @@ class Daemon {
     const timeout = setTimeout(() => {
       log('kill timeout, using SIGKILL', subprocess.pid)
       subprocess.kill('SIGKILL')
-      callback()
     }, GRACE_PERIOD)
 
-    const disposable = this.disposable
-    const clean = this.cleanup.bind(this)
-    subprocess.once('close', () => {
+    subprocess.once('exit', () => {
       log('killed', subprocess.pid)
       clearTimeout(timeout)
       this.subprocess = null
       this._started = false
-      if (disposable) {
-        return clean(callback)
+      if (this.disposable) {
+        return this.cleanup(callback)
       }
-      callback()
+      setImmediate(callback)
     })
 
-    log('killing', subprocess.pid)
-    subprocess.kill('SIGTERM')
+    if (this.api) {
+      log('kill via api', subprocess.pid)
+      this.api.shutdown(() => null)
+    } else {
+      log('killing', subprocess.pid)
+      subprocess.kill('SIGTERM')
+    }
     this.subprocess = null
   }
 

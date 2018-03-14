@@ -10,10 +10,8 @@ chai.use(dirtyChai)
 const async = require('async')
 const fs = require('fs')
 const path = require('path')
-const os = require('os')
 const isrunning = require('is-running')
 
-const isWindows = os.platform() === 'win32'
 const findIpfsExecutable = require('../src/utils/find-ipfs-executable')
 const tempDir = require('../src/utils/tmp-dir')
 const IPFSFactory = require('../src')
@@ -35,8 +33,6 @@ tests.forEach((fOpts) => {
     const dfConfig = Object.assign({}, dfBaseConfig, { type: fOpts.type })
 
     describe('start and stop', () => {
-      if (isWindows) { return }
-
       let ipfsd
       let repoPath
       let api
@@ -44,7 +40,7 @@ tests.forEach((fOpts) => {
       let stopped = false
 
       before(function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(50 * 1000)
 
         const f = IPFSFactory.create(dfConfig)
 
@@ -70,7 +66,7 @@ tests.forEach((fOpts) => {
       it('daemon exec path should match type', () => {
         let execPath = exec[fOpts.type]
 
-        expect(ipfsd.exec).to.include.string(execPath)
+        expect(ipfsd.exec).to.include.string(path.join(execPath))
       })
 
       it('daemon should not be running', (done) => {
@@ -164,7 +160,7 @@ tests.forEach((fOpts) => {
       let exec
 
       before(function (done) {
-        this.timeout(20 * 1000)
+        this.timeout(50 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
         exec = findIpfsExecutable(fOpts.type)
@@ -260,16 +256,10 @@ tests.forEach((fOpts) => {
       })
 
       it('should return a node', function () {
-        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-        if (isWindows) { this.skip() }
-
         expect(ipfsd).to.exist()
       })
 
       it('daemon should be running', function (done) {
-        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-        if (isWindows) { this.skip() }
-
         ipfsd.pid((pid) => {
           expect(pid).to.exist()
           done()
@@ -277,9 +267,6 @@ tests.forEach((fOpts) => {
       })
 
       it('.stop', function (done) {
-        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-        if (isWindows) { this.skip() }
-
         this.timeout(20 * 1000)
 
         ipfsd.stop((err) => {
@@ -292,9 +279,6 @@ tests.forEach((fOpts) => {
       })
 
       it('.start', function (done) {
-        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-        if (isWindows) { this.skip() }
-
         this.timeout(20 * 1000)
 
         ipfsd.start((err) => {
@@ -307,9 +291,6 @@ tests.forEach((fOpts) => {
       })
 
       it('.stop and cleanup', function (done) {
-        // TODO: wont work on windows until we get `/shutdown` implemented in js-ipfs
-        if (isWindows) { this.skip() }
-
         this.timeout(20 * 1000)
 
         ipfsd.stop((err) => {
