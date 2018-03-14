@@ -1,7 +1,8 @@
 'use strict'
 
 const runner = require('child_process')
-const debug = require('debug')('subchild')
+const debug = require('debug')
+const log = debug('ipfsd-ctl:sclite')
 
 const children = []
 
@@ -13,30 +14,29 @@ function removeChild (child) {
 }
 
 function killAll () {
-  debug('killing all children')
+  log('killing all children')
   let child
   while ((child = children.shift()) !== undefined) {
-    debug(child.pid, 'killing')
+    log(child.pid, 'killing')
     child.kill()
   }
 }
 
-process.once('error', killAll)
 process.once('exit', killAll)
 process.once('SIGTERM', killAll)
 process.once('SIGINT', killAll)
 
 function run (cmd, args, opts) {
   const child = runner.execFile(cmd, args, opts)
-  debug(child.pid, 'new')
+  log(child.pid, 'new')
 
   children.push(child)
   child.once('error', () => {
-    debug(child.pid, 'error')
+    log(child.pid, 'error')
     removeChild(child)
   })
   child.once('exit', () => {
-    debug(child.pid, 'exit')
+    log(child.pid, 'exit')
     removeChild(child)
   })
   return child
