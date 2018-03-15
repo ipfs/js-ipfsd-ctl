@@ -57,7 +57,10 @@ function exec (cmd, args, opts, handlers, callback) {
     command.stdout.on('data', listeners.data)
   }
 
-  command.stderr.on('data', listeners.error)
+  // command.stderr.on('data', listeners.error)
+  command.stderr.on('data', (data) => {
+    console.log(data.toString())
+  })
 
   // If command fails to execute return directly to the handler
   command.on('error', handlers.error)
