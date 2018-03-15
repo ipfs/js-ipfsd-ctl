@@ -59,10 +59,7 @@ class Daemon {
     this._started = false
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
-
-    if (this.opts.env) {
-      Object.assign(this.env, this.opts.env)
-    }
+    this._env = Object.assign({}, process.env, this.opts.env)
   }
 
   /**
@@ -107,7 +104,7 @@ class Daemon {
    * @return {object}
    */
   get env () {
-    return this.path ? Object.assign({}, process.env, { IPFS_PATH: this.path }) : process.env
+    return this.path ? Object.assign({}, this._env, { IPFS_PATH: this.path }) : this._env
   }
 
   /**
