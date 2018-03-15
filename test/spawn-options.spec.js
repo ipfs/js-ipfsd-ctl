@@ -79,6 +79,7 @@ describe('Spawn options', function () {
             expect(err).to.not.exist()
             expect(_ipfsd).to.exist()
             expect(_ipfsd.api).to.not.exist()
+            expect(_ipfsd.initialized).to.eql(false)
 
             ipfsd = _ipfsd
             repoPath = _ipfsd.repoPath
