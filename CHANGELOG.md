@@ -1,3 +1,13 @@
+<a name="0.30.1"></a>
+## [0.30.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.0...v0.30.1) (2018-03-15)
+
+
+### Bug Fixes
+
+* pass keysize on command line ([e2a6697](https://github.com/ipfs/js-ipfsd-ctl/commit/e2a6697))
+
+
+
 <a name="0.30.0"></a>
 # [0.30.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.29.1...v0.30.0) (2018-03-14)
 
