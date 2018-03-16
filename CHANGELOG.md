@@ -1,3 +1,13 @@
+<a name="0.30.3"></a>
+## [0.30.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.2...v0.30.3) (2018-03-16)
+
+
+### Bug Fixes
+
+* daemon should recognize previously created repos. ([#212](https://github.com/ipfs/js-ipfsd-ctl/issues/212)) ([2e9cf0d](https://github.com/ipfs/js-ipfsd-ctl/commit/2e9cf0d))
+
+
+
 <a name="0.30.2"></a>
 ## [0.30.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.1...v0.30.2) (2018-03-16)
 
