@@ -21,12 +21,12 @@ function createApi (apiAddr, gwAddr) {
 }
 
 class DaemonClient {
-  constructor (baseUrl, _id, apiAddr, gwAddrs) {
+  constructor (baseUrl, _id, initialized, apiAddr, gwAddrs) {
     this.baseUrl = baseUrl
     this._id = _id
     this._apiAddr = multiaddr(apiAddr)
     this._gwAddr = multiaddr(gwAddrs)
-    this.initialized = false
+    this.initialized = initialized
     this.started = false
     this.api = createApi(apiAddr, gwAddrs)
   }

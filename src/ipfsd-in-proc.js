@@ -37,7 +37,6 @@ class Node extends EventEmitter {
     this._apiAddr = null
     this._gatewayAddr = null
     this._started = false
-    this.initialized = false
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
 
@@ -155,7 +154,7 @@ class Node extends EventEmitter {
         (cb) => this.getConfig(cb),
         (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
       ], (err) => {
-        if (err) { return callback }
+        if (err) { return callback(err) }
         self.clean = false
         self.initialized = true
         return callback()

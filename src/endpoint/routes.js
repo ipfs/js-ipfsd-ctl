@@ -63,8 +63,8 @@ module.exports = (server) => {
         if (err) {
           return reply(boom.badRequest(err))
         }
-
         const id = hat()
+        const initialized = ipfsd.initialized
         nodes[id] = ipfsd
 
         let api = null
@@ -80,7 +80,7 @@ module.exports = (server) => {
           }
         }
 
-        reply({ id: id, api: api })
+        reply({ id: id, api: api, initialized: initialized })
       })
     }
   })

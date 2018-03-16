@@ -128,16 +128,22 @@ class FactoryInProc {
     }
 
     const node = new Node(options)
-    node.once('ready', () => {
-      series([
-        (cb) => options.init
-          ? node.init(cb)
-          : cb(),
-        (cb) => options.start
-          ? node.start(options.args, cb)
-          : cb()
-      ], (err) => callback(err, node))
-    })
+
+    series([
+      (cb) => node.once('ready', cb),
+      (cb) => node.repo._isInitialized(err => {
+        // if err exists, repo failed to find config or the ipfs-repo package
+        // version is different than that of the existing repo.
+        node.initialized = !err
+        cb()
+      }),
+      (cb) => options.init
+        ? node.init(cb)
+        : cb(),
+      (cb) => options.start
+        ? node.start(options.args, cb)
+        : cb()
+    ], (err) => callback(err, node))
   }
 }
 

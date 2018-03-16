@@ -79,6 +79,7 @@ describe('Spawn options', function () {
             expect(err).to.not.exist()
             expect(_ipfsd).to.exist()
             expect(_ipfsd.api).to.not.exist()
+            expect(_ipfsd.initialized).to.eql(false)
 
             ipfsd = _ipfsd
             repoPath = _ipfsd.repoPath
@@ -114,12 +115,7 @@ describe('Spawn options', function () {
         })
       })
 
-      describe('spawn from a initialized repo', () => {
-        // TODO: figure out why `proc` IPFS refuses
-        // to start with a provided repo
-        // `Error: Not able to start from state: uninitalized`
-        if (fOpts.type === 'proc') { return }
-
+      describe('spawn from an initialized repo', () => {
         let ipfsd
 
         it('f.spawn', function (done) {
@@ -135,9 +131,12 @@ describe('Spawn options', function () {
           f.spawn(options, (err, _ipfsd) => {
             expect(err).to.not.exist()
             expect(_ipfsd).to.exist()
-            expect(_ipfsd.api).to.not.exist()
 
             ipfsd = _ipfsd
+
+            expect(ipfsd.api).to.not.exist()
+            expect(ipfsd.initialized).to.eql(true)
+
             done()
           })
         })
