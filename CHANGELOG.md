@@ -1,3 +1,13 @@
+<a name="0.30.2"></a>
+## [0.30.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.1...v0.30.2) (2018-03-16)
+
+
+### Bug Fixes
+
+* pass on environment variables ([b73325e](https://github.com/ipfs/js-ipfsd-ctl/commit/b73325e))
+
+
+
 <a name="0.30.1"></a>
 ## [0.30.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.0...v0.30.1) (2018-03-15)
 
