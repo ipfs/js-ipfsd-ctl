@@ -50,7 +50,22 @@ class Daemon {
       ? td
       : (this.opts.repoPath || td)
     this.disposable = this.opts.disposable
-    this.exec = this.opts.exec || process.env.IPFS_EXEC || findIpfsExecutable(this.opts.type, rootPath)
+
+    if (process.env.IPFS_EXEC) {
+      log('WARNING: The use of IPFS_EXEC is deprecated, ' +
+        'please use IPFS_GO_EXEC or IPFS_JS_EXEC respectively!')
+
+      if (this.opts.type === 'go') {
+        process.env.IPFS_GO_EXEC = process.env.IPFS_EXEC
+      } else {
+        process.env.IPFS_JS_EXEC = process.env.IPFS_EXEC
+      }
+
+      delete process.env.IPFS_EXEC
+    }
+
+    const envExec = this.opts.type === 'go' ? process.env.IPFS_GO_EXEC : process.env.IPFS_JS_EXEC
+    this.exec = this.opts.exec || envExec || findIpfsExecutable(this.opts.type, rootPath)
     this.subprocess = null
     this.initialized = fs.existsSync(this.path)
     this.clean = true
