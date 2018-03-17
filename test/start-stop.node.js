@@ -27,6 +27,7 @@ describe(`start stop tests`, () => {
   tests.forEach((fOpts) => {
     describe(`${fOpts.type} daemon`, () => {
       const dfConfig = Object.assign({}, dfBaseConfig, { type: fOpts.type })
+      const exec = findIpfsExecutable(fOpts.type)
 
       describe('start and stop', () => {
         let ipfsd
@@ -60,7 +61,7 @@ describe(`start stop tests`, () => {
         })
 
         it('daemon exec path should match type', () => {
-          expect(ipfsd.exec).to.include.string(path.join(exec))
+          expect(exec).to.include.string(ipfsd.exec)
         })
 
         it('daemon should not be running', (done) => {
@@ -151,13 +152,10 @@ describe(`start stop tests`, () => {
 
       describe('start and stop with custom exec path', () => {
         let ipfsd
-        let exec
-
         before(function (done) {
           this.timeout(50 * 1000)
 
           const df = IPFSFactory.create(dfConfig)
-          exec = findIpfsExecutable(fOpts.type)
 
           df.spawn({
             exec,
@@ -184,13 +182,11 @@ describe(`start stop tests`, () => {
 
       describe('start and stop with custom ENV exec path', () => {
         let ipfsd
-        let exec
 
         before(function (done) {
           this.timeout(50 * 1000)
 
           const df = IPFSFactory.create(dfConfig)
-          exec = findIpfsExecutable(fOpts.type)
 
           process.env = Object.assign({}, process.env, fOpts.type === 'go' ?
             { IPFS_GO_EXEC: exec } : { IPFS_JS_EXEC: exec })
