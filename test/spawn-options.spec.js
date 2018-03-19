@@ -15,8 +15,8 @@ const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
 
 const tests = [
-  { type: 'go', bits: 1024 },
-  { type: 'js', bits: 512 },
+  // { type: 'go', bits: 1024 },
+  // { type: 'js', bits: 512 },
   { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
@@ -183,6 +183,48 @@ describe('Spawn options', function () {
         this.timeout(20 * 1000)
 
         ipfsd.stop(done)
+      })
+    })
+
+    describe('spawn with default swarm addrs', () => {
+      const addrs = {
+        go: [
+          '/ip4/0.0.0.0/tcp/4001',
+          '/ip6/::/tcp/4001'
+        ],
+        js: [
+          '/ip4/0.0.0.0/tcp/4002',
+          '/ip4/127.0.0.1/tcp/4003/ws'
+        ],
+        proc: [
+          '/ip4/0.0.0.0/tcp/4002',
+          '/ip4/127.0.0.1/tcp/4003/ws'
+        ]
+      }
+
+      it('swarm contains default addrs', function (done) {
+        this.timeout(20 * 1000)
+
+        if (!isNode && fOpts.type === 'proc') {
+          this.skip()
+        }
+
+        f.spawn({
+          defaultAddrs: true,
+          initOptions: {
+            bits: fOpts.bits
+          }
+        }, (err, ipfsd) => {
+          expect(err).to.not.exist()
+          ipfsd.getConfig('Addresses.Swarm', (err, config) => {
+            if (fOpts.type !== 'proc') {
+              config = JSON.parse(config)
+            }
+
+            expect(config).to.deep.equal(addrs[fOpts.type])
+            ipfsd.stop(done)
+          })
+        })
       })
     })
 

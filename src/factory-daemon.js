@@ -79,6 +79,7 @@ class FactoryDaemon {
    * - `start` bool - should the node be started
    * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
    * - `disposable` bool - a new repo is created and initialized for each invocation
+   * - `defaultAddrs` bool (default false) - use the daemon default `Swarm` addrs
    * - `config` - ipfs configuration options
    * - `args` - array of cmd line arguments to be passed to ipfs daemon
    * - `exec` string (optional) - path to the desired IPFS executable to spawn,
@@ -104,9 +105,6 @@ class FactoryDaemon {
 
     if (!options.disposable) {
       const nonDisposableConfig = clone(defaultConfig)
-      // TODO Why delete these?
-      // delete nonDisposableConfig.Addresses
-
       options.init = false
       options.start = false
 
@@ -122,6 +120,10 @@ class FactoryDaemon {
       options.config = defaultsDeep({}, options.config, nonDisposableConfig)
     } else {
       options.config = defaultsDeep({}, options.config, defaultConfig)
+    }
+
+    if (options.defaultAddrs) {
+      delete options.config.Addresses
     }
 
     options.type = this.type
