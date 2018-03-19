@@ -261,7 +261,7 @@ An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api) that is used 
 
 This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`.
    
-### IPFS environment variables
+### ipfsd-ctl environment variables
 
 In additional to the API described in previous sections, `ipfsd-ctl` also supports several environment variables. This are often very usable when running in different environments, such as CI or when doing integration/interop testing.
 
