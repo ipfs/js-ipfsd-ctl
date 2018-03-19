@@ -271,7 +271,7 @@ _Environment variables precedence order is as follows. Top to bottom, top entry 
 - env variables
 - default values
 
-Meaning that, environment variables override defaults in the configuration file but are supersede by options to `df.spawn({...})`
+Meaning that, environment variables override defaults in the configuration file but are superseded by options to `df.spawn({...})`
 
 #### IPFS_JS_EXEC and IPFS_GO_EXEC
 
