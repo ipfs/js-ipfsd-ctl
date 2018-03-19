@@ -263,7 +263,7 @@ This instance is returned for each successfully started IPFS daemon, when either
    
 ## ipfsd-ctl environment variables
 
-In additional to the API described in previous sections, `ipfsd-ctl` also supports several environment variables. This are often very usable when running in different environments, such as CI or when doing integration/interop testing.
+In additional to the API described in previous sections, `ipfsd-ctl` also supports several environment variables. This are often very useful when running in different environments, such as CI or when doing integration/interop testing.
 
 _Environment variables precedence order is as follows. Top to bottom, top entry has highest precedence:_
 
