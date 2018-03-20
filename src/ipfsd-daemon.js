@@ -3,7 +3,7 @@
 const fs = require('fs')
 const waterfall = require('async/waterfall')
 const series = require('async/series')
-const ipfs = require('ipfs-api')
+const IpfsApi = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const path = require('path')
@@ -75,6 +75,20 @@ class Daemon {
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
     this._env = Object.assign({}, process.env, this.opts.env)
+  }
+
+  /**
+   * Get running node api
+   */
+  get runningNodeApi () {
+    let api
+    try {
+      api = fs.readFileSync(`${this.repoPath}/api`)
+    } catch (err) {
+      log(`Unable to open api file: ${err}`)
+    }
+
+    return api ? api.toString() : null
   }
 
   /**
@@ -209,56 +223,65 @@ class Daemon {
 
     callback = once(callback)
 
-    parseConfig(this.path, (err, conf) => {
-      if (err) {
-        return callback(err)
-      }
+    const setApiAddr = (addr) => {
+      this._apiAddr = multiaddr(addr)
+      this.api = IpfsApi(addr)
+      this.api.apiHost = this.apiAddr.nodeAddress().address
+      this.api.apiPort = this.apiAddr.nodeAddress().port
+    }
 
-      let output = ''
-      this.subprocess = run(this, args, { env: this.env }, {
-        error: (err) => {
-          // Only look at the last error
-          const input = String(err)
-            .split('\n')
-            .map((l) => l.trim())
-            .filter(Boolean)
-            .slice(-1)[0] || ''
+    const setGatewayAddr = (addr) => {
+      this._gatewayAddr = multiaddr(addr)
+      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+    }
 
-          if (input.match(/(?:daemon is running|Daemon is ready)/)) {
-            // we're good
-            return callback(null, this.api)
-          }
-          // ignore when kill -9'd
-          if (!input.match('non-zero exit code')) {
-            callback(err)
-          }
-        },
-        data: (data) => {
-          output += String(data)
+    const api = this.runningNodeApi
+    if (api) {
+      setApiAddr(api)
+      this._started = true
+      return callback(null, this.api)
+    }
 
-          const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
-          const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
+    let output = ''
+    this.subprocess = run(this, args, { env: this.env }, {
+      error: (err) => {
+        // Only look at the last error
+        const input = String(err)
+          .split('\n')
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .slice(-1)[0] || ''
 
-          if (apiMatch && apiMatch.length > 0) {
-            this._apiAddr = multiaddr(apiMatch[1])
-            this.api = ipfs(apiMatch[1])
-            this.api.apiHost = this.apiAddr.nodeAddress().address
-            this.api.apiPort = this.apiAddr.nodeAddress().port
-          }
-
-          if (gwMatch && gwMatch.length > 0) {
-            this._gatewayAddr = multiaddr(gwMatch[1])
-            this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-            this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
-          }
-
-          if (output.match(/(?:daemon is running|Daemon is ready)/)) {
-            // we're good
-            this._started = true
-            return callback(null, this.api)
-          }
+        if (input.match(/(?:daemon is running|Daemon is ready)/)) {
+          // we're good
+          return callback(null, this.api)
         }
-      })
+        // ignore when kill -9'd
+        if (!input.match('non-zero exit code')) {
+          callback(err)
+        }
+      },
+      data: (data) => {
+        output += String(data)
+
+        const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
+        const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
+
+        if (apiMatch && apiMatch.length > 0) {
+          setApiAddr(apiMatch[1])
+        }
+
+        if (gwMatch && gwMatch.length > 0) {
+          setGatewayAddr(gwMatch[1])
+        }
+
+        if (output.match(/(?:daemon is running|Daemon is ready)/)) {
+          // we're good
+          this._started = true
+          callback(null, this.api)
+        }
+      }
     })
   }
 

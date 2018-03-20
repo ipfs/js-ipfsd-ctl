@@ -211,6 +211,54 @@ tests.forEach((fOpts) => {
       })
     })
 
+    describe('should detect and attach to running node', () => {
+      let ipfsd
+      let exec
+
+      before(function (done) {
+        this.timeout(50 * 1000)
+
+        const df = IPFSFactory.create(dfConfig)
+        exec = findIpfsExecutable(fOpts.type)
+
+        df.spawn({
+          exec,
+          initOptions: { bits: fOpts.bits }
+        }, (err, daemon) => {
+          expect(err).to.not.exist()
+          expect(daemon).to.exist()
+
+          ipfsd = daemon
+          done()
+        })
+      })
+
+      after((done) => ipfsd.stop(done))
+
+      it('should return a node', () => {
+        expect(ipfsd).to.exist()
+      })
+
+      it('shoul attach to running node', function (done) {
+        this.timeout(50 * 1000)
+
+        const df = IPFSFactory.create(dfConfig)
+        df.spawn({
+          initOptions: { bits: fOpts.bits },
+          repoPath: ipfsd.repoPath,
+          disposable: false
+        }, (err, daemon) => {
+          expect(err).to.not.exist()
+          daemon.start((err, api) => {
+            expect(err).to.not.exist()
+            expect(api).to.exist()
+            expect(ipfsd.apiAddr).to.be.eql(daemon.apiAddr)
+            daemon.stop(done)
+          })
+        })
+      })
+    })
+
     describe('should fail on invalid exec path', function () {
       this.timeout(20 * 1000)
 
