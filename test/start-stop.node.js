@@ -195,40 +195,6 @@ tests.forEach((fOpts) => {
           expect(err).to.not.exist()
           expect(daemon).to.exist()
 
-            ipfsd = daemon
-            done()
-          })
-        })
-
-        after((done) => ipfsd.stop(done))
-
-        it('should return a node', () => {
-          expect(ipfsd).to.exist()
-        })
-
-        it('ipfsd.exec should match exec', () => {
-          expect(ipfsd.exec).to.equal(exec)
-        })
-      })
-
-      describe('start and stop with custom ENV exec path', () => {
-        let ipfsd
-        let exec
-
-        before(function (done) {
-          this.timeout(50 * 1000)
-
-          const df = IPFSFactory.create(dfConfig)
-          exec = findIpfsExecutable(fOpts.type)
-
-          process.env = Object.assign({}, process.env, fOpts.type === 'go' ?
-            { IPFS_GO_EXEC: exec } : { IPFS_JS_EXEC: exec })
-          df.spawn({
-            initOptions: { bits: fOpts.bits }
-          }, (err, daemon) => {
-            expect(err).to.not.exist()
-            expect(daemon).to.exist()
-
           ipfsd = daemon
           done()
         })
