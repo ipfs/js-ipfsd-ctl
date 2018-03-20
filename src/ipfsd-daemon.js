@@ -18,7 +18,6 @@ const log = debug('ipfsd-ctl:daemon')
 const safeParse = require('safe-json-parse/callback')
 const safeStringify = require('safe-json-stringify')
 
-const parseConfig = require('./utils/parse-config')
 const tmpDir = require('./utils/tmp-dir')
 const findIpfsExecutable = require('./utils/find-ipfs-executable')
 const setConfigValue = require('./utils/set-config-value')

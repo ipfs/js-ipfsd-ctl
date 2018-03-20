@@ -187,8 +187,8 @@ tests.forEach((fOpts) => {
 
         const df = IPFSFactory.create(dfConfig)
 
-        process.env = Object.assign({}, process.env, fOpts.type === 'go' ?
-          { IPFS_GO_EXEC: exec } : { IPFS_JS_EXEC: exec })
+        process.env = Object.assign({}, process.env, fOpts.type === 'go'
+          ? { IPFS_GO_EXEC: exec } : { IPFS_JS_EXEC: exec })
         df.spawn({
           initOptions: { bits: fOpts.bits }
         }, (err, daemon) => {
