@@ -188,7 +188,7 @@ tests.forEach((fOpts) => {
       })
     })
 
-    describe.only('should detect and attach to running node', () => {
+    describe('should detect and attach to running node', () => {
       let ipfsd
       let exec
 
@@ -351,6 +351,5 @@ tests.forEach((fOpts) => {
         })
       })
     })
-
   })
 })
