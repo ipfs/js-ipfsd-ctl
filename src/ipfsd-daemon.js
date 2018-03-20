@@ -3,7 +3,7 @@
 const fs = require('fs')
 const waterfall = require('async/waterfall')
 const series = require('async/series')
-const ipfs = require('ipfs-api')
+const IpfsApi = require('ipfs-api')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const path = require('path')
@@ -60,6 +60,21 @@ class Daemon {
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
     this._env = Object.assign({}, process.env, this.opts.env)
+  }
+
+  /**
+   *
+   * @private
+   */
+  get runningNodeApi () {
+    let api
+    try {
+      api = fs.readFileSync(`${this.repoPath}/api`)
+    } catch (err) {
+      debug(`Unable to open api file: ${err}`)
+    }
+
+    return api ? api.toString() : null
   }
 
   /**
@@ -194,11 +209,25 @@ class Daemon {
 
     callback = once(callback)
 
-    parseConfig(this.path, (err, conf) => {
-      if (err) {
-        return callback(err)
-      }
+    const setApiAddr = (addr) => {
+      this._apiAddr = multiaddr(addr)
+      this.api = IpfsApi(addr)
+      this.api.apiHost = this.apiAddr.nodeAddress().address
+      this.api.apiPort = this.apiAddr.nodeAddress().port
+    }
 
+    const setGatewayAddr = (addr) => {
+      this._gatewayAddr = multiaddr(addr)
+      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+    }
+
+    const api = this.runningNodeApi
+    if (api) {
+      setApiAddr(api)
+      this._started = true
+      callback(null, this.api)
+    } else {
       let output = ''
       this.subprocess = run(this, args, { env: this.env }, {
         error: (err) => {
@@ -225,26 +254,21 @@ class Daemon {
           const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
 
           if (apiMatch && apiMatch.length > 0) {
-            this._apiAddr = multiaddr(apiMatch[1])
-            this.api = ipfs(apiMatch[1])
-            this.api.apiHost = this.apiAddr.nodeAddress().address
-            this.api.apiPort = this.apiAddr.nodeAddress().port
+            setApiAddr(apiMatch[1])
           }
 
           if (gwMatch && gwMatch.length > 0) {
-            this._gatewayAddr = multiaddr(gwMatch[1])
-            this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-            this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+            setGatewayAddr(gwMatch[1])
           }
 
           if (output.match(/(?:daemon is running|Daemon is ready)/)) {
             // we're good
             this._started = true
-            return callback(null, this.api)
+            callback(null, this.api)
           }
         }
       })
-    })
+    }
   }
 
   /**
