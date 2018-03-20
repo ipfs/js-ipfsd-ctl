@@ -226,49 +226,49 @@ class Daemon {
     if (api) {
       setApiAddr(api)
       this._started = true
-      callback(null, this.api)
-    } else {
-      let output = ''
-      this.subprocess = run(this, args, { env: this.env }, {
-        error: (err) => {
-          // Only look at the last error
-          const input = String(err)
-            .split('\n')
-            .map((l) => l.trim())
-            .filter(Boolean)
-            .slice(-1)[0] || ''
-
-          if (input.match(/(?:daemon is running|Daemon is ready)/)) {
-            // we're good
-            return callback(null, this.api)
-          }
-          // ignore when kill -9'd
-          if (!input.match('non-zero exit code')) {
-            callback(err)
-          }
-        },
-        data: (data) => {
-          output += String(data)
-
-          const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
-          const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
-
-          if (apiMatch && apiMatch.length > 0) {
-            setApiAddr(apiMatch[1])
-          }
-
-          if (gwMatch && gwMatch.length > 0) {
-            setGatewayAddr(gwMatch[1])
-          }
-
-          if (output.match(/(?:daemon is running|Daemon is ready)/)) {
-            // we're good
-            this._started = true
-            callback(null, this.api)
-          }
-        }
-      })
+      return callback(null, this.api)
     }
+
+    let output = ''
+    this.subprocess = run(this, args, { env: this.env }, {
+      error: (err) => {
+        // Only look at the last error
+        const input = String(err)
+          .split('\n')
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .slice(-1)[0] || ''
+
+        if (input.match(/(?:daemon is running|Daemon is ready)/)) {
+          // we're good
+          return callback(null, this.api)
+        }
+        // ignore when kill -9'd
+        if (!input.match('non-zero exit code')) {
+          callback(err)
+        }
+      },
+      data: (data) => {
+        output += String(data)
+
+        const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
+        const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
+
+        if (apiMatch && apiMatch.length > 0) {
+          setApiAddr(apiMatch[1])
+        }
+
+        if (gwMatch && gwMatch.length > 0) {
+          setGatewayAddr(gwMatch[1])
+        }
+
+        if (output.match(/(?:daemon is running|Daemon is ready)/)) {
+          // we're good
+          this._started = true
+          callback(null, this.api)
+        }
+      }
+    })
   }
 
   /**
