@@ -295,10 +295,6 @@ tests.forEach((fOpts) => {
 
     describe('should fail on invalid exec path', function () {
       this.timeout(20 * 1000)
-      describe('should fail on invalid exec path', function () {
-        this.timeout(20 * 1000)
-    describe('should fail on invalid exec path', function () {
-      this.timeout(20 * 1000)
 
       let ipfsd
       before((done) => {
