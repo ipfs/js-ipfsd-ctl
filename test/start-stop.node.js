@@ -234,10 +234,6 @@ tests.forEach((fOpts) => {
           })
         })
       })
-
-      it('ipfsd.exec should match exec', () => {
-        expect(ipfsd.exec).to.equal(exec)
-      })
     })
 
     describe('should fail on invalid exec path', function () {
