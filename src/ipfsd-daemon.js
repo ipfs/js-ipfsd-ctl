@@ -63,15 +63,14 @@ class Daemon {
   }
 
   /**
-   *
-   * @private
+   * Get running node api
    */
   get runningNodeApi () {
     let api
     try {
       api = fs.readFileSync(`${this.repoPath}/api`)
     } catch (err) {
-      debug(`Unable to open api file: ${err}`)
+      log(`Unable to open api file: ${err}`)
     }
 
     return api ? api.toString() : null
