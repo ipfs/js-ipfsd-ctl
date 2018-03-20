@@ -217,6 +217,7 @@ describe('Spawn options', function () {
         }, (err, ipfsd) => {
           expect(err).to.not.exist()
           ipfsd.getConfig('Addresses.Swarm', (err, config) => {
+            expect(err).to.not.exist()
             if (fOpts.type !== 'proc') {
               config = JSON.parse(config)
             }
