@@ -15,8 +15,8 @@ const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
 
 const tests = [
-  // { type: 'go', bits: 1024 },
-  // { type: 'js', bits: 512 },
+  { type: 'go', bits: 1024 },
+  { type: 'js', bits: 512 },
   { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
