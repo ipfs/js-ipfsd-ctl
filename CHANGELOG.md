@@ -1,3 +1,14 @@
+<a name="0.30.4"></a>
+## [0.30.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.3...v0.30.4) (2018-03-21)
+
+
+### Features
+
+* add ability to use go and js env exec ([#219](https://github.com/ipfs/js-ipfsd-ctl/issues/219)) ([4c8fcad](https://github.com/ipfs/js-ipfsd-ctl/commit/4c8fcad)), closes [#221](https://github.com/ipfs/js-ipfsd-ctl/issues/221)
+* detect running node ([#221](https://github.com/ipfs/js-ipfsd-ctl/issues/221)) ([26c2634](https://github.com/ipfs/js-ipfsd-ctl/commit/26c2634))
+
+
+
 <a name="0.30.3"></a>
 ## [0.30.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.2...v0.30.3) (2018-03-16)
 
