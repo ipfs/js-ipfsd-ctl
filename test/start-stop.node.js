@@ -23,14 +23,10 @@ const tests = [
   { type: 'js', bits: 512 }
 ]
 
-const exec = {
-  js: 'ipfs/src/cli/bin.js',
-  go: 'go-ipfs-dep/go-ipfs/ipfs'
-}
-
 tests.forEach((fOpts) => {
   describe(`${fOpts.type} daemon`, () => {
     const dfConfig = Object.assign({}, dfBaseConfig, { type: fOpts.type })
+    const exec = findIpfsExecutable(fOpts.type)
 
     describe('start and stop', () => {
       let ipfsd
@@ -64,9 +60,7 @@ tests.forEach((fOpts) => {
       })
 
       it('daemon exec path should match type', () => {
-        let execPath = exec[fOpts.type]
-
-        expect(ipfsd.exec).to.include.string(path.join(execPath))
+        expect(exec).to.include.string(ipfsd.exec)
       })
 
       it('daemon should not be running', (done) => {
@@ -157,16 +151,45 @@ tests.forEach((fOpts) => {
 
     describe('start and stop with custom exec path', () => {
       let ipfsd
-      let exec
+      before(function (done) {
+        this.timeout(50 * 1000)
+
+        const df = IPFSFactory.create(dfConfig)
+
+        df.spawn({
+          exec,
+          initOptions: { bits: fOpts.bits }
+        }, (err, daemon) => {
+          expect(err).to.not.exist()
+          expect(daemon).to.exist()
+
+          ipfsd = daemon
+          done()
+        })
+      })
+
+      after((done) => ipfsd.stop(done))
+
+      it('should return a node', () => {
+        expect(ipfsd).to.exist()
+      })
+
+      it('ipfsd.exec should match exec', () => {
+        expect(ipfsd.exec).to.equal(exec)
+      })
+    })
+
+    describe('start and stop with custom ENV exec path', () => {
+      let ipfsd
 
       before(function (done) {
         this.timeout(50 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
-        exec = findIpfsExecutable(fOpts.type)
 
+        process.env = Object.assign({}, process.env, fOpts.type === 'go'
+          ? { IPFS_GO_EXEC: exec } : { IPFS_JS_EXEC: exec })
         df.spawn({
-          exec,
           initOptions: { bits: fOpts.bits }
         }, (err, daemon) => {
           expect(err).to.not.exist()

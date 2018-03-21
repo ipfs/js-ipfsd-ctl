@@ -261,6 +261,22 @@ An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api) that is used 
 
 This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`.
    
+## ipfsd-ctl environment variables
+
+In additional to the API described in previous sections, `ipfsd-ctl` also supports several environment variables. This are often very useful when running in different environments, such as CI or when doing integration/interop testing.
+
+_Environment variables precedence order is as follows. Top to bottom, top entry has highest precedence:_
+
+- command line options/method arguments
+- env variables
+- default values
+
+Meaning that, environment variables override defaults in the configuration file but are superseded by options to `df.spawn({...})`
+
+#### IPFS_JS_EXEC and IPFS_GO_EXEC
+
+An alternative way of specifying the executable path for the `js-ipfs` or `go-ipfs` executable, respectively.
+   
 ## Packaging
 
 `ipfsd-ctl` can be packaged in Electron applications, but the ipfs binary has to be excluded from asar (Electron Archives).
