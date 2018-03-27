@@ -1,3 +1,13 @@
+<a name="0.31.0"></a>
+# [0.31.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.4...v0.31.0) (2018-03-27)
+
+
+### Features
+
+* upgrade to go-ipfs-0.4.14 ([77b4cd9](https://github.com/ipfs/js-ipfsd-ctl/commit/77b4cd9))
+
+
+
 <a name="0.30.4"></a>
 ## [0.30.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.3...v0.30.4) (2018-03-21)
 
