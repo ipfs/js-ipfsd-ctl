@@ -141,7 +141,7 @@ tests.forEach((fOpts) => {
           ipfsd.start(['--should-not-exist'], (err) => {
             expect(err).to.exist()
             expect(err.message)
-              .to.match(/Unrecognized option 'should-not-exist'/)
+              .to.match(/unknown option "should-not-exist"\n/)
 
             done()
           })
