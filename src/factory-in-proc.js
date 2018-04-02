@@ -76,11 +76,12 @@ class FactoryInProc {
    * Spawn JSIPFS instances
    *
    * Options are:
-   * - `init` {bool|Object} - should the node be initialized
+   * - `init` bool - should the node be initialized
    * - `initOptions` Object, it is expected to be of the form `{bits: <size>}`, which sets the desired key size
    * - `start` bool - should the node be started
    * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
    * - `disposable` bool - a new repo is created and initialized for each invocation
+   * - `defaultAddrs` bool (default false) - use the daemon default `Swarm` addrs
    * - `config` - ipfs configuration options
    * - `args` - array of cmd line arguments to be passed to ipfs daemon
    * - `exec` string (optional) - path to the desired IPFS executable to spawn,
@@ -105,9 +106,6 @@ class FactoryInProc {
       options.config = defaults({}, options.config, defaultConfig)
     } else {
       const nonDisposableConfig = clone(defaultConfig)
-      // TODO why delete the addrs here???
-      // delete nonDisposableConfig.Addresses
-
       options.init = false
       options.start = false
 
@@ -118,6 +116,10 @@ class FactoryInProc {
 
       options.repoPath = options.repoPath || (process.env.IPFS_PATH || defaultRepo)
       options.config = defaults({}, options.config, nonDisposableConfig)
+    }
+
+    if (options.defaultAddrs) {
+      delete options.config.Addresses
     }
 
     options.type = this.type

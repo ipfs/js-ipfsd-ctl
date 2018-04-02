@@ -186,6 +186,50 @@ describe('Spawn options', function () {
       })
     })
 
+    // TODO re-enable when jenkins runs tests in isolation
+    describe.skip('spawn with default swarm addrs', () => {
+      const addrs = {
+        go: [
+          '/ip4/0.0.0.0/tcp/4001',
+          '/ip6/::/tcp/4001'
+        ],
+        js: [
+          '/ip4/0.0.0.0/tcp/4002',
+          '/ip4/127.0.0.1/tcp/4003/ws'
+        ],
+        proc: [
+          '/ip4/0.0.0.0/tcp/4002',
+          '/ip4/127.0.0.1/tcp/4003/ws'
+        ]
+      }
+
+      it('swarm contains default addrs', function (done) {
+        this.timeout(20 * 1000)
+
+        if (!isNode && fOpts.type === 'proc') {
+          this.skip()
+        }
+
+        f.spawn({
+          defaultAddrs: true,
+          initOptions: {
+            bits: fOpts.bits
+          }
+        }, (err, ipfsd) => {
+          expect(err).to.not.exist()
+          ipfsd.getConfig('Addresses.Swarm', (err, config) => {
+            expect(err).to.not.exist()
+            if (fOpts.type !== 'proc') {
+              config = JSON.parse(config)
+            }
+
+            expect(config).to.deep.equal(addrs[fOpts.type])
+            ipfsd.stop(done)
+          })
+        })
+      })
+    })
+
     describe('custom config options', () => {
       it('custom config', function (done) {
         this.timeout(50 * 1000)
