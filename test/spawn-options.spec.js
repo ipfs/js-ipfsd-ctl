@@ -27,8 +27,6 @@ const versions = {
   proc: jsVersion
 }
 
-const dscskip = describe.skip
-
 describe('Spawn options', function () {
   this.timeout(20 * 1000)
 
@@ -189,7 +187,7 @@ describe('Spawn options', function () {
     })
 
     // TODO re-enable when jenkins runs tests in isolation
-    dscskip('spawn with default swarm addrs', () => {
+    describe.skip('spawn with default swarm addrs', () => {
       const addrs = {
         go: [
           '/ip4/0.0.0.0/tcp/4001',
