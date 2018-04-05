@@ -80,7 +80,7 @@
     "detect-node": "^2.0.3",
     "hapi": "^16.6.2",
     "hat": "0.0.3",
-    "ipfs-api": "^18.1.2",
+    "ipfs-api": "^20.0.0",
     "ipfs-repo": "^0.18.7",
     "joi": "^13.1.2",
     "lodash.clone": "^4.5.0",
