@@ -148,14 +148,20 @@ class DaemonClient {
   /**
    * Stop the daemon.
    *
+   * @param {integer} - Grace period to wait before force stopping the node
    * @param {function(Error)} [cb]
    * @returns {undefined}
    */
-  stop (cb) {
+  stop (timeout, cb) {
+    if (typeof timeout === 'function') {
+      cb = timeout
+      timeout = null
+    }
+
     cb = cb || (() => {})
     request
       .post(`${this.baseUrl}/stop`)
-      .query({ id: this._id })
+      .query({ id: this._id, timeout })
       .end((err) => {
         if (err) {
           return cb(new Error(err.response.body.message))
@@ -169,17 +175,23 @@ class DaemonClient {
   /**
    * Kill the `ipfs daemon` process.
    *
-   * First `SIGTERM` is sent, after 7.5 seconds `SIGKILL` is sent
+   * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
    * if the process hasn't exited yet.
    *
+   * @param {integer} - Grace period to wait before force stopping the node
    * @param {function()} [cb] - Called when the process was killed.
    * @returns {undefined}
    */
-  killProcess (cb) {
+  killProcess (timeout, cb) {
+    if (typeof timeout === 'function') {
+      cb = timeout
+      timeout = null
+    }
+
     cb = cb || (() => {})
     request
       .post(`${this.baseUrl}/kill`)
-      .query({ id: this._id })
+      .query({ id: this._id, timeout })
       .end((err) => {
         if (err) {
           return cb(new Error(err.response.body.message))

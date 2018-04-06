@@ -22,7 +22,11 @@ const findIpfsExecutable = require('./utils/find-ipfs-executable')
 const setConfigValue = require('./utils/set-config-value')
 const run = require('./utils/run')
 
-const GRACE_PERIOD = 10500 // amount of ms to wait before sigkill
+// amount of ms to wait before sigkill
+const GRACE_PERIOD = 10500
+
+// amount of ms to wait before sigkill for non disposable repos
+const NON_DISPOSABLE_GRACE_PERIOD = 10500 * 3
 
 /**
  * ipfsd for a go-ipfs or js-ipfs daemon
@@ -284,17 +288,23 @@ class Daemon {
   /**
    * Stop the daemon.
    *
+   * @param {integer} - Grace period to wait before force stopping the node
    * @param {function(Error)} callback
    * @returns {undefined}
    */
-  stop (callback) {
+  stop (timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = null
+    }
+
     callback = callback || function noop () {}
 
     if (!this.subprocess) {
       return callback()
     }
 
-    this.killProcess(callback)
+    this.killProcess(timeout, callback)
   }
 
   /**
@@ -304,20 +314,32 @@ class Daemon {
    * process.kill(`SIGTERM`) is used.  In either case, if the process
    * does not exit after 10.5 seconds then a `SIGKILL` is used.
    *
+   * @param {integer} - Grace period to wait before force stopping the node
    * @param {function()} callback - Called when the process was killed.
    * @returns {undefined}
    */
-  killProcess (callback) {
+  killProcess (timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback = timeout
+      timeout = null
+    }
+
+    if (!timeout) {
+      timeout = this.disposable
+        ? GRACE_PERIOD
+        : NON_DISPOSABLE_GRACE_PERIOD
+    }
+
     // need a local var for the closure, as we clear the var.
     const subprocess = this.subprocess
-    const timeout = setTimeout(() => {
+    const grace = setTimeout(() => {
       log('kill timeout, using SIGKILL', subprocess.pid)
       subprocess.kill('SIGKILL')
-    }, GRACE_PERIOD)
+    }, timeout)
 
     subprocess.once('exit', () => {
       log('killed', subprocess.pid)
-      clearTimeout(timeout)
+      clearTimeout(grace)
       this.subprocess = null
       this._started = false
       if (this.disposable) {

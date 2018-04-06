@@ -38,9 +38,9 @@ const routes = proxyquire(
           cb(null, api)
         }
 
-        node.stop = (cb) => node.killProcess(cb)
+        node.stop = (timeout, cb) => node.killProcess(timeout, cb)
 
-        node.killProcess = (cb) => {
+        node.killProcess = (timeout, cb) => {
           node.started = false
           cb()
         }
@@ -218,7 +218,7 @@ describe('routes', () => {
         method: 'POST',
         url: `/stop?id=${id}`,
         headers: { 'content-type': 'application/json' },
-        payload: { id }
+        payload: { id, timeout: 1000 }
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()

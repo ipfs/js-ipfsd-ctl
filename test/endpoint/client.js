@@ -267,6 +267,48 @@ describe('client', () => {
     })
   })
 
+  describe('.stop with timeout', () => {
+    describe('handle valid', () => {
+      after(() => {
+        mock.clearRoutes()
+      })
+
+      it('should handle valid request', (done) => {
+        mock.post('http://localhost:9999/stop', (req) => {
+          expect(req.query.id).to.exist()
+        })
+
+        node.stop(1000, (err) => {
+          expect(err).to.not.exist()
+          done()
+        })
+      })
+    })
+
+    describe('handle invalid', () => {
+      after(() => {
+        mock.clearRoutes()
+      })
+
+      it('should handle invalid request', (done) => {
+        mock.post('http://localhost:9999/stop', () => {
+          const badReq = boom.badRequest()
+          return {
+            status: badReq.output.statusCode,
+            body: {
+              message: badReq.message
+            }
+          }
+        })
+
+        node.stop((err) => {
+          expect(err).to.exist()
+          done()
+        })
+      })
+    })
+  })
+
   describe('.killProcess', () => {
     describe('handle valid', () => {
       after(() => {
