@@ -1,3 +1,13 @@
+<a name="0.32.0"></a>
+# [0.32.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.31.0...v0.32.0) (2018-04-06)
+
+
+### Features
+
+* use default daemon addrs ([#220](https://github.com/ipfs/js-ipfsd-ctl/issues/220)) ([510b320](https://github.com/ipfs/js-ipfsd-ctl/commit/510b320))
+
+
+
 <a name="0.31.0"></a>
 # [0.31.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.30.4...v0.31.0) (2018-03-27)
 
