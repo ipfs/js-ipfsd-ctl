@@ -211,30 +211,12 @@ tests.forEach((fOpts) => {
         expect(api.id).to.exist()
       })
 
-      it('.stop', function (done) {
-        this.timeout(20 * 1000)
-
-        ipfsd.stop((err) => {
-          expect(err).to.not.exist()
-          let tries = 5
-
-          const interval = setInterval(() => {
-            const running = isrunning(pid)
-            if (!running || tries-- <= 0) {
-              clearInterval(interval)
-              expect(running).to.not.be.ok()
-              stopped = true
-              done()
-            }
-          }, 200)
-        })
-      })
-
       it('.stop with timeout', function (done) {
         this.timeout(15000 + 10) // should not take longer than timeout
         ipfsd.stop(15000, (err) => {
           expect(err).to.not.exist()
-          expect(isrunning(pid)).to.not.be.ok()
+          stopped = !isrunning(pid)
+          expect(stopped).to.be.ok()
           done()
         })
       })
