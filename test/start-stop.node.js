@@ -230,12 +230,11 @@ tests.forEach((fOpts) => {
         })
       })
 
-
       it('.stop with timeout', function (done) {
-        this.timeout(15000) // should not take longer than timeout
+        this.timeout(15000 + 10) // should not take longer than timeout
         ipfsd.stop(15000, (err) => {
           expect(err).to.not.exist()
-          const running = isrunning(pid)
+          expect(isrunning(pid)).to.not.be.ok()
           done()
         })
       })

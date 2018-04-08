@@ -148,20 +148,21 @@ class DaemonClient {
   /**
    * Stop the daemon.
    *
-   * @param {integer} - Grace period to wait before force stopping the node
+   * @param {integer|undefined} timeout - Grace period to wait before force stopping the node
    * @param {function(Error)} [cb]
    * @returns {undefined}
    */
   stop (timeout, cb) {
     if (typeof timeout === 'function') {
       cb = timeout
-      timeout = null
+      timeout = undefined
     }
 
     cb = cb || (() => {})
     request
       .post(`${this.baseUrl}/stop`)
-      .query({ id: this._id, timeout })
+      .query({ id: this._id })
+      .send({ timeout })
       .end((err) => {
         if (err) {
           return cb(new Error(err.response.body.message))
@@ -178,20 +179,21 @@ class DaemonClient {
    * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
    * if the process hasn't exited yet.
    *
-   * @param {integer} - Grace period to wait before force stopping the node
+   * @param {integer|undefined} timeout - Grace period to wait before force stopping the node
    * @param {function()} [cb] - Called when the process was killed.
    * @returns {undefined}
    */
   killProcess (timeout, cb) {
     if (typeof timeout === 'function') {
       cb = timeout
-      timeout = null
+      timeout = undefined
     }
 
     cb = cb || (() => {})
     request
       .post(`${this.baseUrl}/kill`)
-      .query({ id: this._id, timeout })
+      .query({ id: this._id })
+      .send({ timeout })
       .end((err) => {
         if (err) {
           return cb(new Error(err.response.body.message))

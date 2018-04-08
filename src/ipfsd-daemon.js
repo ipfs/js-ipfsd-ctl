@@ -288,7 +288,7 @@ class Daemon {
   /**
    * Stop the daemon.
    *
-   * @param {integer} - Grace period to wait before force stopping the node
+   * @param {integer|undefined} timeout - Grace period to wait before force stopping the node
    * @param {function(Error)} callback
    * @returns {undefined}
    */
@@ -314,7 +314,7 @@ class Daemon {
    * process.kill(`SIGTERM`) is used.  In either case, if the process
    * does not exit after 10.5 seconds then a `SIGKILL` is used.
    *
-   * @param {integer} - Grace period to wait before force stopping the node
+   * @param {integer|undefined} timeout - Grace period to wait before force stopping the node
    * @param {function()} callback - Called when the process was killed.
    * @returns {undefined}
    */
