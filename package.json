@@ -90,7 +90,7 @@
     "hat": "~0.0.3",
     "ipfs-api": "^23.0.0",
     "joi": "^13.1.2",
-    "lodash.clone": "^4.5.0",
+    "lodash.clonedeep": "^4.5.0",
     "lodash.defaults": "^4.2.0",
     "lodash.defaultsdeep": "^4.6.0",
     "multiaddr": "^5.0.0",

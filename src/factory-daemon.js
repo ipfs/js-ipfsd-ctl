@@ -1,7 +1,7 @@
 'use strict'
 
 const defaultsDeep = require('lodash.defaultsdeep')
-const clone = require('lodash.clone')
+const clone = require('lodash.clonedeep')
 const series = require('async/series')
 const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
@@ -110,8 +110,19 @@ class FactoryDaemon {
       ? options.init
       : true
 
+    const config = clone(defaultConfig)
+    if (options.defaultAddrs) {
+      if (options.config && options.config.Addresses) {
+        Object.keys(options.config.Addresses)
+          .forEach((key) => {
+            delete config.Addresses[key]
+          })
+      } else {
+        delete config.Addresses
+      }
+    }
+
     if (!options.disposable) {
-      const nonDisposableConfig = clone(defaultConfig)
       options.init = false
       options.start = false
 
@@ -124,14 +135,9 @@ class FactoryDaemon {
 
       options.repoPath = options.repoPath ||
         (process.env.IPFS_PATH || defaultRepo)
-      options.config = defaultsDeep({}, options.config, nonDisposableConfig)
-    } else {
-      options.config = defaultsDeep({}, options.config, defaultConfig)
     }
 
-    if (options.defaultAddrs) {
-      delete options.config.Addresses
-    }
+    options.config = defaultsDeep({}, options.config, config)
 
     options.type = this.options.type
     options.exec = options.exec || this.options.exec

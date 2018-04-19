@@ -1,7 +1,7 @@
 'use strict'
 
 const defaults = require('lodash.defaultsdeep')
-const clone = require('lodash.clone')
+const clone = require('lodash.clonedeep')
 const series = require('async/series')
 const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
@@ -104,10 +104,19 @@ class FactoryInProc {
       ? options.init
       : true
 
-    if (options.disposable) {
-      options.config = defaults({}, options.config, defaultConfig)
-    } else {
-      const nonDisposableConfig = clone(defaultConfig)
+    const config = clone(defaultConfig)
+    if (options.defaultAddrs) {
+      if (options.config && options.config.Addresses) {
+        Object.keys(options.config.Addresses)
+          .forEach((key) => {
+            delete config.Addresses[key]
+          })
+      } else {
+        delete config.Addresses
+      }
+    }
+
+    if (!options.disposable) {
       options.init = false
       options.start = false
 
@@ -117,12 +126,10 @@ class FactoryInProc {
       )
 
       options.repoPath = options.repoPath || (process.env.IPFS_PATH || defaultRepo)
-      options.config = defaults({}, options.config, nonDisposableConfig)
+      options.config = defaults({}, options.config, config)
     }
 
-    if (options.defaultAddrs) {
-      delete options.config.Addresses
-    }
+    options.config = defaults({}, options.config, config)
 
     options.type = this.options.type
     options.exec = options.exec || this.options.exec

@@ -17,8 +17,8 @@ const JSIPFS = require('ipfs')
 const once = require('once')
 
 const tests = [
-  { type: 'go', bits: 1024 },
-  { type: 'js', bits: 512 },
+  // { type: 'go', bits: 1024 },
+  // { type: 'js', bits: 512 },
   { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
@@ -187,7 +187,7 @@ describe('Spawn options', function () {
     })
 
     // TODO re-enable when jenkins runs tests in isolation
-    describe.skip('spawn with default swarm addrs', () => {
+    describe('spawn with default swarm addrs', () => {
       const addrs = {
         go: [
           '/ip4/0.0.0.0/tcp/4001',
@@ -228,6 +228,50 @@ describe('Spawn options', function () {
           })
         })
       })
+    })
+
+    // TODO re-enable when jenkins runs tests in isolation
+    describe('spawn with default swarm addrs with override', () => {
+      it('swarm contains default addrs', function (done) {
+          this.timeout(20 * 1000)
+
+          if (!isNode && fOpts.type === 'proc') {
+            this.skip()
+          }
+
+        const addrs = {
+          go: [
+            '/ip4/0.0.0.0/tcp/65001'
+          ],
+          js: [
+            '/ip4/0.0.0.0/tcp/65001'
+          ],
+          proc: [
+            '/ip4/0.0.0.0/tcp/65001'
+          ]
+        }
+
+        f.spawn({
+            defaultAddrs: true,
+            config: {
+              Addresses: {
+                Swarm: addrs[fOpts.type]
+              }
+            }
+          }, (err, ipfsd) => {
+            expect(err).to.not.exist()
+            ipfsd.getConfig('Addresses.Swarm', (err, config) => {
+              expect(err).to.not.exist()
+              if (fOpts.type !== 'proc') {
+                config = JSON.parse(config)
+              }
+
+              expect(config).to.deep.equal(addrs[fOpts.type])
+              ipfsd.stop(done)
+            })
+          })
+        }
+      )
     })
 
     describe('custom config options', () => {
