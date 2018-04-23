@@ -17,8 +17,8 @@ const JSIPFS = require('ipfs')
 const once = require('once')
 
 const tests = [
-  // { type: 'go', bits: 1024 },
-  // { type: 'js', bits: 512 },
+  { type: 'go', bits: 1024 },
+  { type: 'js', bits: 512 },
   { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
