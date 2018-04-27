@@ -73,6 +73,7 @@ class Node extends EventEmitter {
     })
 
     this.exec.once('ready', () => this.emit('ready'))
+    this.exec.once('error', err => this.emit('error', err))
   }
 
   /**

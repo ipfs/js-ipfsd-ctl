@@ -5,6 +5,8 @@ yarn.lock
 **/*.log
 test/repo-tests*
 
+.vscode
+.eslintrc
 # Logs
 logs
 *.log
