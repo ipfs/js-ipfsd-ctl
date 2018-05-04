@@ -1,3 +1,13 @@
+<a name="0.33.0"></a>
+# [0.33.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.32.1...v0.33.0) (2018-05-04)
+
+
+### Bug Fixes
+
+* error event propagation ([#233](https://github.com/ipfs/js-ipfsd-ctl/issues/233)) ([db3dd68](https://github.com/ipfs/js-ipfsd-ctl/commit/db3dd68))
+
+
+
 <a name="0.32.1"></a>
 ## [0.32.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.32.0...v0.32.1) (2018-04-12)
 
