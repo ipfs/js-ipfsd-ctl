@@ -130,6 +130,7 @@ class FactoryInProc {
     }
 
     const node = new Node(options)
+    node.once('error', err => callback(err, node))
 
     series([
       (cb) => node.once('ready', cb),
