@@ -265,7 +265,7 @@ class Daemon {
         output += String(data)
 
         const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
-        const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]?(.*)/)
+        const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]? (.*)/)
 
         if (apiMatch && apiMatch.length > 0) {
           setApiAddr(apiMatch[1])
