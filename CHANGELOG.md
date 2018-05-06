@@ -1,3 +1,13 @@
+<a name="0.33.1"></a>
+## [0.33.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.33.0...v0.33.1) (2018-05-06)
+
+
+### Bug Fixes
+
+* Daemon spawning throws error with the new multiaddr version ([a0d2e37](https://github.com/ipfs/js-ipfsd-ctl/commit/a0d2e37))
+
+
+
 <a name="0.33.0"></a>
 # [0.33.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.32.1...v0.33.0) (2018-05-04)
 
