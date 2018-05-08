@@ -1,3 +1,8 @@
+<a name="0.33.2"></a>
+## [0.33.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.33.1...v0.33.2) (2018-05-08)
+
+
+
 <a name="0.33.1"></a>
 ## [0.33.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.33.0...v0.33.1) (2018-05-06)
 
