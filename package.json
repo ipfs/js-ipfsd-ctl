@@ -86,7 +86,7 @@
     "hapi": "^16.6.2",
     "hat": "0.0.3",
     "ipfs-api": "^21.0.0",
-    "ipfs-repo": "^0.19.0",
+    "ipfs-repo": "^0.21.0",
     "joi": "^13.1.2",
     "lodash.clone": "^4.5.0",
     "lodash.defaults": "^4.2.0",
