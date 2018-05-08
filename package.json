@@ -2,6 +2,7 @@
   "name": "ipfsd-ctl",
   "version": "0.33.2",
   "description": "Spawn IPFS Daemons, JS or Go",
+  "leadMaintainer": "Vasco Santos <vasco.santos@moxy.studio>",
   "main": "src/index.js",
   "scripts": {
     "lint": "aegir lint",
@@ -38,7 +39,7 @@
     "node": ">=6.0.0",
     "npm": ">=3.0.0"
   },
-  "pre-commit": [
+  "pre-push": [
     "lint",
     "test"
   ],
@@ -47,7 +48,6 @@
     "node",
     "daemon"
   ],
-  "author": "Juan Benet <juan@benet.ai> (http://juan.benet.ai/)",
   "contributors": [
     "Bret Comnes <bcomnes@gmail.com>",
     "David Dias <daviddias.p@gmail.com>",
@@ -111,7 +111,6 @@
     "ipfs": "~0.28.2",
     "is-running": "1.0.5",
     "mkdirp": "^0.5.1",
-    "pre-commit": "^1.2.2",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0",
     "superagent-mocker": "^0.5.2",

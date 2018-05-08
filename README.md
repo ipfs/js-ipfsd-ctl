@@ -13,6 +13,10 @@
 
 > Spawn IPFS daemons using JavaScript!
 
+## Lead Maintainer
+
+[Vasco Santos](https://github.com/vasco-santos).
+
 ## Table of Contents
 
 - [Install](#install)
