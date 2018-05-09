@@ -72,6 +72,8 @@ class Node extends EventEmitter {
       libp2p: this.opts.libp2p
     })
 
+    // TODO: should this be wrapped in a process.nextTick(), for context:
+    // https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/#why-use-process-nexttick
     this.exec.once('error', err => this.emit('error', err))
     this.exec.once('ready', () => this.emit('ready'))
   }
