@@ -130,7 +130,11 @@ class FactoryInProc {
     }
 
     const node = new Node(options)
-    const errHandler = (err) => callback(err, node)
+    let called = false
+    const errHandler = (err) => {
+      called = true
+      callback(err, node)
+    }
     node.once('error', errHandler)
 
     series([
@@ -149,7 +153,7 @@ class FactoryInProc {
         : cb()
     ], (err) => {
       node.removeListener('error', errHandler)
-      callback(err, node)
+      if (!called) { callback(err, node) }
     })
   }
 }
