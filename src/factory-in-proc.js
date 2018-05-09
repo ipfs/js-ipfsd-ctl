@@ -130,7 +130,8 @@ class FactoryInProc {
     }
 
     const node = new Node(options)
-    node.once('error', err => callback(err, node))
+    const errHandler = (err) => callback(err, node)
+    node.once('error', errHandler)
 
     series([
       (cb) => node.once('ready', cb),
@@ -146,7 +147,10 @@ class FactoryInProc {
       (cb) => options.start
         ? node.start(options.args, cb)
         : cb()
-    ], (err) => callback(err, node))
+    ], (err) => {
+      node.removeListener('error', errHandler)
+      callback(err, node)
+    })
   }
 }
 
