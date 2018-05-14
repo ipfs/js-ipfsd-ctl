@@ -2,11 +2,7 @@
   "name": "ipfsd-ctl",
   "version": "0.39.1",
   "description": "Spawn IPFS Daemons, JS or Go",
-<<<<<<< HEAD
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
-=======
-  "leadMaintainer": "Vasco Santos <vasco.santos@moxy.studio>",
->>>>>>> docs: add lead-maintainer (#240)
   "main": "src/index.js",
   "scripts": {
     "lint": "aegir lint",

@@ -233,11 +233,11 @@ describe('Spawn options', function () {
     // TODO re-enable when jenkins runs tests in isolation
     describe('spawn with default swarm addrs with override', () => {
       it('swarm contains default addrs', function (done) {
-          this.timeout(20 * 1000)
+        this.timeout(20 * 1000)
 
-          if (!isNode && fOpts.type === 'proc') {
-            this.skip()
-          }
+        if (!isNode && fOpts.type === 'proc') {
+          this.skip()
+        }
 
         const addrs = {
           go: [
@@ -252,25 +252,25 @@ describe('Spawn options', function () {
         }
 
         f.spawn({
-            defaultAddrs: true,
-            config: {
-              Addresses: {
-                Swarm: addrs[fOpts.type]
-              }
+          defaultAddrs: true,
+          config: {
+            Addresses: {
+              Swarm: addrs[fOpts.type]
             }
-          }, (err, ipfsd) => {
+          }
+        }, (err, ipfsd) => {
+          expect(err).to.not.exist()
+          ipfsd.getConfig('Addresses.Swarm', (err, config) => {
             expect(err).to.not.exist()
-            ipfsd.getConfig('Addresses.Swarm', (err, config) => {
-              expect(err).to.not.exist()
-              if (fOpts.type !== 'proc') {
-                config = JSON.parse(config)
-              }
+            if (fOpts.type !== 'proc') {
+              config = JSON.parse(config)
+            }
 
-              expect(config).to.deep.equal(addrs[fOpts.type])
-              ipfsd.stop(done)
-            })
+            expect(config).to.deep.equal(addrs[fOpts.type])
+            ipfsd.stop(done)
           })
-        }
+        })
+      }
       )
     })
 
