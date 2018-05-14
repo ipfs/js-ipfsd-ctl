@@ -8,7 +8,7 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const IPFSFactory = require('../src')
-const JSIPFS = require('ipfs')
+// const JSIPFS = require('ipfs')
 
 const tests = [
   { type: 'go', bits: 1024 },
