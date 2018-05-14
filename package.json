@@ -86,17 +86,17 @@
     "hapi": "^16.6.2",
     "hat": "0.0.3",
     "ipfs-api": "^21.0.0",
-    "ipfs-repo": "^0.19.0",
+    "ipfs-repo": "~0.20.0",
     "joi": "^13.1.2",
     "lodash.clone": "^4.5.0",
     "lodash.defaults": "^4.2.0",
     "lodash.defaultsdeep": "^4.6.0",
-    "multiaddr": "^4.0.0",
+    "multiaddr": "^5.0.0",
     "readable-stream": "^2.3.6",
     "rimraf": "^2.6.2",
     "safe-json-parse": "^4.0.0",
     "safe-json-stringify": "^1.1.0",
-    "shutdown": "^0.3.0",
+    "shutdown": "~0.3.0",
     "stream-http": "^2.8.1",
     "subcomandante": "^1.0.5",
     "superagent": "^3.8.2",
@@ -115,7 +115,7 @@
     "once": "^1.4.0",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0",
-    "superagent-mocker": "^0.5.2",
+    "superagent-mocker": "~0.5.2",
     "supertest": "^3.0.0"
   },
   "repository": {
@@ -125,9 +125,5 @@
   "bugs": {
     "url": "https://github.com/ipfs/js-ipfsd-ctl/issues"
   },
-  "homepage": "https://github.com/ipfs/js-ipfsd-ctl",
-  "directories": {
-    "example": "examples",
-    "test": "test"
-  }
+  "homepage": "https://github.com/ipfs/js-ipfsd-ctl"
 }
