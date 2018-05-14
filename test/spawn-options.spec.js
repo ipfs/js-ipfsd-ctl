@@ -8,6 +8,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
+
 const fs = require('fs')
 const isNode = require('detect-node')
 const hat = require('hat')
@@ -442,7 +443,7 @@ describe('Spawn options', function () {
     })
 
     describe(`don't callback twice on error`, () => {
-      if (!isNode && fOpts.type !== 'proc') { return }
+      if (fOpts.type !== 'proc') { return }
       it('spawn with error', (done) => {
         this.timeout(20 * 1000)
         // `once.strict` should throw if its called more than once

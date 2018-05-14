@@ -5,6 +5,7 @@ const clone = require('lodash.clone')
 const series = require('async/series')
 const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
+const once = require('once')
 
 const Node = require('./ipfsd-in-proc')
 const defaultConfig = require('./defaults/config')
@@ -130,12 +131,13 @@ class FactoryInProc {
     }
 
     const node = new Node(options)
-    let called = false
-    const errHandler = (err) => {
-      called = true
-      callback(err, node)
-    }
-    node.once('error', errHandler)
+    const callbackOnce = once((err) => {
+      if (err) {
+        return callback(err)
+      }
+      callback(null, node)
+    })
+    node.once('error', callbackOnce)
 
     series([
       (cb) => node.once('ready', cb),
@@ -151,10 +153,7 @@ class FactoryInProc {
       (cb) => options.start
         ? node.start(options.args, cb)
         : cb()
-    ], (err) => {
-      node.removeListener('error', errHandler)
-      if (!called) { callback(err, node) }
-    })
+    ], callbackOnce)
   }
 }
 
