@@ -17,10 +17,8 @@ const JSIPFS = require('ipfs')
 const once = require('once')
 
 const tests = [
-  // { type: 'go', bits: 1024 },
-  // { type: 'js', bits: 512 },
-  // TODO: Enable again once js-ipfs 0.29 is released
-  // A weird dependency wrangling is breaking a isBlock call
+  { type: 'go', bits: 1024 },
+  { type: 'js', bits: 512 },
   { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
