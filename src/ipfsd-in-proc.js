@@ -2,7 +2,7 @@
 
 const multiaddr = require('multiaddr')
 const defaultsDeep = require('lodash.defaultsdeep')
-const createRepo = require('./utils/repo/create-nodejs')
+const repoUtils = require('./utils/repo/nodejs')
 const defaults = require('lodash.defaults')
 const waterfall = require('async/waterfall')
 const debug = require('debug')
@@ -30,14 +30,14 @@ class Node extends EventEmitter {
     IPFS = this.opts.exec
 
     this.opts.args = this.opts.args || []
-    this.path = this.opts.repoPath
-    this.repo = createRepo(this.path)
+    this.path = this.opts.repoPath || repoUtils.createTempRepoPath()
     this.disposable = this.opts.disposable
     this.clean = true
     this._apiAddr = null
     this._gatewayAddr = null
     this._started = false
     this.api = null
+    this.initialized = false
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
 
     this.opts.EXPERIMENTAL = defaultsDeep({}, opts.EXPERIMENTAL, {
@@ -64,7 +64,7 @@ class Node extends EventEmitter {
     })
 
     this.exec = new IPFS({
-      repo: this.repo,
+      repo: this.path,
       init: false,
       start: false,
       pass: this.opts.pass,
@@ -178,7 +178,8 @@ class Node extends EventEmitter {
       return callback()
     }
 
-    this.repo.teardown(callback)
+    repoUtils.removeRepo(this.path)
+    callback()
   }
 
   /**

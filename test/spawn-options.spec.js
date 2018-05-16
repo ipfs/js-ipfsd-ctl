@@ -13,15 +13,15 @@ const fs = require('fs')
 const isNode = require('detect-node')
 const hat = require('hat')
 const IPFSFactory = require('../src')
-// const JSIPFS = require('ipfs')
+const JSIPFS = require('ipfs')
 const once = require('once')
 
 const tests = [
-  { type: 'go', bits: 1024 },
-  { type: 'js', bits: 512 }
+  // { type: 'go', bits: 1024 },
+  // { type: 'js', bits: 512 },
   // TODO: Enable again once js-ipfs 0.29 is released
   // A weird dependency wrangling is breaking a isBlock call
-  // { type: 'proc', exec: JSIPFS, bits: 512 }
+  { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
 const jsVersion = require('ipfs/package.json').version

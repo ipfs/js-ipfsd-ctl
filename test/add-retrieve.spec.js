@@ -8,14 +8,14 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const IPFSFactory = require('../src')
-// const JSIPFS = require('ipfs')
+const JSIPFS = require('ipfs')
 
 const tests = [
-  { type: 'go', bits: 1024 },
-  { type: 'js', bits: 512 }
+  // { type: 'go', bits: 1024 },
+  // { type: 'js', bits: 512 },
   // TODO: Enable again once js-ipfs 0.29 is released
   // A weird dependency wrangling is breaking a isBlock call
-  // { type: 'proc', exec: JSIPFS, bits: 512 }
+  { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
 describe('data can be put and fetched', () => {
