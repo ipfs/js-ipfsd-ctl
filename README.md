@@ -1,4 +1,4 @@
-# ipfsd-ctl, the IPFS Factory.
+# ipfsd-ctl, the IPFS Factory
 
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://protocol.ai)
 [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
