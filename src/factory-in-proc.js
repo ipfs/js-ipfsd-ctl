@@ -5,6 +5,8 @@ const clone = require('lodash.clone')
 const series = require('async/series')
 const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
+const once = require('once')
+const repoUtils = require('./utils/repo/nodejs')
 
 const Node = require('./ipfsd-in-proc')
 const defaultConfig = require('./defaults/config')
@@ -130,14 +132,19 @@ class FactoryInProc {
     }
 
     const node = new Node(options)
-    node.once('error', err => callback(err, node))
+    const callbackOnce = once((err) => {
+      if (err) {
+        return callback(err)
+      }
+      callback(null, node)
+    })
+    node.once('error', callbackOnce)
 
     series([
       (cb) => node.once('ready', cb),
-      (cb) => node.repo._isInitialized(err => {
-        // if err exists, repo failed to find config or the ipfs-repo package
-        // version is different than that of the existing repo.
-        node.initialized = !err
+      (cb) => repoUtils.repoExists(node.path, (err, initialized) => {
+        if (err) { return cb(err) }
+        node.initialized = initialized
         cb()
       }),
       (cb) => options.init
@@ -146,7 +153,7 @@ class FactoryInProc {
       (cb) => options.start
         ? node.start(options.args, cb)
         : cb()
-    ], (err) => callback(err, node))
+    ], callbackOnce)
   }
 }
 

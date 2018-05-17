@@ -8,11 +8,13 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
+
 const fs = require('fs')
 const isNode = require('detect-node')
 const hat = require('hat')
 const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
+const once = require('once')
 
 const tests = [
   { type: 'go', bits: 1024 },
@@ -160,7 +162,6 @@ describe('Spawn options', function () {
       })
     })
 
-    // TODO ?? What is this test trying to prove?
     describe('spawn a node and attach api', () => {
       let ipfsd
 
@@ -438,6 +439,36 @@ describe('Spawn options', function () {
             .to.match(/(?:Error: )?failed to set config value/mgi)
           done()
         })
+      })
+    })
+
+    describe(`don't callback twice on error`, () => {
+      if (fOpts.type !== 'proc') { return }
+      it('spawn with error', (done) => {
+        this.timeout(20 * 1000)
+        // `once.strict` should throw if its called more than once
+        const callback = once.strict((err, ipfsd) => {
+          if (err) { return done(err) }
+
+          ipfsd.once('error', () => {}) // avoid EventEmitter throws
+
+          // Do an operation, just to make sure we're working
+          ipfsd.api.id((err) => {
+            if (err) {
+              return done(err)
+            }
+
+            // Do something to make stopping fail
+            ipfsd.exec._repo.close((err) => {
+              if (err) { return done(err) }
+              ipfsd.stop((err) => {
+                expect(err).to.exist()
+                done()
+              })
+            })
+          })
+        })
+        f.spawn(callback)
       })
     })
   }))

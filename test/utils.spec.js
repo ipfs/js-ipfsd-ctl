@@ -13,9 +13,6 @@ const path = require('path')
 const flatten = require('../src/utils/flatten')
 const tempDir = require('../src/utils/tmp-dir')
 const findIpfsExecutable = require('../src/utils/find-ipfs-executable')
-const createRepo = require('../src/utils/repo/create-nodejs')
-
-const IPFSRepo = require('ipfs-repo')
 
 describe('utils', () => {
   describe('.flatten', () => {
@@ -61,26 +58,6 @@ describe('utils', () => {
         expect(execPath).to.exist()
         expect(execPath).to.include(path.join('ipfs', 'src', 'cli', 'bin.js'))
         expect(fs.existsSync(execPath)).to.be.ok()
-      })
-    })
-
-    describe('.createRepo', () => {
-      let repo = null
-      let repoPath = tempDir()
-
-      it('should create repo', () => {
-        repo = createRepo(repoPath)
-        expect(repo).to.exist()
-        expect(repo).to.be.instanceOf(IPFSRepo)
-        expect(fs.existsSync(repoPath)).to.be.ok()
-      })
-
-      it('should cleanup repo', (done) => {
-        repo.teardown((err) => {
-          expect(err).to.not.exist()
-          expect(!fs.existsSync(repoPath)).to.be.ok()
-          done()
-        })
       })
     })
   }
