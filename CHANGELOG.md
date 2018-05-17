@@ -1,3 +1,13 @@
+<a name="0.35.0"></a>
+# [0.35.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.34.0...v0.35.0) (2018-05-17)
+
+
+### Features
+
+* stop using ipfs-repo ([ca44996](https://github.com/ipfs/js-ipfsd-ctl/commit/ca44996))
+
+
+
 <a name="0.34.0"></a>
 # [0.34.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.33.2...v0.34.0) (2018-05-14)
 
