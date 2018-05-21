@@ -31,5 +31,11 @@ module.exports = (type, rootPath) => {
     return npm2Path
   }
 
+  try {
+    return require.resolve(depPath)
+  } catch (error) {
+    // ignore the error
+  }
+
   throw new Error('Cannot find the IPFS executable')
 }
