@@ -85,7 +85,7 @@
     "detect-node": "^2.0.3",
     "dexie": "^1.5.1",
     "hapi": "^16.6.2",
-    "hat": "0.0.3",
+    "hat": "~0.0.3",
     "ipfs-api": "^22.0.0",
     "joi": "^13.1.2",
     "lodash.clone": "^4.5.0",
@@ -101,7 +101,7 @@
     "stream-http": "^2.8.1",
     "subcomandante": "^1.0.5",
     "superagent": "^3.8.2",
-    "truthy": "0.0.1"
+    "truthy": "~0.0.1"
   },
   "devDependencies": {
     "aegir": "^13.0.6",
@@ -109,10 +109,10 @@
     "cross-env": "^5.1.4",
     "detect-port": "^1.2.2",
     "dirty-chai": "^2.0.1",
-    "go-ipfs-dep": "0.4.15",
+    "go-ipfs-dep": "~0.4.15",
     "ipfs": "~0.28.2",
-    "is-running": "1.0.5",
-    "mkdirp": "^0.5.1",
+    "is-running": "^1.0.5",
+    "mkdirp": "~0.5.1",
     "proxyquire": "^2.0.1",
     "sinon": "^4.5.0",
     "superagent-mocker": "~0.5.2",
