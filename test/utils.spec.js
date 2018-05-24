@@ -53,7 +53,7 @@ describe('utils', () => {
         expect(fs.existsSync(execPath)).to.be.ok()
       })
 
-      it('should find go executable', () => {
+      it('should find js executable', () => {
         const execPath = findIpfsExecutable('js', __dirname)
         expect(execPath).to.exist()
         expect(execPath).to.include(path.join('ipfs', 'src', 'cli', 'bin.js'))
