@@ -23,6 +23,7 @@ class FactoryDaemon {
    * @param {Object} options
    *  - `type` string - 'go' or 'js'
    *  - `exec` string (optional) - the path of the daemon executable
+   *  - `IpfsApi` - a custom IPFS API constructor
    * @return {*}
    */
   constructor (options) {
@@ -30,6 +31,7 @@ class FactoryDaemon {
       throw new Error('This Factory does not know how to spawn in proc nodes')
     }
     options = Object.assign({}, { type: 'go' }, options)
+    this.options = options
     this.type = options.type
     this.exec = options.exec
   }
@@ -62,7 +64,11 @@ class FactoryDaemon {
       callback = options
       options = {}
     }
-    options = Object.assign({}, options, { type: this.type, exec: this.exec })
+    options = Object.assign(
+      { IpfsApi: this.options.IpfsApi },
+      options,
+      { type: this.type, exec: this.exec }
+    )
     // TODO: (1) this should check to see if it is looking for Go or JS
     // TODO: (2) This spawns a whole daemon just to get his version? There is
     // a way to get the version while the daemon is offline...
@@ -97,7 +103,11 @@ class FactoryDaemon {
 
     // TODO this options parsing is daunting. Refactor and move to a separate
     // func documenting what it is trying to do.
-    options = defaultsDeep({}, options, defaultOptions)
+    options = defaultsDeep(
+      { IpfsApi: this.options.IpfsApi },
+      options,
+      defaultOptions
+    )
 
     options.init = typeof options.init !== 'undefined'
       ? options.init
@@ -128,12 +138,13 @@ class FactoryDaemon {
 
     options.type = this.type
     options.exec = options.exec || this.exec
+    options.initOptions = defaultsDeep({}, this.options.initOptions, options.initOptions)
 
     const node = new Daemon(options)
 
     series([
       (cb) => options.init
-        ? node.init(cb)
+        ? node.init(options.initOptions, cb)
         : cb(null, node),
       (cb) => options.start
         ? node.start(options.args, cb)

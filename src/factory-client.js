@@ -16,6 +16,7 @@ class FactoryClient {
       options.host = 'localhost'
     }
 
+    this.options = options
     this.port = options.port
     this.host = options.host
     this.type = options.type || 'go'
@@ -100,7 +101,8 @@ class FactoryClient {
           res.body.id,
           res.body.initialized,
           apiAddr,
-          gatewayAddr
+          gatewayAddr,
+          { IpfsApi: this.options.IpfsApi }
         )
 
         callback(null, ipfsd)

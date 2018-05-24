@@ -32,9 +32,11 @@ class FactoryInProc {
    * @return {*}
    */
   constructor (options) {
+    options = options || {}
     if (options.type !== 'proc') {
       throw new Error('This Factory only knows how to create in proc nodes')
     }
+    this.options = options
     this.type = options.type
     this.exec = options.exec
   }
