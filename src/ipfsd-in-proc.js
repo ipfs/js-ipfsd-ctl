@@ -48,7 +48,8 @@ class Node extends EventEmitter {
         hop: {
           enabled: false
         }
-      }
+      },
+      mfs: false
     })
 
     this.opts.args.forEach((arg) => {
@@ -56,10 +57,12 @@ class Node extends EventEmitter {
         this.opts.EXPERIMENTAL.pubsub = true
       } else if (arg === '--enable-sharding-experiment') {
         this.opts.EXPERIMENTAL.sharding = true
+      } else if (arg === '--enable-mfs-experiment') {
+        this.opts.EXPERIMENTAL.mfs = true
       } else if (arg.startsWith('--pass')) {
         this.opts.pass = arg.split(' ').slice(1).join(' ')
       } else {
-        throw new Error('Unkown argument ' + arg)
+        throw new Error(`Unknown argument ${arg}`)
       }
     })
 
