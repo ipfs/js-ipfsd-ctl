@@ -40,7 +40,6 @@ describe('Spawn options', function () {
       f = IPFSFactory.create(fOpts)
     })
 
-    // TODO document this method on the readme
     it('f.version', function (done) {
       this.timeout(20 * 1000)
 
