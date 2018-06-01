@@ -30,10 +30,7 @@ class FactoryDaemon {
     if (options && options.type === 'proc') {
       throw new Error('This Factory does not know how to spawn in proc nodes')
     }
-    options = Object.assign({}, { type: 'go' }, options)
-    this.options = options
-    this.type = options.type
-    this.exec = options.exec
+    this.options = Object.assign({}, { type: 'go' }, options)
   }
 
   /**
@@ -67,7 +64,7 @@ class FactoryDaemon {
     options = Object.assign(
       { IpfsApi: this.options.IpfsApi },
       options,
-      { type: this.type, exec: this.exec }
+      { type: this.options.type, exec: this.options.exec }
     )
     // TODO: (1) this should check to see if it is looking for Go or JS
     // TODO: (2) This spawns a whole daemon just to get his version? There is
@@ -136,8 +133,8 @@ class FactoryDaemon {
       delete options.config.Addresses
     }
 
-    options.type = this.type
-    options.exec = options.exec || this.exec
+    options.type = this.options.type
+    options.exec = options.exec || this.options.exec
     options.initOptions = defaultsDeep({}, this.options.initOptions, options.initOptions)
 
     const node = new Daemon(options)

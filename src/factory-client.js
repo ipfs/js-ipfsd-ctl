@@ -11,21 +11,19 @@ class FactoryClient {
     options = options || {}
     if (!options.host) { options.host = 'localhost' }
     if (!options.port) { options.port = 43134 }
+    if (!options.type) { options.type = 'go' }
     if (typeof options.host === 'number') {
       options.port = options.host
       options.host = 'localhost'
     }
 
     this.options = options
-    this.port = options.port
-    this.host = options.host
-    this.type = options.type || 'go'
 
-    if (this.type === 'proc') {
+    if (options.type === 'proc') {
       throw new Error(`'proc' is not supported in client mode`)
     }
 
-    this.baseUrl = `${options.secure ? 'https://' : 'http://'}${this.host}:${this.port}`
+    this.baseUrl = `${options.secure ? 'https://' : 'http://'}${options.host}:${options.port}`
   }
 
   /**
@@ -63,7 +61,7 @@ class FactoryClient {
       options = undefined
     }
 
-    options = options || { type: this.type }
+    options = options || { type: this.options.type }
 
     request
       .get(`${this.baseUrl}/version`)
@@ -87,7 +85,7 @@ class FactoryClient {
 
     request
       .post(`${this.baseUrl}/spawn`)
-      .send({ options: options, type: this.type })
+      .send({ options: options, type: this.options.type })
       .end((err, res) => {
         if (err) {
           return callback(new Error(err.response ? err.response.body.message : err))
