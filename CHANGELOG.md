@@ -1,3 +1,13 @@
+<a name="0.37.1"></a>
+## [0.37.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.37.0...v0.37.1) (2018-06-01)
+
+
+### Features
+
+* add support for experimental mfs flag ([3ce834e](https://github.com/ipfs/js-ipfsd-ctl/commit/3ce834e))
+
+
+
 <a name="0.37.0"></a>
 # [0.37.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.36.0...v0.37.0) (2018-05-23)
 
