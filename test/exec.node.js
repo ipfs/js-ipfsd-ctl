@@ -2,7 +2,10 @@
 /* eslint-env mocha */
 'use strict'
 
-const expect = require('chai').expect
+const chai = require('chai')
+const dirtyChai = require('dirty-chai')
+const expect = chai.expect
+chai.use(dirtyChai)
 const isrunning = require('is-running')
 const cp = require('child_process')
 const path = require('path')
@@ -18,12 +21,12 @@ function token () {
   return Math.random().toString().substr(2)
 }
 
-function psExpect (pid, expect, grace, callback) {
+function psExpect (pid, shouldBeRunning, grace, callback) {
   setTimeout(() => {
     const actual = isrunning(pid)
 
-    if (actual !== expect && grace > 0) {
-      return psExpect(pid, expect, --grace, callback)
+    if (actual !== shouldBeRunning && grace > 0) {
+      return psExpect(pid, shouldBeRunning, --grace, callback)
     }
 
     callback(null, actual)
@@ -66,7 +69,7 @@ function makeCheck (n, done) {
 describe('exec', () => {
   // TODO: skip on windows for now
   // TODO: running under coverage messes up the process hierarchies
-  if (isWindows || process.env['COVERAGE']) {
+  if (isWindows || process.env.COVERAGE) {
     return
   }
 
@@ -100,11 +103,6 @@ describe('exec', () => {
       })
     })
   })
-
-  // Travis and CircleCI don't like the usage of SIGHUP
-  if (process.env.CI) {
-    return
-  }
 
   it('SIGKILL kills survivor', (done) => {
     const check = makeCheck(2, done)
