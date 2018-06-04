@@ -57,8 +57,6 @@ class Node extends EventEmitter {
         this.opts.EXPERIMENTAL.pubsub = true
       } else if (arg === '--enable-sharding-experiment') {
         this.opts.EXPERIMENTAL.sharding = true
-      } else if (arg === '--enable-mfs-experiment') {
-        this.opts.EXPERIMENTAL.mfs = true
       } else if (arg.startsWith('--pass')) {
         this.opts.pass = arg.split(' ').slice(1).join(' ')
       } else {
