@@ -101,8 +101,7 @@
     "shutdown": "~0.3.0",
     "stream-http": "^2.8.1",
     "subcomandante": "^1.0.5",
-    "superagent": "^3.8.2",
-    "truthy": "~0.0.1"
+    "superagent": "^3.8.2"
   },
   "devDependencies": {
     "aegir": "^13.0.6",

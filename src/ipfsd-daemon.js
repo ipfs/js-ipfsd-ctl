@@ -8,7 +8,6 @@ const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const path = require('path')
 const once = require('once')
-const truthy = require('truthy')
 const defaults = require('lodash.defaults')
 const debug = require('debug')
 const os = require('os')
@@ -41,10 +40,8 @@ class Daemon {
       ? process.env.testpath
       : __dirname
 
-    const type = truthy(process.env.IPFS_TYPE)
-
-    this.opts = opts || { type: type || 'go' }
-    const td = tmpDir(opts.type === 'js')
+    this.opts = opts || { type: 'go' }
+    const td = tmpDir(this.opts.type === 'js')
     this.path = this.opts.disposable
       ? td
       : (this.opts.repoPath || td)
