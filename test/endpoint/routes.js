@@ -38,9 +38,9 @@ const routes = proxyquire(
           cb(null, api)
         }
 
-        node.stop = (cb) => node.killProcess(cb)
+        node.stop = (timeout, cb) => node.killProcess(timeout, cb)
 
-        node.killProcess = (cb) => {
+        node.killProcess = (timeout, cb) => {
           node.started = false
           cb()
         }
@@ -213,12 +213,24 @@ describe('routes', () => {
   })
 
   describe('POST /stop', () => {
-    it('should return 200', (done) => {
+    it('should return 200 without timeout', (done) => {
       server.inject({
         method: 'POST',
         url: `/stop?id=${id}`,
         headers: { 'content-type': 'application/json' },
         payload: { id }
+      }, (res) => {
+        expect(res.statusCode).to.equal(200)
+        done()
+      })
+    })
+
+    it('should return 200 with timeout', (done) => {
+      server.inject({
+        method: 'POST',
+        url: `/stop?id=${id}`,
+        headers: { 'content-type': 'application/json' },
+        payload: { id, timeout: 1000 }
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -244,6 +256,18 @@ describe('routes', () => {
         url: `/kill?id=${id}`,
         headers: { 'content-type': 'application/json' },
         payload: { id }
+      }, (res) => {
+        expect(res.statusCode).to.equal(200)
+        done()
+      })
+    })
+
+    it('should return 200 with timeout', (done) => {
+      server.inject({
+        method: 'POST',
+        url: `/kill?id=${id}`,
+        headers: { 'content-type': 'application/json' },
+        payload: { id, timeout: 1000 }
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()

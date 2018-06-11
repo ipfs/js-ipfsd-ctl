@@ -214,15 +214,17 @@ Start the daemon.
 `callback` is a function with the signature `function(err, ipfsApi)` that receives an instance of `ipfs-api` on success or an instance of `Error` on failure
 
 
-#### `ipfsd.stop([callback])`
+#### `ipfsd.stop([timeout, callback])`
 
 Stop the daemon.
 
-`callback` is a function with the signature `function(err)` callback - function that receives an instance of `Error` on failure
+`callback` is a function with the signature `function(err)` callback - function that receives an instance of `Error` on failure. Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of `10500` ms will be used for disposable nodes and `10500 * 3` ms for non disposable nodes.
 
-#### `ipfsd.killProcess([callback])`
+#### `ipfsd.killProcess([timeout, callback])`
 
-Kill the `ipfs daemon` process.
+Kill the `ipfs daemon` process. Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of `10500` ms will be used for disposable nodes and `10500 * 3` ms for non disposable nodes.
+
+Note: timeout is ignored for `proc` nodes
 
 First a `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent if the process hasn't exited yet.
 

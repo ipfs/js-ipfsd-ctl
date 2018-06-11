@@ -191,7 +191,8 @@ module.exports = (server) => {
     path: '/stop',
     handler: (request, reply) => {
       const id = request.query.id
-      nodes[id].stop((err) => {
+      const timeout = request.payload.timeout
+      nodes[id].stop(timeout, (err) => {
         if (err) {
           return reply(boom.badRequest(err))
         }
@@ -213,7 +214,8 @@ module.exports = (server) => {
     path: '/kill',
     handler: (request, reply) => {
       const id = request.query.id
-      nodes[id].killProcess((err) => {
+      const timeout = request.payload.timeout
+      nodes[id].killProcess(timeout, (err) => {
         if (err) {
           return reply(boom.badRequest(err))
         }
