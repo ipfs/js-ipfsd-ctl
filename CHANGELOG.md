@@ -1,3 +1,13 @@
+<a name="0.37.4"></a>
+## [0.37.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.37.3...v0.37.4) (2018-06-11)
+
+
+### Features
+
+* add timeout to stop and killProcess ([#228](https://github.com/ipfs/js-ipfsd-ctl/issues/228)) ([d6955d4](https://github.com/ipfs/js-ipfsd-ctl/commit/d6955d4))
+
+
+
 <a name="0.37.3"></a>
 ## [0.37.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.37.2...v0.37.3) (2018-06-01)
 
