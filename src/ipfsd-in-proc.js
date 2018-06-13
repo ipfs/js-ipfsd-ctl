@@ -70,7 +70,8 @@ class Node extends EventEmitter {
       start: false,
       pass: this.opts.pass,
       EXPERIMENTAL: this.opts.EXPERIMENTAL,
-      libp2p: this.opts.libp2p
+      libp2p: this.opts.libp2p,
+      config: this.opts.config
     })
 
     // TODO: should this be wrapped in a process.nextTick(), for context:

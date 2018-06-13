@@ -242,7 +242,8 @@ describe('Spawn options', function () {
               swarmAddr1
             ],
             API: addr
-          }
+          },
+          Bootstrap: ['/dns4/wss0.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmZMxNdpMkewiVZLMRxaNxUeZpDUb34pWjZ1kZvsd16Zic']
         }
 
         const options = { config: config, initOptions: { bits: fOpts.bits } }
@@ -263,6 +264,14 @@ describe('Spawn options', function () {
             }
             expect(config).to.eql([swarmAddr1])
             // expect(config).to.include(swarmAddr1)
+            cb(null, ipfsd)
+          }),
+          (ipfsd, cb) => ipfsd.getConfig('Bootstrap', (err, bootstrapConfig) => {
+            expect(err).to.not.exist()
+            if (typeof bootstrapConfig === 'string') {
+              bootstrapConfig = JSON.parse(bootstrapConfig)
+            }
+            expect(bootstrapConfig).to.deep.equal(config.Bootstrap)
             cb(null, ipfsd)
           })
         ], (err, ipfsd) => {
