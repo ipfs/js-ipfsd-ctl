@@ -13,6 +13,10 @@ const debug = require('debug')
 const os = require('os')
 const hat = require('hat')
 const log = debug('ipfsd-ctl:daemon')
+const daemonLog = {
+  info: debug('ipfsd-ctl:daemon:stdout'),
+  err: debug('ipfsd-ctl:daemon:stderr')
+}
 
 const safeParse = require('safe-json-parse/callback')
 const safeStringify = require('safe-json-stringify')
@@ -246,12 +250,18 @@ class Daemon {
     let output = ''
     this.subprocess = run(this, args, { env: this.env }, {
       error: (err) => {
+        let line = String(err)
+
         // Only look at the last error
-        const input = String(err)
+        const input = line
           .split('\n')
           .map((l) => l.trim())
           .filter(Boolean)
           .slice(-1)[0] || ''
+
+        if (line) {
+          daemonLog.err(line.trim())
+        }
 
         if (input.match(/(?:daemon is running|Daemon is ready)/)) {
           // we're good
@@ -263,7 +273,13 @@ class Daemon {
         }
       },
       data: (data) => {
-        output += String(data)
+        let line = String(data)
+
+        output += line
+
+        if (line) {
+          daemonLog.info(line.trim())
+        }
 
         const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
         const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]? (.*)/)
