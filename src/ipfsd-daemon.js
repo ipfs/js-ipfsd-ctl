@@ -249,37 +249,42 @@ class Daemon {
 
     let output = ''
     this.subprocess = run(this, args, { env: this.env }, {
-      error: (err) => {
-        let line = String(err)
+      error: (error) => {
+        if (callback) {
+          callback(error)
+          callback = null
+        }
+      },
+      stderr: (data) => {
+        data = String(data)
+
+        if (data) {
+          daemonLog.err(data.trim())
+        }
 
         // Only look at the last error
-        const input = line
+        const input = data
           .split('\n')
           .map((l) => l.trim())
           .filter(Boolean)
           .slice(-1)[0] || ''
 
-        if (line) {
-          daemonLog.err(line.trim())
-        }
-
-        if (input.match(/(?:daemon is running|Daemon is ready)/)) {
-          // we're good
-          return callback(null, this.api)
-        }
         // ignore when kill -9'd
-        if (!input.match('non-zero exit code')) {
-          callback(err)
+        if (callback && !input.match('non-zero exit code')) {
+          callback(new Error(input))
+          callback = null
+
+          return
         }
       },
-      data: (data) => {
-        let line = String(data)
+      stdout: (data) => {
+        data = String(data)
 
-        output += line
-
-        if (line) {
-          daemonLog.info(line.trim())
+        if (data) {
+          daemonLog.info(data.trim())
         }
+
+        output += data
 
         const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
         const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]? (.*)/)
@@ -292,10 +297,13 @@ class Daemon {
           setGatewayAddr(gwMatch[1])
         }
 
-        if (output.match(/(?:daemon is running|Daemon is ready)/)) {
+        if (callback && output.match(/(?:daemon is running|Daemon is ready)/)) {
           // we're good
           this._started = true
           callback(null, this.api)
+          callback = null
+
+          return
         }
       }
     })

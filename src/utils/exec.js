@@ -18,7 +18,10 @@ function exec (cmd, args, opts, handlers, callback) {
 
     handlers = {
       error: callback,
-      data (data) {
+      stdout (data) {
+        result += data
+      },
+      stderr (data) {
         result += data
       },
       done () {
@@ -32,7 +35,7 @@ function exec (cmd, args, opts, handlers, callback) {
 
   // The listeners that will actually be set on the process
   const listeners = {
-    data: handlers.data,
+    data: handlers.stdout,
     error (data) {
       err += data
     },
@@ -58,6 +61,10 @@ function exec (cmd, args, opts, handlers, callback) {
   }
 
   command.stderr.on('data', listeners.error)
+
+  if (handlers.stderr) {
+    command.stderr.on('data', handlers.stderr)
+  }
 
   // If command fails to execute return directly to the handler
   command.on('error', handlers.error)
