@@ -66,34 +66,20 @@ describe('ipfsd.api for Daemons', () => {
             recursive: true
           }, (err, res) => {
             expect(err).to.not.exist()
+            expect(res.length).to.equal(4)
 
-            const added = res[res.length - 1]
-
-            // TODO: Temporary: Need to see what is going on on windows
-            expect(res).to.eql([
-              {
-                path: 'fixtures/test.txt',
-                hash: 'Qmf412jQZiuVUtdgnB36FXFX7xg5V6KEbSJ4dpQuhkLyfD',
-                size: 19
-              },
-              {
-                path: 'fixtures',
-                hash: 'QmXkiTdnfRJjiQREtF5dWf2X4V9awNHQSn9YGofwVY4qUU',
-                size: 73
-              }
-            ])
-
-            expect(res.length).to.equal(2)
-            expect(added).to.have.property('path', 'fixtures')
-            expect(added).to.have.property(
+            const fixuresDir = res.find(file => file.path === 'fixtures')
+            expect(fixuresDir).to.have.property(
               'hash',
-              'QmXkiTdnfRJjiQREtF5dWf2X4V9awNHQSn9YGofwVY4qUU'
+              'QmR9731QMXHCjK2EvoQZNhMHVE77tGMbgPFXMWPHztMV4a'
             )
-            expect(res[0]).to.have.property('path', 'fixtures/test.txt')
-            expect(res[0]).to.have.property(
+
+            const testFile = res.find(file => file.path === 'fixtures/test.txt')
+            expect(testFile).to.have.property(
               'hash',
               'Qmf412jQZiuVUtdgnB36FXFX7xg5V6KEbSJ4dpQuhkLyfD'
             )
+
             cb()
           })
         },

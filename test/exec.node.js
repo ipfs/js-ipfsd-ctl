@@ -10,7 +10,6 @@ const isrunning = require('is-running')
 const cp = require('child_process')
 const path = require('path')
 const exec = require('../src/utils/exec')
-
 const os = require('os')
 
 const isWindows = os.platform() === 'win32'
@@ -73,6 +72,39 @@ describe('exec', () => {
     return
   }
 
+  it('captures stderr and stdout', (done) => {
+    let stdout = ''
+    let stderr = ''
+
+    exec(process.execPath, [
+      path.resolve(path.join(__dirname, 'fixtures', 'talky.js'))
+    ], {
+      stdout: (data) => {
+        stdout += String(data)
+      },
+      stderr: (data) => {
+        stderr += String(data)
+      }
+    }, (error) => {
+      expect(error).to.not.exist()
+      expect(stdout).to.equal('hello\n')
+      expect(stderr).to.equal('world\n')
+
+      done()
+    })
+  })
+
+  it('survives process errors and captures exit code and stderr', (done) => {
+    exec(process.execPath, [
+      path.resolve(path.join(__dirname, 'fixtures', 'error.js'))
+    ], {}, (error) => {
+      expect(error.message).to.contain('non-zero exit code 1')
+      expect(error.message).to.contain('Goodbye cruel world!')
+
+      done()
+    })
+  })
+
   it('SIGTERM kills hang', (done) => {
     const tok = token()
 
@@ -81,8 +113,7 @@ describe('exec', () => {
     const args = hang.concat(tok)
 
     const p = exec(args[0], args.slice(1), {}, (err) => {
-      // `tail -f /dev/null somerandom` errors out
-      expect(err).to.exist()
+      expect(err).to.not.exist()
 
       isRunningGrep(token, (err, running) => {
         expect(err).to.not.exist()

@@ -248,38 +248,24 @@ class Daemon {
     }
 
     let output = ''
-    this.subprocess = run(this, args, { env: this.env }, {
-      error: (err) => {
-        let line = String(err)
 
-        // Only look at the last error
-        const input = line
-          .split('\n')
-          .map((l) => l.trim())
-          .filter(Boolean)
-          .slice(-1)[0] || ''
+    this.subprocess = run(this, args, {
+      env: this.env,
+      stderr: (data) => {
+        data = String(data)
 
-        if (line) {
-          daemonLog.err(line.trim())
-        }
-
-        if (input.match(/(?:daemon is running|Daemon is ready)/)) {
-          // we're good
-          return callback(null, this.api)
-        }
-        // ignore when kill -9'd
-        if (!input.match('non-zero exit code')) {
-          callback(err)
+        if (data) {
+          daemonLog.err(data.trim())
         }
       },
-      data: (data) => {
-        let line = String(data)
+      stdout: (data) => {
+        data = String(data)
 
-        output += line
-
-        if (line) {
-          daemonLog.info(line.trim())
+        if (data) {
+          daemonLog.info(data.trim())
         }
+
+        output += data
 
         const apiMatch = output.trim().match(/API (?:server|is) listening on[:]? (.*)/)
         const gwMatch = output.trim().match(/Gateway (?:.*) listening on[:]? (.*)/)
@@ -298,7 +284,7 @@ class Daemon {
           callback(null, this.api)
         }
       }
-    })
+    }, callback)
   }
 
   /**
@@ -401,21 +387,28 @@ class Daemon {
     if (!key) {
       key = 'show'
     }
+    let config = ''
 
-    waterfall([
+    series([
       (cb) => run(
         this,
         ['config', key],
-        { env: this.env },
+        {
+          env: this.env,
+          stdout: (data) => {
+            config += String(data)
+          }
+        },
         cb
       ),
-      (config, cb) => {
+      (cb) => {
         if (key === 'show') {
           return safeParse(config, cb)
         }
+
         cb(null, config.trim())
       }
-    ], callback)
+    ], (error, results) => callback(error, results && results[results.length - 1]))
   }
 
   /**
@@ -463,7 +456,13 @@ class Daemon {
    * @returns {undefined}
    */
   version (callback) {
-    run(this, ['version'], { env: this.env }, callback)
+    let stdout = ''
+    run(this, ['version'], {
+      env: this.env,
+      stdout: (data) => {
+        stdout += String(data)
+      }
+    }, (error) => callback(error, stdout.trim()))
   }
 }
 
