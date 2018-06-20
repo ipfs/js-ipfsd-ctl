@@ -4,66 +4,39 @@ const run = require('subcomandante')
 const once = require('once')
 const debug = require('debug')
 const log = debug('ipfsd-ctl:exec')
-
 const path = require('path')
+const noop = () => {}
 
-function exec (cmd, args, opts, handlers, callback) {
-  opts = opts || {}
-  let err = ''
-  let result = ''
+function exec (cmd, args, opts, callback) {
+  if (typeof opts === 'function') {
+    callback = opts
+    opts = {}
+  }
 
-  // Handy method if we just want the result and err returned in a callback
-  if (typeof handlers === 'function') {
-    callback = once(handlers)
+  callback = once(callback)
 
-    handlers = {
-      error: callback,
-      data (data) {
-        result += data
-      },
-      done () {
-        if (err) {
-          return callback(new Error(err))
-        }
-        callback(null, result.trim())
-      }
+  opts = Object.assign({}, {
+    stdout: noop,
+    stderr: noop
+  }, opts)
+
+  const done = (code) => {
+    // if process exits with non-zero code, subcomandante will cause
+    // an error event to be emitted which will call the passed
+    // callback so we only need to handle the happy path
+    if (code === 0) {
+      callback()
     }
   }
 
-  // The listeners that will actually be set on the process
-  const listeners = {
-    data: handlers.data,
-    error (data) {
-      err += data
-    },
-    done: once((code) => {
-      if (typeof code === 'number' && code !== 0) {
-        return handlers.error(
-          new Error(`non-zero exit code ${code}\n
-            while running: ${cmd} ${args.join(' ')}\n\n
-            ${err}`)
-        )
-      }
-      if (handlers.done) {
-        handlers.done()
-      }
-    })
-  }
-
   log(path.basename(cmd), args.join(' '))
+
   const command = run(cmd, args, opts)
-
-  if (listeners.data) {
-    command.stdout.on('data', listeners.data)
-  }
-
-  command.stderr.on('data', listeners.error)
-
-  // If command fails to execute return directly to the handler
-  command.on('error', handlers.error)
-
-  command.on('close', listeners.done)
-  command.on('exit', listeners.done)
+  command.on('error', callback)
+  command.on('close', done)
+  command.on('exit', done)
+  command.stdout.on('data', opts.stdout)
+  command.stderr.on('data', opts.stderr)
 
   return command
 }
