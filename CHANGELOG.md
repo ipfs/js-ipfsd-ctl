@@ -1,3 +1,18 @@
+<a name="0.37.5"></a>
+## [0.37.5](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.37.4...v0.37.5) (2018-06-22)
+
+
+### Bug Fixes
+
+* pass config to ipfs for proc daemon ([#268](https://github.com/ipfs/js-ipfsd-ctl/issues/268)) ([1cdb739](https://github.com/ipfs/js-ipfsd-ctl/commit/1cdb739))
+
+
+### Features
+
+* log stderr from daemon ([#270](https://github.com/ipfs/js-ipfsd-ctl/issues/270)) ([c4a175c](https://github.com/ipfs/js-ipfsd-ctl/commit/c4a175c))
+
+
+
 <a name="0.37.4"></a>
 ## [0.37.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.37.3...v0.37.4) (2018-06-11)
 
