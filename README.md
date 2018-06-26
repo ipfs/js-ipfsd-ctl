@@ -13,7 +13,7 @@
 
 ## Lead Maintainer
 
-[Vasco Santos](https://github.com/vasco-santos).
+[Hugo Dias](https://github.com/hugomrdias).
 
 ## Table of Contents
 
