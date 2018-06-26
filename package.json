@@ -2,7 +2,7 @@
   "name": "ipfsd-ctl",
   "version": "0.37.5",
   "description": "Spawn IPFS Daemons, JS or Go",
-  "leadMaintainer": "Vasco Santos <vasco.santos@moxy.studio>",
+  "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
   "main": "src/index.js",
   "scripts": {
     "lint": "aegir lint",
