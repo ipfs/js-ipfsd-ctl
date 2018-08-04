@@ -6,6 +6,9 @@ const loadKey = require('libp2p-crypto').keys.supportedKeys.rsa.unmarshalRsaPriv
 const base = require('base-x')(' !#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~') // "compression" aka "whatever part of ascii can be put into a JSON string without needing to get escaped"-base
 const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
+const protobuf = require('protons')
+const pbm = protobuf(require('libp2p-crypto/src/keys/keys.proto'))
+
 module.exports = (cb) => {
   loadKey(base.decode(Ids[rand(0, Ids.length)]), (err, key) => {
     if (err) { return cb(err) }
@@ -16,4 +19,7 @@ module.exports = (cb) => {
   })
 }
 
-module.exports.privKey = () => base.decode(Ids[rand(0, Ids.length)]).toString('base64')
+module.exports.privKey = () => pbm.PublicKey.encode({
+  Type: pbm.KeyType.RSA,
+  Data: base.decode(Ids[rand(0, Ids.length)])
+}).toString('base64')
