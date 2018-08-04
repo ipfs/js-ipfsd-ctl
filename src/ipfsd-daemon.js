@@ -17,6 +17,7 @@ const daemonLog = {
   info: debug('ipfsd-ctl:daemon:stdout'),
   err: debug('ipfsd-ctl:daemon:stderr')
 }
+const testIds = require('./test-ids')
 
 const safeParse = require('safe-json-parse/callback')
 const safeStringify = require('safe-json-stringify')
@@ -78,7 +79,7 @@ class Daemon {
     this._started = false
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
-    this._env = Object.assign({}, process.env, this.opts.env)
+    this._env = Object.assign({}, process.env, this.opts.env, this.disposable ? {IPFS_PREGENERATED_PRIVATE_KEY: testIds.privKey()} : {})
   }
 
   /**

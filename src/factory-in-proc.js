@@ -7,6 +7,7 @@ const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
 const once = require('once')
 const repoUtils = require('./utils/repo/nodejs')
+const testIds = require('./test-ids')
 
 const Node = require('./ipfsd-in-proc')
 const defaultConfig = require('./defaults/config')
@@ -148,7 +149,7 @@ class FactoryInProc {
         cb()
       }),
       (cb) => options.init
-        ? node.init(cb)
+        ? options.disposable ? testIds((err, pregenId) => err ? cb(err) : node.init({pregenId}, cb)) : node.init(cb)
         : cb(),
       (cb) => options.start
         ? node.start(options.args, cb)

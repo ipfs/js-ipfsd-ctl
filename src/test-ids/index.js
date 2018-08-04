@@ -15,3 +15,5 @@ module.exports = (cb) => {
     })
   })
 }
+
+module.exports.privKey = () => base.decode(Ids[rand(0, Ids.length)]).toString('base64')
