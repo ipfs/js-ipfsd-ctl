@@ -7,14 +7,14 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const setImmediate = require('async/setImmediate')
+const IpfsApi = require('ipfs-api')
 const IpfsFactory = require('../src')
 
-describe('custom API', function () {
+describe.only('custom API', function () {
   this.timeout(30 * 1000)
 
   it('should create a factory with a custom API', done => {
-    const mockApi = { shutdown: cb => setImmediate(() => cb()) }
+    const mockApi = {}
 
     const f = IpfsFactory.create({
       type: 'js',
@@ -25,6 +25,8 @@ describe('custom API', function () {
     f.spawn((err, ipfsd) => {
       if (err) return done(err)
       expect(ipfsd.api).to.equal(mockApi)
+      // Restore a real API so that the node can be stopped properly
+      ipfsd.api = IpfsApi(ipfsd.apiAddr)
       ipfsd.stop(done)
     })
   })
