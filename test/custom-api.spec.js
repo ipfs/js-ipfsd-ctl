@@ -10,7 +10,7 @@ chai.use(dirtyChai)
 const IpfsApi = require('ipfs-api')
 const IpfsFactory = require('../src')
 
-describe.only('custom API', function () {
+describe('custom API', function () {
   this.timeout(30 * 1000)
 
   it('should create a factory with a custom API', done => {
