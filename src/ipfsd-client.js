@@ -4,7 +4,7 @@ const request = require('superagent')
 const IpfsApi = require('ipfs-api')
 const multiaddr = require('multiaddr')
 
-function createApi (apiAddr, gwAddr) {
+function createApi (apiAddr, gwAddr, IpfsApi) {
   let api
   if (apiAddr) {
     api = IpfsApi(apiAddr)
@@ -21,14 +21,15 @@ function createApi (apiAddr, gwAddr) {
 }
 
 class DaemonClient {
-  constructor (baseUrl, _id, initialized, apiAddr, gwAddrs) {
+  constructor (baseUrl, _id, initialized, apiAddr, gwAddrs, options) {
+    this.options = options || {}
     this.baseUrl = baseUrl
     this._id = _id
     this._apiAddr = multiaddr(apiAddr)
     this._gwAddr = multiaddr(gwAddrs)
     this.initialized = initialized
     this.started = false
-    this.api = createApi(apiAddr, gwAddrs)
+    this.api = createApi(apiAddr, gwAddrs, this.options.IpfsApi || IpfsApi)
   }
 
   /**
@@ -140,7 +141,7 @@ class DaemonClient {
         const apiAddr = res.body.api ? res.body.api.apiAddr : ''
         const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 
-        this.api = createApi(apiAddr, gatewayAddr)
+        this.api = createApi(apiAddr, gatewayAddr, this.options.IpfsApi || IpfsApi)
         return cb(null, this.api)
       })
   }

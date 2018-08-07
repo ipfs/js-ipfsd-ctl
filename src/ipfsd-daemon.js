@@ -156,6 +156,8 @@ class Daemon {
       initOptions = {}
     }
 
+    initOptions = initOptions || {}
+
     if (initOptions.directory && initOptions.directory !== this.path) {
       this.path = initOptions.directory
     }
@@ -229,7 +231,7 @@ class Daemon {
 
     const setApiAddr = (addr) => {
       this._apiAddr = multiaddr(addr)
-      this.api = IpfsApi(addr)
+      this.api = (this.opts.IpfsApi || IpfsApi)(addr)
       this.api.apiHost = this.apiAddr.nodeAddress().address
       this.api.apiPort = this.apiAddr.nodeAddress().port
     }

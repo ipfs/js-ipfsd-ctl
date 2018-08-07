@@ -180,8 +180,7 @@ class Node extends EventEmitter {
       return callback()
     }
 
-    repoUtils.removeRepo(this.path)
-    callback()
+    repoUtils.removeRepo(this.path, callback)
   }
 
   /**

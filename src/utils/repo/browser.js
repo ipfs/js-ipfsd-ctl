@@ -3,13 +3,15 @@
 
 const hat = require('hat')
 const Dexie = require('dexie')
+const setImmediate = require('async/setImmediate')
 
 exports.createTempRepoPath = function createTempPathRepo () {
   return '/ipfs-' + hat()
 }
 
-exports.removeRepo = function removeRepo (repoPath) {
+exports.removeRepo = function removeRepo (repoPath, callback) {
   Dexie.delete(repoPath)
+  setImmediate(callback)
 }
 
 exports.repoExists = function repoExists (repoPath, cb) {

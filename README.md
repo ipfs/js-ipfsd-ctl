@@ -43,10 +43,10 @@ const f = IPFSFactory.create()
 
 f.spawn(function (err, ipfsd) {
   if (err) { throw err }
-  
+
   ipfsd.api.id(function (err, id) {
     if (err) { throw err }
-    
+
     console.log(id)
     ipfsd.stop()
   })
@@ -73,7 +73,7 @@ server.start((err) => {
 
     ipfsd.api.id(function (err, id) {
       if (err) { throw err }
-      
+
       console.log(id)
       ipfsd.stop(server.stop)
     })
@@ -109,6 +109,7 @@ Install one or both of the following modules:
     - `go` - spawn go-ipfs daemon
     - `js` - spawn js-ipfs daemon
     - `proc` - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `DaemonFactory.create({type: 'proc', exec: require('ipfs') })`.
+  - `IpfsApi` - A custom IPFS API constructor to use instead of the packaged one
 
 **example:** See [Usage](#usage)
 
@@ -128,7 +129,7 @@ Spawn the daemon
 
 - `callback` - is a function with the signature `function (err, ipfsd)` where:
   - `err` - is the error set if spawning the node is unsuccessful
-  - `ipfsd` - is the daemon controller instance: 
+  - `ipfsd` - is the daemon controller instance:
     - `api` - a property of `ipfsd`, an instance of  [ipfs-api](https://github.com/ipfs/js-ipfs-api) attached to the newly created ipfs node   
 
 **example:** See [Usage](#usage)
@@ -145,12 +146,15 @@ Get the version without spawning a daemon
         - repo - the repo version
         - commit - the commit hash for this version
 
-### Remote endpoint - `const server = `IPFSFactory.createServer([options]) `
+### Remote endpoint - `const server = IPFSFactory.createServer([options])`
 
 `IPFSFactory.createServer` starts a IPFSFactory endpoint.
 
-**example:** 
-```
+- `options` is an optional object the following properties:
+  - `port` - the port to start the server on
+
+**example:**
+```js
 const IPFSFactory = require('ipfsd-ctl')
 
 const server = IPFSFactory.createServer({ port: 12345 })
@@ -187,16 +191,16 @@ Get the current repo path. Returns string.
 #### `ipfsd.started` (getter)
 
 Is the node started. Returns a boolean.
- 
+
 #### `init([initOpts], callback)`
 
-Initialize a repo. 
+Initialize a repo.
 
 `initOpts` (optional) is an object with the following properties:
   - `keysize` (default 2048) - The bit size of the identity key.
   - `directory` (default IPFS_PATH if defined, or ~/.ipfs for go-ipfs and ~/.jsipfs for js-ipfs) - The location of the repo.
   - `pass` (optional) - The passphrase of the key chain.
- 
+
 `callback` is a function with the signature `function (Error, ipfsd)` where `err` is an Error in case something goes wrong and `ipfsd` is the daemon controller instance.
 
 #### `ipfsd.cleanup(callback)`
@@ -248,7 +252,7 @@ Returns the output of an `ipfs config` command. If no `key` is passed, the whole
 
 Set a config value.
 
-`key` - the key of the config entry to change/set 
+`key` - the key of the config entry to change/set
 
 `value` - the config value to change/set
 
@@ -259,13 +263,13 @@ Set a config value.
 Get the version of ipfs
 
 `callback` is a function with the signature `function(err, version)`
-   
+
 ### IPFS HTTP Client  - `ipfsd.api`
 
 An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api) that is used to interact with the daemon.
 
 This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`.
-   
+
 ## ipfsd-ctl environment variables
 
 In additional to the API described in previous sections, `ipfsd-ctl` also supports several environment variables. This are often very useful when running in different environments, such as CI or when doing integration/interop testing.
@@ -281,7 +285,7 @@ Meaning that, environment variables override defaults in the configuration file 
 #### IPFS_JS_EXEC and IPFS_GO_EXEC
 
 An alternative way of specifying the executable path for the `js-ipfs` or `go-ipfs` executable, respectively.
-   
+
 ## Packaging
 
 `ipfsd-ctl` can be packaged in Electron applications, but the ipfs binary has to be excluded from asar (Electron Archives).

@@ -32,11 +32,11 @@ class FactoryInProc {
    * @return {*}
    */
   constructor (options) {
+    options = options || {}
     if (options.type !== 'proc') {
       throw new Error('This Factory only knows how to create in proc nodes')
     }
-    this.type = options.type
-    this.exec = options.exec
+    this.options = options
   }
 
   /**
@@ -124,8 +124,8 @@ class FactoryInProc {
       delete options.config.Addresses
     }
 
-    options.type = this.type
-    options.exec = options.exec || this.exec
+    options.type = this.options.type
+    options.exec = options.exec || this.options.exec
 
     if (typeof options.exec !== 'function') {
       return callback(new Error(`'type' proc requires 'exec' to be a coderef`))

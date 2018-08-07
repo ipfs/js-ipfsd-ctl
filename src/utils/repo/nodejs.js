@@ -6,15 +6,15 @@ const hat = require('hat')
 const rimraf = require('rimraf')
 const fs = require('fs')
 
-exports.removeRepo = function removeRepo (dir) {
-  try {
-    fs.accessSync(dir)
-  } catch (err) {
-    // Does not exist so all good
-    return
-  }
+exports.removeRepo = function removeRepo (dir, callback) {
+  fs.access(dir, (err) => {
+    if (err) {
+      // Does not exist so all good
+      return callback()
+    }
 
-  return rimraf.sync(dir)
+    rimraf(dir, callback)
+  })
 }
 
 exports.createTempRepoPath = function createTempRepo () {
