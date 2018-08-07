@@ -88,7 +88,7 @@
     "dexie": "^1.5.1",
     "hapi": "^16.6.2",
     "hat": "~0.0.3",
-    "ipfs-api": "^22.2.4",
+    "ipfs-api": "^23.0.0",
     "joi": "^13.1.2",
     "lodash.clone": "^4.5.0",
     "lodash.defaults": "^4.2.0",
