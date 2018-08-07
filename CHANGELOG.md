@@ -1,3 +1,14 @@
+<a name="0.39.1"></a>
+## [0.39.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.37.5...v0.39.1) (2018-08-07)
+
+
+### Features
+
+* allows a custom IpfsApi constructor to be used ([#261](https://github.com/ipfs/js-ipfsd-ctl/issues/261)) ([dacde26](https://github.com/ipfs/js-ipfsd-ctl/commit/dacde26))
+* go-ipfs 0.4.17 ([958a9e3](https://github.com/ipfs/js-ipfsd-ctl/commit/958a9e3))
+
+
+
 <a name="0.39.0"></a>
 # [0.39.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.38.0...v0.39.0) (2018-07-28)
 
