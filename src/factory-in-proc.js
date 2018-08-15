@@ -148,9 +148,17 @@ class FactoryInProc {
         node.initialized = initialized
         cb()
       }),
-      (cb) => options.init
-        ? options.disposable ? testIds((err, pregenId) => err ? cb(err) : node.init({pregenId}, cb)) : node.init(cb)
-        : cb(),
+      (cb) => {
+        if (options.init) {
+          if (options.disposable) {
+            node.init({privateKey: testIds()}, cb)
+          } else {
+            node.init(cb)
+          }
+        } else {
+          cb()
+        }
+      },
       (cb) => options.start
         ? node.start(options.args, cb)
         : cb()

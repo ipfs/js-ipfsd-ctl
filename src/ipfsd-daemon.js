@@ -79,7 +79,7 @@ class Daemon {
     this._started = false
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
-    this._env = Object.assign({}, process.env, this.opts.env, this.disposable ? {IPFS_PREGENERATED_PRIVATE_KEY: testIds.privKey()} : {})
+    this._env = Object.assign({}, process.env, this.opts.env, this.disposable ? {IPFS_PREGENERATED_PRIVATE_KEY: testIds()} : {})
   }
 
   /**

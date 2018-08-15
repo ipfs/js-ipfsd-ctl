@@ -1,25 +1,35 @@
 'use strict'
 
-const Ids = require('./ids.json').split('"') // file can be generated using mkg20001/test-peer-ids.tk patched with ipfs://QmVZRWjZoqve9UKgng2gymN8a3FQUENgsQaicQ2fWs7kGx
-const Id = require('peer-id')
-const loadKey = require('libp2p-crypto').keys.supportedKeys.rsa.unmarshalRsaPrivateKey // this is needed because the keys aren't wrapped in the usual privateKey pbuf container to save space
+/**
+ * Shuffles array in place.
+ * Credit: https://stackoverflow.com/a/6274381/3990041
+ * @param {Array} a An array containing the items.
+ * @returns {Array}
+ */
+function shuffle (a) {
+  let j, x, i
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1))
+    x = a[i]
+    a[i] = a[j]
+    a[j] = x
+  }
+  return a
+}
+
+const Ids = shuffle(require('./ids.json').split('"')) // file can be generated using mkg20001/test-peer-ids.tk patched with ipfs://QmVZRWjZoqve9UKgng2gymN8a3FQUENgsQaicQ2fWs7kGx
 const base = require('base-x')(' !#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~') // "compression" aka "whatever part of ascii can be put into a JSON string without needing to get escaped"-base
-const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
 
 const protobuf = require('protons')
 const pbm = protobuf(require('libp2p-crypto/src/keys/keys.proto'))
 
-module.exports = (cb) => {
-  loadKey(base.decode(Ids[rand(0, Ids.length)]), (err, key) => {
-    if (err) { return cb(err) }
-    key.hash((err, digest) => {
-      if (err) { return cb(err) }
-      cb(null, new Id(digest, key, key.public))
-    })
-  })
-}
+module.exports = () => {
+  if (!Ids.length) { // TODO: should this maybe re-use ids?
+    throw new Error('Ran out of pregenerated ids! What do you even need this many for?')
+  }
 
-module.exports.privKey = () => pbm.PublicKey.encode({
-  Type: pbm.KeyType.RSA,
-  Data: base.decode(Ids[rand(0, Ids.length)])
-}).toString('base64')
+  return pbm.PublicKey.encode({ // this is needed because the keys aren't wrapped in the usual privateKey pbuf container to save space
+    Type: pbm.KeyType.RSA,
+    Data: base.decode(Ids.pop())
+  }).toString('base64')
+}
