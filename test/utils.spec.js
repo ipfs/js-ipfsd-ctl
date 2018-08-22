@@ -59,6 +59,12 @@ describe('utils', () => {
         expect(execPath).to.include(path.join('ipfs', 'src', 'cli', 'bin.js'))
         expect(fs.existsSync(execPath)).to.be.ok()
       })
+
+      it('should find executable on path', () => {
+        const execName = 'netstat'
+        const execPath = findIpfsExecutable.find('/', '/non-existent-dependency', execName)
+        expect(execPath).to.include(execName)
+      })
     })
   }
 })
