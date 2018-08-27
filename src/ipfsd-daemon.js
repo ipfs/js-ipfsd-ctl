@@ -79,7 +79,7 @@ class Daemon {
     this._started = false
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
-    this._env = Object.assign({}, process.env, this.opts.env, this.disposable ? {IPFS_PREGENERATED_PRIVATE_KEY: testIds()} : {})
+    this._env = Object.assign({}, process.env, this.opts.env)
   }
 
   /**
@@ -169,7 +169,11 @@ class Daemon {
     if (bits) {
       args.push('-b')
       args.push(bits)
+    } else if (this.disposable) {
+      args.push('--private-key')
+      args.push(testIds())
     }
+
     if (initOptions.pass) {
       args.push('--pass')
       args.push('"' + initOptions.pass + '"')
