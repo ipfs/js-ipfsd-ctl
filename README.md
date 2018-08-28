@@ -215,7 +215,7 @@ Start the daemon.
 
 `flags` - Flags array to be passed to the `ipfs daemon` command.
 
-`callback` is a function with the signature `function(err, ipfsApi)` that receives an instance of `ipfs-api` on success or an instance of `Error` on failure
+`callback` is a function with the signature `function(Error, ipfsApi)` that receives an instance of `Error` on failure or an instance of `ipfs-api` on success. 
 
 
 #### `ipfsd.stop([timeout, callback])`

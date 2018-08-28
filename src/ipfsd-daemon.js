@@ -187,7 +187,7 @@ class Daemon {
         if (err) { return callback(err) }
         this.clean = false
         this.initialized = true
-        return callback()
+        return callback(null, this)
       })
     })
   }
