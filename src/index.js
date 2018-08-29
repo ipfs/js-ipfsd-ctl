@@ -8,9 +8,14 @@ const FactoryInProc = require('./factory-in-proc')
 const FactoryClient = require('./factory-client')
 const EndpointServer = require('./endpoint/server')
 
-exports = module.exports
 
-exports.create = (opts) => {
+/**
+ * Create a Factory
+ *
+ * @param {Object} [opts={}]
+ * @returns {(FactoryInProc|FactoryDaemon|FactoryClient)}
+ */
+const create = (opts) => {
   const options = defaults({}, opts, { remote: !isNode })
 
   if (options.type === 'proc') {
@@ -22,9 +27,20 @@ exports.create = (opts) => {
   }
 }
 
-exports.createServer = (options) => {
+/**
+ * Create a Endpoint Server
+ *
+ * @param {Object|number} options
+ * @returns {EndpointServer}
+ */
+const createServer = (options) => {
   if (typeof options === 'number') {
     options = { port: options }
   }
   return new EndpointServer(options)
+}
+
+module.exports = {
+  create,
+  createServer
 }

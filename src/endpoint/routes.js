@@ -17,6 +17,12 @@ const routeConfig = {
 
 let nodes = {}
 
+
+/**
+ * @namespace Routes
+ *
+ * @param {*} server
+ */
 module.exports = (server) => {
   server.route({
     method: 'GET',
@@ -87,7 +93,9 @@ module.exports = (server) => {
 
   /**
    * Initialize a repo.
-   **/
+   *
+   * @memberof Routes
+   */
   server.route({
     method: 'POST',
     path: '/init',

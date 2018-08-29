@@ -121,7 +121,7 @@ class Node extends EventEmitter {
   /**
    * Is the environment
    *
-   * @return {object}
+   * @return {Object}
    */
   get env () {
     throw new Error('Not implemented!')
@@ -303,7 +303,7 @@ class Node extends EventEmitter {
   /**
    * Replace the current config with the provided one
    *
-   * @param {object} config
+   * @param {Object} config
    * @param {function(Error)} callback
    * @return {undefined}
    */

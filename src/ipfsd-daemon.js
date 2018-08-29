@@ -34,15 +34,12 @@ const NON_DISPOSABLE_GRACE_PERIOD = 10500 * 3
 
 /**
  * ipfsd for a go-ipfs or js-ipfs daemon
+ * Create a new node.
+ *
+ * @param {Object} [opts]
+ * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
  */
 class Daemon {
-  /**
-   * Create a new node.
-   *
-   * @param {Object} [opts]
-   * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
-   * @returns {Node}
-   */
   constructor (opts) {
     const rootPath = process.env.testpath
       ? process.env.testpath

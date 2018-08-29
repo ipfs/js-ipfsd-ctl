@@ -20,6 +20,17 @@ function createApi (apiAddr, gwAddr, IpfsApi) {
   return api
 }
 
+/**
+ * DaemonClient
+ *
+ *Creates an instance of DaemonClient.
+ * @param {*} baseUrl
+ * @param {*} _id
+ * @param {*} initialized
+ * @param {*} apiAddr
+ * @param {*} gwAddrs
+ * @param {*} options
+ */
 class DaemonClient {
   constructor (baseUrl, _id, initialized, apiAddr, gwAddrs, options) {
     this.options = options || {}

@@ -3,7 +3,12 @@
 const Hapi = require('hapi')
 const routes = require('./routes')
 
-class Server {
+/**
+ * Creates an instance of Server.
+ * @param {Object} options
+ * @param {number} [options.port=43134] - server port
+ */
+class EndpointServer {
   constructor (options) {
     options = options || { port: 43134 }
 
@@ -11,6 +16,11 @@ class Server {
     this.port = options.port
   }
 
+  /**
+   * Start the server
+   *
+   * @param {*} cb
+   */
   start (cb) {
     cb = cb || (() => {})
 
@@ -35,6 +45,11 @@ class Server {
     })
   }
 
+  /**
+   * Stop the server
+   *
+   * @param {*} cb
+   */
   stop (cb) {
     cb = cb || (() => {})
 
@@ -42,4 +57,4 @@ class Server {
   }
 }
 
-module.exports = Server
+module.exports = EndpointServer

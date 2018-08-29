@@ -3,8 +3,9 @@
 const request = require('superagent')
 const DaemonClient = require('./ipfsd-client')
 
-/*
+/**
  * Exposes the same Factory API but uses a remote endpoint to create the Daemons/Nodes
+ * @param {Object} options
  */
 class FactoryClient {
   constructor (options) {
@@ -31,9 +32,8 @@ class FactoryClient {
    * useful in browsers to be able to generate temp
    * repos manually
    *
-   * @param {String} type - the type of the node
-   * @param {function(Error, string)} callback
-   * @returns {undefined}
+   * @param {string} type - the type of the node
+   * @param {function(err: Error, tmpDir: string)} callback
    */
   tmpDir (type, callback) {
     request
@@ -50,7 +50,6 @@ class FactoryClient {
   /**
    * Get the version of the IPFS Daemon.
    *
-   * @memberof FactoryDaemon
    * @param {Object} [options={}]
    * @param {function(Error, string)} callback
    * @returns {undefined}
@@ -75,6 +74,12 @@ class FactoryClient {
       })
   }
 
+  /**
+   * Spawn a remote daemon using ipfs-api
+   *
+   * @param {Object} [options={}]
+   * @param {function(err: Error, ipfsd: DaemonClient)} callback
+   */
   spawn (options, callback) {
     if (typeof options === 'function') {
       callback = options

@@ -13,19 +13,13 @@ const defaultOptions = require('./defaults/options')
 // TODO extract common functionality into base class
 
 /**
- * Spawn IPFS Daemons (either JS or Go)
+ * Creates an instance of FactoryDaemon.
  *
- * @namespace FactoryDaemon
+ * @param {Object} options
+ * @param {string} [options.type='go'] - 'go' or 'js'
+ * @param {string} [options.exec] - the path of the daemon executable
  */
 class FactoryDaemon {
-  /**
-   *
-   * @param {Object} options
-   *  - `type` string - 'go' or 'js'
-   *  - `exec` string (optional) - the path of the daemon executable
-   *  - `IpfsApi` - a custom IPFS API constructor
-   * @return {*}
-   */
   constructor (options) {
     if (options && options.type === 'proc') {
       throw new Error('This Factory does not know how to spawn in proc nodes')
@@ -42,7 +36,6 @@ class FactoryDaemon {
    *
    * @param {String} type - the type of the node
    * @param {function(Error, string)} callback
-   * @returns {undefined}
    */
   tmpDir (type, callback) {
     callback(null, tmpDir(type === 'js'))
@@ -51,10 +44,8 @@ class FactoryDaemon {
   /**
    * Get the version of the IPFS Daemon.
    *
-   * @memberof FactoryDaemon
    * @param {Object} [options={}]
    * @param {function(Error, string)} callback
-   * @returns {undefined}
    */
   version (options, callback) {
     if (typeof options === 'function') {
@@ -89,8 +80,7 @@ class FactoryDaemon {
    * this will override the `exec` set when creating the daemon controller factory instance
    *
    * @param {Object} [options={}] - various config options and ipfs config parameters
-   * @param {Function} callback(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
-   * @return {undefined}
+   * @param {function(err: Error, ipfsd: Daemon)} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
    */
   spawn (options, callback) {
     if (typeof options === 'function') {

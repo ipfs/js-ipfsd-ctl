@@ -15,22 +15,13 @@ const defaultOptions = require('./defaults/options')
 // TODO extract common functionality into base class
 
 /**
- * Spawn JSIPFS instances (aka in process nodes)
- *
- * @namespace FactoryInProc
+ * Factory to spawn in-proc JS-IPFS instances (aka in process nodes)
+ * @class
+ * @param {Object} options
+ * @param {String} [options.type='proc'] - one of 'go', 'js' or 'proc', in this case this needs to be 'proc'
+ * @param {String} [options.exec] - the path of the daemon executable or IPFS class in the case of `proc`
  */
 class FactoryInProc {
-  /**
-   * Create a FactoryInProc
-   *
-   * @param {Object} options
-   *  - `type` string - one of 'go', 'js' or 'proc',
-   *  the type of the daemon to spawn
-   *  - `exec` string (optional) - the path of the daemon
-   *  executable or IPFS class in the case of `proc`
-   *
-   * @return {*}
-   */
   constructor (options) {
     options = options || {}
     if (options.type !== 'proc') {
@@ -47,8 +38,7 @@ class FactoryInProc {
    * *Here for completeness*
    *
    * @param {string} type - the type of the node
-   * @param {function(Error, string)} callback
-   * @returns {undefined}
+   * @param {function(err: Error, tmpDir: string)} callback
    */
   tmpDir (type, callback) {
     callback(null, tmpDir(true))
@@ -57,10 +47,8 @@ class FactoryInProc {
   /**
    * Get the version of the currently used go-ipfs binary.
    *
-   * @memberof FactoryInProc
    * @param {Object} [options={}]
-   * @param {function(Error, string)} callback
-   * @returns {undefined}
+   * @param {function(err: Error, version: string)} callback
    */
   version (options, callback) {
     if (typeof options === 'function') {
@@ -90,7 +78,7 @@ class FactoryInProc {
    * this will override the `exec` set when creating the daemon controller factory instance
    *
    * @param {Object} [opts={}] - various config options and ipfs config parameters
-   * @param {Function} callback(err, [`ipfs-api instance`, `Node (ctrl) instance`]) - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
+   * @param {function(err: Error, ipfsd: Node)} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
    * @return {undefined}
    */
   spawn (opts, callback) {
