@@ -162,7 +162,7 @@ class Node extends EventEmitter {
         if (err) { return callback(err) }
         self.clean = false
         self.initialized = true
-        return callback()
+        return callback(null, this)
       })
     })
   }

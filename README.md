@@ -201,7 +201,7 @@ Initialize a repo.
   - `directory` (default IPFS_PATH if defined, or ~/.ipfs for go-ipfs and ~/.jsipfs for js-ipfs) - The location of the repo.
   - `pass` (optional) - The passphrase of the key chain.
 
-`callback` is a function with the signature `function (Error, ipfsd)` where `err` is an Error in case something goes wrong and `ipfsd` is the daemon controller instance.
+`callback` is a function with the signature `function (err, ipfsd)` where `err` is an Error in case something goes wrong and `ipfsd` is the daemon controller instance.
 
 #### `ipfsd.cleanup(callback)`
 
@@ -215,7 +215,7 @@ Start the daemon.
 
 `flags` - Flags array to be passed to the `ipfs daemon` command.
 
-`callback` is a function with the signature `function(err, ipfsApi)` that receives an instance of `ipfs-api` on success or an instance of `Error` on failure
+`callback` is a function with the signature `function(err, ipfsApi)` that receives an instance of `Error` on failure or an instance of `ipfs-api` on success. 
 
 
 #### `ipfsd.stop([timeout, callback])`
