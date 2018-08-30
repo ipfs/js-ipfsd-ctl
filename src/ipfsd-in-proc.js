@@ -39,6 +39,7 @@ class Node extends EventEmitter {
     this.api = null
     this.initialized = false
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
+    this.privateKey = this.opts.initOptions ? this.opts.initOptions.privateKey : null
 
     this.opts.EXPERIMENTAL = defaultsDeep({}, opts.EXPERIMENTAL, {
       pubsub: false,
@@ -142,12 +143,17 @@ class Node extends EventEmitter {
     }
 
     const bits = initOptions.keysize ? initOptions.bits : this.bits
+    const privateKey = initOptions.privateKey ? initOptions.privateKey : this.privateKey
     // do not just set a default keysize,
     // in case we decide to change it at
     // the daemon level in the future
     if (bits) {
       initOptions.bits = bits
       log(`initializing with keysize: ${bits}`)
+    }
+    if (privateKey) {
+      initOptions.privateKey = privateKey
+      log(`initializing with privateKey: ${privateKey}`)
     }
     this.exec.init(initOptions, (err) => {
       if (err) {

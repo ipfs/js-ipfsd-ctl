@@ -78,6 +78,7 @@ class Daemon {
     this._started = false
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
+    this.privateKey = this.opts.initOptions ? this.opts.initOptions.privateKey : null
     this._env = Object.assign({}, process.env, this.opts.env)
   }
 
@@ -163,6 +164,7 @@ class Daemon {
     }
 
     const bits = initOptions.bits || this.bits
+    const privateKey = initOptions.privateKey || this.privateKey
     const args = ['init']
     // do not just set a default keysize,
     // in case we decide to change it at
@@ -170,6 +172,10 @@ class Daemon {
     if (bits) {
       args.push('-b')
       args.push(bits)
+    }
+    if (privateKey) {
+      args.push('--privateKey')
+      args.push(privateKey)
     }
     if (initOptions.pass) {
       args.push('--pass')
