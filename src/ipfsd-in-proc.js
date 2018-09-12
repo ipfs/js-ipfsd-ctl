@@ -14,15 +14,11 @@ let IPFS = null
 
 /**
  * ipfsd for a js-ipfs instance (aka in-process IPFS node)
+ *
+ * @param {Object} [opts]
+ * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
  */
 class Node extends EventEmitter {
-  /**
-   * Create a new node.
-   *
-   * @param {Object} [opts]
-   * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
-   * @returns {Node}
-   */
   constructor (opts) {
     super()
     this.opts = opts || {}
@@ -85,7 +81,7 @@ class Node extends EventEmitter {
   /**
    * Get the address of connected IPFS API.
    *
-   * @returns {Multiaddr}
+   * @member {Multiaddr}
    */
   get apiAddr () {
     return this._apiAddr
@@ -94,7 +90,7 @@ class Node extends EventEmitter {
   /**
    * Get the address of connected IPFS HTTP Gateway.
    *
-   * @returns {Multiaddr}
+   * @member {Multiaddr}
    */
   get gatewayAddr () {
     return this._gatewayAddr
@@ -103,7 +99,7 @@ class Node extends EventEmitter {
   /**
    * Get the current repo path
    *
-   * @return {string}
+   * @member {string}
    */
   get repoPath () {
     return this.path
@@ -112,7 +108,7 @@ class Node extends EventEmitter {
   /**
    * Is the node started
    *
-   * @return {boolean}
+   * @member {boolean}
    */
   get started () {
     return this._started
@@ -121,7 +117,7 @@ class Node extends EventEmitter {
   /**
    * Is the environment
    *
-   * @return {Object}
+   * @member {Object}
    */
   get env () {
     throw new Error('Not implemented!')

@@ -19,7 +19,7 @@ class EndpointServer {
   /**
    * Start the server
    *
-   * @param {*} cb
+   * @param {function(err: Error, server: Hapi.Server)} cb
    */
   start (cb) {
     cb = cb || (() => {})
@@ -48,7 +48,7 @@ class EndpointServer {
   /**
    * Stop the server
    *
-   * @param {*} cb
+   * @param {function(err: Error)} [cb] - {@link https://github.com/hapijs/hapi/blob/v16.6.2/API.md#serverstopoptions-callback Hapi docs}
    */
   stop (cb) {
     cb = cb || (() => {})
