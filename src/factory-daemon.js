@@ -5,12 +5,9 @@ const clone = require('lodash.clone')
 const series = require('async/series')
 const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
-
 const Daemon = require('./ipfsd-daemon')
 const defaultConfig = require('./defaults/config')
 const defaultOptions = require('./defaults/options')
-
-// TODO extract common functionality into base class
 
 /**
  * Creates an instance of FactoryDaemon.
@@ -35,7 +32,7 @@ class FactoryDaemon {
    * *Here for completeness*
    *
    * @param {String} type - the type of the node
-   * @param {function(Error, string)} callback
+   * @param {function(Error, string): void} callback
    */
   tmpDir (type, callback) {
     callback(null, tmpDir(type === 'js'))
@@ -45,7 +42,7 @@ class FactoryDaemon {
    * Get the version of the IPFS Daemon.
    *
    * @param {Object} [options={}]
-   * @param {function(Error, string)} callback
+   * @param {function(Error, string): void} callback
    */
   version (options, callback) {
     if (typeof options === 'function') {
@@ -80,7 +77,7 @@ class FactoryDaemon {
    * this will override the `exec` set when creating the daemon controller factory instance
    *
    * @param {Object} [options={}] - various config options and ipfs config parameters
-   * @param {function(err: Error, ipfsd: Daemon)} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
+   * @param {function(Error, Daemon): void} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
    */
   spawn (options, callback) {
     if (typeof options === 'function') {

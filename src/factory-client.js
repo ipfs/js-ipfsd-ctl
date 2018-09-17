@@ -33,7 +33,7 @@ class FactoryClient {
    * repos manually
    *
    * @param {string} type - the type of the node
-   * @param {function(err: Error, tmpDir: string)} callback
+   * @param {function(Error, string): void} callback
    */
   tmpDir (type, callback) {
     request
@@ -51,7 +51,7 @@ class FactoryClient {
    * Get the version of the IPFS Daemon.
    *
    * @param {Object} [options={}]
-   * @param {function(Error, string)} callback
+   * @param {function(Error, string): void} callback
    * @returns {undefined}
    */
   version (options, callback) {
@@ -78,7 +78,7 @@ class FactoryClient {
    * Spawn a remote daemon using ipfs-api
    *
    * @param {Object} [options={}]
-   * @param {function(err: Error, ipfsd: DaemonClient)} callback
+   * @param {function(Error, DaemonClient)} callback
    */
   spawn (options, callback) {
     if (typeof options === 'function') {

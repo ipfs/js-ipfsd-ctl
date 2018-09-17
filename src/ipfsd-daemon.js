@@ -144,7 +144,7 @@ class Daemon {
    * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
    * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
    * @param {string} [initOptions.pass] - The passphrase of the keychain.
-   * @param {function (Error, Node)} callback
+   * @param {function (Error, Node): void} callback
    * @returns {undefined}
    */
   init (initOptions, callback) {
@@ -194,8 +194,7 @@ class Daemon {
    * If the node was marked as `disposable` this will be called
    * automatically when the process is exited.
    *
-   * @param {function(Error)} callback
-   * @returns {undefined}
+   * @param {function(Error): void)} callback
    */
   cleanup (callback) {
     if (this.clean) {
@@ -210,8 +209,7 @@ class Daemon {
    * Start the daemon.
    *
    * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
-   * @param {function(Error, IpfsApi)} callback
-   * @returns {undefined}
+   * @param {function(Error, IpfsApi): void} callback
    */
   start (flags, callback) {
     if (typeof flags === 'function') {
@@ -289,9 +287,8 @@ class Daemon {
   /**
    * Stop the daemon.
    *
-   * @param {integer|undefined} timeout - Grace period to wait before force stopping the node
-   * @param {function(Error)} callback
-   * @returns {undefined}
+   * @param {number} [timeout] - Grace period to wait before force stopping the node
+   * @param {function(Error: void)} callback
    */
   stop (timeout, callback) {
     if (typeof timeout === 'function') {
@@ -315,9 +312,8 @@ class Daemon {
    * process.kill(`SIGTERM`) is used.  In either case, if the process
    * does not exit after 10.5 seconds then a `SIGKILL` is used.
    *
-   * @param {integer|undefined} timeout - Grace period to wait before force stopping the node
-   * @param {function()} callback - Called when the process was killed.
-   * @returns {undefined}
+   * @param {Number} [timeout] - Grace period to wait before force stopping the node
+   * @param {function(Error): void} callback - Called when the process was killed.
    */
   killProcess (timeout, callback) {
     if (typeof timeout === 'function') {
@@ -362,8 +358,7 @@ class Daemon {
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @param {function()} callback - receives the pid
-   * @returns {undefined}
+   * @param {function(Error): void} callback - receives the pid
    */
   pid (callback) {
     callback(this.subprocess && this.subprocess.pid)
@@ -375,8 +370,7 @@ class Daemon {
    * If no `key` is passed, the whole config is returned as an object.
    *
    * @param {string} [key] - A specific config to retrieve.
-   * @param {function(Error, (Object|string))} callback
-   * @returns {undefined}
+   * @param {function(Error, (Object|string)): void} callback
    */
   getConfig (key, callback) {
     if (typeof key === 'function') {
@@ -415,8 +409,7 @@ class Daemon {
    *
    * @param {string} key
    * @param {string} value
-   * @param {function(Error)} callback
-   * @returns {undefined}
+   * @param {function(Error): void} callback
    */
   setConfig (key, value, callback) {
     setConfigValue(this, key, value, callback)
@@ -426,8 +419,7 @@ class Daemon {
    * Replace the current config with the provided one
    *
    * @param {object} config
-   * @param {function(Error)} callback
-   * @return {undefined}
+   * @param {function(Error): void} callback
    */
   replaceConfig (config, callback) {
     const tmpFile = path.join(os.tmpdir(), hat())
@@ -451,8 +443,7 @@ class Daemon {
   /**
    * Get the version of ipfs
    *
-   * @param {function(Error, string)} callback
-   * @returns {undefined}
+   * @param {function(Error, string): void} callback
    */
   version (callback) {
     let stdout = ''

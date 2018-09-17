@@ -38,7 +38,7 @@ class FactoryInProc {
    * *Here for completeness*
    *
    * @param {string} type - the type of the node
-   * @param {function(err: Error, tmpDir: string)} callback
+   * @param {function(Error, string): void} callback
    */
   tmpDir (type, callback) {
     callback(null, tmpDir(true))
@@ -48,7 +48,7 @@ class FactoryInProc {
    * Get the version of the currently used go-ipfs binary.
    *
    * @param {Object} [options={}]
-   * @param {function(err: Error, version: string)} callback
+   * @param {function(Error, string): void} callback
    */
   version (options, callback) {
     if (typeof options === 'function') {
@@ -78,8 +78,7 @@ class FactoryInProc {
    * this will override the `exec` set when creating the daemon controller factory instance
    *
    * @param {Object} [opts={}] - various config options and ipfs config parameters
-   * @param {function(err: Error, ipfsd: Node)} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
-   * @return {undefined}
+   * @param {function(Error, Node): void} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
    */
   spawn (opts, callback) {
     if (typeof opts === 'function') {
