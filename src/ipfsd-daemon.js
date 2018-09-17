@@ -17,6 +17,7 @@ const daemonLog = {
   info: debug('ipfsd-ctl:daemon:stdout'),
   err: debug('ipfsd-ctl:daemon:stderr')
 }
+const testIds = require('./test-ids')
 
 const safeParse = require('safe-json-parse/callback')
 const safeStringify = require('safe-json-stringify')
@@ -170,7 +171,11 @@ class Daemon {
     if (bits) {
       args.push('-b')
       args.push(bits)
+    } else if (this.disposable) {
+      args.push('--private-key')
+      args.push(testIds())
     }
+
     if (initOptions.pass) {
       args.push('--pass')
       args.push('"' + initOptions.pass + '"')
