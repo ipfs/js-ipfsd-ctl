@@ -17,7 +17,6 @@ const routeConfig = {
 
 let nodes = {}
 
-
 /**
  * @namespace EndpointServerRoutes
  * @private

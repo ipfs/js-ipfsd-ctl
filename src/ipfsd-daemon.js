@@ -189,13 +189,6 @@ class Daemon {
     })
   }
 
-  /**
-   * Delete the repo that was being used.
-   * If the node was marked as `disposable` this will be called
-   * automatically when the process is exited.
-   *
-   * @param {function(Error): void)} callback
-   */
   cleanup (callback) {
     if (this.clean) {
       return callback()
