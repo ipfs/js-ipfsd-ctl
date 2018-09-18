@@ -14,8 +14,8 @@
     "release": "aegir release",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
-    "coverage": "COVERAGE=true aegir coverage --timeout 50000",
-    "coverage-publish": "aegir coverage -u"
+    "coverage": "aegir coverage",
+    "coverage-publish": "aegir coverage --upload"
   },
   "browser": {
     "hapi": false,
