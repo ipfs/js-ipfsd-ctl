@@ -105,7 +105,7 @@
     "superagent": "^3.8.2"
   },
   "devDependencies": {
-    "aegir": "^13.0.6",
+    "aegir": "^15.2.0",
     "chai": "^4.1.2",
     "cross-env": "^5.1.4",
     "detect-port": "^1.2.2",
