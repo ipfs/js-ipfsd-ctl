@@ -36,8 +36,8 @@ const NON_DISPOSABLE_GRACE_PERIOD = 10500 * 3
  * ipfsd for a go-ipfs or js-ipfs daemon
  * Create a new node.
  *
- * @param {Object} [opts]
- * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
+ * @class
+ * @param {Typedefs.SpawnOptions} [opts]
  */
 class Daemon {
   constructor (opts) {
@@ -73,13 +73,15 @@ class Daemon {
     this._apiAddr = null
     this._gatewayAddr = null
     this._started = false
+    /** @member {IpfsApi} */
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
     this._env = Object.assign({}, process.env, this.opts.env)
   }
 
   /**
-   * Get running node api
+   * Running node api
+   * @member {String}
    */
   get runningNodeApi () {
     let api
@@ -93,27 +95,27 @@ class Daemon {
   }
 
   /**
-   * Get the address of connected IPFS API.
+   * Address of connected IPFS API.
    *
-   * @returns {Multiaddr}
+   * @member {Multiaddr}
    */
   get apiAddr () {
     return this._apiAddr
   }
 
   /**
-   * Get the address of connected IPFS HTTP Gateway.
+   * Address of connected IPFS HTTP Gateway.
    *
-   * @returns {Multiaddr}
+   * @member {Multiaddr}
    */
   get gatewayAddr () {
     return this._gatewayAddr
   }
 
   /**
-   * Get the current repo path
+   * Current repo path
    *
-   * @return {string}
+   * @member {string}
    */
   get repoPath () {
     return this.path
@@ -122,16 +124,16 @@ class Daemon {
   /**
    * Is the node started
    *
-   * @return {boolean}
+   * @member {boolean}
    */
   get started () {
     return this._started
   }
 
   /**
-   * Is the environment
+   * Shell environment variables
    *
-   * @return {object}
+   * @member {object}
    */
   get env () {
     return this.path ? Object.assign({}, this._env, { IPFS_PATH: this.path }) : this._env
@@ -144,8 +146,8 @@ class Daemon {
    * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
    * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
    * @param {string} [initOptions.pass] - The passphrase of the keychain.
-   * @param {function (Error, Node): void} callback
-   * @returns {undefined}
+   * @param {function (Error, Daemon): void} callback
+   * @returns {void}
    */
   init (initOptions, callback) {
     if (typeof initOptions === 'function') {
@@ -189,6 +191,12 @@ class Daemon {
     })
   }
 
+  /**
+   * Delete the repo that was being used. If the node was marked as disposable this will be called automatically when the process is exited.
+   *
+   * @param {function(Error): void} callback
+   * @returns {void}
+   */
   cleanup (callback) {
     if (this.clean) {
       return callback()
@@ -203,6 +211,7 @@ class Daemon {
    *
    * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
    * @param {function(Error, IpfsApi): void} callback
+   * @return {void}
    */
   start (flags, callback) {
     if (typeof flags === 'function') {
@@ -280,8 +289,9 @@ class Daemon {
   /**
    * Stop the daemon.
    *
-   * @param {number} [timeout] - Grace period to wait before force stopping the node
-   * @param {function(Error: void)} callback
+   * @param {number} [timeout] - Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of 10500 ms will be used for disposable nodes and 10500 * 3 ms for non disposable nodes.
+   * @param {function(Error): void} callback
+   * @return {void}
    */
   stop (timeout, callback) {
     if (typeof timeout === 'function') {
@@ -305,8 +315,11 @@ class Daemon {
    * process.kill(`SIGTERM`) is used.  In either case, if the process
    * does not exit after 10.5 seconds then a `SIGKILL` is used.
    *
-   * @param {Number} [timeout] - Grace period to wait before force stopping the node
+   * Note: timeout is ignored for proc nodes
+   *
+   * @param {Number} [timeout] - Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of 10500 ms will be used for disposable nodes and 10500 * 3 ms for non disposable nodes.
    * @param {function(Error): void} callback - Called when the process was killed.
+   * @returns {void}
    */
   killProcess (timeout, callback) {
     if (typeof timeout === 'function') {
@@ -351,7 +364,8 @@ class Daemon {
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @param {function(Error): void} callback - receives the pid
+   * @param {function(Error, number): void} callback - receives the pid
+   * @returns {void}
    */
   pid (callback) {
     callback(this.subprocess && this.subprocess.pid)
@@ -364,6 +378,7 @@ class Daemon {
    *
    * @param {string} [key] - A specific config to retrieve.
    * @param {function(Error, (Object|string)): void} callback
+   * @returns {void}
    */
   getConfig (key, callback) {
     if (typeof key === 'function') {
@@ -400,9 +415,10 @@ class Daemon {
   /**
    * Set a config value.
    *
-   * @param {string} key
-   * @param {string} value
+   * @param {string} key - The key of the config entry to change/set.
+   * @param {string} value - The config value to change/set.
    * @param {function(Error): void} callback
+   * @returns {void}
    */
   setConfig (key, value, callback) {
     setConfigValue(this, key, value, callback)
@@ -413,6 +429,7 @@ class Daemon {
    *
    * @param {object} config
    * @param {function(Error): void} callback
+   * @returns {void}
    */
   replaceConfig (config, callback) {
     const tmpFile = path.join(os.tmpdir(), hat())
@@ -437,6 +454,7 @@ class Daemon {
    * Get the version of ipfs
    *
    * @param {function(Error, string): void} callback
+   * @returns {void}
    */
   version (callback) {
     let stdout = ''

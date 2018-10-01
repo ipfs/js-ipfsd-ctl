@@ -3,6 +3,8 @@
 const request = require('superagent')
 const DaemonClient = require('./ipfsd-client')
 
+/** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
+
 /**
  * Exposes the same Factory API but uses a remote endpoint to create the Daemons/Nodes
  * @param {Object} options
@@ -34,6 +36,7 @@ class FactoryClient {
    *
    * @param {string} type - the type of the node
    * @param {function(Error, string): void} callback
+   * @returns {void}
    */
   tmpDir (type, callback) {
     request
@@ -77,8 +80,9 @@ class FactoryClient {
   /**
    * Spawn a remote daemon using ipfs-api
    *
-   * @param {Object} [options={}]
+   * @param {SpawnOptions} [options={}]
    * @param {function(Error, DaemonClient)} callback
+   * @return {void}
    */
   spawn (options, callback) {
     if (typeof options === 'function') {

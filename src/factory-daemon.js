@@ -9,6 +9,8 @@ const Daemon = require('./ipfsd-daemon')
 const defaultConfig = require('./defaults/config')
 const defaultOptions = require('./defaults/options')
 
+/** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
+
 /**
  * Creates an instance of FactoryDaemon.
  *
@@ -33,6 +35,7 @@ class FactoryDaemon {
    *
    * @param {String} type - the type of the node
    * @param {function(Error, string): void} callback
+   * @returns {void}
    */
   tmpDir (type, callback) {
     callback(null, tmpDir(type === 'js'))
@@ -42,7 +45,14 @@ class FactoryDaemon {
    * Get the version of the IPFS Daemon.
    *
    * @param {Object} [options={}]
-   * @param {function(Error, string): void} callback
+   * @param {function(Error, (string|Object)): void} callback - Receives `Error` or `version` that might be one of the following:
+   * - if type is `go` a version string like `ipfs version <version number>`
+   * - if type is `js` a version string like `js-ipfs version <version number>`
+   * - if type is `proc` an object with the following properties:
+   *    - version - the ipfs version
+   *    - repo - the repo version
+   *    - commit - the commit hash for this version
+   * @returns {void}
    */
   version (options, callback) {
     if (typeof options === 'function') {
@@ -64,20 +74,9 @@ class FactoryDaemon {
   /**
    * Spawn an IPFS node, either js-ipfs or go-ipfs
    *
-   * Options are:
-   * - `init` bool - should the node be initialized
-   * - `initOptions` Object, it is expected to be of the form `{bits: <size>}`, which sets the desired key size
-   * - `start` bool - should the node be started
-   * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
-   * - `disposable` bool - a new repo is created and initialized for each invocation
-   * - `defaultAddrs` bool (default false) - use the daemon default `Swarm` addrs
-   * - `config` - ipfs configuration options
-   * - `args` - array of cmd line arguments to be passed to ipfs daemon
-   * - `exec` string (optional) - path to the desired IPFS executable to spawn,
-   * this will override the `exec` set when creating the daemon controller factory instance
-   *
-   * @param {Object} [options={}] - various config options and ipfs config parameters
-   * @param {function(Error, Daemon): void} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
+   * @param {SpawnOptions} [options={}] - Various config options and ipfs config parameters
+   * @param {function(Error, Daemon): void} callback - Callback receives Error or a Daemon instance, Daemon has a `api` property which is an `ipfs-api` instance.
+   * @returns {void}
    */
   spawn (options, callback) {
     if (typeof options === 'function') {

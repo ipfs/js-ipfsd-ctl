@@ -4,15 +4,14 @@ const defaults = require('lodash.defaultsdeep')
 const clone = require('lodash.clone')
 const series = require('async/series')
 const path = require('path')
-const tmpDir = require('./utils/tmp-dir')
 const once = require('once')
+const tmpDir = require('./utils/tmp-dir')
 const repoUtils = require('./utils/repo/nodejs')
-
-const Node = require('./ipfsd-in-proc')
+const InProc = require('./ipfsd-in-proc')
 const defaultConfig = require('./defaults/config')
 const defaultOptions = require('./defaults/options')
 
-// TODO extract common functionality into base class
+/** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
 
 /**
  * Factory to spawn in-proc JS-IPFS instances (aka in process nodes)
@@ -39,6 +38,7 @@ class FactoryInProc {
    *
    * @param {string} type - the type of the node
    * @param {function(Error, string): void} callback
+   * @returns {void}
    */
   tmpDir (type, callback) {
     callback(null, tmpDir(true))
@@ -49,6 +49,7 @@ class FactoryInProc {
    *
    * @param {Object} [options={}]
    * @param {function(Error, string): void} callback
+   * @returns {void}
    */
   version (options, callback) {
     if (typeof options === 'function') {
@@ -56,7 +57,7 @@ class FactoryInProc {
       options = {}
     }
 
-    const node = new Node(options)
+    const node = new InProc(options)
     node.once('ready', () => {
       node.version(callback)
     })
@@ -65,20 +66,9 @@ class FactoryInProc {
   /**
    * Spawn JSIPFS instances
    *
-   * Options are:
-   * - `init` bool - should the node be initialized
-   * - `initOptions` Object, it is expected to be of the form `{bits: <size>}`, which sets the desired key size
-   * - `start` bool - should the node be started
-   * - `repoPath` string - the repository path to use for this node, ignored if node is disposable
-   * - `disposable` bool - a new repo is created and initialized for each invocation
-   * - `defaultAddrs` bool (default false) - use the daemon default `Swarm` addrs
-   * - `config` - ipfs configuration options
-   * - `args` - array of cmd line arguments to be passed to ipfs daemon
-   * - `exec` string (optional) - path to the desired IPFS executable to spawn,
-   * this will override the `exec` set when creating the daemon controller factory instance
-   *
-   * @param {Object} [opts={}] - various config options and ipfs config parameters
-   * @param {function(Error, Node): void} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
+   * @param {SpawnOptions} [opts={}] - various config options and ipfs config parameters
+   * @param {function(Error, InProc): void} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
+   * @returns {void}
    */
   spawn (opts, callback) {
     if (typeof opts === 'function') {
@@ -118,7 +108,7 @@ class FactoryInProc {
       return callback(new Error(`'type' proc requires 'exec' to be a coderef`))
     }
 
-    const node = new Node(options)
+    const node = new InProc(options)
     const callbackOnce = once((err) => {
       if (err) {
         return callback(err)

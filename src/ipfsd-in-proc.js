@@ -2,11 +2,11 @@
 
 const multiaddr = require('multiaddr')
 const defaultsDeep = require('lodash.defaultsdeep')
-const repoUtils = require('./utils/repo/nodejs')
 const defaults = require('lodash.defaults')
 const waterfall = require('async/waterfall')
 const debug = require('debug')
 const EventEmitter = require('events')
+const repoUtils = require('./utils/repo/nodejs')
 
 const log = debug('ipfsd-ctl:in-proc')
 
@@ -18,7 +18,7 @@ let IPFS = null
  * @param {Object} [opts]
  * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
  */
-class Node extends EventEmitter {
+class InProc extends EventEmitter {
   constructor (opts) {
     super()
     this.opts = opts || {}
@@ -130,7 +130,7 @@ class Node extends EventEmitter {
    * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
    * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
    * @param {string} [initOptions.pass] - The passphrase of the keychain.
-   * @param {function (Error, Node)} callback
+   * @param {function (Error, InProc)} callback
    * @returns {undefined}
    */
   init (initOptions, callback) {
@@ -318,4 +318,4 @@ class Node extends EventEmitter {
   }
 }
 
-module.exports = Node
+module.exports = InProc

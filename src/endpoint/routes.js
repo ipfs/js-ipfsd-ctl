@@ -19,8 +19,9 @@ let nodes = {}
 
 /**
  * @namespace EndpointServerRoutes
- * @private
+ * @ignore
  * @param {Hapi.Server} server
+ * @returns {void}
  */
 module.exports = (server) => {
   server.route({

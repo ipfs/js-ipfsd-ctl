@@ -6,9 +6,9 @@ const routes = require('./routes')
 /**
  * Creates an instance of Server.
  * @param {Object} options
- * @param {number} [options.port=43134] - server port
+ * @param {number} [options.port=43134] - Server port.
  */
-class EndpointServer {
+class Server {
   constructor (options) {
     options = options || { port: 43134 }
 
@@ -19,7 +19,8 @@ class EndpointServer {
   /**
    * Start the server
    *
-   * @param {function(err: Error, server: Hapi.Server)} cb
+   * @param {function(Error, Hapi.Server): void} cb
+   * @returns {void}
    */
   start (cb) {
     cb = cb || (() => {})
@@ -49,6 +50,7 @@ class EndpointServer {
    * Stop the server
    *
    * @param {function(err: Error)} [cb] - {@link https://github.com/hapijs/hapi/blob/v16.6.2/API.md#serverstopoptions-callback Hapi docs}
+   * @returns {void}
    */
   stop (cb) {
     cb = cb || (() => {})
@@ -57,4 +59,4 @@ class EndpointServer {
   }
 }
 
-module.exports = EndpointServer
+module.exports = Server
