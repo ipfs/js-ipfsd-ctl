@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.39.1",
+  "version": "0.39.2",
   "description": "Spawn IPFS Daemons, JS or Go",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
   "main": "src/index.js",
@@ -14,8 +14,8 @@
     "release": "aegir release",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
-    "coverage": "COVERAGE=true aegir coverage --timeout 50000",
-    "coverage-publish": "aegir coverage -u"
+    "coverage": "aegir coverage",
+    "coverage-publish": "aegir coverage --upload"
   },
   "browser": {
     "hapi": false,
@@ -68,8 +68,8 @@
     "Richard Schneider <makaretu@gmail.com>",
     "Scott Hardy <scott.the.hardy@gmail.com>",
     "Stephen Whitmore <stephen.whitmore@gmail.com>",
-    "Vasco Santos <vasco.santos@moxy.studio>",
     "Vasco Santos <vasco.santos@ua.pt>",
+    "Vasco Santos <vasco.santos@moxy.studio>",
     "Volker Mische <volker.mische@gmail.com>",
     "edsilv <e.silverton@gmail.com>",
     "greenkeeperio-bot <support@greenkeeper.io>",
@@ -88,7 +88,6 @@
     "dexie": "^2.0.4",
     "hapi": "^16.6.2",
     "hat": "~0.0.3",
-    "ipfs-api": "^24.0.1",
     "joi": "^13.1.2",
     "lodash.clone": "^4.5.0",
     "lodash.defaults": "^4.2.0",
@@ -96,6 +95,7 @@
     "multiaddr": "^5.0.0",
     "once": "^1.4.0",
     "readable-stream": "^3.0.2",
+    "ipfs-api": "^24.0.1",
     "rimraf": "^2.6.2",
     "safe-json-parse": "^4.0.0",
     "safe-json-stringify": "^1.1.0",
@@ -105,14 +105,14 @@
     "superagent": "^3.8.2"
   },
   "devDependencies": {
-    "aegir": "^15.1.0",
+    "aegir": "^15.2.0",
     "chai": "^4.1.2",
     "cross-env": "^5.1.4",
     "detect-port": "^1.2.2",
     "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "0.4.17",
-    "ipfs": "~0.31.7",
     "is-running": "^2.1.0",
+    "ipfs": "~0.32.0",
     "mkdirp": "~0.5.1",
     "proxyquire": "^2.0.1",
     "sinon": "^6.1.5",

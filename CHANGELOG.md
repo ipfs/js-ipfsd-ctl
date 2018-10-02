@@ -1,3 +1,14 @@
+<a name="0.39.2"></a>
+## [0.39.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.39.1...v0.39.2) (2018-09-12)
+
+
+### Bug Fixes
+
+* add namesys pubsub option ([#293](https://github.com/ipfs/js-ipfsd-ctl/issues/293)) ([d1f23a3](https://github.com/ipfs/js-ipfsd-ctl/commit/d1f23a3))
+* fix ipfsd.init return value ([#291](https://github.com/ipfs/js-ipfsd-ctl/issues/291)) ([3fa63e3](https://github.com/ipfs/js-ipfsd-ctl/commit/3fa63e3)), closes [#289](https://github.com/ipfs/js-ipfsd-ctl/issues/289)
+
+
+
 <a name="0.39.1"></a>
 ## [0.39.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.37.5...v0.39.1) (2018-08-07)
 
