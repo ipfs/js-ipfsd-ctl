@@ -105,18 +105,18 @@
     "superagent": "^3.8.2"
   },
   "devDependencies": {
-    "stream-http": "^2.8.1",
-    "readable-stream": "^2.3.6",
     "aegir": "^15.2.0",
     "chai": "^4.1.2",
     "dependency-check": "^3.2.1",
     "detect-port": "^1.2.2",
     "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "0.4.17",
-    "is-running": "^2.1.0",
     "ipfs": "~0.32.0",
+    "is-running": "^2.1.0",
     "mkdirp": "~0.5.1",
     "proxyquire": "^2.0.1",
+    "readable-stream": "^2.3.6",
+    "stream-http": "^2.8.1",
     "superagent-mocker": "~0.5.2"
   },
   "repository": {
