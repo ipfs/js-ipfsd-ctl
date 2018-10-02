@@ -15,7 +15,7 @@
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
     "coverage": "aegir coverage",
-    "coverage-publish": "aegir coverage --upload"
+    "dep-check": "dependency-check package.json './test/**/*.js'"
   },
   "browser": {
     "hapi": false,
@@ -41,7 +41,7 @@
   },
   "pre-push": [
     "lint",
-    "test"
+    "dep-check"
   ],
   "keywords": [
     "ipfs",
@@ -82,32 +82,34 @@
   "license": "MIT",
   "dependencies": {
     "async": "^2.6.0",
+    "base-x": "^3.0.4",
     "boom": "^7.2.0",
     "debug": "^3.1.0",
     "detect-node": "^2.0.3",
     "dexie": "^2.0.4",
     "hapi": "^16.6.2",
     "hat": "~0.0.3",
+    "ipfs-api": "^24.0.1",
     "joi": "^13.1.2",
+    "libp2p-crypto": "~0.14.0",
     "lodash.clone": "^4.5.0",
     "lodash.defaults": "^4.2.0",
     "lodash.defaultsdeep": "^4.6.0",
     "multiaddr": "^5.0.0",
     "once": "^1.4.0",
-    "readable-stream": "^3.0.2",
-    "ipfs-api": "^24.0.1",
+    "protons": "^1.0.1",
     "rimraf": "^2.6.2",
     "safe-json-parse": "^4.0.0",
     "safe-json-stringify": "^1.1.0",
-    "shutdown": "~0.3.0",
-    "stream-http": "^2.8.1",
     "subcomandante": "^1.0.5",
     "superagent": "^3.8.2"
   },
   "devDependencies": {
+    "stream-http": "^2.8.1",
+    "readable-stream": "^2.3.6",
     "aegir": "^15.2.0",
     "chai": "^4.1.2",
-    "cross-env": "^5.1.4",
+    "dependency-check": "^3.2.1",
     "detect-port": "^1.2.2",
     "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "0.4.17",
@@ -115,9 +117,7 @@
     "ipfs": "~0.32.0",
     "mkdirp": "~0.5.1",
     "proxyquire": "^2.0.1",
-    "sinon": "^6.1.5",
-    "superagent-mocker": "~0.5.2",
-    "supertest": "^3.0.0"
+    "superagent-mocker": "~0.5.2"
   },
   "repository": {
     "type": "git",
