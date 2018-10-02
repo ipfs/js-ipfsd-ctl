@@ -86,7 +86,7 @@
     "boom": "^7.2.0",
     "debug": "^3.1.0",
     "detect-node": "^2.0.3",
-    "dexie": "^1.5.1",
+    "dexie": "^2.0.4",
     "hapi": "^16.6.2",
     "hat": "~0.0.3",
     "ipfs-api": "^24.0.1",
@@ -113,8 +113,8 @@
     "detect-port": "^1.2.2",
     "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "0.4.17",
+    "is-running": "^2.1.0",
     "ipfs": "~0.32.0",
-    "is-running": "^1.0.5",
     "mkdirp": "~0.5.1",
     "proxyquire": "^2.0.1",
     "superagent-mocker": "~0.5.2"
