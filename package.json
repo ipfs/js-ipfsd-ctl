@@ -118,6 +118,7 @@
     "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "0.4.17",
     "ipfs": "~0.32.0",
+    "ipfs-pregen-ids": "~0.1.0",
     "is-running": "^2.1.0",
     "mkdirp": "~0.5.1",
     "proxyquire": "^2.0.1",

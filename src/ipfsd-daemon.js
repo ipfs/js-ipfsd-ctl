@@ -170,6 +170,13 @@ class Daemon {
     if (bits) {
       args.push('-b')
       args.push(bits)
+    } else if ((this.disposable || initOptions.pregen) && initOptions._pregen) {
+      try {
+        let id = initOptions._pregen(bits).toString('base64') // if bits not supported by pregen or we're out of pregen ids this throws
+        args.push('--private-key', id)
+      } catch (e) {
+        // ignore pregen ids error
+      }
     }
     if (initOptions.pass) {
       args.push('--pass')

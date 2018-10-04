@@ -135,7 +135,7 @@ class FactoryDaemon {
 
     options.type = this.options.type
     options.exec = options.exec || this.options.exec
-    options.initOptions = defaultsDeep({}, this.options.initOptions, options.initOptions)
+    options.initOptions = defaultsDeep({_pregen: this.options.pregen}, this.options.initOptions, options.initOptions)
 
     const node = new Daemon(options)
 

@@ -147,9 +147,23 @@ class FactoryInProc {
         node.initialized = initialized
         cb()
       }),
-      (cb) => options.init
-        ? node.init(cb)
-        : cb(),
+      (cb) => {
+        if (options.init) {
+          if ((options.disposable || options.pregen) && this.options.pregen) {
+            let id
+            try {
+              id = this.options.pregen(this.options.bits).toString('base64') // if bits not supported by pregen or we're out of pregen ids this throws
+            } catch (e) {
+              // id will be undefined so the arg gets ignored
+            }
+            node.init({privateKey: id}, cb)
+          } else {
+            node.init(cb)
+          }
+        } else {
+          cb()
+        }
+      },
       (cb) => options.start
         ? node.start(options.args, cb)
         : cb()

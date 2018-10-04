@@ -11,6 +11,10 @@ const EndpointServer = require('./endpoint/server')
 exports = module.exports
 
 exports.create = (opts) => {
+  if (typeof opts === 'function') { // support .create(require('ipfs-pregen-ids'))
+    opts = {pregen: opts}
+  }
+
   const options = defaults({}, opts, { remote: !isNode })
 
   if (options.type === 'proc') {
@@ -23,7 +27,7 @@ exports.create = (opts) => {
 }
 
 exports.createServer = (options) => {
-  if (typeof options === 'number') {
+  if (typeof options === 'number') { // support .createServer(80)
     options = { port: options }
   }
   return new EndpointServer(options)
