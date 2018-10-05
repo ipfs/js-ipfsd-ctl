@@ -167,16 +167,20 @@ class Daemon {
     // do not just set a default keysize,
     // in case we decide to change it at
     // the daemon level in the future
-    if (bits) {
-      args.push('-b')
-      args.push(bits)
-    } else if ((this.disposable || initOptions.pregen) && initOptions._pregen) {
+    if ((this.disposable || initOptions.pregen) && initOptions._pregen) {
       try {
         let id = initOptions._pregen(bits).toString('base64') // if bits not supported by pregen or we're out of pregen ids this throws
         args.push('--private-key', id)
       } catch (e) {
         // ignore pregen ids error
+        if (bits) {
+          args.push('-b', bits)
+          args.push(bits)
+        }
       }
+    } else if (bits) {
+      args.push('-b', bits)
+      args.push(bits)
     }
     if (initOptions.pass) {
       args.push('--pass')
