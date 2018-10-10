@@ -4,6 +4,8 @@
   "description": "Spawn IPFS Daemons, JS or Go",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
   "main": "src/index.js",
+  "jsdelivr": "dist/index.min.js",
+  "unpkg": "dist/index.min.js",
   "scripts": {
     "lint": "aegir lint",
     "docs": "aegir docs",
@@ -39,6 +41,10 @@
     "node": ">=6.0.0",
     "npm": ">=3.0.0"
   },
+  "files":[
+    "src",
+    "dist"
+  ],
   "pre-push": [
     "lint",
     "dep-check"
