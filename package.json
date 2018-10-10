@@ -84,7 +84,7 @@
     "async": "^2.6.0",
     "base-x": "^3.0.4",
     "boom": "^7.2.0",
-    "debug": "^3.1.0",
+    "debug": "^4.1.0",
     "detect-node": "^2.0.3",
     "dexie": "^2.0.4",
     "hapi": "^16.6.2",
@@ -105,7 +105,7 @@
     "superagent": "^3.8.2"
   },
   "devDependencies": {
-    "aegir": "^15.2.0",
+    "aegir": "^15.3.1",
     "chai": "^4.1.2",
     "dependency-check": "^3.2.1",
     "detect-port": "^1.2.2",
@@ -115,8 +115,8 @@
     "is-running": "^2.1.0",
     "mkdirp": "~0.5.1",
     "proxyquire": "^2.0.1",
-    "readable-stream": "^2.3.6",
-    "stream-http": "^2.8.1",
+    "readable-stream": "^3.0.6",
+    "stream-http": "^3.0.0",
     "superagent-mocker": "~0.5.2"
   },
   "repository": {
