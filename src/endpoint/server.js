@@ -3,6 +3,11 @@
 const Hapi = require('hapi')
 const routes = require('./routes')
 
+/**
+ * Creates an instance of Server.
+ * @param {Object} options
+ * @param {number} [options.port=43134] - Server port.
+ */
 class Server {
   constructor (options) {
     options = options || { port: 43134 }
@@ -11,6 +16,12 @@ class Server {
     this.port = options.port
   }
 
+  /**
+   * Start the server
+   *
+   * @param {function(Error, Hapi.Server): void} cb
+   * @returns {void}
+   */
   start (cb) {
     cb = cb || (() => {})
 
@@ -35,6 +46,12 @@ class Server {
     })
   }
 
+  /**
+   * Stop the server
+   *
+   * @param {function(err: Error)} [cb] - {@link https://github.com/hapijs/hapi/blob/v16.6.2/API.md#serverstopoptions-callback Hapi docs}
+   * @returns {void}
+   */
   stop (cb) {
     cb = cb || (() => {})
 

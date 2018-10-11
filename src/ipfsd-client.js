@@ -20,7 +20,17 @@ function createApi (apiAddr, gwAddr, IpfsApi) {
   return api
 }
 
-class DaemonClient {
+/**
+ * Creates an instance of Client.
+ *
+ * @param {*} baseUrl
+ * @param {*} _id
+ * @param {*} initialized
+ * @param {*} apiAddr
+ * @param {*} gwAddrs
+ * @param {*} options
+ */
+class Client {
   constructor (baseUrl, _id, initialized, apiAddr, gwAddrs, options) {
     this.options = options || {}
     this.baseUrl = baseUrl
@@ -231,7 +241,7 @@ class DaemonClient {
    *
    * @param {string} [key] - A specific config to retrieve.
    * @param {function(Error, (Object|string))} cb
-   * @returns {undefined}
+   * @returns {void}
    */
   getConfig (key, cb) {
     if (typeof key === 'function') {
@@ -259,7 +269,7 @@ class DaemonClient {
    * @param {string} key
    * @param {string} value
    * @param {function(Error)} cb
-   * @returns {undefined}
+   * @returns {void}
    */
   setConfig (key, value, cb) {
     request.put(`${this.baseUrl}/config`)
@@ -275,4 +285,4 @@ class DaemonClient {
   }
 }
 
-module.exports = DaemonClient
+module.exports = Client

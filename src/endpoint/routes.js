@@ -17,6 +17,12 @@ const routeConfig = {
 
 let nodes = {}
 
+/**
+ * @namespace EndpointServerRoutes
+ * @ignore
+ * @param {Hapi.Server} server
+ * @returns {void}
+ */
 module.exports = (server) => {
   server.route({
     method: 'GET',
@@ -46,10 +52,10 @@ module.exports = (server) => {
     }
   })
 
-  /**
+  /*
    * Spawn an IPFS node
    * The repo is created in a temporary location and cleaned up on process exit.
-   **/
+   */
   server.route({
     method: 'POST',
     path: '/spawn',
@@ -85,9 +91,9 @@ module.exports = (server) => {
     }
   })
 
-  /**
+  /*
    * Initialize a repo.
-   **/
+   */
   server.route({
     method: 'POST',
     path: '/init',
@@ -107,9 +113,9 @@ module.exports = (server) => {
     config: routeConfig
   })
 
-  /**
+  /*
    * Start the daemon.
-   **/
+   */
   server.route({
     method: 'POST',
     path: '/start',
@@ -135,7 +141,7 @@ module.exports = (server) => {
     config: routeConfig
   })
 
-  /**
+  /*
    * Get the address of connected IPFS API.
    */
   server.route({
@@ -149,8 +155,9 @@ module.exports = (server) => {
     config: routeConfig
   })
 
-  /**
+  /*
    * Get the address of connected IPFS HTTP Gateway.
+   * @memberof EndpointServerRoutes
    */
   server.route({
     method: 'GET',
@@ -162,11 +169,11 @@ module.exports = (server) => {
     config: routeConfig
   })
 
-  /**
+  /*
    * Delete the repo that was being used.
    * If the node was marked as `disposable` this will be called
    * automatically when the process is exited.
-   **/
+   */
   server.route({
     method: 'POST',
     path: '/cleanup',
@@ -183,7 +190,7 @@ module.exports = (server) => {
     config: routeConfig
   })
 
-  /**
+  /*
    * Stop the daemon.
    */
   server.route({
@@ -203,7 +210,7 @@ module.exports = (server) => {
     config: routeConfig
   })
 
-  /**
+  /*
    * Kill the `ipfs daemon` process.
    *
    * First `SIGTERM` is sent, after 7.5 seconds `SIGKILL` is sent
@@ -226,10 +233,8 @@ module.exports = (server) => {
     config: routeConfig
   })
 
-  /**
+  /*
    * Get the pid of the `ipfs daemon` process.
-   *
-   * @returns {number}
    */
   server.route({
     method: 'GET',
@@ -242,7 +247,7 @@ module.exports = (server) => {
     config: routeConfig
   })
 
-  /**
+  /*
    * Call `ipfs config`
    *
    * If no `key` is passed, the whole config is returned as an object.
@@ -270,7 +275,7 @@ module.exports = (server) => {
     }, routeConfig)
   })
 
-  /**
+  /*
    * Set a config value.
    */
   server.route({
