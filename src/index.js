@@ -11,7 +11,6 @@ const Server = require('./endpoint/server')
 /**
  * Create a Factory
  *
- * @memberof IpfsdCtl
  * @static
  * @function
  * @param {Object} [opts={}]
@@ -41,7 +40,6 @@ const create = (opts) => {
 /**
  * Create a Endpoint Server
  *
- * @memberof IpfsdCtl
  * @static
  * @function
  * @param {(Object|number)} options - Configuration options or just the port.
