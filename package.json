@@ -24,8 +24,6 @@
     "glob": false,
     "fs": false,
     "joi": false,
-    "stream": "readable-stream",
-    "http": "stream-http",
     "./src/utils/repo/nodejs.js": "./src/utils/repo/browser.js",
     "./src/utils/exec.js": false,
     "./src/utils/find-ipfs-executable.js": false,
@@ -38,7 +36,7 @@
     "./test/utils/df-config-nodejs.js": "./test/utils/df-config-browser.js"
   },
   "engines": {
-    "node": ">=6.0.0",
+    "node": ">=8.0.0",
     "npm": ">=3.0.0"
   },
   "files":[
@@ -121,8 +119,6 @@
     "is-running": "^2.1.0",
     "mkdirp": "~0.5.1",
     "proxyquire": "^2.0.1",
-    "readable-stream": "^3.0.6",
-    "stream-http": "^3.0.0",
     "superagent-mocker": "~0.5.2"
   },
   "repository": {
