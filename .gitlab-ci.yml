@@ -53,6 +53,7 @@ test-browser-firefox:
     - AEGIR_BROWSERS=FirefoxHeadless npm run test:browser
 
 cov:
+  stage: cov
   script: 
     - ls
     - npx nyc report
