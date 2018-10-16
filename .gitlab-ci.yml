@@ -1,0 +1,48 @@
+image: node:10
+stages:
+  - check
+  - test
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+# Cache modules in between jobs
+# cache:
+#   key: ${CI_COMMIT_REF_SLUG}
+#   paths:
+#   - yarn-cache/
+
+before_script:
+  # - yarn config set cache-folder .yarn-cache
+  - npm ci -q
+
+check:
+  stage: check
+  script:
+  - npm run lint
+  - npm run dep-check
+  - npm install --no-lockfile @commitlint/config-conventional @commitlint/cli --save-dev
+  - npx commitlint --extends=@commitlint/config-conventional --from=$CI_COMMIT_REF_NAME --to=CI_COMMIT_SHA
+
+test-node-8:
+  stage: test
+  image: node:8
+  script:
+  - npm run test:node
+
+test-node-10:
+  stage: test
+  script:
+  - npm run test:node
+
+test-browser-chrome:
+  image: hugomrdias/node-chrome:test
+  stage: test
+  script:
+    - AEGIR_BROWSERS=ChromeDocker npm run test:browser
+
+test-browser-firefox:
+  image: hugomrdias/node-firefox:test
+  stage: test
+  script:
+    - AEGIR_BROWSERS=FirefoxHeadless npm run test:browser
