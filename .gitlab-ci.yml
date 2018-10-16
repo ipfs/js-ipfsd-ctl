@@ -22,7 +22,7 @@ check:
   - npm run lint
   - npm run dep-check
   - npm install --no-lockfile @commitlint/config-conventional @commitlint/cli --save-dev
-  - npx commitlint --extends=@commitlint/config-conventional --from=$CI_COMMIT_REF_NAME --to=CI_COMMIT_SHA
+  - npx commitlint --extends=@commitlint/config-conventional --from=$CI_COMMIT_REF_NAME --to=$CI_COMMIT_SHA
 
 test-node-8:
   stage: test
