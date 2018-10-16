@@ -36,7 +36,9 @@ test-node-10:
   script:
     - COVERAGE=TRUE npx nyc npm run test:node
   artifacts:
-    - .nyc_output/
+    name: "node"
+    paths:
+      - .nyc_output/
 
 test-browser-chrome:
   image: hugomrdias/node-chrome:test
