@@ -2,6 +2,7 @@ image: node:10
 stages:
   - check
   - test
+  - cov
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -33,7 +34,9 @@ test-node-8:
 test-node-10:
   stage: test
   script:
-  - npx nyc npm run test:node
+    - COVERAGE=TRUE npx nyc npm run test:node
+  artifacts:
+    - .nyc_output/
 
 test-browser-chrome:
   image: hugomrdias/node-chrome:test
@@ -46,3 +49,10 @@ test-browser-firefox:
   stage: test
   script:
     - AEGIR_BROWSERS=FirefoxHeadless npm run test:browser
+
+cov:
+  script: 
+    - ls
+    - npx nyc report
+  dependencies:
+    - test-node-10
