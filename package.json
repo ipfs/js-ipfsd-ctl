@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.39.2",
+  "version": "0.39.3",
   "description": "Spawn IPFS Daemons, JS or Go",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
   "main": "src/index.js",
@@ -39,7 +39,7 @@
     "node": ">=8.0.0",
     "npm": ">=3.0.0"
   },
-  "files":[
+  "files": [
     "src",
     "dist"
   ],
@@ -53,6 +53,7 @@
     "daemon"
   ],
   "contributors": [
+    "Alan Shaw <alan.shaw@protocol.ai>",
     "Alan Shaw <alan@tableflip.io>",
     "Alex Potsides <alex@achingbrain.net>",
     "Bret Comnes <bcomnes@gmail.com>",
@@ -63,11 +64,13 @@
     "Gar <gar+gh@danger.computer>",
     "Haad <haadcode@users.noreply.github.com>",
     "Harlan T Wood <harlantwood@users.noreply.github.com>",
+    "Hugo Dias <hugomrdias@gmail.com>",
     "Hugo Dias <mail@hugodias.me>",
     "Jacob Heun <jake@andyet.net>",
     "Jonathan <jkrone@vt.edu>",
     "Kristoffer Ström <kristoffer@rymdkoloni.se>",
     "Lars-Magnus Skog <ralphtheninja@riseup.net>",
+    "Maciej Krüger <mkg20001@gmail.com>",
     "Richard Littauer <richard.littauer@gmail.com>",
     "Richard Schneider <makaretu@gmail.com>",
     "Scott Hardy <scott.the.hardy@gmail.com>",
