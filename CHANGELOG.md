@@ -1,3 +1,19 @@
+<a name="0.39.3"></a>
+## [0.39.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.39.2...v0.39.3) (2018-10-19)
+
+
+### Bug Fixes
+
+* CLI scraping of API and Gateway addresses ([#301](https://github.com/ipfs/js-ipfsd-ctl/issues/301)) ([1fc3fa0](https://github.com/ipfs/js-ipfsd-ctl/commit/1fc3fa0))
+
+
+### Features
+
+* upgrade to ipfs-api 24.0.1 ([d773a27](https://github.com/ipfs/js-ipfsd-ctl/commit/d773a27))
+* Use pregenerated ids for testing ([#284](https://github.com/ipfs/js-ipfsd-ctl/issues/284)) ([cbc1ac6](https://github.com/ipfs/js-ipfsd-ctl/commit/cbc1ac6))
+
+
+
 <a name="0.39.2"></a>
 ## [0.39.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.39.1...v0.39.2) (2018-09-12)
 
