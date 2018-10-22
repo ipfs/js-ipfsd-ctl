@@ -7,7 +7,6 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const isrunning = require('is-running')
-const cp = require('child_process')
 const path = require('path')
 const exec = require('../src/utils/exec')
 const os = require('os')
@@ -30,19 +29,6 @@ function psExpect (pid, shouldBeRunning, grace, callback) {
 
     callback(null, actual)
   }, 200)
-}
-
-function isRunningGrep (pattern, callback) {
-  const cmd = 'ps aux'
-  cp.exec(cmd, { maxBuffer: 1024 * 500 }, (err, stdout, stderr) => {
-    if (err) {
-      return callback(err)
-    }
-
-    const running = stdout.match(pattern) !== null
-
-    callback(null, running)
-  })
 }
 
 function makeCheck (n, done) {
@@ -98,7 +84,6 @@ describe('exec', () => {
     exec(process.execPath, [
       path.resolve(path.join(__dirname, 'fixtures', 'error.js'))
     ], {}, (error) => {
-      expect(error.message).to.contain('non-zero exit code 1')
       expect(error.message).to.contain('Goodbye cruel world!')
 
       done()
@@ -113,13 +98,10 @@ describe('exec', () => {
     const args = hang.concat(tok)
 
     const p = exec(args[0], args.slice(1), {}, (err) => {
-      expect(err).to.not.exist()
-
-      isRunningGrep(token, (err, running) => {
-        expect(err).to.not.exist()
-        expect(running).to.not.be.ok()
-        check()
-      })
+      expect(err).to.exist()
+      expect(err.killed).to.be.ok()
+      expect(err.signal).to.equal('SIGTERM')
+      check()
     })
 
     psExpect(p.pid, true, 10, (err, running) => {
@@ -141,13 +123,10 @@ describe('exec', () => {
     const tok = token()
 
     const p = exec(survivor, [tok], {}, (err) => {
-      expect(err).to.not.exist()
-
-      isRunningGrep(token, (err, running) => {
-        expect(err).to.not.exist()
-        expect(running).to.not.be.ok()
-        check()
-      })
+      expect(err).to.exist()
+      expect(err.killed).to.be.ok()
+      expect(err.signal).to.equal('SIGKILL')
+      check()
     })
 
     psExpect(p.pid, true, 10, (err, running) => {
