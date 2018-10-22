@@ -94,6 +94,7 @@
     "debug": "^4.1.0",
     "detect-node": "^2.0.3",
     "dexie": "^2.0.4",
+    "execa": "^1.0.0",
     "hapi": "^16.6.2",
     "hat": "~0.0.3",
     "ipfs-api": "^24.0.1",
@@ -108,7 +109,6 @@
     "rimraf": "^2.6.2",
     "safe-json-parse": "^4.0.0",
     "safe-json-stringify": "^1.1.0",
-    "subcomandante": "^1.0.5",
     "superagent": "^3.8.2"
   },
   "devDependencies": {
