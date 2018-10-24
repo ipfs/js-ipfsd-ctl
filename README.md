@@ -84,7 +84,7 @@ server.start((err) => {
 `ipfsd-ctl` can spawn `disposable` and `non-disposable` daemons.
 
 - `disposable`- Creates on a temporary repo which will be optionally initialized and started (the default), as well cleaned up on process exit. Great for tests.
-- `non-disposable` - Requires the user to initialize and start the node, as well as stop and cleanup after wards. Additionally, a non-disposable will allow you to pass a custom repo using the `repoPath` option, if the `repoPath` is not defined, it will use the default repo for the node type (`$HOME/.ipfs` or `$HOME/.jsipfs`). The `repoPath` parameter is ignored for disposable nodes, as there is a risk of deleting a live repo.
+- `non-disposable` - ipfsd-ctl will initialize and start a daemon if not there isn't a repo initialized and a daemon started. non-disposable defaults to try to find an IPFS repo `$HOME/.ipfs` or `$HOME/.jsipfs` for go-ipfs or js-ipfs respectively. The repo will not be deleted up after use.
 
 ## Batteries not included. Bring your own IPFS executable.
 

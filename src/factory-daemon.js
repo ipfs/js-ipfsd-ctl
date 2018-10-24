@@ -98,8 +98,6 @@ class FactoryDaemon {
 
     if (!options.disposable) {
       const nonDisposableConfig = clone(defaultConfig)
-      options.init = false
-      options.start = false
 
       const defaultRepo = path.join(
         process.env.HOME || process.env.USERPROFILE,
@@ -126,9 +124,14 @@ class FactoryDaemon {
     const node = new Daemon(options)
 
     series([
+
+      // TODO if init fails, check if it was because the
+      // repo was already was inited, if yes, continue
       (cb) => options.init
         ? node.init(options.initOptions, cb)
         : cb(null, node),
+      // TODO if start fails, check if it was because there
+      // is a daemon already running and connect to it instead
       (cb) => options.start
         ? node.start(options.args, cb)
         : cb()
