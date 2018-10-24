@@ -162,7 +162,10 @@ class Daemon {
     }
 
     const bits = initOptions.bits || this.bits
-    const args = ['init']
+    const args = [
+      'init',
+      this.opts.type === 'js' && JSON.stringify(this.opts.config)
+    ].filter(Boolean)
     // do not just set a default keysize,
     // in case we decide to change it at
     // the daemon level in the future
@@ -174,14 +177,22 @@ class Daemon {
       args.push('--pass')
       args.push('"' + initOptions.pass + '"')
     }
-    run(this, args, { env: this.env }, (err, result) => {
+    run(this, args, { stdout: data => console.log(data.toString()), env: this.env }, (err, result) => {
       if (err) {
         return callback(err)
       }
 
+      if (this.opts.type === 'js') {
+        this.clean = false
+        this.initialized = true
+        return callback(null, this)
+      }
+
       waterfall([
         (cb) => this.getConfig(cb),
-        (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
+        (conf, cb) => {
+          this.replaceConfig(defaults({}, this.opts.config, conf), cb)
+        }
       ], (err) => {
         if (err) { return callback(err) }
         this.clean = false
