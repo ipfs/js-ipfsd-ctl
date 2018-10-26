@@ -6,8 +6,7 @@
 [![Codecov branch](https://img.shields.io/codecov/c/github/ipfs/js-ipfs-multipart/master.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-ipfs-multipart)
 [![Dependency Status](https://david-dm.org/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfsd-ctl)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
-[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-
+[![Size minified + gzip](https://flat.badgen.net/bundlephobia/minzip/ipfsd-ctl)](https://bundlephobia.com/result?p=ipfsd-ctl)
 > Spawn IPFS daemons using JavaScript!
 
 ## Lead Maintainer
