@@ -112,7 +112,7 @@
     "superagent": "^3.8.2"
   },
   "devDependencies": {
-    "aegir": "^15.3.1",
+    "aegir": "^17.0.0",
     "chai": "^4.1.2",
     "dependency-check": "^3.2.1",
     "detect-port": "^1.2.2",
