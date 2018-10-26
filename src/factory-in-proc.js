@@ -8,8 +8,8 @@ const once = require('once')
 const tmpDir = require('./utils/tmp-dir')
 const repoUtils = require('./utils/repo/nodejs')
 const InProc = require('./ipfsd-in-proc')
-const defaultConfig = require('./defaults/config')
-const defaultOptions = require('./defaults/options')
+const defaultConfig = require('./defaults/config.json')
+const defaultOptions = require('./defaults/options.json')
 
 /** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
 
