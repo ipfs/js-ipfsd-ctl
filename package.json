@@ -88,11 +88,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "async": "^2.6.0",
+    "async": "^2.6.1",
     "base-x": "^3.0.4",
     "boom": "^7.2.0",
     "debug": "^4.1.0",
-    "detect-node": "^2.0.3",
+    "detect-node": "^2.0.4",
     "dexie": "^2.0.4",
     "execa": "^1.0.0",
     "hapi": "^16.6.2",
