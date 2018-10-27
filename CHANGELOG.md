@@ -1,3 +1,40 @@
+<a name="0.39.4"></a>
+## [0.39.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.39.3...v0.39.4) (2018-10-26)
+
+
+### Bug Fixes
+
+* upgrade ipfs-api ([3c8c913](https://github.com/ipfs/js-ipfsd-ctl/commit/3c8c913))
+
+
+
+<a name="0.39.3"></a>
+## [0.39.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.39.2...v0.39.3) (2018-10-19)
+
+
+### Bug Fixes
+
+* CLI scraping of API and Gateway addresses ([#301](https://github.com/ipfs/js-ipfsd-ctl/issues/301)) ([1fc3fa0](https://github.com/ipfs/js-ipfsd-ctl/commit/1fc3fa0))
+
+
+### Features
+
+* upgrade to ipfs-api 24.0.1 ([d773a27](https://github.com/ipfs/js-ipfsd-ctl/commit/d773a27))
+* Use pregenerated ids for testing ([#284](https://github.com/ipfs/js-ipfsd-ctl/issues/284)) ([cbc1ac6](https://github.com/ipfs/js-ipfsd-ctl/commit/cbc1ac6))
+
+
+
+<a name="0.39.2"></a>
+## [0.39.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.39.1...v0.39.2) (2018-09-12)
+
+
+### Bug Fixes
+
+* add namesys pubsub option ([#293](https://github.com/ipfs/js-ipfsd-ctl/issues/293)) ([d1f23a3](https://github.com/ipfs/js-ipfsd-ctl/commit/d1f23a3))
+* fix ipfsd.init return value ([#291](https://github.com/ipfs/js-ipfsd-ctl/issues/291)) ([3fa63e3](https://github.com/ipfs/js-ipfsd-ctl/commit/3fa63e3)), closes [#289](https://github.com/ipfs/js-ipfsd-ctl/issues/289)
+
+
+
 <a name="0.39.1"></a>
 ## [0.39.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.37.5...v0.39.1) (2018-08-07)
 

@@ -2,7 +2,7 @@
 'use strict'
 
 const hat = require('hat')
-const Dexie = require('dexie')
+const Dexie = require('dexie').default
 const setImmediate = require('async/setImmediate')
 
 exports.createTempRepoPath = function createTempPathRepo () {
