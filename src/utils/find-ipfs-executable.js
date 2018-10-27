@@ -54,9 +54,5 @@ module.exports.find = (appRoot, depPath, execName) => {
     // ignore the error
   }
 
-  try {
-    return which.sync(execName)
-  } catch (error) {
-    // ignore the error
-  }
+  return which.sync(execName, { nothrow: true })
 }
