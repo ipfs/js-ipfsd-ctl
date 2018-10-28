@@ -30,7 +30,7 @@ npm install --save ipfsd-ctl
 
 ## Usage
 
-**Spawn an IPFS daemon from Node.js**
+**Spawn IPFS daemons from Node.js**
 
 ```js
 // Start a disposable node, and get access to the api
@@ -45,10 +45,24 @@ f.spawn(function (err, ipfsd) {
   ipfsd.api.id(function (err, id) {
     if (err) { throw err }
 
-    console.log(id)
+    console.log('I am an IPFS Daemon', id)
     ipfsd.stop()
   })
 })
+
+// You can do this multiple times!
+
+f.spawn(function (err, ipfsd) {
+  if (err) { throw err }
+
+  ipfsd.api.id(function (err, id) {
+    if (err) { throw err }
+
+    console.log('Another IPFS daemon', id)
+    ipfsd.stop()
+  })
+})
+
 ```
 
 **Spawn an IPFS daemon from the Browser using the provided remote endpoint**
@@ -83,8 +97,8 @@ server.start((err) => {
 
 `ipfsd-ctl` can spawn `disposable` and `non-disposable` daemons.
 
-- `disposable`- Creates on a temporary repo which will be optionally initialized and started (the default), as well cleaned up on process exit. Great for tests.
-- `non-disposable` - ipfsd-ctl will initialize and start a daemon if not there isn't a repo initialized and a daemon started. non-disposable defaults to try to find an IPFS repo `$HOME/.ipfs` or `$HOME/.jsipfs` for go-ipfs or js-ipfs respectively. The repo will not be deleted up after use.
+- `disposable`- Creates on a temporary repo which will be optionally initialized and started (default), as well cleaned up on process exit. Great for writing tests.
+- `Not disposable` - ipfsd-ctl will initialize and start a daemon if not there isn't a repo initialized and a daemon started (if there is, then it will just connect to it). Non Disposable defaults to try to find an IPFS repo `$HOME/.ipfs` or `$HOME/.jsipfs` for go-ipfs or js-ipfs respectively. The repo will not be deleted up after use.
 
 ## Batteries not included. Bring your own IPFS executable.
 
@@ -128,7 +142,7 @@ Spawn the daemon
 - `callback` - is a function with the signature `function (err, ipfsd)` where:
   - `err` - is the error set if spawning the node is unsuccessful
   - `ipfsd` - is the daemon controller instance:
-    - `api` - a property of `ipfsd`, an instance of  [ipfs-api](https://github.com/ipfs/js-ipfs-api) attached to the newly created ipfs node   
+    - `api` - a property of `ipfsd`, an instance of  [ipfs-api](https://github.com/ipfs/js-ipfs-api) attached to the newly created ipfs node
 
 **example:** See [Usage](#usage)
 
@@ -213,7 +227,7 @@ Start the daemon.
 
 `flags` - Flags array to be passed to the `ipfs daemon` command.
 
-`callback` is a function with the signature `function(err, ipfsApi)` that receives an instance of `Error` on failure or an instance of `ipfs-api` on success. 
+`callback` is a function with the signature `function(err, ipfsApi)` that receives an instance of `Error` on failure or an instance of `ipfs-api` on success.
 
 
 #### `ipfsd.stop([timeout, callback])`
@@ -304,11 +318,11 @@ Project structure:
 ```
 src
 ├── defaults
-│   ├── config.json
-│   └── options.json
+│   ├── config.json
+│   └── options.json
 ├── endpoint                    # endpoint to support remote spawning
-│   ├── routes.js
-│   └── server.js
+│   ├── routes.js
+│   └── server.js
 ├── factory-client.js           # IPFS Factories: client (remote), daemon (go or js) and in-proc (js)
 ├── factory-daemon.js
 ├── factory-in-proc.js
@@ -323,8 +337,8 @@ src
     ├── flatten.js
     ├── parse-config.js
     ├── repo
-    │   ├── create-browser.js
-    │   └── create-nodejs.js
+    │   ├── create-browser.js
+    │   └── create-nodejs.js
     ├── run.js
     ├── set-config-value.js
     └── tmp-dir.js
