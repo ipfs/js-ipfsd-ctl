@@ -1,3 +1,19 @@
+<a name="0.39.5"></a>
+## [0.39.5](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.39.4...v0.39.5) (2018-10-28)
+
+
+### Bug Fixes
+
+* linting errors ([ac22a3c](https://github.com/ipfs/js-ipfsd-ctl/commit/ac22a3c))
+
+
+### Features
+
+* add dht experimental flag ([3164a88](https://github.com/ipfs/js-ipfsd-ctl/commit/3164a88))
+* use execa instead of subcomandante ([388b401](https://github.com/ipfs/js-ipfsd-ctl/commit/388b401))
+
+
+
 <a name="0.39.4"></a>
 ## [0.39.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.39.3...v0.39.4) (2018-10-26)
 
