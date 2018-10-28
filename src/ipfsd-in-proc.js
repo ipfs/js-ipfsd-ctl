@@ -55,6 +55,8 @@ class InProc extends EventEmitter {
         this.opts.EXPERIMENTAL.sharding = true
       } else if (arg === '--enable-namesys-pubsub') {
         this.opts.EXPERIMENTAL.ipnsPubsub = true
+      } else if (arg === '--enable-dht-experiment') {
+        this.opts.EXPERIMENTAL.dht = true
       } else if (arg.startsWith('--pass')) {
         this.opts.pass = arg.split(' ').slice(1).join(' ')
       } else {
