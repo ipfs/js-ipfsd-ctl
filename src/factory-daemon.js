@@ -124,16 +124,29 @@ class FactoryDaemon {
     const node = new Daemon(options)
 
     series([
-
-      // TODO if init fails, check if it was because the
-      // repo was already was inited, if yes, continue
       (cb) => options.init
-        ? node.init(options.initOptions, cb)
+        ? node.init(options.initOptions, (err) => {
+          if (err) {
+            console.log(err)
+            // TODO if init fails, check if it was because the
+            // repo was already was inited, if yes, continue
+            cb(err)
+          } else {
+            cb()
+          }
+        })
         : cb(null, node),
-      // TODO if start fails, check if it was because there
-      // is a daemon already running and connect to it instead
       (cb) => options.start
-        ? node.start(options.args, cb)
+        ? node.start(options.args, (err) => {
+          if (err) {
+            console.log(err)
+            // TODO if start fails, check if it was because there
+            // is a daemon already running and connect to it instead
+            cb(err)
+          } else {
+            cb()
+          }
+        })
         : cb()
     ], (err) => {
       if (err) { return callback(err) }
