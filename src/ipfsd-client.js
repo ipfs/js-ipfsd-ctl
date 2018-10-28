@@ -218,8 +218,8 @@ class Client {
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @param {Function} cb
-   * @returns {number}
+   * @param {function(Error, number): void} cb - receives the pid
+   * @returns {void}
    */
   pid (cb) {
     request

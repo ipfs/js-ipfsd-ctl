@@ -260,7 +260,7 @@ class InProc extends EventEmitter {
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @returns {number}
+   * @returns {undefined}
    */
   pid () {
     throw new Error('not implemented')
