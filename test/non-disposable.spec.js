@@ -115,7 +115,7 @@ tests.forEach((fOpts) => {
       })
     })
 
-    it.only('should init and start', function (done) {
+    it('should init and start', function (done) {
       const df = IPFSFactory.create(config)
       df.spawn({
         initOptions: { bits: fOpts.bits },
