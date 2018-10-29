@@ -11,7 +11,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const tests = [
-  // { type: 'go', bits: 1024 },
+  { type: 'go', bits: 1024 },
   { type: 'js', bits: 512 }
 ]
 
