@@ -18,7 +18,7 @@ const tests = [
 tests.forEach((fOpts) => {
   const config = Object.assign({}, {port: 25000}, fOpts)
 
-  describe.only(`non-disposable ${fOpts.type} daemon`, function () {
+  describe(`non-disposable ${fOpts.type} daemon`, function () {
     this.timeout(40000)
     let ipfsd = null
     let repoPath = null
