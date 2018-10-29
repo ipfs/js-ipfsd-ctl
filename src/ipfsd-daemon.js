@@ -64,7 +64,6 @@ class Daemon {
 
       delete process.env.IPFS_EXEC
     }
-
     const envExec = this.opts.type === 'go' ? process.env.IPFS_GO_EXEC : process.env.IPFS_JS_EXEC
     this.exec = this.opts.exec || envExec || findIpfsExecutable(this.opts.type, rootPath)
     this.subprocess = null
@@ -152,7 +151,16 @@ class Daemon {
   init (initOptions, callback) {
     if (typeof initOptions === 'function') {
       callback = initOptions
-      initOptions = {}
+      initOptions = null
+    }
+
+    if (this.initialized && initOptions) {
+      callback(new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`))
+    }
+
+    if (this.initialized) {
+      this.clean = false
+      return callback(null, this)
     }
 
     initOptions = initOptions || {}

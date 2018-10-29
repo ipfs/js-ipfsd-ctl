@@ -51,116 +51,6 @@ describe('Spawn options', function () {
       })
     })
 
-    describe('init and start', () => {
-      let prevRepoPath
-
-      describe('init and start manually', () => {
-        let ipfsd
-        let repoPath
-
-        before((done) => {
-          f.tmpDir(fOpts.type, (err, tmpDir) => {
-            expect(err).to.not.exist()
-            repoPath = tmpDir
-            prevRepoPath = repoPath
-            done()
-          })
-        })
-
-        it('f.spawn', (done) => {
-          const options = {
-            repoPath: repoPath,
-            init: false,
-            start: false,
-            disposable: false,
-            initOptions: { bits: fOpts.bits }
-          }
-
-          f.spawn(options, (err, _ipfsd) => {
-            expect(err).to.not.exist()
-            expect(_ipfsd).to.exist()
-            expect(_ipfsd.api).to.not.exist()
-            expect(_ipfsd.initialized).to.eql(false)
-
-            ipfsd = _ipfsd
-            repoPath = _ipfsd.repoPath
-            done()
-          })
-        })
-
-        it('ipfsd.init', function (done) {
-          this.timeout(20 * 1000)
-
-          ipfsd.init((err) => {
-            expect(err).to.not.exist()
-            expect(ipfsd.initialized).to.be.ok()
-            done()
-          })
-        })
-
-        it('ipfsd.start', function (done) {
-          this.timeout(20 * 1000)
-
-          ipfsd.start((err, api) => {
-            expect(err).to.not.exist()
-            expect(api).to.exist()
-            expect(api.id).to.exist()
-            done()
-          })
-        })
-
-        it('ipfsd.stop', function (done) {
-          this.timeout(20 * 1000)
-
-          ipfsd.stop(done)
-        })
-      })
-
-      describe('spawn from an initialized repo', () => {
-        let ipfsd
-
-        it('f.spawn', function (done) {
-          this.timeout(20 * 1000)
-
-          const options = {
-            repoPath: prevRepoPath,
-            init: false,
-            start: false,
-            disposable: false
-          }
-
-          f.spawn(options, (err, _ipfsd) => {
-            expect(err).to.not.exist()
-            expect(_ipfsd).to.exist()
-
-            ipfsd = _ipfsd
-
-            expect(ipfsd.api).to.not.exist()
-            expect(ipfsd.initialized).to.eql(true)
-
-            done()
-          })
-        })
-
-        it('ipfsd.start', function (done) {
-          this.timeout(20 * 1000)
-
-          ipfsd.start((err, api) => {
-            expect(err).to.not.exist()
-            expect(api).to.exist()
-            expect(api.id).to.exist()
-            done()
-          })
-        })
-
-        it('ipfsd.stop', function (done) {
-          this.timeout(20 * 1000)
-
-          ipfsd.stop(done)
-        })
-      })
-    })
-
     describe('spawn a node and attach api', () => {
       let ipfsd
 
@@ -286,7 +176,6 @@ describe('Spawn options', function () {
       // remote endpoint?
       if (!isNode) { return }
 
-      let ipfsd
       let repoPath
 
       before((done) => {
@@ -298,52 +187,22 @@ describe('Spawn options', function () {
       })
 
       it('allows passing custom repo path to spawn', function (done) {
-        this.timeout(20 * 1000)
-
-        const config = {
-          Addresses: {
-            Swarm: [
-              '/ip4/127.0.0.1/tcp/0/ws',
-              '/ip4/127.0.0.1/tcp/0'
-            ],
-            API: '/ip4/127.0.0.1/tcp/0',
-            Gateway: '/ip4/127.0.0.1/tcp/0'
-          }
-        }
-
         const options = {
           disposable: false,
-          init: false,
-          start: false,
+          init: true,
+          start: true,
           repoPath: repoPath,
-          config: config,
           initOptions: { bits: fOpts.bits }
         }
 
-        series([
-          (cb) => f.spawn(options, (err, _ipfsd) => {
-            expect(err).to.not.exist()
-            ipfsd = _ipfsd
-            cb()
-          }),
-          (cb) => {
-            ipfsd.init(cb)
-          },
-          (cb) => {
-            ipfsd.start(cb)
-          }
-        ], (err) => {
+        f.spawn(options, (err, ipfsd) => {
           expect(err).to.not.exist()
           if (isNode) {
             // We can only check if it really got created when run in Node.js
             expect(fs.existsSync(repoPath)).to.be.ok()
           }
-          done()
+          ipfsd.stop(() => ipfsd.cleanup(done))
         })
-      })
-
-      after((done) => {
-        ipfsd.stop(() => ipfsd.cleanup(done))
       })
     })
 
