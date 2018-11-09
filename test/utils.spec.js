@@ -2,6 +2,7 @@
 /* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
+const { waterfall } = require('async')
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
@@ -13,8 +14,84 @@ const path = require('path')
 const flatten = require('../src/utils/flatten')
 const tempDir = require('../src/utils/tmp-dir')
 const findIpfsExecutable = require('../src/utils/find-ipfs-executable')
+const ctl = require('../src/index')
+const { repoExists, removeRepo } = require('../src/utils/repo/nodejs')
 
 describe('utils', () => {
+  describe('repo', () => {
+    it('repoExists should return true', (done) => {
+      const fac = ctl.create({type: 'proc', exec: require('ipfs')})
+      fac.spawn((err, ipfsd) => {
+        if (err) {
+          return done(err)
+        }
+
+        repoExists(ipfsd.path, (err, exists) => {
+          if (err) {
+            return done(err)
+          }
+          expect(exists).to.be.true()
+          done()
+        })
+      })
+    })
+
+    it('repoExists should return false', (done) => {
+      repoExists('test-fail', (err, exists) => {
+        if (err) {
+          return done(err)
+        }
+        expect(exists).to.be.false()
+        done()
+      })
+    })
+
+    it.only('removeRepo should delete repo', (done) => {
+      const fac = ctl.create({type: 'proc', exec: require('ipfs')})
+
+      waterfall([
+        cb => fac.spawn({disposable: false}, cb),
+        (ipfsd, cb) => ipfsd.init(cb),
+        (ipfsd, cb) => ipfsd.start(err => {
+          if (err) { return cb(err) }
+          cb(null, ipfsd)
+        }),
+        (ipfsd, cb) => ipfsd.stop(err => {
+          if (err) { return cb(err) }
+          cb(null, ipfsd)
+        }),
+        (ipfsd, cb) => removeRepo(ipfsd.path, err => {
+          if (err) { return cb(err) }
+          cb(null, ipfsd)
+        })
+      ], (ipfsd, err) => {
+        if (err) {
+          return done(err)
+        }
+        repoExists(ipfsd.path, (err, exists) => {
+          if (err) {
+            return done(err)
+          }
+          expect(exists).to.be.false()
+          done()
+        })
+      })
+    })
+
+    it.only('removeRepo shouldn\'t delete repo', (done) => {
+      const fac = ctl.create({type: 'proc', exec: require('ipfs')})
+      fac.spawn((err, ipfsd) => {
+        if (err) {
+          done(err)
+        }
+        removeRepo(ipfsd.path, (err) => {
+          expect(err).to.exist()
+          done()
+        })
+      })
+    })
+  })
+
   describe('.flatten', () => {
     it('should flatten', () => {
       expect(flatten({ a: { b: { c: [1, 2, 3] } } }))

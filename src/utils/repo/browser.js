@@ -2,25 +2,42 @@
 'use strict'
 
 const hat = require('hat')
-const Dexie = require('dexie').default
-const setImmediate = require('async/setImmediate')
 
-exports.createTempRepoPath = function createTempPathRepo () {
+function createTempRepoPath () {
   return '/ipfs-' + hat()
 }
 
-exports.removeRepo = function removeRepo (repoPath, callback) {
-  Dexie.delete(repoPath)
-  setImmediate(callback)
+function removeRepo (repoPath, cb) {
+  const req = self.indexedDB.deleteDatabase(repoPath)
+  req.onerror = () => { cb(req.error) }
+  req.onblocked = (e) => {
+    cb(new Error('Request blocked but another connection.'))
+  }
+  req.onsuccess = (e) => {
+    if (!e.result) {
+      cb()
+    } else {
+      cb(new Error('Error removing repo.'))
+    }
+  }
 }
 
-exports.repoExists = function repoExists (repoPath, cb) {
-  const db = new Dexie(repoPath)
-  db.open(repoPath)
-    .then((store) => {
-      const table = store.table(repoPath)
-      return table
-        .count((cnt) => cb(null, cnt > 0))
-        .catch(cb)
-    }).catch(cb)
+function repoExists (repoPath, cb) {
+  var req = self.indexedDB.open(repoPath)
+  var existed = true
+  req.onerror = () => cb(req.error)
+  req.onsuccess = function () {
+    req.result.close()
+    if (!existed) { self.indexedDB.deleteDatabase(repoPath) }
+    cb(null, existed)
+  }
+  req.onupgradeneeded = function () {
+    existed = false
+  }
+}
+
+module.exports = {
+  createTempRepoPath,
+  removeRepo,
+  repoExists
 }
