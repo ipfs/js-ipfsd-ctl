@@ -27,7 +27,6 @@ class InProc {
     this.initialized = false
     this.started = false
     this.clean = true
-    this.exec = null
     this.api = null
     this.apiAddr = null
     this.gatewayAddr = null
@@ -66,7 +65,7 @@ class InProc {
       return setImmediate(() => cb(null, this))
     }
     const IPFS = this.opts.exec
-    this.api = this.exec = new IPFS({
+    this.api = new IPFS({
       repo: this.path,
       init: false,
       start: false,
@@ -75,8 +74,8 @@ class InProc {
       libp2p: this.opts.libp2p,
       config: this.opts.config
     })
-    this.exec.once('error', cb)
-    this.exec.once('ready', () => cb(null, this))
+    this.api.once('error', cb)
+    this.api.once('ready', () => cb(null, this))
   }
 
   setApi (addr) {

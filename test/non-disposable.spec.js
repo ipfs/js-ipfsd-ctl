@@ -192,6 +192,7 @@ tests.forEach((fOpts) => {
           return done(err)
         }
 
+        expect(ipfsd.initialized).to.be.false()
         ipfsd.init((err) => {
           expect(err).to.not.exist()
           expect(ipfsd.initialized).to.be.true()
