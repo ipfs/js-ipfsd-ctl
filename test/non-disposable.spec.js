@@ -84,7 +84,7 @@ tests.forEach((fOpts) => {
       })
     })
 
-    it.only('should attach to running node with manual start', function (done) {
+    it('should attach to running node with manual start', function (done) {
       if (fOpts.type === 'proc' && !isNode) {
         return this.skip()
       }
