@@ -2,7 +2,6 @@
 
 const series = require('async/series')
 const merge = require('merge-options')
-const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
 const Daemon = require('./ipfsd-daemon')
 const defaultConfig = require('./defaults/config.json')
@@ -79,10 +78,7 @@ class FactoryDaemon {
       callback = options
       options = {}
     }
-    const defaultRepo = path.join(
-      process.env.HOME || process.env.USERPROFILE,
-      this.options.type === 'js' ? '.jsipfs' : '.ipfs'
-    )
+
     const daemonOptions = merge({
       exec: this.options.exec,
       type: this.options.type,
@@ -90,8 +86,7 @@ class FactoryDaemon {
       disposable: true,
       start: options.disposable !== false,
       init: options.disposable !== false,
-      config: defaultConfig,
-      repoPath: defaultRepo
+      config: defaultConfig
     }, options)
 
     if (options.defaultAddrs) {
@@ -101,8 +96,8 @@ class FactoryDaemon {
     const node = new Daemon(daemonOptions)
 
     series([
-      daemonOptions.init && ((cb) => node.init(daemonOptions.initOptions, cb)),
-      daemonOptions.start && ((cb) => node.start(daemonOptions.args, cb))
+      daemonOptions.init && (cb => node.init(daemonOptions.initOptions, cb)),
+      daemonOptions.start && (cb => node.start(daemonOptions.args, cb))
     ].filter(Boolean),
     (err) => {
       if (err) { return callback(err) }

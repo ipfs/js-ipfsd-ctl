@@ -1,15 +1,14 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
-
 const proxyquire = require('proxyquire')
 const multiaddr = require('multiaddr')
-
 const Hapi = require('hapi')
+const chai = require('chai')
+const dirtyChai = require('dirty-chai')
+
+const expect = chai.expect
+chai.use(dirtyChai)
 
 const routes = proxyquire(
   '../../src/endpoint/routes',
@@ -71,15 +70,14 @@ describe('routes', () => {
     it('should return 200', (done) => {
       server.inject({
         method: 'POST',
-        url: '/spawn',
-        headers: { 'content-type': 'application/json' }
+        url: '/spawn'
       }, (res) => {
         expect(res.statusCode).to.equal(200)
-        expect(res.result.id).to.exist()
-        expect(res.result.api.apiAddr).to.exist()
-        expect(res.result.api.gatewayAddr).to.exist()
+        expect(res.result._id).to.exist()
+        expect(res.result.apiAddr).to.exist()
+        expect(res.result.gatewayAddr).to.exist()
 
-        id = res.result.id
+        id = res.result._id
         done()
       })
     })
@@ -89,9 +87,7 @@ describe('routes', () => {
     it('should return 200', (done) => {
       server.inject({
         method: 'GET',
-        url: `/api-addr?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id }
+        url: `/api-addr?id=${id}`
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         expect(res.result.apiAddr).to.exist()
@@ -102,8 +98,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'GET',
-        url: '/api-addr',
-        headers: { 'content-type': 'application/json' }
+        url: '/api-addr'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()
@@ -115,9 +110,7 @@ describe('routes', () => {
     it('should return 200', (done) => {
       server.inject({
         method: 'GET',
-        url: `/getaway-addr?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id }
+        url: `/getaway-addr?id=${id}`
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         expect(res.result.getawayAddr).to.exist()
@@ -128,8 +121,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'GET',
-        url: '/getaway-addr',
-        headers: { 'content-type': 'application/json' }
+        url: '/getaway-addr'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()
@@ -141,9 +133,7 @@ describe('routes', () => {
     it('should return 200', (done) => {
       server.inject({
         method: 'POST',
-        url: `/init?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id }
+        url: `/init?id=${id}`
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -153,8 +143,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'POST',
-        url: '/init',
-        headers: { 'content-type': 'application/json' }
+        url: '/init'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()
@@ -166,9 +155,7 @@ describe('routes', () => {
     it('should return 200', (done) => {
       server.inject({
         method: 'POST',
-        url: `/cleanup?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id }
+        url: `/cleanup?id=${id}`
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -178,8 +165,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'POST',
-        url: '/cleanup',
-        headers: { 'content-type': 'application/json' }
+        url: '/cleanup'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()
@@ -191,9 +177,7 @@ describe('routes', () => {
     it('should return 200', (done) => {
       server.inject({
         method: 'POST',
-        url: `/start?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id }
+        url: `/start?id=${id}`
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -203,8 +187,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'POST',
-        url: '/start',
-        headers: { 'content-type': 'application/json' }
+        url: '/start'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()
@@ -217,8 +200,7 @@ describe('routes', () => {
       server.inject({
         method: 'POST',
         url: `/stop?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id }
+        payload: { timeout: 1000 }
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -229,8 +211,7 @@ describe('routes', () => {
       server.inject({
         method: 'POST',
         url: `/stop?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id, timeout: 1000 }
+        payload: { timeout: 1000 }
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -240,8 +221,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'POST',
-        url: '/stop',
-        headers: { 'content-type': 'application/json' }
+        url: '/stop'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()
@@ -254,8 +234,7 @@ describe('routes', () => {
       server.inject({
         method: 'POST',
         url: `/kill?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id }
+        payload: { timeout: 1000 }
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -266,8 +245,7 @@ describe('routes', () => {
       server.inject({
         method: 'POST',
         url: `/kill?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id, timeout: 1000 }
+        payload: { timeout: 1000 }
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -277,8 +255,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'POST',
-        url: '/kill',
-        headers: { 'content-type': 'application/json' }
+        url: '/kill'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()
@@ -290,9 +267,7 @@ describe('routes', () => {
     it('should return 200', (done) => {
       server.inject({
         method: 'GET',
-        url: `/pid?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id }
+        url: `/pid?id=${id}`
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -302,8 +277,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'GET',
-        url: '/pid',
-        headers: { 'content-type': 'application/json' }
+        url: '/pid'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()
@@ -315,9 +289,7 @@ describe('routes', () => {
     it('should return 200', (done) => {
       server.inject({
         method: 'GET',
-        url: `/config?id=${id}`,
-        headers: { 'content-type': 'application/json' },
-        payload: { id }
+        url: `/config?id=${id}`
       }, (res) => {
         expect(res.statusCode).to.equal(200)
         done()
@@ -327,8 +299,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'GET',
-        url: '/config',
-        headers: { 'content-type': 'application/json' }
+        url: '/config'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()
@@ -341,7 +312,6 @@ describe('routes', () => {
       server.inject({
         method: 'PUT',
         url: `/config?id=${id}`,
-        headers: { 'content-type': 'application/json' },
         payload: { key: 'foo', value: 'bar' }
       }, (res) => {
         expect(res.statusCode).to.equal(200)
@@ -352,8 +322,7 @@ describe('routes', () => {
     it('should return 400', (done) => {
       server.inject({
         method: 'PUT',
-        url: '/config',
-        headers: { 'content-type': 'application/json' }
+        url: '/config'
       }, (res) => {
         expect(res.statusCode).to.equal(400)
         done()

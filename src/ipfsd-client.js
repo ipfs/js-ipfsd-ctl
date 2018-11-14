@@ -4,108 +4,88 @@ const request = require('superagent')
 const IpfsClient = require('ipfs-http-client')
 const multiaddr = require('multiaddr')
 
-function createApi (apiAddr, gwAddr, IpfsClient) {
-  let api
-  if (apiAddr) {
-    api = IpfsClient(apiAddr)
-    api.apiHost = multiaddr(apiAddr).nodeAddress().address
-    api.apiPort = multiaddr(apiAddr).nodeAddress().port
-  }
-
-  if (api && gwAddr) {
-    api.gatewayHost = multiaddr(gwAddr).nodeAddress().address
-    api.gatewayPort = multiaddr(gwAddr).nodeAddress().port
-  }
-
-  return api
-}
-
 /**
  * Creates an instance of Client.
  *
  * @param {*} baseUrl
  * @param {*} _id
  * @param {*} initialized
- * @param {*} apiAddr
- * @param {*} gwAddrs
  * @param {*} options
  */
 class Client {
-  constructor (baseUrl, _id, initialized, apiAddr, gwAddrs, options) {
-    this.options = options || {}
+  constructor (baseUrl, remoteState, options = {}) {
+    this.options = options
     this.baseUrl = baseUrl
-    this._id = _id
-    this._apiAddr = multiaddr(apiAddr)
-    this._gwAddr = multiaddr(gwAddrs)
-    this.initialized = initialized
-    this.started = false
-    this.api = createApi(apiAddr, gwAddrs, this.options.IpfsClient || IpfsClient)
+    this._id = remoteState._id
+    this.initialized = remoteState.initialized
+    this.started = remoteState.started
+    this.clean = true
+    this.apiAddr = null
+    this.gatewayAddr = null
+    this.path = remoteState.path
+    this.api = null
+
+    if (this.started) {
+      this.setApi(remoteState.apiAddr)
+      this.setGateway(remoteState.gatewayAddr)
+    }
   }
 
-  /**
-   * Get the address of connected IPFS API.
-   *
-   * @returns {Multiaddr}
-   */
-  get apiAddr () {
-    return this._apiAddr
+  setApi (addr) {
+    if (addr) {
+      this.apiAddr = multiaddr(addr)
+      this.api = (this.options.IpfsClient || IpfsClient)(addr)
+      this.api.apiHost = this.apiAddr.nodeAddress().address
+      this.api.apiPort = this.apiAddr.nodeAddress().port
+    }
   }
 
-  /**
-   * Set the address of connected IPFS API.
-   *
-   * @param {Multiaddr} addr
-   * @returns {void}
-   */
-  set apiAddr (addr) {
-    this._apiAddr = addr
-  }
-
-  /**
-   * Get the address of connected IPFS HTTP Gateway.
-   *
-   * @returns {Multiaddr}
-   */
-  get gatewayAddr () {
-    return this._gwAddr
-  }
-
-  /**
-   * Set the address of connected IPFS Gateway.
-   *
-   * @param {Multiaddr} addr
-   * @returns {void}
-   */
-  set gatewayAddr (addr) {
-    this._gwAddr = addr
+  setGateway (addr) {
+    if (addr) {
+      this.gatewayAddr = multiaddr(addr)
+      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+    }
   }
 
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOpts={}]
-   * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
-   * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
-   * @param {function (Error, Node)} cb
-   * @returns {undefined}
+   * @param {Object} [initOptions={}]
+   * @param {number} [initOptions.keysize=2048] - The bit size of the identiy key.
+   * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
+   * @param {function (Error, Node)} callback
+   * @returns {void}
    */
-  init (initOpts, cb) {
-    if (typeof initOpts === 'function') {
-      cb = initOpts
-      initOpts = {}
+  init (initOptions, callback) {
+    if (typeof initOptions === 'function') {
+      callback = initOptions
+      initOptions = null
     }
 
+    if (this.initialized && initOptions) {
+      return callback(new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`))
+    }
+
+    if (this.initialized) {
+      this.clean = false
+      return callback(null, this)
+    }
+
+    initOptions = initOptions || {}
+    // TODO probably needs to change config like the other impl
     request
       .post(`${this.baseUrl}/init`)
       .query({ id: this._id })
-      .send({ initOpts })
+      .send({ initOptions })
       .end((err, res) => {
         if (err) {
-          return cb(new Error(err.response ? err.response.body.message : err))
+          return callback(new Error(err.response ? err.response.body.message : err))
         }
 
+        this.clean = false
         this.initialized = res.body.initialized
-        cb(null, this)
+        callback(null, this)
       })
   }
 
@@ -115,13 +95,23 @@ class Client {
    * automatically when the process is exited.
    *
    * @param {function(Error)} cb
-   * @returns {undefined}
+   * @returns {void}
    */
   cleanup (cb) {
+    if (this.clean) {
+      return cb()
+    }
+
     request
       .post(`${this.baseUrl}/cleanup`)
       .query({ id: this._id })
-      .end((err) => { cb(err) })
+      .end((err) => {
+        if (err) {
+          return cb(err)
+        }
+        this.clean = true
+        cb(null, this)
+      })
   }
 
   /**
@@ -137,6 +127,10 @@ class Client {
       flags = []
     }
 
+    if (this.started) {
+      return cb(null, this.api)
+    }
+
     request
       .post(`${this.baseUrl}/start`)
       .query({ id: this._id })
@@ -148,10 +142,16 @@ class Client {
 
         this.started = true
 
-        const apiAddr = res.body.api ? res.body.api.apiAddr : ''
-        const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
+        const apiAddr = res.body ? res.body.apiAddr : ''
+        const gatewayAddr = res.body ? res.body.gatewayAddr : ''
 
-        this.api = createApi(apiAddr, gatewayAddr, this.options.IpfsClient || IpfsClient)
+        if (apiAddr) {
+          this.setApi(apiAddr)
+        }
+
+        if (gatewayAddr) {
+          this.setGateway(gatewayAddr)
+        }
         return cb(null, this.api)
       })
   }

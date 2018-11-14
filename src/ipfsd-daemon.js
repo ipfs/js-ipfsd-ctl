@@ -12,19 +12,19 @@ const defaults = require('lodash.defaults')
 const debug = require('debug')
 const os = require('os')
 const hat = require('hat')
-const log = debug('ipfsd-ctl:daemon')
-const daemonLog = {
-  info: debug('ipfsd-ctl:daemon:stdout'),
-  err: debug('ipfsd-ctl:daemon:stderr')
-}
-
 const safeParse = require('safe-json-parse/callback')
 const safeStringify = require('safe-json-stringify')
-
+const log = debug('ipfsd-ctl:daemon')
 const tmpDir = require('./utils/tmp-dir')
 const findIpfsExecutable = require('./utils/find-ipfs-executable')
 const setConfigValue = require('./utils/set-config-value')
 const run = require('./utils/run')
+const { checkForRunningApi, defaultRepo } = require('./utils/repo/nodejs')
+
+const daemonLog = {
+  info: debug('ipfsd-ctl:daemon:stdout'),
+  err: debug('ipfsd-ctl:daemon:stderr')
+}
 
 // amount of ms to wait before sigkill
 const GRACE_PERIOD = 10500
@@ -40,17 +40,16 @@ const NON_DISPOSABLE_GRACE_PERIOD = 10500 * 3
  * @param {Typedefs.SpawnOptions} [opts]
  */
 class Daemon {
-  constructor (opts) {
+  constructor (opts = { type: 'go' }) {
     const rootPath = process.env.testpath
       ? process.env.testpath
       : __dirname
 
-    this.opts = opts || { type: 'go' }
-    const td = tmpDir(this.opts.type === 'js')
-    this.path = this.opts.disposable
-      ? td
-      : (this.opts.repoPath || td)
+    this.opts = opts
     this.disposable = this.opts.disposable
+    this.path = this.opts.disposable
+      ? tmpDir(this.opts.type === 'js')
+      : (this.opts.repoPath || defaultRepo(this.opts.type))
 
     if (process.env.IPFS_EXEC) {
       log('WARNING: The use of IPFS_EXEC is deprecated, ' +
@@ -66,49 +65,29 @@ class Daemon {
     }
     const envExec = this.opts.type === 'go' ? process.env.IPFS_GO_EXEC : process.env.IPFS_JS_EXEC
     this.exec = this.opts.exec || envExec || findIpfsExecutable(this.opts.type, rootPath)
+    this._env = Object.assign({}, process.env, this.opts.env)
+    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
     this.subprocess = null
+    this.started = false
     this.initialized = fs.existsSync(this.path)
     this.clean = true
-    this._apiAddr = null
-    this._gatewayAddr = null
-    this._started = false
-    /** @member {IpfsClient} */
+    /** @member {IpfsApi} */
     this.api = null
-    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
-    this._env = Object.assign({}, process.env, this.opts.env)
+    this.apiAddr = null
+    this.gatewayAddr = null
   }
 
-  /**
-   * Running node api
-   * @member {String}
-   */
-  get runningNodeApi () {
-    let api
-    try {
-      api = fs.readFileSync(`${this.repoPath}/api`)
-    } catch (err) {
-      log(`Unable to open api file: ${err}`)
-    }
-
-    return api ? api.toString() : null
+  setApi (addr) {
+    this.apiAddr = multiaddr(addr)
+    this.api = (this.opts.IpfsClient || IpfsClient)(addr)
+    this.api.apiHost = this.apiAddr.nodeAddress().address
+    this.api.apiPort = this.apiAddr.nodeAddress().port
   }
 
-  /**
-   * Address of connected IPFS API.
-   *
-   * @member {Multiaddr}
-   */
-  get apiAddr () {
-    return this._apiAddr
-  }
-
-  /**
-   * Address of connected IPFS HTTP Gateway.
-   *
-   * @member {Multiaddr}
-   */
-  get gatewayAddr () {
-    return this._gatewayAddr
+  setGateway (addr) {
+    this.gatewayAddr = multiaddr(addr)
+    this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+    this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
   }
 
   /**
@@ -118,15 +97,6 @@ class Daemon {
    */
   get repoPath () {
     return this.path
-  }
-
-  /**
-   * Is the node started
-   *
-   * @member {boolean}
-   */
-  get started () {
-    return this._started
   }
 
   /**
@@ -155,7 +125,7 @@ class Daemon {
     }
 
     if (this.initialized && initOptions) {
-      callback(new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`))
+      return callback(new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`))
     }
 
     if (this.initialized) {
@@ -234,23 +204,11 @@ class Daemon {
 
     callback = once(callback)
 
-    const setApiAddr = (addr) => {
-      this._apiAddr = multiaddr(addr)
-      this.api = (this.opts.IpfsClient || IpfsClient)(addr)
-      this.api.apiHost = this.apiAddr.nodeAddress().address
-      this.api.apiPort = this.apiAddr.nodeAddress().port
-    }
-
-    const setGatewayAddr = (addr) => {
-      this._gatewayAddr = multiaddr(addr)
-      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
-    }
-
-    const api = this.runningNodeApi
+    // Check if a daemon is already running
+    const api = checkForRunningApi(this.path)
     if (api) {
-      setApiAddr(api)
-      this._started = true
+      this.setApi(api)
+      this.started = true
       return callback(null, this.api)
     }
 
@@ -273,21 +231,19 @@ class Daemon {
         }
 
         output += data
-
         const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
         const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
-
         if (apiMatch && apiMatch.length > 0) {
-          setApiAddr(apiMatch[1])
+          this.setApi(apiMatch[1])
         }
 
         if (gwMatch && gwMatch.length > 0) {
-          setGatewayAddr(gwMatch[1])
+          this.setGateway(gwMatch[1])
         }
 
         if (output.match(/(?:daemon is running|Daemon is ready)/)) {
           // we're good
-          this._started = true
+          this.started = true
           callback(null, this.api)
         }
       }
@@ -307,6 +263,7 @@ class Daemon {
       timeout = null
     }
 
+    // TODO this should call this.api.stop
     callback = callback || function noop () {}
 
     if (!this.subprocess) {
@@ -352,7 +309,7 @@ class Daemon {
       log('killed', subprocess.pid)
       clearTimeout(grace)
       this.subprocess = null
-      this._started = false
+      this.started = false
       if (this.disposable) {
         return this.cleanup(callback)
       }

@@ -61,32 +61,25 @@ module.exports = (server) => {
     path: '/spawn',
     handler: (request, reply) => {
       const payload = request.payload || {}
-
       // TODO: use the ../src/index.js so that the right Factory is picked
       const f = new FactoryDaemon({ type: payload.type })
 
-      f.spawn(payload.options, (err, ipfsd) => {
+      f.spawn(payload, (err, ipfsd) => {
         if (err) {
           return reply(boom.badRequest(err))
         }
         const id = hat()
-        const initialized = ipfsd.initialized
         nodes[id] = ipfsd
 
-        let api = null
-
-        if (nodes[id].started) {
-          api = {
-            apiAddr: nodes[id].apiAddr
-              ? nodes[id].apiAddr.toString()
-              : '',
-            gatewayAddr: nodes[id].gatewayAddr
-              ? nodes[id].gatewayAddr.toString()
-              : ''
-          }
-        }
-
-        reply({ id: id, api: api, initialized: initialized })
+        reply({
+          _id: id,
+          apiAddr: ipfsd.apiAddr ? ipfsd.apiAddr.toString() : '',
+          gatewayAddr: ipfsd.gatewayAddr ? ipfsd.gatewayAddr.toString() : '',
+          initialized: ipfsd.initialized,
+          started: ipfsd.started,
+          _env: ipfsd._env,
+          path: ipfsd.path
+        })
       })
     }
   })
@@ -131,10 +124,8 @@ module.exports = (server) => {
         }
 
         reply({
-          api: {
-            apiAddr: nodes[id].apiAddr.toString(),
-            gatewayAddr: nodes[id].gatewayAddr.toString()
-          }
+          apiAddr: nodes[id].apiAddr.toString(),
+          gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : null
         })
       })
     },

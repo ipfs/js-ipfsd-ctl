@@ -1,16 +1,12 @@
 'use strict'
 
 const multiaddr = require('multiaddr')
+const IpfsApi = require('ipfs-api')
 const defaultsDeep = require('lodash.defaultsdeep')
 const defaults = require('lodash.defaults')
 const waterfall = require('async/waterfall')
-const debug = require('debug')
-const EventEmitter = require('events')
-const repoUtils = require('./utils/repo/nodejs')
-
-const log = debug('ipfsd-ctl:in-proc')
-
-let IPFS = null
+const tmpDir = require('./utils/tmp-dir')
+const { repoExists, removeRepo, checkForRunningApi, defaultRepo } = require('./utils/repo/nodejs')
 
 /**
  * ipfsd for a js-ipfs instance (aka in-process IPFS node)
@@ -18,23 +14,23 @@ let IPFS = null
  * @param {Object} [opts]
  * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
  */
-class InProc extends EventEmitter {
-  constructor (opts) {
-    super()
-    this.opts = opts || {}
-
-    IPFS = this.opts.exec
+class InProc {
+  constructor (opts = {}) {
+    this.opts = opts
 
     this.opts.args = this.opts.args || []
-    this.path = this.opts.repoPath || repoUtils.createTempRepoPath()
-    this.disposable = this.opts.disposable
-    this.clean = true
-    this._apiAddr = null
-    this._gatewayAddr = null
-    this._started = false
-    this.api = null
-    this.initialized = false
+    this.path = this.opts.disposable
+      ? tmpDir(this.opts.type === 'js')
+      : (this.opts.repoPath || defaultRepo(this.opts.type))
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
+    this.disposable = this.opts.disposable
+    this.initialized = false
+    this.started = false
+    this.clean = true
+    this.exec = null
+    this.api = null
+    this.apiAddr = null
+    this.gatewayAddr = null
 
     this.opts.EXPERIMENTAL = defaultsDeep({}, opts.EXPERIMENTAL, {
       pubsub: false,
@@ -63,8 +59,14 @@ class InProc extends EventEmitter {
         throw new Error(`Unknown argument ${arg}`)
       }
     })
+  }
 
-    this.exec = new IPFS({
+  setExec (cb) {
+    if (this.api !== null) {
+      return setImmediate(() => cb(null, this))
+    }
+    const IPFS = this.opts.exec
+    this.api = this.exec = new IPFS({
       repo: this.path,
       init: false,
       start: false,
@@ -73,29 +75,23 @@ class InProc extends EventEmitter {
       libp2p: this.opts.libp2p,
       config: this.opts.config
     })
-
-    // TODO: should this be wrapped in a process.nextTick(), for context:
-    // https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/#why-use-process-nexttick
-    this.exec.once('error', err => this.emit('error', err))
-    this.exec.once('ready', () => this.emit('ready'))
+    this.exec.once('error', cb)
+    this.exec.once('ready', () => cb(null, this))
   }
 
-  /**
-   * Get the address of connected IPFS API.
-   *
-   * @member {Multiaddr}
-   */
-  get apiAddr () {
-    return this._apiAddr
+  setApi (addr) {
+    this.apiAddr = multiaddr(addr)
+    this.api = (this.opts.IpfsApi || IpfsApi)(addr)
+    // TODO find out why we set this
+    this.api.apiHost = this.apiAddr.nodeAddress().address
+    this.api.apiPort = this.apiAddr.nodeAddress().port
   }
 
-  /**
-   * Get the address of connected IPFS HTTP Gateway.
-   *
-   * @member {Multiaddr}
-   */
-  get gatewayAddr () {
-    return this._gatewayAddr
+  setGateway (addr) {
+    this.gatewayAddr = multiaddr(addr)
+    // TODO find out why we set this
+    this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+    this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
   }
 
   /**
@@ -105,15 +101,6 @@ class InProc extends EventEmitter {
    */
   get repoPath () {
     return this.path
-  }
-
-  /**
-   * Is the node started
-   *
-   * @member {boolean}
-   */
-  get started () {
-    return this._started
   }
 
   /**
@@ -132,36 +119,37 @@ class InProc extends EventEmitter {
    * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
    * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
    * @param {string} [initOptions.pass] - The passphrase of the keychain.
-   * @param {function (Error, InProc)} callback
-   * @returns {undefined}
+   * @param {function (Error, InProc): void} callback
    */
   init (initOptions, callback) {
     if (typeof initOptions === 'function') {
       callback = initOptions
-      initOptions = {}
+      initOptions = null
     }
 
-    const bits = initOptions.keysize ? initOptions.bits : this.bits
-    // do not just set a default keysize,
-    // in case we decide to change it at
-    // the daemon level in the future
-    if (bits) {
-      initOptions.bits = bits
-      log(`initializing with keysize: ${bits}`)
-    }
-    this.exec.init(initOptions, (err) => {
-      if (err) {
-        return callback(err)
+    repoExists(this.path, (b, initialized) => {
+      if (initialized && initOptions) {
+        return callback(new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`))
       }
 
-      const self = this
+      if (initialized) {
+        this.initialized = true
+        this.clean = false
+        return callback(null, this)
+      }
+
+      // Repo not initialized
+      initOptions = initOptions || {}
+
       waterfall([
-        (cb) => this.getConfig(cb),
+        cb => this.setExec(cb),
+        (ipfsd, cb) => this.api.init(initOptions, cb),
+        (init, cb) => this.getConfig(cb),
         (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
       ], (err) => {
         if (err) { return callback(err) }
-        self.clean = false
-        self.initialized = true
+        this.clean = false
+        this.initialized = true
         return callback(null, this)
       })
     })
@@ -180,7 +168,8 @@ class InProc extends EventEmitter {
       return callback()
     }
 
-    repoUtils.removeRepo(this.path, callback)
+    this.clean = true
+    removeRepo(this.path, callback)
   }
 
   /**
@@ -196,26 +185,21 @@ class InProc extends EventEmitter {
       flags = undefined // not used
     }
 
-    this.exec.start((err) => {
-      if (err) {
-        return callback(err)
-      }
+    // Check if a daemon is already running
+    const api = checkForRunningApi(this.path)
+    if (api) {
+      this.setApi(api)
+      this.started = true
+      return callback(null, this.api)
+    }
 
-      this._started = true
-      this.api = this.exec
-      this.exec.config.get((err, conf) => {
-        if (err) {
-          return callback(err)
-        }
+    waterfall([
+      cb => this.setExec(cb),
+      (ipfsd, cb) => this.api.start(cb)
+    ], (err) => {
+      if (err) { return callback(err) }
 
-        this._apiAddr = conf.Addresses.API
-        this._gatewayAddr = conf.Addresses.Gateway
-
-        this.api.apiHost = multiaddr(conf.Addresses.API).nodeAddress().host
-        this.api.apiPort = multiaddr(conf.Addresses.API).nodeAddress().port
-
-        callback(null, this.api)
-      })
+      callback(null, this.api)
     })
   }
 
@@ -228,16 +212,16 @@ class InProc extends EventEmitter {
   stop (callback) {
     callback = callback || function noop () {}
 
-    if (!this.exec) {
+    if (!this.api) {
       return callback()
     }
 
-    this.exec.stop((err) => {
+    this.api.stop((err) => {
       if (err) {
         return callback(err)
       }
 
-      this._started = false
+      this.started = false
       if (this.disposable) {
         return this.cleanup(callback)
       }
@@ -283,7 +267,7 @@ class InProc extends EventEmitter {
       key = undefined
     }
 
-    this.exec.config.get(key, callback)
+    this.api.config.get(key, callback)
   }
 
   /**
@@ -292,10 +276,9 @@ class InProc extends EventEmitter {
    * @param {string} key
    * @param {string} value
    * @param {function(Error)} callback
-   * @returns {undefined}
    */
   setConfig (key, value, callback) {
-    this.exec.config.set(key, value, callback)
+    this.api.config.set(key, value, callback)
   }
 
   /**
@@ -303,20 +286,21 @@ class InProc extends EventEmitter {
    *
    * @param {Object} config
    * @param {function(Error)} callback
-   * @return {undefined}
    */
   replaceConfig (config, callback) {
-    this.exec.config.replace(config, callback)
+    this.api.config.replace(config, callback)
   }
 
   /**
    * Get the version of ipfs
    *
    * @param {function(Error, string)} callback
-   * @returns {undefined}
    */
   version (callback) {
-    this.exec.version(callback)
+    waterfall([
+      cb => this.setExec(cb),
+      (ipfsd, cb) => this.api.version(cb)
+    ], callback)
   }
 }
 

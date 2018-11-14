@@ -1,6 +1,8 @@
 'use strict'
 
 const request = require('superagent')
+const merge = require('merge-options')
+const defaultConfig = require('./defaults/config.json')
 const DaemonClient = require('./ipfsd-client')
 
 /** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
@@ -90,29 +92,32 @@ class FactoryClient {
       options = {}
     }
 
-    options = options || {}
+    const daemonOptions = merge({
+      exec: this.options.exec,
+      type: this.options.type,
+      IpfsClient: this.options.IpfsClient,
+      disposable: true,
+      start: options.disposable !== false,
+      init: options.disposable !== false,
+      config: defaultConfig
+    }, options)
 
+    if (options.defaultAddrs) {
+      delete daemonOptions.config.Addresses
+    }
     request
-      .post(`${this.baseUrl}/spawn`)
-      .send({ options: options, type: this.options.type })
+      .post(`${this.baseUrl}/spawn`, daemonOptions)
       .end((err, res) => {
         if (err) {
           return callback(new Error(err.response ? err.response.body.message : err))
         }
-
-        const apiAddr = res.body.api ? res.body.api.apiAddr : ''
-        const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
-
-        const ipfsd = new DaemonClient(
+        const node = new DaemonClient(
           this.baseUrl,
-          res.body.id,
-          res.body.initialized,
-          apiAddr,
-          gatewayAddr,
-          { IpfsClient: this.options.IpfsClient }
+          res.body,
+          daemonOptions
         )
 
-        callback(null, ipfsd)
+        callback(null, node)
       })
   }
 }
