@@ -11,7 +11,7 @@ variables:
   DOCKER_DRIVER: overlay2
 
 before_script:
-  - yarn
+  - npm ci -q
 
 check:
   stage: check
