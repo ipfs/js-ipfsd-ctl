@@ -26,8 +26,8 @@ check:
       - dist/
 
 test-node-8:
-  stage: test
   image: node:8
+  stage: test
   script:
     - npx nyc -s npm run test:node -- --bail
   artifacts:
@@ -35,6 +35,7 @@ test-node-8:
       - .nyc_output/
 
 test-node-10:
+  image: node:10
   stage: test
   script:
     - ls ./node_modules/go-ipfs-dep/go-ipfs
