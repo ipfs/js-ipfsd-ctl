@@ -21,8 +21,6 @@ check:
     # - npm install --no-lockfile @commitlint/config-conventional @commitlint/cli --save-dev
     # - npx commitlint --extends=@commitlint/config-conventional --from=$CI_COMMIT_BEFORE_SHA --to=$CI_COMMIT_SHA
     - npm run build
-  only:
-    - branches
   artifacts:
     paths:
       - dist/
@@ -96,7 +94,7 @@ pre-release:
     - npm --no-git-tag-version version prerelease --preid=rc &>/dev/null # bump package.json to x.x.x-rc.x but without tagging
     - npx conventional-changelog-cli -i CHANGELOG.md -r 0 -s -p angular -u # generate changelog
     - git add CHANGELOG.md # add changelog
-    - version=`node -p \"require('./package.json').version\"` # save the current version to a env var
+    - version=`node -p "require('./package.json').version"` # save the current version to a env var
     - "git commit -am \"chore(pre-release): ${version}\"" # commit everything with nice msg
     - git push upstream master # push
     - npm publish . --tag next # npm publish with the dist-tag next
@@ -122,7 +120,7 @@ release:
     - npm --no-git-tag-version version $bump &>/dev/null # first npm version without tag
     - npx conventional-changelog -i CHANGELOG.md -r 0 -s -p angular # generate changelog
     - git add CHANGELOG.md # git add
-    - version=`node -p \"require('./package.json').version\"` # save the current version to a env var
+    - version=`node -p "require('./package.json').version"` # save the current version to a env var
     - mv -f _package.json package.json # revert package.json to the previous version so we can run npm version and not bump twice
     - "git commit -am \"docs(CHANGELOG): ${version}\"" # commit everything with nice msg
     - "npm version $bump -m \"chore(release): v%s\"" # run the final npm version to bump, commmit, tag
