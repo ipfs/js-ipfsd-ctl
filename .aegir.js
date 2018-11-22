@@ -1,5 +1,5 @@
 'use strict'
-
+const path = require('path')
 const createServer = require('./src').createServer
 
 const server = createServer() // using defaults
