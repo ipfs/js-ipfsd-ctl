@@ -18,7 +18,6 @@ function exec (cmd, args, opts, callback) {
   }, opts)
 
   log(path.basename(cmd), args.join(' '))
-  console.log(cmd)
   const command = execa(cmd, args, { env: opts.env })
   command.stderr.on('data', opts.stderr)
   command.stdout.on('data', opts.stdout)
@@ -27,7 +26,6 @@ function exec (cmd, args, opts, callback) {
       callback(null, r)
     })
     .catch(err => {
-      console.log(err)
       callback(err)
     })
 

@@ -44,6 +44,16 @@ test-node-10:
     paths:
       - .nyc_output/
 
+test-node-11:
+  image: node:10-slim
+  stage: test
+  script:
+    - ls ./node_modules/go-ipfs-dep/go-ipfs
+    - npx nyc -s npm run test:node -- --bail
+  artifacts:
+    paths:
+      - .nyc_output/
+
 test-browser-chrome:
   image: hugomrdias/node-chrome:test
   stage: test
