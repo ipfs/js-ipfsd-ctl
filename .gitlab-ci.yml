@@ -88,6 +88,7 @@ cov:
 # Does a pre-release without tags this enables us to have changelog for pre-releases and don't mess up release changlog
 pre-release:
   stage: pre-release
+  when: manual
   before_script: []
   script:
     - *git_auth
@@ -112,6 +113,7 @@ pre-release:
 # we play a bit with package.json.
 release:
   stage: release
+  when: manual
   before_script: []
   script:
     - *git_auth
@@ -134,4 +136,3 @@ release:
     variables:
       - $CI_COMMIT_MESSAGE =~ /^chore\(pre-release\)/
       - $CI_COMMIT_MESSAGE =~ /^chore\(release\)/
-  when: manual
