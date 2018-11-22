@@ -1,0 +1,139 @@
+image: hugomrdias/node-alpine:test
+stages:
+  - check
+  - test
+  - cov
+  - pre-release
+  - release
+  - interop
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+before_script:
+  - npm ci -q
+
+check:
+  stage: check
+  script:
+    - npm run lint
+    - npm run dep-check
+    # - npm install --no-lockfile @commitlint/config-conventional @commitlint/cli --save-dev
+    # - npx commitlint --extends=@commitlint/config-conventional --from=$CI_COMMIT_BEFORE_SHA --to=$CI_COMMIT_SHA
+    - npm run build
+  only:
+    - branches
+  artifacts:
+    paths:
+      - dist/
+
+test-node-8:
+  stage: test
+  image: node:8
+  script:
+    - npx nyc -s npm run test:node
+  artifacts:
+    paths:
+      - .nyc_output/
+
+test-node-10:
+  stage: test
+  script:
+    - npx nyc -s npm run test:node
+  artifacts:
+    paths:
+      - .nyc_output/
+
+test-browser-chrome:
+  image: hugomrdias/node-chrome:test
+  stage: test
+  script:
+    - AEGIR_BROWSERS=ChromeDocker npm run test:browser
+
+test-browser-firefox:
+  image: hugomrdias/node-firefox:test
+  stage: test
+  script:
+    - AEGIR_BROWSERS=FirefoxHeadless npm run test:browser
+  artifacts:
+    paths:
+      - coverage/
+
+cov:
+  stage: cov
+  image: node:10-alpine
+  before_script: []
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - cp coverage/coverage-final.json .nyc_output/browser.json
+    - npx nyc report --reporter text-summary --reporter html
+  dependencies:
+    - test-node-10
+    - test-node-8
+    - test-browser-firefox
+  artifacts:
+    paths:
+      - coverage/
+  coverage: '/Lines        : \d+\.\d+/'
+
+.git_auth: &git_auth |
+  export GH_RELEASE_GITHUB_API_TOKEN=$GITHUB_TOKEN
+  git remote add upstream https://hugomrdias:$GITHUB_TOKEN@github.com/hugomrdias/$CI_PROJECT_NAME.git
+  git config --global user.email "hugomrdias@gmail.com"
+  git config --global user.name "hugomrdias"
+  git checkout $CI_COMMIT_REF_NAME
+  git fetch upstream
+  git branch -u upstream/$CI_COMMIT_REF_NAME
+  echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+
+# Does a pre-release without tags this enables us to have changelog for pre-releases and don't mess up release changlog
+pre-release:
+  stage: pre-release
+  before_script: []
+  script:
+    - *git_auth
+    - npm --no-git-tag-version version prerelease --preid=rc &>/dev/null # bump package.json to x.x.x-rc.x but without tagging
+    - npx conventional-changelog-cli -i CHANGELOG.md -r 0 -s -p angular -u # generate changelog
+    - git add CHANGELOG.md # add changelog
+    - version=`node -p \"require('./package.json').version\"` # save the current version to a env var
+    - "git commit -am \"chore(pre-release): ${version}\"" # commit everything with nice msg
+    - git push upstream master # push
+    - npm publish . --tag next # npm publish with the dist-tag next
+  only:
+    refs:
+      - master
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^chore\(pre-release\)/
+      - $CI_COMMIT_MESSAGE =~ /^chore\(release\)/
+# Does a full release this is meant to be a manual job
+# You will notice a bit of a back and forth with the package.json
+# This happens because conventional-changelog needs to run with package.json already in the next version
+# but we also want to run npm version after conventional-changelog so to not bump twice with npm version
+# we play a bit with package.json.
+release:
+  stage: release
+  before_script: []
+  script:
+    - *git_auth
+    - cp package.json _package.json # conventional-changelog needs to know the
+    - bump=`npx conventional-recommended-bump -p angular` # find the correct bump according to conventional-changelog-angular
+    - npm --no-git-tag-version version $bump &>/dev/null # first npm version without tag
+    - npx conventional-changelog -i CHANGELOG.md -r 0 -s -p angular # generate changelog
+    - git add CHANGELOG.md # git add
+    - version=`node -p \"require('./package.json').version\"` # save the current version to a env var
+    - mv -f _package.json package.json # revert package.json to the previous version so we can run npm version and not bump twice
+    - "git commit -am \"docs(CHANGELOG): ${version}\"" # commit everything with nice msg
+    - "npm version $bump -m \"chore(release): v%s\"" # run the final npm version to bump, commmit, tag
+    - git push --follow-tags upstream master # push with tags
+    - npm publish # publish to npm
+    - npx gh-release -y # do a github release with the same changelog created above
+  only:
+    refs:
+      - master
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^chore\(pre-release\)/
+      - $CI_COMMIT_MESSAGE =~ /^chore\(release\)/
+  when: manual
