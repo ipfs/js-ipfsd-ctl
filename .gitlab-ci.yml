@@ -5,7 +5,6 @@ stages:
   - cov
   - pre-release
   - release
-  - interop
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -44,15 +43,15 @@ test-node-10:
     paths:
       - .nyc_output/
 
-test-node-11:
-  image: node:11
-  stage: test
-  script:
-    - ls ./node_modules/go-ipfs-dep/go-ipfs
-    - npx nyc -s npm run test:node -- --bail
-  artifacts:
-    paths:
-      - .nyc_output/
+# test-node-11:
+#   image: node:11
+#   stage: test
+#   script:
+#     - ls ./node_modules/go-ipfs-dep/go-ipfs
+#     - npx nyc -s npm run test:node -- --bail
+#   artifacts:
+#     paths:
+#       - .nyc_output/
 
 test-browser-chrome:
   image: hugomrdias/node-chrome:test
@@ -71,7 +70,6 @@ test-browser-firefox:
 
 cov:
   stage: cov
-  image: node:10-alpine
   before_script: []
   variables:
     GIT_STRATEGY: none
