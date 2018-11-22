@@ -29,7 +29,7 @@ test-node-8:
   stage: test
   image: node:8
   script:
-    - npx nyc -s npm run test:node
+    - npx nyc -s npm run test:node -- --bail
   artifacts:
     paths:
       - .nyc_output/
@@ -37,7 +37,7 @@ test-node-8:
 test-node-10:
   stage: test
   script:
-    - npx nyc -s npm run test:node
+    - npx nyc -s npm run test:node -- --bail
   artifacts:
     paths:
       - .nyc_output/
