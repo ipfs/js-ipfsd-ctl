@@ -45,7 +45,7 @@ test-node-10:
       - .nyc_output/
 
 test-node-11:
-  image: node:10-slim
+  image: node:11
   stage: test
   script:
     - ls ./node_modules/go-ipfs-dep/go-ipfs
