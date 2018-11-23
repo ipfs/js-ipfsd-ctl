@@ -37,22 +37,32 @@ test-node-10:
   image: node:10
   stage: test
   script:
+    - npx nyc -s npm run test:node -- --bail
+  artifacts:
+    paths:
+      - .nyc_output/
+
+test-node-11:
+  allow_failure: true
+  image: node:11
+  stage: test
+  script:
     - ls ./node_modules/go-ipfs-dep/go-ipfs
     - npx nyc -s npm run test:node -- --bail
   artifacts:
     paths:
       - .nyc_output/
 
-# test-node-11:
-#   image: node:11
-#   stage: test
-#   script:
-#     - ls ./node_modules/go-ipfs-dep/go-ipfs
-#     - npx nyc -s npm run test:node -- --bail
-#   artifacts:
-#     paths:
-#       - .nyc_output/
-
+test-node-10-macos:
+  stage: test
+  script:
+    - npx nyc -s npm run test:node -- --bail
+  tags:
+    - mac
+  artifacts:
+    paths:
+      - .nyc_output/
+      
 test-browser-chrome:
   image: hugomrdias/node-chrome:test
   stage: test
