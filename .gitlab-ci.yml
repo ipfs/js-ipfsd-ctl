@@ -99,7 +99,7 @@ cov:
   dependencies:
     - linux-node-10
     - win-node-10
-    - mac-node-10
+    - macos-node-10
     - test-browser-firefox
   artifacts:
     paths:
