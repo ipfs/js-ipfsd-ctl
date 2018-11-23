@@ -97,8 +97,9 @@ cov:
     - cp coverage/coverage-final.json .nyc_output/browser.json
     - npx nyc report --reporter text-summary --reporter html
   dependencies:
-    - test-node-10
-    - test-node-8
+    - linux-node-10
+    - win-node-10
+    - mac-node-10
     - test-browser-firefox
   artifacts:
     paths:
