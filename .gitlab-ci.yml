@@ -24,7 +24,7 @@ check:
     paths:
       - dist/
 
-test-node-8:
+linux-node-8:
   image: node:8
   stage: test
   script:
@@ -33,7 +33,7 @@ test-node-8:
     paths:
       - .nyc_output/
 
-test-node-10:
+linux-node-10:
   image: node:10
   stage: test
   script:
@@ -42,7 +42,7 @@ test-node-10:
     paths:
       - .nyc_output/
 
-test-node-11:
+linux-node-11:
   allow_failure: true
   image: node:11
   stage: test
@@ -53,12 +53,22 @@ test-node-11:
     paths:
       - .nyc_output/
 
-test-node-10-macos:
+macos-node-10:
   stage: test
   script:
     - npx nyc -s npm run test:node -- --bail
   tags:
     - mac
+  artifacts:
+    paths:
+      - .nyc_output/
+
+win-node-10:
+  stage: test
+  script:
+    - npx nyc -s npm run test:node -- --bail
+  tags:
+    - win
   artifacts:
     paths:
       - .nyc_output/
