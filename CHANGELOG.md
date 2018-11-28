@@ -1,3 +1,14 @@
+<a name="0.40.1"></a>
+## [0.40.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.40.0...v0.40.1) (2018-11-28)
+
+
+### Features
+
+* add gitlab ci ([#310](https://github.com/ipfs/js-ipfsd-ctl/issues/310)) ([7df2805](https://github.com/ipfs/js-ipfsd-ctl/commit/7df2805))
+* change to ipfs-http-client ([#311](https://github.com/ipfs/js-ipfsd-ctl/issues/311)) ([412c18f](https://github.com/ipfs/js-ipfsd-ctl/commit/412c18f))
+
+
+
 <a name="0.40.0"></a>
 # [0.40.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.39.5...v0.40.0) (2018-11-03)
 
