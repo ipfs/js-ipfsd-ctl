@@ -62,7 +62,7 @@ describe('ipfsd.api for Daemons', () => {
           })
         },
         (cb) => {
-          api.util.addFromFs(path.join(__dirname, 'fixtures/'), {
+          api.addFromFs(path.join(__dirname, 'fixtures/'), {
             recursive: true
           }, (err, res) => {
             expect(err).to.not.exist()
