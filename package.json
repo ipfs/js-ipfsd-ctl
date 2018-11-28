@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.40.0",
+  "version": "0.40.1",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
@@ -129,8 +129,8 @@
     "Gar <gar+gh@danger.computer>",
     "Haad <haadcode@users.noreply.github.com>",
     "Harlan T Wood <harlantwood@users.noreply.github.com>",
-    "Hugo Dias <hugomrdias@gmail.com>",
     "Hugo Dias <mail@hugodias.me>",
+    "Hugo Dias <hugomrdias@gmail.com>",
     "Jacob Heun <jake@andyet.net>",
     "Jonathan <jkrone@vt.edu>",
     "Kristoffer Ström <kristoffer@rymdkoloni.se>",
