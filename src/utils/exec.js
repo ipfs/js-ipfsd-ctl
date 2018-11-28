@@ -18,7 +18,6 @@ function exec (cmd, args, opts, callback) {
   }, opts)
 
   log(path.basename(cmd), args.join(' '))
-
   const command = execa(cmd, args, { env: opts.env })
   command.stderr.on('data', opts.stderr)
   command.stdout.on('data', opts.stdout)
