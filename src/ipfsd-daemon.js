@@ -3,7 +3,7 @@
 const fs = require('fs')
 const waterfall = require('async/waterfall')
 const series = require('async/series')
-const IpfsApi = require('ipfs-api')
+const IpfsClient = require('ipfs-http-client')
 const multiaddr = require('multiaddr')
 const rimraf = require('rimraf')
 const path = require('path')
@@ -73,7 +73,7 @@ class Daemon {
     this._apiAddr = null
     this._gatewayAddr = null
     this._started = false
-    /** @member {IpfsApi} */
+    /** @member {IpfsClient} */
     this.api = null
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
     this._env = Object.assign({}, process.env, this.opts.env)
@@ -210,7 +210,7 @@ class Daemon {
    * Start the daemon.
    *
    * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
-   * @param {function(Error, IpfsApi): void} callback
+   * @param {function(Error, IpfsClient): void} callback
    * @return {void}
    */
   start (flags, callback) {
@@ -228,7 +228,7 @@ class Daemon {
 
     const setApiAddr = (addr) => {
       this._apiAddr = multiaddr(addr)
-      this.api = (this.opts.IpfsApi || IpfsApi)(addr)
+      this.api = (this.opts.IpfsClient || IpfsClient)(addr)
       this.api.apiHost = this.apiAddr.nodeAddress().address
       this.api.apiPort = this.apiAddr.nodeAddress().port
     }

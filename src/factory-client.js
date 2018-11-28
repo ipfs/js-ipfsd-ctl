@@ -78,7 +78,7 @@ class FactoryClient {
   }
 
   /**
-   * Spawn a remote daemon using ipfs-api
+   * Spawn a remote daemon using ipfs-http-client
    *
    * @param {SpawnOptions} [options={}]
    * @param {function(Error, DaemonClient)} callback
@@ -109,7 +109,7 @@ class FactoryClient {
           res.body.initialized,
           apiAddr,
           gatewayAddr,
-          { IpfsApi: this.options.IpfsApi }
+          { IpfsClient: this.options.IpfsClient }
         )
 
         callback(null, ipfsd)

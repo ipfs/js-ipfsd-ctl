@@ -107,7 +107,7 @@ Install one or both of the following modules:
     - `go` - spawn go-ipfs daemon
     - `js` - spawn js-ipfs daemon
     - `proc` - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `DaemonFactory.create({type: 'proc', exec: require('ipfs') })`.
-  - `IpfsApi` - A custom IPFS API constructor to use instead of the packaged one
+  - `IpfsClient` - A custom IPFS API constructor to use instead of the packaged one
 
 **example:** See [Usage](#usage)
 
@@ -128,7 +128,7 @@ Spawn the daemon
 - `callback` - is a function with the signature `function (err, ipfsd)` where:
   - `err` - is the error set if spawning the node is unsuccessful
   - `ipfsd` - is the daemon controller instance:
-    - `api` - a property of `ipfsd`, an instance of  [ipfs-api](https://github.com/ipfs/js-ipfs-api) attached to the newly created ipfs node   
+    - `api` - a property of `ipfsd`, an instance of  [ipfs-http-client](https://github.com/ipfs/js-ipfs-http-client) attached to the newly created ipfs node
 
 **example:** See [Usage](#usage)
 
@@ -213,7 +213,7 @@ Start the daemon.
 
 `flags` - Flags array to be passed to the `ipfs daemon` command.
 
-`callback` is a function with the signature `function(err, ipfsApi)` that receives an instance of `Error` on failure or an instance of `ipfs-api` on success. 
+`callback` is a function with the signature `function(err, ipfsClient)` that receives an instance of `Error` on failure or an instance of `ipfs-http-client` on success.
 
 
 #### `ipfsd.stop([timeout, callback])`
@@ -264,7 +264,7 @@ Get the version of ipfs
 
 ### IPFS HTTP Client  - `ipfsd.api`
 
-An instance of [ipfs-api](https://github.com/ipfs/js-ipfs-api#api) that is used to interact with the daemon.
+An instance of [ipfs-http-client](https://github.com/ipfs/js-ipfs-http-client#api) that is used to interact with the daemon.
 
 This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`.
 

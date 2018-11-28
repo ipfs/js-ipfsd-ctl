@@ -7,7 +7,7 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const IpfsApi = require('ipfs-api')
+const IpfsClient = require('ipfs-http-client')
 const IpfsFactory = require('../src')
 
 describe('custom API', function () {
@@ -19,14 +19,14 @@ describe('custom API', function () {
     const f = IpfsFactory.create({
       type: 'js',
       initOptions: { bits: 512 },
-      IpfsApi: () => mockApi
+      IpfsClient: () => mockApi
     })
 
     f.spawn((err, ipfsd) => {
       if (err) return done(err)
       expect(ipfsd.api).to.equal(mockApi)
       // Restore a real API so that the node can be stopped properly
-      ipfsd.api = IpfsApi(ipfsd.apiAddr)
+      ipfsd.api = IpfsClient(ipfsd.apiAddr)
       ipfsd.stop(done)
     })
   })

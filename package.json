@@ -76,7 +76,7 @@
     "execa": "^1.0.0",
     "hapi": "^16.6.2",
     "hat": "~0.0.3",
-    "ipfs-api": "^26.1.0",
+    "ipfs-http-client": "^27.0.0",
     "joi": "^14.0.4",
     "libp2p-crypto": "~0.14.0",
     "lodash.clone": "^4.5.0",
