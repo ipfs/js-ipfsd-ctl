@@ -22,7 +22,7 @@ const Server = require('./endpoint/server')
  * - go - spawn go-ipfs daemon
  * - js - spawn js-ipfs daemon
  * - proc - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `IPFSFactory.create({type: 'proc', exec: require('ipfs') })`.
- * @param {Object} IpfsApi - A custom IPFS API constructor to use instead of the packaged one `js-ipfs-api`.
+ * @param {Object} IpfsClient - A custom IPFS API constructor to use instead of the packaged one `js-ipfs-http-client`.
  * @returns {(FactoryDaemon|FactoryClient|FactoryInProc)}
  */
 const create = (opts) => {

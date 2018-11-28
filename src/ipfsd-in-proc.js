@@ -187,7 +187,7 @@ class InProc extends EventEmitter {
    * Start the daemon.
    *
    * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
-   * @param {function(Error, IpfsApi)} callback
+   * @param {function(Error, IpfsClient)} callback
    * @returns {undefined}
    */
   start (flags, callback) {

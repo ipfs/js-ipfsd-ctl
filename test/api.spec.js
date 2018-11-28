@@ -107,7 +107,7 @@ describe('ipfsd.api for Daemons', () => {
         expect(ipfsd.gatewayAddr).to.not.be.null()
         expect(multiaddr.isMultiaddr(ipfsd.gatewayAddr)).to.equal(true)
 
-        // Check for props in ipfs-api instance
+        // Check for props in ipfs-http-client instance
         expect(ipfsd.api).to.have.property('apiHost')
         expect(ipfsd.api).to.have.property('apiPort')
         expect(ipfsd.api).to.have.property('gatewayHost')

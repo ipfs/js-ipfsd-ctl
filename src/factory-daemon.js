@@ -60,7 +60,7 @@ class FactoryDaemon {
       options = {}
     }
     options = Object.assign(
-      { IpfsApi: this.options.IpfsApi },
+      { IpfsClient: this.options.IpfsClient },
       options,
       { type: this.options.type, exec: this.options.exec }
     )
@@ -75,7 +75,7 @@ class FactoryDaemon {
    * Spawn an IPFS node, either js-ipfs or go-ipfs
    *
    * @param {SpawnOptions} [options={}] - Various config options and ipfs config parameters
-   * @param {function(Error, Daemon): void} callback - Callback receives Error or a Daemon instance, Daemon has a `api` property which is an `ipfs-api` instance.
+   * @param {function(Error, Daemon): void} callback - Callback receives Error or a Daemon instance, Daemon has a `api` property which is an `ipfs-http-client` instance.
    * @returns {void}
    */
   spawn (options, callback) {
@@ -87,7 +87,7 @@ class FactoryDaemon {
     // TODO this options parsing is daunting. Refactor and move to a separate
     // func documenting what it is trying to do.
     options = defaultsDeep(
-      { IpfsApi: this.options.IpfsApi },
+      { IpfsClient: this.options.IpfsClient },
       options,
       defaultOptions
     )

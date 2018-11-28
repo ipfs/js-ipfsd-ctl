@@ -1,13 +1,13 @@
 'use strict'
 
 const request = require('superagent')
-const IpfsApi = require('ipfs-api')
+const IpfsClient = require('ipfs-http-client')
 const multiaddr = require('multiaddr')
 
-function createApi (apiAddr, gwAddr, IpfsApi) {
+function createApi (apiAddr, gwAddr, IpfsClient) {
   let api
   if (apiAddr) {
-    api = IpfsApi(apiAddr)
+    api = IpfsClient(apiAddr)
     api.apiHost = multiaddr(apiAddr).nodeAddress().address
     api.apiPort = multiaddr(apiAddr).nodeAddress().port
   }
@@ -39,7 +39,7 @@ class Client {
     this._gwAddr = multiaddr(gwAddrs)
     this.initialized = initialized
     this.started = false
-    this.api = createApi(apiAddr, gwAddrs, this.options.IpfsApi || IpfsApi)
+    this.api = createApi(apiAddr, gwAddrs, this.options.IpfsClient || IpfsClient)
   }
 
   /**
@@ -128,7 +128,7 @@ class Client {
    * Start the daemon.
    *
    * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
-   * @param {function(Error, IpfsApi)} cb
+   * @param {function(Error, IpfsClient)} cb
    * @returns {undefined}
    */
   start (flags, cb) {
@@ -151,7 +151,7 @@ class Client {
         const apiAddr = res.body.api ? res.body.api.apiAddr : ''
         const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 
-        this.api = createApi(apiAddr, gatewayAddr, this.options.IpfsApi || IpfsApi)
+        this.api = createApi(apiAddr, gatewayAddr, this.options.IpfsClient || IpfsClient)
         return cb(null, this.api)
       })
   }
