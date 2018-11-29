@@ -71,8 +71,6 @@ test-browser-firefox:
 cov:
   stage: cov
   before_script: []
-  variables:
-    GIT_STRATEGY: none
   script:
     - cp coverage/coverage-final.json .nyc_output/browser.json
     - npx nyc report --reporter text-summary --reporter html
