@@ -1,7 +1,7 @@
 'use strict'
 
 const multiaddr = require('multiaddr')
-const IpfsApi = require('ipfs-api')
+const IpfsClient = require('ipfs-http-client')
 const defaultsDeep = require('lodash.defaultsdeep')
 const defaults = require('lodash.defaults')
 const waterfall = require('async/waterfall')
@@ -80,7 +80,7 @@ class InProc {
 
   setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = (this.opts.IpfsApi || IpfsApi)(addr)
+    this.api = (this.opts.IpfsApi || IpfsClient)(addr)
     // TODO find out why we set this
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
