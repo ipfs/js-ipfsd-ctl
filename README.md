@@ -91,7 +91,7 @@ server.start((err) => {
 Install one or both of the following modules:
 
 - `ipfs` - `> npm i ipfs` - If you want to spawn js-ipfs nodes and/or daemons.
-- `go-ipfs-dep` - `> npm i go-ipfs-dep` - If you want to spwan go-ipfs daemons.
+- `go-ipfs-dep` - `> npm i go-ipfs-dep` - If you want to spawn go-ipfs daemons.
 
 ## API
 
