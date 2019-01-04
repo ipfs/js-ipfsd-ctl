@@ -1,3 +1,8 @@
+<a name="0.40.3"></a>
+## [0.40.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.40.2...v0.40.3) (2019-01-04)
+
+
+
 <a name="0.40.2"></a>
 ## [0.40.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.40.1...v0.40.2) (2018-12-11)
 
