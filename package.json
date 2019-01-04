@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.40.2",
+  "version": "0.40.3",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
@@ -121,6 +121,7 @@
     "Alan Shaw <alan.shaw@protocol.ai>",
     "Alan Shaw <alan@tableflip.io>",
     "Alex Potsides <alex@achingbrain.net>",
+    "André Cruz <andremiguelcruz@msn.com>",
     "Bret Comnes <bcomnes@gmail.com>",
     "David Dias <daviddias.p@gmail.com>",
     "Dmitriy Ryajov <dryajov@gmail.com>",
