@@ -57,8 +57,8 @@ class InProc extends EventEmitter {
         this.opts.EXPERIMENTAL.ipnsPubsub = true
       } else if (arg === '--enable-dht-experiment') {
         this.opts.EXPERIMENTAL.dht = true
-      } else if (arg === '--local') {
-        this.opts.local = true
+      } else if (arg === '--offline') {
+        this.opts.offline = true
       } else if (arg.startsWith('--pass')) {
         this.opts.pass = arg.split(' ').slice(1).join(' ')
       } else {
@@ -71,7 +71,7 @@ class InProc extends EventEmitter {
       init: false,
       start: false,
       pass: this.opts.pass,
-      local: this.opts.local,
+      offline: this.opts.offline,
       EXPERIMENTAL: this.opts.EXPERIMENTAL,
       libp2p: this.opts.libp2p,
       config: this.opts.config
