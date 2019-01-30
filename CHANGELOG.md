@@ -1,3 +1,18 @@
+<a name="0.41.0"></a>
+# [0.41.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.40.3...v0.41.0) (2019-01-30)
+
+
+### Bug Fixes
+
+* rename local flag to offline ([#318](https://github.com/ipfs/js-ipfsd-ctl/issues/318)) ([49bf51b](https://github.com/ipfs/js-ipfsd-ctl/commit/49bf51b))
+
+
+### BREAKING CHANGES
+
+* `--local` option has been renamed to `--offline`
+
+
+
 <a name="0.40.3"></a>
 ## [0.40.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.40.2...v0.40.3) (2019-01-04)
 
