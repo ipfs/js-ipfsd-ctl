@@ -1,0 +1,54 @@
+trigger:
+- master
+
+jobs:
+- job: check
+  pool:
+    vmImage: 'Ubuntu-16.04'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'install node 10'
+  - script: |
+      npm install
+      npm run lint
+      npm run build
+    displayName: 'run checks'
+- job: test_mac
+  pool:
+    vmImage: 'macOS-10.13'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'install node 10'
+  - script: |
+      npm install
+      npm run test:node -- --bail --no-colors
+- job: test_linux
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'install node 10'
+  - script: |
+      npm install
+      npm run test:node -- --bail --no-colors
+- job: test_windows
+  pool:
+    vmImage: 'vs2017-win2016'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '2.x'
+      addToPath: true
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'install node 10'
+  - powershell: |
+      npm install
+      npm run test:node -- --bail --no-colors
