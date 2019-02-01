@@ -5,24 +5,24 @@ stages:
   - test
   - cov
 
- node_js:
-  - 10
+node_js:
+ - 10
 
- os:
+os:
   - linux
   - osx
   - windows
 
- script: npx nyc -s npm run test:node -- --bail
+script: npx nyc -s npm run test:node -- --bail
 
-
- jobs:
+jobs:
   include:
     - stage: check
       node_js: 10
       script:
-        - npm run lint
-        - npm run dep-check
+      - npm run lint
+      - npm run dep-check
+    
     - stage: test
       name: chrome
       node_js: 10
@@ -30,6 +30,7 @@ stages:
         chrome: stable
       script:
         - npx aegir test -t browser
+    
     - stage: test
       name: firefox
       node_js: 10
