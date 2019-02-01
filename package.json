@@ -101,8 +101,6 @@
     "go-ipfs-dep": "0.4.18",
     "ipfs": "~0.33.1",
     "is-running": "^2.1.0",
-    "istanbul-instrumenter-loader": "^3.0.1",
-    "karma-coverage-istanbul-reporter": "^2.0.4",
     "lint-staged": "^8.0.3",
     "mkdirp": "~0.5.1",
     "proxyquire": "^2.1.0",
