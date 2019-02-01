@@ -15,7 +15,9 @@ jobs:
       npm run lint
       npm run build
     displayName: 'run checks'
+
 - job: test_mac
+  dependsOn: check
   pool:
     vmImage: 'macOS-10.13'
   steps:
@@ -26,7 +28,9 @@ jobs:
   - script: |
       npm install
       npm run test:node -- --bail --no-colors
+
 - job: test_linux
+  dependsOn: check
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
@@ -37,7 +41,9 @@ jobs:
   - script: |
       npm install
       npm run test:node -- --bail --no-colors
+
 - job: test_windows
+  dependsOn: check
   pool:
     vmImage: 'vs2017-win2016'
   steps:
