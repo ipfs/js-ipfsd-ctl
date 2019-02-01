@@ -18,7 +18,7 @@
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
     "coverage": "aegir coverage --timeout 50000",
-    "dep-check": "dependency-check package.json './test/**/*.js'"
+    "dep-check": "dependency-check package.json './test/**/*.js' './src/**/*.js'"
   },
   "browser": {
     "hapi": false,
