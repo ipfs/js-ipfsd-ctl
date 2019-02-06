@@ -14,11 +14,13 @@ os:
   - windows
 
 script: npx nyc -s npm run test:node -- --bail
+after_success: npx nyc report --reporter=text-lcov > coverage.lcov && npx codecov
 
 jobs:
   include:
     - stage: check
       script:
+        - commitlint-travis
         - npm run lint
         - npm run dep-check
 
@@ -26,15 +28,13 @@ jobs:
       name: chrome
       addons:
         chrome: stable
-      script:
-        - npx aegir test -t browser
+      script: npm run test:browser
 
     - stage: test
       name: firefox
       addons:
         firefox: latest
-      script:
-        - npx aegir test -t browser -- --browsers FirefoxHeadless
+      script: npm run test:browser -- --browsers FirefoxHeadless
 
 notifications:
   email: false
