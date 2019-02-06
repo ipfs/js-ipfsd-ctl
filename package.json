@@ -39,18 +39,13 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged && npm run dep-check",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "commit-msg": "npx aegir check commitlint -- -E HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
     "*.js": [
       "eslint --fix -c node_modules/aegir/src/config/eslintrc.js",
       "git add"
-    ]
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
     ]
   },
   "engines": {
