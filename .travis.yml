@@ -35,3 +35,6 @@ jobs:
         firefox: latest
       script:
         - npx aegir test -t browser -- --browsers FirefoxHeadless
+
+notifications:
+  email: false
