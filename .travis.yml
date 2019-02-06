@@ -6,7 +6,7 @@ stages:
   - cov
 
 node_js:
-  - 10
+  - '10'
 
 os:
   - linux
@@ -18,14 +18,12 @@ script: npx nyc -s npm run test:node -- --bail
 jobs:
   include:
     - stage: check
-      node_js: 10
       script:
         - npm run lint
         - npm run dep-check
 
     - stage: test
       name: chrome
-      node_js: 10
       addons:
         chrome: stable
       script:
@@ -33,7 +31,6 @@ jobs:
 
     - stage: test
       name: firefox
-      node_js: 10
       addons:
         firefox: latest
       script:
