@@ -28,7 +28,7 @@ jobs:
       name: chrome
       addons:
         chrome: stable
-      script: npm run test:browser
+      script: npx aegir test -t browser
 
     - stage: test
       name: firefox
