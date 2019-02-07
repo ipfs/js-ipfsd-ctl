@@ -20,9 +20,9 @@ jobs:
   include:
     - stage: check
       script:
-        - commitlint-travis
+        - npx aegir commitlint --travis
+        - npx aegir dep-check
         - npm run lint
-        - npm run dep-check
 
     - stage: test
       name: chrome

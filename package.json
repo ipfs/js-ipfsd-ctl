@@ -11,14 +11,13 @@
     "lint": "aegir lint",
     "docs": "aegir docs",
     "build": "aegir build",
-    "test": "aegir test -t node -t browser --no-cors",
+    "test": "aegir test -t node -t browser",
     "test:node": "aegir test -t node",
-    "test:browser": "aegir test -t browser --no-cors",
+    "test:browser": "aegir test -t browser",
     "release": "aegir release",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
-    "coverage": "aegir coverage --timeout 50000",
-    "dep-check": "dependency-check package.json './test/**/*.js' './src/**/*.js'"
+    "coverage": "aegir coverage --timeout 50000"
   },
   "browser": {
     "hapi": false,
@@ -38,8 +37,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && npm run dep-check",
-      "commit-msg": "npx aegir check commitlint -- -E HUSKY_GIT_PARAMS"
+      "pre-commit": "lint-staged && npx aegir dep-check",
+      "commit-msg": "npx aegir commitlint -- -E HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
@@ -88,7 +87,6 @@
   "devDependencies": {
     "aegir": "ipfs/aegir#ci/travis",
     "chai": "^4.2.0",
-    "dependency-check": "^3.3.0",
     "detect-port": "^1.3.0",
     "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "0.4.18",
