@@ -174,6 +174,10 @@ class Daemon {
       args.push('--pass')
       args.push('"' + initOptions.pass + '"')
     }
+    if (initOptions.profile) {
+      args.push('-p')
+      args.push(initOptions.profile)
+    }
     run(this, args, { env: this.env }, (err, result) => {
       if (err) {
         return callback(err)
