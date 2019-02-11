@@ -174,10 +174,14 @@ class Daemon {
       args.push('--pass')
       args.push('"' + initOptions.pass + '"')
     }
-    // TODO: remove when JS IPFS supports profiles
-    if (this.opts.type === 'go' && initOptions.profile) {
-      args.push('-p')
-      args.push(initOptions.profile)
+    if (initOptions.profile) {
+      // TODO: remove when JS IPFS supports profiles
+      if (this.opts.type === 'go') {
+        args.push('-p')
+        args.push(initOptions.profile)
+      } else {
+        log(`ignoring "profile" option, not supported for ${this.opts.type} node`)
+      }
     }
     run(this, args, { env: this.env }, (err, result) => {
       if (err) {
