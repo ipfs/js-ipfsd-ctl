@@ -44,7 +44,7 @@ tests.forEach((fOpts) => {
           init: true,
           start: false,
           disposable: true,
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }, (err, _ipfsd) => {
           expect(err).to.not.exist()
           expect(_ipfsd).to.exist()
@@ -135,7 +135,7 @@ tests.forEach((fOpts) => {
 
         df.spawn({
           start: false,
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }, (err, ipfsd) => {
           expect(err).to.not.exist()
           ipfsd.start(['--should-not-exist'], (err) => {
@@ -165,7 +165,7 @@ tests.forEach((fOpts) => {
           init: true,
           start: false,
           disposable: true,
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }, (err, _ipfsd) => {
           expect(err).to.not.exist()
           expect(_ipfsd).to.exist()
@@ -247,7 +247,7 @@ tests.forEach((fOpts) => {
 
         df.spawn({
           start: false,
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }, (err, ipfsd) => {
           expect(err).to.not.exist()
           ipfsd.start(['--should-not-exist'], (err) => {
@@ -270,7 +270,7 @@ tests.forEach((fOpts) => {
 
         df.spawn({
           exec,
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }, (err, daemon) => {
           expect(err).to.not.exist()
           expect(daemon).to.exist()
@@ -302,7 +302,7 @@ tests.forEach((fOpts) => {
         process.env = Object.assign({}, process.env, fOpts.type === 'go'
           ? { IPFS_GO_EXEC: exec } : { IPFS_JS_EXEC: exec })
         df.spawn({
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }, (err, daemon) => {
           expect(err).to.not.exist()
           expect(daemon).to.exist()
@@ -335,7 +335,7 @@ tests.forEach((fOpts) => {
 
         df.spawn({
           exec,
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }, (err, daemon) => {
           expect(err).to.not.exist()
           expect(daemon).to.exist()
@@ -356,7 +356,7 @@ tests.forEach((fOpts) => {
 
         const df = IPFSFactory.create(dfConfig)
         df.spawn({
-          initOptions: { bits: fOpts.bits },
+          initOptions: { bits: fOpts.bits, profile: 'test' },
           repoPath: ipfsd.repoPath,
           disposable: false
         }, (err, daemon) => {
@@ -383,7 +383,7 @@ tests.forEach((fOpts) => {
           init: false,
           start: false,
           exec: exec,
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }, (err, daemon) => {
           expect(err).to.not.exist()
           expect(daemon).to.exist()
@@ -418,7 +418,7 @@ tests.forEach((fOpts) => {
             start: false,
             disposable: false,
             repoPath: tempDir(fOpts.type),
-            initOptions: { bits: fOpts.bits },
+            initOptions: { bits: fOpts.bits, profile: 'test' },
             config: {
               Addresses: {
                 Swarm: [`/ip4/127.0.0.1/tcp/0`],

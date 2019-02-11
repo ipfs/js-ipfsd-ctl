@@ -50,7 +50,7 @@ describe('ipfsd.api for Daemons', () => {
           df.spawn({
             start: false,
             config: config,
-            initOptions: { bits: 1024 }
+            initOptions: { bits: 1024, profile: 'test' }
           }, (err, _ipfsd) => {
             expect(err).to.not.exist()
             ipfsd = _ipfsd
@@ -94,7 +94,7 @@ describe('ipfsd.api for Daemons', () => {
 
       df.spawn({
         config: config,
-        initOptions: { bits: 1024 }
+        initOptions: { bits: 1024, profile: 'test' }
       }, (err, _ipfsd) => {
         expect(err).to.not.exist()
         const ipfsd = _ipfsd

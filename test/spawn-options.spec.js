@@ -73,7 +73,7 @@ describe('Spawn options', function () {
             init: false,
             start: false,
             disposable: false,
-            initOptions: { bits: fOpts.bits }
+            initOptions: { bits: fOpts.bits, profile: 'test' }
           }
 
           f.spawn(options, (err, _ipfsd) => {
@@ -167,7 +167,7 @@ describe('Spawn options', function () {
       it('create init and start node', function (done) {
         this.timeout(20 * 1000)
 
-        f.spawn({ initOptions: { bits: fOpts.bits } },
+        f.spawn({ initOptions: { bits: fOpts.bits, profile: 'test' } },
           (err, _ipfsd) => {
             expect(err).to.not.exist()
             expect(_ipfsd).to.exist()
@@ -213,7 +213,8 @@ describe('Spawn options', function () {
         f.spawn({
           defaultAddrs: true,
           initOptions: {
-            bits: fOpts.bits
+            bits: fOpts.bits,
+            profile: 'test'
           }
         }, (err, ipfsd) => {
           expect(err).to.not.exist()
@@ -246,7 +247,7 @@ describe('Spawn options', function () {
           Bootstrap: ['/dns4/wss0.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmZMxNdpMkewiVZLMRxaNxUeZpDUb34pWjZ1kZvsd16Zic']
         }
 
-        const options = { config: config, initOptions: { bits: fOpts.bits } }
+        const options = { config: config, initOptions: { bits: fOpts.bits, profile: 'test' } }
 
         waterfall([
           (cb) => f.spawn(options, cb),
@@ -317,7 +318,7 @@ describe('Spawn options', function () {
           start: false,
           repoPath: repoPath,
           config: config,
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }
 
         series([
@@ -357,7 +358,7 @@ describe('Spawn options', function () {
 
         const options = {
           args: ['--enable-pubsub-experiment'],
-          initOptions: { bits: fOpts.bits }
+          initOptions: { bits: fOpts.bits, profile: 'test' }
         }
 
         f.spawn(options, (err, _ipfsd) => {
@@ -396,7 +397,7 @@ describe('Spawn options', function () {
 
       before(function (done) {
         this.timeout(20 * 1000)
-        f.spawn({ initOptions: { bits: fOpts.bits } },
+        f.spawn({ initOptions: { bits: fOpts.bits, profile: 'test' } },
           (err, _ipfsd) => {
             expect(err).to.not.exist()
             ipfsd = _ipfsd

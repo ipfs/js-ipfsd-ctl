@@ -22,7 +22,7 @@ describe('custom API', function () {
       IpfsClient: () => mockApi
     })
 
-    f.spawn((err, ipfsd) => {
+    f.spawn({ initOptions: { profile: 'test' } }, (err, ipfsd) => {
       if (err) return done(err)
       expect(ipfsd.api).to.equal(mockApi)
       // Restore a real API so that the node can be stopped properly
