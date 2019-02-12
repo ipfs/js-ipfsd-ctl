@@ -1,3 +1,13 @@
+<a name="0.42.0"></a>
+# [0.42.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.41.0...v0.42.0) (2019-02-12)
+
+
+### Features
+
+* support passing profile init option ([#321](https://github.com/ipfs/js-ipfsd-ctl/issues/321)) ([62a15d2](https://github.com/ipfs/js-ipfsd-ctl/commit/62a15d2))
+
+
+
 <a name="0.41.0"></a>
 # [0.41.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.40.3...v0.41.0) (2019-01-30)
 
