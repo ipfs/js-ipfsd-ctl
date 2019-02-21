@@ -19,6 +19,7 @@ jobs:
   include:
     - os: windows
       filter_secrets: false
+      cache: false
       
     - stage: check
       script:
