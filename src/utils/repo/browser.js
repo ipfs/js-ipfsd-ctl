@@ -4,16 +4,16 @@ const hat = require('hat')
 const Dexie = require('dexie').default
 const setImmediate = require('async/setImmediate')
 
-exports.createTempRepoPath = function createTempPathRepo () {
+function createTempRepoPath () {
   return '/ipfs-' + hat()
 }
 
-exports.removeRepo = function removeRepo (repoPath, callback) {
+function removeRepo (repoPath, callback) {
   Dexie.delete(repoPath)
   setImmediate(callback)
 }
 
-exports.repoExists = function repoExists (repoPath, cb) {
+function repoExists (repoPath, cb) {
   const db = new Dexie(repoPath)
   db.open(repoPath)
     .then((store) => {
@@ -22,4 +22,10 @@ exports.repoExists = function repoExists (repoPath, cb) {
         .count((cnt) => cb(null, cnt > 0))
         .catch(cb)
     }).catch(cb)
+}
+
+module.exports = {
+  createTempRepoPath,
+  removeRepo,
+  repoExists
 }

@@ -6,7 +6,7 @@ const hat = require('hat')
 const rimraf = require('rimraf')
 const fs = require('fs')
 
-exports.removeRepo = function removeRepo (dir, callback) {
+function removeRepo (dir, callback) {
   fs.access(dir, (err) => {
     if (err) {
       // Does not exist so all good
@@ -17,13 +17,19 @@ exports.removeRepo = function removeRepo (dir, callback) {
   })
 }
 
-exports.createTempRepoPath = function createTempRepo () {
+function createTempRepoPath () {
   return path.join(os.tmpdir(), '/ipfs-test-' + hat())
 }
 
-exports.repoExists = function (repoPath, cb) {
+function repoExists (repoPath, cb) {
   fs.access(`${repoPath}/config`, (err) => {
     if (err) { return cb(null, false) }
     cb(null, true)
   })
+}
+
+module.exports = {
+  createTempRepoPath,
+  removeRepo,
+  repoExists
 }
