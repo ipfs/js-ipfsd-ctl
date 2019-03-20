@@ -38,14 +38,7 @@ class InProc extends EventEmitter {
 
     this.opts.EXPERIMENTAL = defaultsDeep({}, opts.EXPERIMENTAL, {
       pubsub: false,
-      sharding: false,
-      relay: {
-        enabled: false,
-        hop: {
-          enabled: false
-        }
-      },
-      mfs: false
+      sharding: false
     })
 
     this.opts.args.forEach((arg) => {
