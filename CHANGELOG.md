@@ -1,3 +1,13 @@
+<a name="0.42.2"></a>
+## [0.42.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.42.1...v0.42.2) (2019-04-04)
+
+
+### Bug Fixes
+
+* pass relay in via opts, not config ([#327](https://github.com/ipfs/js-ipfsd-ctl/issues/327)) ([bc0a5b8](https://github.com/ipfs/js-ipfsd-ctl/commit/bc0a5b8))
+
+
+
 <a name="0.42.1"></a>
 ## [0.42.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.42.0...v0.42.1) (2019-03-20)
 
