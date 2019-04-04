@@ -102,7 +102,7 @@ Install one or both of the following modules:
 
 - `options` - optional object with:
   - `remote` bool - use remote endpoint to spawn the nodes.
-  - `port` number - remote endpoint point. Defaults to 43134.
+  - `port` number - remote endpoint port. Defaults to 43134.
   - `exec` - IPFS executable path. `ipfsd-ctl` will attempt to locate it by default. If you desire to spawn js-ipfs instances in the same process, pass the ref to the module instead (e.g `exec: require('ipfs')`)
   - `type` - the daemon type, see below the options
     - `go` - spawn go-ipfs daemon
