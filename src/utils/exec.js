@@ -24,8 +24,7 @@ function exec (cmd, args, opts, callback) {
   command
     .then(r => {
       callback(null, r)
-    })
-    .catch(err => {
+    }, err => {
       callback(err)
     })
 
