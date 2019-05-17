@@ -1,3 +1,13 @@
+<a name="0.42.3"></a>
+## [0.42.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.42.2...v0.42.3) (2019-05-17)
+
+
+### Bug Fixes
+
+* dont call callbacks twice ([c61606f](https://github.com/ipfs/js-ipfsd-ctl/commit/c61606f))
+
+
+
 <a name="0.42.2"></a>
 ## [0.42.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.42.1...v0.42.2) (2019-04-04)
 
