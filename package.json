@@ -61,7 +61,7 @@
     "daemon"
   ],
   "dependencies": {
-    "async": "^2.6.2",
+    "async": "^3.0.1",
     "base-x": "^3.0.5",
     "boom": "^7.3.0",
     "debug": "^4.1.1",
