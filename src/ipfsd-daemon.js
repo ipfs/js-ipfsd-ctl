@@ -269,6 +269,8 @@ class Daemon {
       stdout: (data) => {
         data = String(data)
 
+        console.log('ctl_cli: ', data)
+
         if (data) {
           daemonLog.info(data.trim())
         }
