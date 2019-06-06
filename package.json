@@ -82,7 +82,7 @@
     "rimraf": "^2.6.3",
     "safe-json-parse": "^4.0.0",
     "safe-json-stringify": "^1.2.0",
-    "superagent": "^4.0.0-beta.5"
+    "superagent": "^5.0.6"
   },
   "devDependencies": {
     "aegir": "^18.2.0",
