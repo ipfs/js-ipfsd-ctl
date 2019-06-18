@@ -71,7 +71,7 @@ describe('ipfsd.api for Daemons', () => {
             const fixuresDir = res.find(file => file.path === 'fixtures')
             expect(fixuresDir).to.have.property(
               'hash',
-              'QmR9731QMXHCjK2EvoQZNhMHVE77tGMbgPFXMWPHztMV4a'
+              'QmNiv9nS9xipNafXqApzGqwajU8EaXrS2vUPJftg5ZEDUb'
             )
 
             const testFile = res.find(file => file.path === 'fixtures/test.txt')
