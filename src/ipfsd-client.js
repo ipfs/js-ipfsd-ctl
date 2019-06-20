@@ -250,7 +250,10 @@ class Client {
     }
 
     const qr = { id: this._id }
-    qr.key = key
+
+    if (key) {
+      qr.key = key
+    }
     request
       .get(`${this.baseUrl}/config`)
       .query(qr)

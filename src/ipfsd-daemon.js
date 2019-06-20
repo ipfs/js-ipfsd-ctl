@@ -389,12 +389,9 @@ class Daemon {
    * @param {function(Error, (Object|string)): void} callback
    * @returns {void}
    */
-  getConfig (key, callback) {
+  getConfig (key = 'show', callback) {
     if (typeof key === 'function') {
       callback = key
-      key = 'show'
-    }
-    if (!key) {
       key = 'show'
     }
     let config = ''
