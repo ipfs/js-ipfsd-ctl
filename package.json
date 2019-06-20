@@ -70,7 +70,7 @@
     "execa": "^1.0.0",
     "hapi": "^16.6.2",
     "hat": "~0.0.3",
-    "ipfs-http-client": "ipfs/js-ipfs-http-client#feat/name-resolve-dns",
+    "ipfs-http-client": "ipfs/js-ipfs-http-client#master",
     "joi": "^14.3.1",
     "libp2p-crypto": "~0.16.1",
     "lodash.clone": "^4.5.0",
