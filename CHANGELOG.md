@@ -1,3 +1,13 @@
+<a name="0.43.0"></a>
+# [0.43.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.42.4...v0.43.0) (2019-06-20)
+
+
+### Bug Fixes
+
+* updates deps and http for name resolve dns ([#332](https://github.com/ipfs/js-ipfsd-ctl/issues/332)) ([58a9fea](https://github.com/ipfs/js-ipfsd-ctl/commit/58a9fea))
+
+
+
 <a name="0.42.4"></a>
 ## [0.42.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.42.3...v0.42.4) (2019-06-04)
 
