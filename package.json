@@ -93,7 +93,7 @@
     "husky": "^2.4.1",
     "ipfs": "~0.36.3",
     "is-running": "^2.1.0",
-    "lint-staged": "^8.1.7",
+    "lint-staged": "^9.0.1",
     "mkdirp": "~0.5.1",
     "proxyquire": "^2.1.0",
     "superagent-mocker": "~0.5.2"
