@@ -1,8 +1,6 @@
 /* eslint-env mocha */
-/* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
-const waterfall = require('async/waterfall')
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
@@ -20,46 +18,35 @@ describe('data can be put and fetched', () => {
   tests.forEach((dfOpts) => describe(`${dfOpts.type}`, () => {
     let ipfsd
 
-    before(function (done) {
+    before(async function () {
       this.timeout(30 * 1000)
 
       const f = IPFSFactory.create(dfOpts)
 
-      f.spawn({ initOptions: { bits: dfOpts.bits, profile: 'test' } }, (err, _ipfsd) => {
-        expect(err).to.not.exist()
-        expect(_ipfsd).to.exist()
-        expect(_ipfsd.api).to.exist()
-        expect(_ipfsd.api).to.have.property('id')
+      ipfsd = await f.spawn({ initOptions: { bits: dfOpts.bits, profile: 'test' } })
 
-        ipfsd = _ipfsd
-        done()
-      })
+      expect(ipfsd).to.exist()
+      expect(ipfsd.api).to.exist()
+      expect(ipfsd.api).to.have.property('id')
     })
 
-    after(function (done) {
+    after(async function () {
       this.timeout(20 * 1000)
-      ipfsd.stop(done)
+      await ipfsd.stop()
     })
 
-    it('put and fetch a block', function (done) {
+    it('put and fetch a block', async function () {
       this.timeout(20 * 1000)
 
       const data = Buffer.from('blorb')
+      const block = await ipfsd.api.block.put(data)
+      const cidStr = block.cid.toBaseEncodedString()
 
-      waterfall([
-        (cb) => ipfsd.api.block.put(data, cb),
-        (block, cb) => {
-          const cidStr = block.cid.toBaseEncodedString()
-          expect(cidStr)
-            .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
+      expect(cidStr)
+        .to.eql('QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ')
 
-          ipfsd.api.block.get(cidStr, cb)
-        },
-        (block, cb) => {
-          expect(block.data).to.eql(data)
-          cb()
-        }
-      ], done)
+      const fetched = await ipfsd.api.block.get(cidStr)
+      expect(fetched.data).to.eql(data)
     })
   }))
 })

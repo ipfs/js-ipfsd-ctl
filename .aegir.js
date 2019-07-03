@@ -1,10 +1,10 @@
 'use strict'
-const path = require('path')
+
 const createServer = require('./src').createServer
 
 const server = createServer() // using defaults
 module.exports = {
-  bundlesize: { maxSize: '291kB' },
+  bundlesize: { maxSize: '270kB' },
   karma: {
     files: [{
       pattern: 'test/fixtures/**/*',
@@ -15,8 +15,8 @@ module.exports = {
   },
   hooks: {
     browser: {
-      pre: server.start.bind(server),
-      post: server.stop.bind(server)
+      pre: () => server.start(),
+      post: () => server.stop()
     }
   }
 }

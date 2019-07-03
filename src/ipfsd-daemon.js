@@ -1,13 +1,9 @@
 'use strict'
 
-const fs = require('fs')
-const waterfall = require('async/waterfall')
-const series = require('async/series')
 const IpfsClient = require('ipfs-http-client')
 const multiaddr = require('multiaddr')
-const rimraf = require('rimraf')
+const fs = require('fs-extra')
 const path = require('path')
-const once = require('once')
 const defaults = require('lodash.defaults')
 const debug = require('debug')
 const os = require('os')
@@ -18,7 +14,6 @@ const daemonLog = {
   err: debug('ipfsd-ctl:daemon:stderr')
 }
 
-const safeParse = require('safe-json-parse/callback')
 const safeStringify = require('safe-json-stringify')
 
 const tmpDir = require('./utils/tmp-dir')
@@ -31,6 +26,15 @@ const GRACE_PERIOD = 10500
 
 // amount of ms to wait before sigkill for non disposable repos
 const NON_DISPOSABLE_GRACE_PERIOD = 10500 * 3
+
+function translateError (err) {
+  // get the actual error message to be the err.message
+  let message = err.message
+  err.message = err.stderr
+  err.stderr = message
+
+  throw err
+}
 
 /**
  * ipfsd for a go-ipfs or js-ipfs daemon
@@ -146,17 +150,9 @@ class Daemon {
    * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
    * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
    * @param {string} [initOptions.pass] - The passphrase of the keychain.
-   * @param {function (Error, Daemon): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  init (initOptions, callback) {
-    if (typeof initOptions === 'function') {
-      callback = initOptions
-      initOptions = {}
-    }
-
-    initOptions = initOptions || {}
-
+  async init (initOptions = {}) {
     if (initOptions.directory && initOptions.directory !== this.path) {
       this.path = initOptions.directory
     }
@@ -183,57 +179,43 @@ class Daemon {
         log(`ignoring "profile" option, not supported for ${this.opts.type} node`)
       }
     }
-    run(this, args, { env: this.env }, (err, result) => {
-      if (err) {
-        return callback(err)
-      }
 
-      waterfall([
-        (cb) => this.getConfig(cb),
-        (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
-      ], (err) => {
-        if (err) { return callback(err) }
-        this.clean = false
-        this.initialized = true
-        return callback(null, this)
-      })
-    })
+    await run(this, args, { env: this.env })
+      .catch(translateError)
+
+    const conf = await this.getConfig()
+
+    await this.replaceConfig(defaults({}, this.opts.config, conf))
+
+    this.clean = false
+    this.initialized = true
+
+    return this
   }
 
   /**
    * Delete the repo that was being used. If the node was marked as disposable this will be called automatically when the process is exited.
    *
-   * @param {function(Error): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  cleanup (callback) {
+  async cleanup () {
     if (this.clean) {
-      return callback()
+      return
     }
 
     this.clean = true
-    rimraf(this.path, callback)
+
+    await fs.remove(this.path)
   }
 
   /**
    * Start the daemon.
    *
    * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
-   * @param {function(Error, IpfsClient): void} callback
-   * @return {void}
+   * @return {Promise}
    */
-  start (flags, callback) {
-    if (typeof flags === 'function') {
-      callback = flags
-      flags = []
-    }
-    if (typeof flags === 'object' && Object.keys(flags).length === 0) {
-      flags = []
-    }
-
+  start (flags = []) {
     const args = ['daemon'].concat(flags || [])
-
-    callback = once(callback)
 
     const setApiAddr = (addr) => {
       this._apiAddr = multiaddr(addr)
@@ -249,72 +231,74 @@ class Daemon {
     }
 
     const api = this.runningNodeApi
+
     if (api) {
       setApiAddr(api)
       this._started = true
-      return callback(null, this.api)
+      return this.api
     }
 
     let output = ''
 
-    this.subprocess = run(this, args, {
-      env: this.env,
-      stderr: (data) => {
-        data = String(data)
+    return new Promise(async (resolve, reject) => {
+      this.subprocess = run(this, args, {
+        env: this.env,
+        stderr: (data) => {
+          data = String(data)
 
-        if (data) {
-          daemonLog.err(data.trim())
+          if (data) {
+            daemonLog.err(data.trim())
+          }
+        },
+        stdout: (data) => {
+          data = String(data)
+
+          if (data) {
+            daemonLog.info(data.trim())
+          }
+
+          output += data
+
+          const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
+          const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
+
+          if (apiMatch && apiMatch.length > 0) {
+            setApiAddr(apiMatch[1])
+          }
+
+          if (gwMatch && gwMatch.length > 0) {
+            setGatewayAddr(gwMatch[1])
+          }
+
+          if (output.match(/(?:daemon is running|Daemon is ready)/)) {
+            // we're good
+            this._started = true
+            resolve(this.api)
+          }
         }
-      },
-      stdout: (data) => {
-        data = String(data)
+      })
 
-        if (data) {
-          daemonLog.info(data.trim())
-        }
-
-        output += data
-
-        const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
-        const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
-
-        if (apiMatch && apiMatch.length > 0) {
-          setApiAddr(apiMatch[1])
-        }
-
-        if (gwMatch && gwMatch.length > 0) {
-          setGatewayAddr(gwMatch[1])
-        }
-
-        if (output.match(/(?:daemon is running|Daemon is ready)/)) {
-          // we're good
-          this._started = true
-          callback(null, this.api)
-        }
+      try {
+        await this.subprocess
+          .catch(translateError)
+      } catch (err) {
+        reject(err)
       }
-    }, callback)
+    })
   }
 
   /**
    * Stop the daemon.
    *
    * @param {number} [timeout] - Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of 10500 ms will be used for disposable nodes and 10500 * 3 ms for non disposable nodes.
-   * @param {function(Error): void} callback
-   * @return {void}
+   * @return {Promise}
    */
-  stop (timeout, callback) {
-    if (typeof timeout === 'function') {
-      callback = timeout
-      timeout = null
-    }
-
-    callback = callback || function noop () {}
-
+  async stop (timeout) {
     if (!this.subprocess) {
-      return callback()
+      return
     }
 
-    this.killProcess(timeout, callback)
+    await this.killProcess(timeout)
   }
 
   /**
@@ -327,57 +311,54 @@ class Daemon {
    * Note: timeout is ignored for proc nodes
    *
    * @param {Number} [timeout] - Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of 10500 ms will be used for disposable nodes and 10500 * 3 ms for non disposable nodes.
-   * @param {function(Error): void} callback - Called when the process was killed.
-   * @returns {void}
+   * @returns {Promise}
    */
-  killProcess (timeout, callback) {
-    if (typeof timeout === 'function') {
-      callback = timeout
-      timeout = null
-    }
-
+  killProcess (timeout) {
     if (!timeout) {
       timeout = this.disposable
         ? GRACE_PERIOD
         : NON_DISPOSABLE_GRACE_PERIOD
     }
 
-    // need a local var for the closure, as we clear the var.
-    const subprocess = this.subprocess
-    const grace = setTimeout(() => {
-      log('kill timeout, using SIGKILL', subprocess.pid)
-      subprocess.kill('SIGKILL')
-    }, timeout)
-
-    subprocess.once('exit', () => {
-      log('killed', subprocess.pid)
-      clearTimeout(grace)
+    return new Promise((resolve, reject) => {
+      // need a local var for the closure, as we clear the var.
+      const subprocess = this.subprocess
       this.subprocess = null
-      this._started = false
-      if (this.disposable) {
-        return this.cleanup(callback)
-      }
-      setImmediate(callback)
-    })
 
-    if (this.api) {
-      log('kill via api', subprocess.pid)
-      this.api.shutdown(() => null)
-    } else {
-      log('killing', subprocess.pid)
-      subprocess.kill('SIGTERM')
-    }
-    this.subprocess = null
+      const grace = setTimeout(() => {
+        log('kill timeout, using SIGKILL', subprocess.pid)
+        subprocess.kill('SIGKILL')
+      }, timeout)
+
+      subprocess.once('exit', () => {
+        log('killed', subprocess.pid)
+        clearTimeout(grace)
+        this._started = false
+
+        if (this.disposable) {
+          return this.cleanup().then(resolve, reject)
+        }
+
+        resolve()
+      })
+
+      if (this.api) {
+        log('kill via api', subprocess.pid)
+        this.api.shutdown(() => null)
+      } else {
+        log('killing', subprocess.pid)
+        subprocess.kill('SIGTERM')
+      }
+    })
   }
 
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @param {function(Error, number): void} callback - receives the pid
-   * @returns {void}
+   * @returns {number}
    */
-  pid (callback) {
-    callback(this.subprocess && this.subprocess.pid)
+  pid () {
+    return this.subprocess && this.subprocess.pid
   }
 
   /**
@@ -386,36 +367,21 @@ class Daemon {
    * If no `key` is passed, the whole config is returned as an object.
    *
    * @param {string} [key] - A specific config to retrieve.
-   * @param {function(Error, (Object|string)): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  getConfig (key = 'show', callback) {
-    if (typeof key === 'function') {
-      callback = key
-      key = 'show'
+  async getConfig (key = 'show') {
+    const {
+      stdout
+    } = await run(this, ['config', key], {
+      env: this.env
+    })
+      .catch(translateError)
+
+    if (key === 'show') {
+      return JSON.parse(stdout)
     }
-    let config = ''
 
-    series([
-      (cb) => run(
-        this,
-        ['config', key],
-        {
-          env: this.env,
-          stdout: (data) => {
-            config += String(data)
-          }
-        },
-        cb
-      ),
-      (cb) => {
-        if (key === 'show') {
-          return safeParse(config, cb)
-        }
-
-        cb(null, config.trim())
-      }
-    ], (error, results) => callback(error, results && results[results.length - 1]))
+    return stdout.trim()
   }
 
   /**
@@ -423,53 +389,45 @@ class Daemon {
    *
    * @param {string} key - The key of the config entry to change/set.
    * @param {string} value - The config value to change/set.
-   * @param {function(Error): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  setConfig (key, value, callback) {
-    setConfigValue(this, key, value, callback)
+  setConfig (key, value) {
+    return setConfigValue(this, key, value)
+      .catch(translateError)
   }
 
   /**
    * Replace the current config with the provided one
    *
    * @param {object} config
-   * @param {function(Error): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  replaceConfig (config, callback) {
+  async replaceConfig (config) {
     const tmpFile = path.join(os.tmpdir(), hat())
+
     // TODO: we're using tmp file here until
     // https://github.com/ipfs/js-ipfs/pull/785
     // is ready
-    series([
-      (cb) => fs.writeFile(tmpFile, safeStringify(config), cb),
-      (cb) => run(
-        this,
-        ['config', 'replace', `${tmpFile}`],
-        { env: this.env },
-        cb
-      )
-    ], (err) => {
-      if (err) { return callback(err) }
-      fs.unlink(tmpFile, callback)
-    })
+    await fs.writeFile(tmpFile, safeStringify(config))
+    await run(this, ['config', 'replace', `${tmpFile}`], { env: this.env })
+      .catch(translateError)
+    await fs.unlink(tmpFile)
   }
 
   /**
    * Get the version of ipfs
    *
-   * @param {function(Error, string): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  version (callback) {
-    let stdout = ''
-    run(this, ['version'], {
-      env: this.env,
-      stdout: (data) => {
-        stdout += String(data)
-      }
-    }, (error) => callback(error, stdout.trim()))
+  async version () {
+    const {
+      stdout
+    } = await run(this, ['version'], {
+      env: this.env
+    })
+      .catch(translateError)
+
+    return stdout.trim()
   }
 }
 

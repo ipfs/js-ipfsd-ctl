@@ -40,16 +40,12 @@ npm install --save ipfsd-ctl
 const IPFSFactory = require('ipfsd-ctl')
 const f = IPFSFactory.create()
 
-f.spawn(function (err, ipfsd) {
-  if (err) { throw err }
+const ipfs = await f.spawn()
+const id = await ipfsd.api.id()
 
-  ipfsd.api.id(function (err, id) {
-    if (err) { throw err }
+console.log(id)
 
-    console.log(id)
-    ipfsd.stop()
-  })
-})
+await ipfsd.stop()
 ```
 
 **Spawn an IPFS daemon from the Browser using the provided remote endpoint**
@@ -64,20 +60,14 @@ const port = 9090
 const server = IPFSFactory.createServer(port)
 const f = IPFSFactory.create({ remote: true, port: port })
 
-server.start((err) => {
-  if (err) { throw err }
+await server.start()
+const ipfsd = await f.spawn()
+const id = await ipfsd.api.id()
 
-  f.spawn((err, ipfsd) => {
-    if (err) { throw err }
+console.log(id)
 
-    ipfsd.api.id(function (err, id) {
-      if (err) { throw err }
-
-      console.log(id)
-      ipfsd.stop(server.stop)
-    })
-  })
-})
+await ipfsd.stop()
+await server.stop()
 ```
 
 ## Disposable vs non Disposable nodes
@@ -112,7 +102,7 @@ Install one or both of the following modules:
 
 **example:** See [Usage](#usage)
 
-#### Spawn a daemon with `f.spawn([options], callback)`
+#### Spawn a daemon with `f.spawn([options]) : Promise`
 
 Spawn the daemon
 
@@ -126,14 +116,14 @@ Spawn the daemon
   - `args` - array of cmd line arguments to be passed to ipfs daemon
   - `config` - ipfs configuration options
 
-- `callback` - is a function with the signature `function (err, ipfsd)` where:
-  - `err` - is the error set if spawning the node is unsuccessful
-  - `ipfsd` - is the daemon controller instance:
-    - `api` - a property of `ipfsd`, an instance of  [ipfs-http-client](https://github.com/ipfs/js-ipfs-http-client) attached to the newly created ipfs node
+Returns a promise that resolves to:
+
+- `ipfsd` - is the daemon controller instance:
+  - `api` - a property of `ipfsd`, an instance of  [ipfs-http-client](https://github.com/ipfs/js-ipfs-http-client) attached to the newly created ipfs node
 
 **example:** See [Usage](#usage)
 
-#### Get daemon version with `f.version(callback)`
+#### Get daemon version with `f.version() : Promise`
 
 Get the version without spawning a daemon
 
@@ -158,17 +148,13 @@ const IPFSFactory = require('ipfsd-ctl')
 
 const server = IPFSFactory.createServer({ port: 12345 })
 
-server.start((err) => {
-  if (err) { throw err }
+await server.start()
 
-  console.log('endpoint is running')
+console.log('endpoint is running')
 
-  server.stop((err) => {
-    if (err) { throw err }
+await server.stop()
 
-    console.log('endpoint has stopped')
-  })
-})
+console.log('endpoint has stopped')
 ```
 
 ### IPFS Daemon Controller - `ipfsd`
@@ -191,7 +177,7 @@ Get the current repo path. Returns string.
 
 Is the node started. Returns a boolean.
 
-#### `init([initOpts], callback)`
+#### `init([initOpts]) : Promise`
 
 Initialize a repo.
 
@@ -200,30 +186,31 @@ Initialize a repo.
   - `directory` (default IPFS_PATH if defined, or ~/.ipfs for go-ipfs and ~/.jsipfs for js-ipfs) - The location of the repo.
   - `pass` (optional) - The passphrase of the key chain.
 
-`callback` is a function with the signature `function (err, ipfsd)` where `err` is an Error in case something goes wrong and `ipfsd` is the daemon controller instance.
+Returns a promise that resolves to a daemon controller instance.
 
-#### `ipfsd.cleanup(callback)`
+#### `ipfsd.cleanup() : Promise`
 
 Delete the repo that was being used. If the node was marked as `disposable` this will be called automatically when the process is exited.
 
-`callback` is a function with the signature `function(err)`.
+Returns a promise that resolves when the cleanup is complete.
 
-#### `ipfsd.start(flags, callback)`
+#### `ipfsd.start(flags) : Promise`
 
 Start the daemon.
 
 `flags` - Flags array to be passed to the `ipfs daemon` command.
 
-`callback` is a function with the signature `function(err, ipfsClient)` that receives an instance of `Error` on failure or an instance of `ipfs-http-client` on success.
+Returns a promiset hat resolves to an instance of `ipfs-http-client`.
 
-
-#### `ipfsd.stop([timeout, callback])`
+#### `ipfsd.stop([timeout]) : Promise`
 
 Stop the daemon.
 
-`callback` is a function with the signature `function(err)` callback - function that receives an instance of `Error` on failure. Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of `10500` ms will be used for disposable nodes and `10500 * 3` ms for non disposable nodes.
+Use `timeout` to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of `10500` ms will be used for disposable nodes and `10500 * 3` ms for non disposable nodes.
 
-#### `ipfsd.killProcess([timeout, callback])`
+Returns a promise that resolves when the daemon has stopped.
+
+#### `ipfsd.killProcess([timeout]) : Promise`
 
 Kill the `ipfs daemon` process. Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of `10500` ms will be used for disposable nodes and `10500 * 3` ms for non disposable nodes.
 
@@ -231,23 +218,23 @@ Note: timeout is ignored for `proc` nodes
 
 First a `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent if the process hasn't exited yet.
 
-`callback` is a function with the signature `function()` called once the process is killed
+Returns a promise that resolves once the process is killed
 
-#### `ipfsd.pid(callback)`
+#### `ipfsd.pid() : Promise`
 
 Get the pid of the `ipfs daemon` process. Returns the pid number
 
-`callback` is a function with the signature `function(err, pid)` that receives the `pid` of the running daemon or an `Error` instance on failure
+Returns a promiset that resolves to the `pid` of the running daemon.
 
-#### `ipfsd.getConfig([key], callback)`
+#### `ipfsd.getConfig([key]) : Promise`
 
 Returns the output of an `ipfs config` command. If no `key` is passed, the whole config is returned as an object.
 
 `key` (optional) - A specific config to retrieve.
 
-`callback` is a function with the signature `function(err, (Object|string))` that receives an object or string on success or an `Error` instance on failure
+Returns a promise that resolves to  `Object|string` on success.
 
-#### `ipfsd.setConfig(key, value, callback)`
+#### `ipfsd.setConfig(key, value) : Promise`
 
 Set a config value.
 
@@ -255,13 +242,13 @@ Set a config value.
 
 `value` - the config value to change/set
 
-`callback` is a function with the signature `function(err)` callback - function that receives an `Error` instance on failure
+Returns a promise that resolves on success.
 
-#### `ipfsd.version(callback)`
+#### `ipfsd.version() : Promise`
 
 Get the version of ipfs
 
-`callback` is a function with the signature `function(err, version)`
+Returns a promise that resolves to the `version`
 
 ### IPFS HTTP Client  - `ipfsd.api`
 

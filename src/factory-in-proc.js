@@ -2,9 +2,7 @@
 
 const defaults = require('lodash.defaultsdeep')
 const clone = require('lodash.clone')
-const series = require('async/series')
 const path = require('path')
-const once = require('once')
 const tmpDir = require('./utils/tmp-dir')
 const repoUtils = require('./utils/repo/nodejs')
 const InProc = require('./ipfsd-in-proc')
@@ -36,30 +34,26 @@ class FactoryInProc {
    *
    * *Here for completeness*
    *
-   * @param {string} type - the type of the node
-   * @param {function(Error, string): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  tmpDir (type, callback) {
-    callback(null, tmpDir(true))
+  tmpDir () {
+    return tmpDir(true)
   }
 
   /**
    * Get the version of the currently used go-ipfs binary.
    *
    * @param {Object} [options={}]
-   * @param {function(Error, string): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  version (options, callback) {
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
-
-    const node = new InProc(options)
-    node.once('ready', () => {
-      node.version(callback)
+  version (options = {}) {
+    return new Promise((resolve, reject) => {
+      const node = new InProc(options)
+      node.once('ready', () => {
+        node.version()
+          .then(resolve, reject)
+      })
+      node.once('error', reject)
     })
   }
 
@@ -67,15 +61,9 @@ class FactoryInProc {
    * Spawn JSIPFS instances
    *
    * @param {SpawnOptions} [opts={}] - various config options and ipfs config parameters
-   * @param {function(Error, InProc): void} callback - a callback that receives an array with an `ipfs-instance` attached to the node and a `Node`
-   * @returns {void}
+   * @returns {Promise} - Resolves to an array with an `ipfs-instance` attached to the node and a `Node`
    */
-  spawn (opts, callback) {
-    if (typeof opts === 'function') {
-      callback = opts
-      opts = defaultOptions
-    }
-
+  async spawn (opts = {}) {
     const options = defaults({}, opts, defaultOptions)
     options.init = typeof options.init !== 'undefined'
       ? options.init
@@ -105,32 +93,29 @@ class FactoryInProc {
     options.exec = options.exec || this.options.exec
 
     if (typeof options.exec !== 'function') {
-      return callback(new Error(`'type' proc requires 'exec' to be a coderef`))
+      throw new Error(`'type' proc requires 'exec' to be a coderef`)
     }
 
     const node = new InProc(options)
-    const callbackOnce = once((err) => {
-      if (err) {
-        return callback(err)
-      }
-      callback(null, node)
-    })
-    node.once('error', callbackOnce)
 
-    series([
-      (cb) => node.once('ready', cb),
-      (cb) => repoUtils.repoExists(node.path, (err, initialized) => {
-        if (err) { return cb(err) }
-        node.initialized = initialized
-        cb()
-      }),
-      (cb) => options.init
-        ? node.init(cb)
-        : cb(),
-      (cb) => options.start
-        ? node.start(options.args, cb)
-        : cb()
-    ], callbackOnce)
+    await new Promise((resolve, reject) => {
+      node.once('error', reject)
+      node.once('ready', () => {
+        resolve()
+      })
+    })
+
+    node.initialized = await repoUtils.repoExists(node.path)
+
+    if (options.init) {
+      await node.init()
+    }
+
+    if (options.start) {
+      await node.start(options.args)
+    }
+
+    return node
   }
 }
 

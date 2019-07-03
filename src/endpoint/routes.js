@@ -1,8 +1,8 @@
 'use strict'
 
 const hat = require('hat')
-const boom = require('boom')
 const Joi = require('joi')
+const boom = require('boom')
 const defaults = require('lodash.defaultsdeep')
 const FactoryDaemon = require('../factory-daemon')
 const tmpDir = require('../utils/tmp-dir')
@@ -27,28 +27,30 @@ module.exports = (server) => {
   server.route({
     method: 'GET',
     path: '/util/tmp-dir',
-    handler: (request, reply) => {
+    handler: (request) => {
       const type = request.query.type || 'go'
       const path = tmpDir(type === 'js')
 
-      reply({ tmpDir: path })
+      return { tmpDir: path }
     }
   })
 
   server.route({
     method: 'GET',
     path: '/version',
-    handler: (request, reply) => {
+    handler: async (request) => {
       const type = request.query.type || 'go'
 
       // TODO: use the ../src/index.js so that the right Factory is picked
       const f = new FactoryDaemon({ type: type })
-      f.version((err, version) => {
-        if (err) {
-          return reply(boom.badRequest(err))
+
+      try {
+        return {
+          version: await f.version()
         }
-        reply({ version: version })
-      })
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
     }
   })
 
@@ -59,16 +61,14 @@ module.exports = (server) => {
   server.route({
     method: 'POST',
     path: '/spawn',
-    handler: (request, reply) => {
+    handler: async (request) => {
       const payload = request.payload || {}
 
       // TODO: use the ../src/index.js so that the right Factory is picked
       const f = new FactoryDaemon({ type: payload.type })
 
-      f.spawn(payload.options, (err, ipfsd) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
+      try {
+        const ipfsd = await f.spawn(payload.options)
         const id = hat()
         const initialized = ipfsd.initialized
         nodes[id] = ipfsd
@@ -86,8 +86,14 @@ module.exports = (server) => {
           }
         }
 
-        reply({ id: id, api: api, initialized: initialized })
-      })
+        return {
+          id,
+          api,
+          initialized
+        }
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
     }
   })
 
@@ -97,18 +103,19 @@ module.exports = (server) => {
   server.route({
     method: 'POST',
     path: '/init',
-    handler: (request, reply) => {
+    handler: async (request) => {
       const id = request.query.id
-
       const payload = request.payload || {}
 
-      nodes[id].init(payload.initOpts, (err) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
+      try {
+        await nodes[id].init(payload.initOpts)
 
-        reply({ initialized: nodes[id].initialized })
-      })
+        return {
+          initialized: nodes[id].initialized
+        }
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
     },
     config: routeConfig
   })
@@ -119,24 +126,23 @@ module.exports = (server) => {
   server.route({
     method: 'POST',
     path: '/start',
-    handler: (request, reply) => {
+    handler: async (request) => {
       const id = request.query.id
-
       const payload = request.payload || {}
       const flags = payload.flags || []
 
-      nodes[id].start(flags, (err) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
+      try {
+        await nodes[id].start(flags)
 
-        reply({
+        return {
           api: {
             apiAddr: nodes[id].apiAddr.toString(),
             gatewayAddr: nodes[id].gatewayAddr.toString()
           }
-        })
-      })
+        }
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
     },
     config: routeConfig
   })
@@ -147,10 +153,10 @@ module.exports = (server) => {
   server.route({
     method: 'GET',
     path: '/api-addr',
-    handler: (request, reply) => {
+    handler: (request) => {
       const id = request.query.id
 
-      reply({ apiAddr: nodes[id].apiAddr.toString() })
+      return { apiAddr: nodes[id].apiAddr.toString() }
     },
     config: routeConfig
   })
@@ -162,9 +168,10 @@ module.exports = (server) => {
   server.route({
     method: 'GET',
     path: '/getaway-addr',
-    handler: (request, reply) => {
+    handler: (request) => {
       const id = request.query.id
-      reply({ getawayAddr: nodes[id].gatewayAddr.toString() })
+
+      return { getawayAddr: nodes[id].gatewayAddr.toString() }
     },
     config: routeConfig
   })
@@ -177,15 +184,16 @@ module.exports = (server) => {
   server.route({
     method: 'POST',
     path: '/cleanup',
-    handler: (request, reply) => {
+    handler: async (request, h) => {
       const id = request.query.id
-      nodes[id].cleanup((err) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
 
-        reply().code(200)
-      })
+      try {
+        await nodes[id].cleanup()
+
+        return h.response().code(200)
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
     },
     config: routeConfig
   })
@@ -196,16 +204,17 @@ module.exports = (server) => {
   server.route({
     method: 'POST',
     path: '/stop',
-    handler: (request, reply) => {
+    handler: async (request, h) => {
       const id = request.query.id
       const timeout = request.payload.timeout
-      nodes[id].stop(timeout, (err) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
 
-        reply().code(200)
-      })
+      try {
+        await nodes[id].stop(timeout)
+
+        return h.response().code(200)
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
     },
     config: routeConfig
   })
@@ -219,16 +228,17 @@ module.exports = (server) => {
   server.route({
     method: 'POST',
     path: '/kill',
-    handler: (request, reply) => {
+    handler: async (request, h) => {
       const id = request.query.id
       const timeout = request.payload.timeout
-      nodes[id].killProcess(timeout, (err) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
 
-        reply().code(200)
-      })
+      try {
+        await nodes[id].killProcess(timeout)
+
+        return h.response().code(200)
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
     },
     config: routeConfig
   })
@@ -239,10 +249,10 @@ module.exports = (server) => {
   server.route({
     method: 'GET',
     path: '/pid',
-    handler: (request, reply) => {
+    handler: (request) => {
       const id = request.query.id
 
-      reply({ pid: nodes[id].pid })
+      return { pid: nodes[id].pid }
     },
     config: routeConfig
   })
@@ -255,16 +265,17 @@ module.exports = (server) => {
   server.route({
     method: 'GET',
     path: '/config',
-    handler: (request, reply) => {
+    handler: async (request) => {
       const id = request.query.id
       const key = request.query.key
-      nodes[id].getConfig(key, (err, config) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
 
-        reply({ config: config })
-      })
+      try {
+        const config = await nodes[id].getConfig(key)
+
+        return { config: config }
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
     },
     config: defaults({}, {
       validate: {
@@ -281,18 +292,18 @@ module.exports = (server) => {
   server.route({
     method: 'PUT',
     path: '/config',
-    handler: (request, reply) => {
+    handler: async (request, h) => {
       const id = request.query.id
       const key = request.payload.key
       const val = request.payload.value
 
-      nodes[id].setConfig(key, val, (err) => {
-        if (err) {
-          return reply(boom.badRequest(err))
-        }
+      try {
+        await nodes[id].setConfig(key, val)
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
 
-        reply().code(200)
-      })
+      return h.response().code(200)
     },
     config: defaults({}, {
       validate: {

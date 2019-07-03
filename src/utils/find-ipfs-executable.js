@@ -27,6 +27,7 @@ module.exports = (type, rootPath) => {
   if (fs.existsSync(npm3Path)) {
     return npm3Path
   }
+
   if (fs.existsSync(npm2Path)) {
     return npm2Path
   }
