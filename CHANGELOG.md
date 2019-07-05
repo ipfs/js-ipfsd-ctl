@@ -1,3 +1,13 @@
+<a name="0.44.0"></a>
+# [0.44.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.43.0...v0.44.0) (2019-07-05)
+
+
+### Features
+
+* refactor to async/await ([#353](https://github.com/ipfs/js-ipfsd-ctl/issues/353)) ([ab1a2a4](https://github.com/ipfs/js-ipfsd-ctl/commit/ab1a2a4))
+
+
+
 <a name="0.43.0"></a>
 # [0.43.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.42.4...v0.43.0) (2019-06-20)
 
