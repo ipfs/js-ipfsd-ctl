@@ -34,86 +34,55 @@ class FactoryClient {
    * useful in browsers to be able to generate temp
    * repos manually
    *
-   * @param {string} type - the type of the node
-   * @param {function(Error, string): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  tmpDir (type, callback) {
-    request
+  async tmpDir () {
+    const res = await request
       .get(`${this.baseUrl}/util/tmp-dir`)
-      .end((err, res) => {
-        if (err) {
-          return callback(new Error(err.response ? err.response.body.message : err))
-        }
 
-        callback(null, res.body.tmpDir)
-      })
+    return res.body.tmpDir
   }
 
   /**
    * Get the version of the IPFS Daemon.
    *
    * @param {Object} [options={}]
-   * @param {function(Error, string): void} callback
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  version (options, callback) {
-    if (typeof options === 'function') {
-      callback = options
-      options = undefined
-    }
-
+  async version (options = {}) {
     options = options || { type: this.options.type }
 
-    request
+    const res = await request
       .get(`${this.baseUrl}/version`)
       .query(options)
-      .end((err, res) => {
-        if (err) {
-          return callback(new Error(err.response ? err.response.body.message : err))
-        }
 
-        callback(null, res.body.version)
-      })
+    return res.body.version
   }
 
   /**
    * Spawn a remote daemon using ipfs-http-client
    *
    * @param {SpawnOptions} [options={}]
-   * @param {function(Error, DaemonClient)} callback
-   * @return {void}
+   * @return {Promise}
    */
-  spawn (options, callback) {
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
-
-    options = options || {}
-
-    request
+  async spawn (options = {}) {
+    const res = await request
       .post(`${this.baseUrl}/spawn`)
       .send({ options: options, type: this.options.type })
-      .end((err, res) => {
-        if (err) {
-          return callback(new Error(err.response ? err.response.body.message : err))
-        }
 
-        const apiAddr = res.body.api ? res.body.api.apiAddr : ''
-        const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
+    const apiAddr = res.body.api ? res.body.api.apiAddr : ''
+    const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 
-        const ipfsd = new DaemonClient(
-          this.baseUrl,
-          res.body.id,
-          res.body.initialized,
-          apiAddr,
-          gatewayAddr,
-          { IpfsClient: this.options.IpfsClient }
-        )
+    const ipfsd = new DaemonClient(
+      this.baseUrl,
+      res.body.id,
+      res.body.initialized,
+      apiAddr,
+      gatewayAddr,
+      { IpfsClient: this.options.IpfsClient }
+    )
 
-        callback(null, ipfsd)
-      })
+    return ipfsd
   }
 }
 

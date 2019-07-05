@@ -30,7 +30,7 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.post('http://localhost:9999/spawn', (req) => {
           expect(req.body.options.opt1).to.equal('hello!')
           return {
@@ -44,14 +44,11 @@ describe('client', () => {
           }
         })
 
-        client.spawn({ opt1: 'hello!' }, (err, ipfsd) => {
-          expect(err).to.not.exist()
-          expect(ipfsd).to.exist()
-          expect(ipfsd.apiAddr.toString()).to.equal('/ip4/127.0.0.1/tcp/5001')
-          expect(ipfsd.gatewayAddr.toString()).to.equal('/ip4/127.0.0.1/tcp/8080')
-          node = ipfsd
-          done()
-        })
+        const ipfsd = await client.spawn({ opt1: 'hello!' })
+        expect(ipfsd).to.exist()
+        expect(ipfsd.apiAddr.toString()).to.equal('/ip4/127.0.0.1/tcp/5001')
+        expect(ipfsd.gatewayAddr.toString()).to.equal('/ip4/127.0.0.1/tcp/8080')
+        node = ipfsd
       })
     })
 
@@ -60,9 +57,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.post('http://localhost:9999/spawn', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -71,11 +69,12 @@ describe('client', () => {
           }
         })
 
-        client.spawn((err, ipfsd) => {
-          expect(err).to.exist()
-          expect(ipfsd).to.not.exist()
-          done()
-        })
+        try {
+          await client.spawn()
+          expect.fail('Should have thrown')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })
@@ -86,7 +85,7 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.post('http://localhost:9999/init', (req) => {
           expect(req.query.id).to.exist()
 
@@ -97,11 +96,8 @@ describe('client', () => {
           }
         })
 
-        node.init({ bits: 512 }, (err) => {
-          expect(err).to.not.exist()
-          expect(node.initialized).to.be.ok()
-          done()
-        })
+        await node.init({ bits: 512 })
+        expect(node.initialized).to.be.ok()
       })
     })
 
@@ -110,9 +106,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.post('http://localhost:9999/init', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -121,10 +118,12 @@ describe('client', () => {
           }
         })
 
-        node.init((err) => {
-          expect(err).to.exist()
-          done()
-        })
+        try {
+          await node.init()
+          expect.fail('Should have thrown')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })
@@ -135,15 +134,12 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.post('http://localhost:9999/cleanup', (req) => {
           expect(req.query.id).to.exist()
         })
 
-        node.cleanup((err) => {
-          expect(err).to.not.exist()
-          done()
-        })
+        await node.cleanup()
       })
     })
 
@@ -152,9 +148,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle invalid request', (done) => {
+      it('should handle invalid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.post('http://localhost:9999/cleanup', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -163,10 +160,12 @@ describe('client', () => {
           }
         })
 
-        node.init((err) => {
-          expect(err).to.exist()
-          done()
-        })
+        try {
+          await node.cleanup()
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })
@@ -177,7 +176,7 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.post('http://localhost:9999/start', (req) => {
           expect(req.query.id).to.exist()
           expect(req.body.flags).to.exist()
@@ -193,11 +192,8 @@ describe('client', () => {
           }
         })
 
-        node.start(['--enable-pubsub-experiment'], (err, api) => {
-          expect(err).to.not.exist()
-          expect(api).to.exist()
-          done()
-        })
+        const api = await node.start(['--enable-pubsub-experiment'])
+        expect(api).to.exist()
       })
     })
 
@@ -206,9 +202,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle invalid request', (done) => {
+      it('should handle invalid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.post('http://localhost:9999/start', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -217,10 +214,12 @@ describe('client', () => {
           }
         })
 
-        node.start((err) => {
-          expect(err).to.exist()
-          done()
-        })
+        try {
+          await node.start()
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })
@@ -231,15 +230,12 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.post('http://localhost:9999/stop', (req) => {
           expect(req.query.id).to.exist()
         })
 
-        node.stop((err) => {
-          expect(err).to.not.exist()
-          done()
-        })
+        await node.stop()
       })
     })
 
@@ -248,9 +244,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle invalid request', (done) => {
+      it('should handle invalid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.post('http://localhost:9999/stop', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -259,10 +256,12 @@ describe('client', () => {
           }
         })
 
-        node.stop((err) => {
-          expect(err).to.exist()
-          done()
-        })
+        try {
+          await node.stop()
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })
@@ -273,15 +272,12 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.post('http://localhost:9999/stop', (req) => {
           expect(req.query.id).to.exist()
         })
 
-        node.stop(1000, (err) => {
-          expect(err).to.not.exist()
-          done()
-        })
+        await node.stop(1000)
       })
     })
 
@@ -290,9 +286,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle invalid request', (done) => {
+      it('should handle invalid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.post('http://localhost:9999/stop', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -301,10 +298,12 @@ describe('client', () => {
           }
         })
 
-        node.stop((err) => {
-          expect(err).to.exist()
-          done()
-        })
+        try {
+          await node.stop(1000)
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })
@@ -315,15 +314,12 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.post('http://localhost:9999/kill', (req) => {
           expect(req.query.id).to.exist()
         })
 
-        node.killProcess((err) => {
-          expect(err).to.not.exist()
-          done()
-        })
+        await node.killProcess()
       })
     })
 
@@ -332,9 +328,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle invalid request', (done) => {
+      it('should handle invalid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.post('http://localhost:9999/kill', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -343,10 +340,12 @@ describe('client', () => {
           }
         })
 
-        node.killProcess((err) => {
-          expect(err).to.exist()
-          done()
-        })
+        try {
+          await node.killProcess()
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })
@@ -357,7 +356,7 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.get('http://localhost:9999/pid', (req) => {
           expect(req.query.id).to.exist()
           return {
@@ -367,11 +366,8 @@ describe('client', () => {
           }
         })
 
-        node.pid((err, res) => {
-          expect(err).to.not.exist()
-          expect(res).to.equal(1)
-          done()
-        })
+        const res = await node.pid()
+        expect(res).to.equal(1)
       })
     })
 
@@ -380,9 +376,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle invalid request', (done) => {
+      it('should handle invalid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.get('http://localhost:9999/pid', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -391,10 +388,12 @@ describe('client', () => {
           }
         })
 
-        node.pid((err) => {
-          expect(err).to.exist()
-          done()
-        })
+        try {
+          await node.pid()
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })
@@ -405,7 +404,7 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.get('http://localhost:9999/config', (req) => {
           expect(req.query.id).to.exist()
           expect(req.query.key).to.equal('foo')
@@ -418,11 +417,8 @@ describe('client', () => {
           }
         })
 
-        node.getConfig('foo', (err, res) => {
-          expect(err).to.not.exist()
-          expect(res.foo).to.equal('bar')
-          done()
-        })
+        const res = await node.getConfig('foo')
+        expect(res.foo).to.equal('bar')
       })
     })
 
@@ -431,9 +427,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle invalid request', (done) => {
+      it('should handle invalid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.get('http://localhost:9999/config', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -442,10 +439,12 @@ describe('client', () => {
           }
         })
 
-        node.getConfig((err) => {
-          expect(err).to.exist()
-          done()
-        })
+        try {
+          await node.getConfig('foo')
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })
@@ -456,17 +455,14 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', (done) => {
+      it('should handle valid request', async () => {
         mock.put('http://localhost:9999/config', (req) => {
           expect(req.query.id).to.exist()
           expect(req.body.key).to.equal('foo')
           expect(req.body.value).to.equal('bar')
         })
 
-        node.setConfig('foo', 'bar', (err) => {
-          expect(err).to.not.exist()
-          done()
-        })
+        await node.setConfig('foo', 'bar')
       })
     })
 
@@ -475,9 +471,10 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle invalid request', (done) => {
+      it('should handle invalid request', async () => {
+        const badReq = boom.badRequest()
+
         mock.put('http://localhost:9999/config', () => {
-          const badReq = boom.badRequest()
           return {
             status: badReq.output.statusCode,
             body: {
@@ -486,10 +483,12 @@ describe('client', () => {
           }
         })
 
-        node.setConfig('foo', 'bar', (err) => {
-          expect(err).to.exist()
-          done()
-        })
+        try {
+          await node.setConfig('foo', 'bar')
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.response.body.message).to.equal(badReq.message)
+        }
       })
     })
   })

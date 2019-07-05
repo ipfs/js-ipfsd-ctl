@@ -20,6 +20,22 @@ function createApi (apiAddr, gwAddr, IpfsClient) {
   return api
 }
 
+function translateError (err) {
+  let message = err.message
+
+  if (err.response && err.response.body && err.response.body.message) {
+    message = err.response.body.message
+  }
+
+  const output = new Error(message)
+  output.status = err.status
+  output.response = err.response
+  output.stack = err.stack
+  output.message = message
+
+  throw output
+}
+
 /**
  * Creates an instance of Client.
  *
@@ -89,24 +105,16 @@ class Client {
    * @param {function (Error, Node)} cb
    * @returns {undefined}
    */
-  init (initOpts, cb) {
-    if (typeof initOpts === 'function') {
-      cb = initOpts
-      initOpts = {}
-    }
-
-    request
+  async init (initOpts = {}) {
+    const res = await request
       .post(`${this.baseUrl}/init`)
       .query({ id: this._id })
       .send({ initOpts })
-      .end((err, res) => {
-        if (err) {
-          return cb(new Error(err.response ? err.response.body.message : err))
-        }
+      .catch(translateError)
 
-        this.initialized = res.body.initialized
-        cb(null, this)
-      })
+    this.initialized = res.body.initialized
+
+    return this
   }
 
   /**
@@ -117,11 +125,11 @@ class Client {
    * @param {function(Error)} cb
    * @returns {undefined}
    */
-  cleanup (cb) {
-    request
+  cleanup () {
+    return request
       .post(`${this.baseUrl}/cleanup`)
       .query({ id: this._id })
-      .end((err) => { cb(err) })
+      .catch(translateError)
   }
 
   /**
@@ -131,29 +139,21 @@ class Client {
    * @param {function(Error, IpfsClient)} cb
    * @returns {undefined}
    */
-  start (flags, cb) {
-    if (typeof flags === 'function') {
-      cb = flags
-      flags = []
-    }
-
-    request
+  async start (flags = []) {
+    const res = await request
       .post(`${this.baseUrl}/start`)
       .query({ id: this._id })
       .send({ flags })
-      .end((err, res) => {
-        if (err) {
-          return cb(new Error(err.response ? err.response.body.message : err))
-        }
+      .catch(translateError)
 
-        this.started = true
+    this.started = true
 
-        const apiAddr = res.body.api ? res.body.api.apiAddr : ''
-        const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
+    const apiAddr = res.body.api ? res.body.api.apiAddr : ''
+    const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 
-        this.api = createApi(apiAddr, gatewayAddr, this.options.IpfsClient || IpfsClient)
-        return cb(null, this.api)
-      })
+    this.api = createApi(apiAddr, gatewayAddr, this.options.IpfsClient || IpfsClient)
+
+    return this.api
   }
 
   /**
@@ -163,25 +163,14 @@ class Client {
    * @param {function(Error)} [cb]
    * @returns {undefined}
    */
-  stop (timeout, cb) {
-    if (typeof timeout === 'function') {
-      cb = timeout
-      timeout = undefined
-    }
-
-    cb = cb || (() => {})
-    request
+  async stop (timeout) {
+    await request
       .post(`${this.baseUrl}/stop`)
       .query({ id: this._id })
       .send({ timeout })
-      .end((err) => {
-        if (err) {
-          return cb(new Error(err.response.body.message))
-        }
+      .catch(translateError)
 
-        this.started = false
-        cb(null)
-      })
+    this.started = false
   }
 
   /**
@@ -194,25 +183,14 @@ class Client {
    * @param {function()} [cb] - Called when the process was killed.
    * @returns {undefined}
    */
-  killProcess (timeout, cb) {
-    if (typeof timeout === 'function') {
-      cb = timeout
-      timeout = undefined
-    }
-
-    cb = cb || (() => {})
-    request
+  async killProcess (timeout) {
+    await request
       .post(`${this.baseUrl}/kill`)
       .query({ id: this._id })
       .send({ timeout })
-      .end((err) => {
-        if (err) {
-          return cb(new Error(err.response.body.message))
-        }
+      .catch(translateError)
 
-        this.started = false
-        cb(null)
-      })
+    this.started = false
   }
 
   /**
@@ -221,17 +199,13 @@ class Client {
    * @param {function(Error, number): void} cb - receives the pid
    * @returns {void}
    */
-  pid (cb) {
-    request
+  async pid () {
+    const res = await request
       .get(`${this.baseUrl}/pid`)
       .query({ id: this._id })
-      .end((err, res) => {
-        if (err) {
-          return cb(new Error(err.response ? err.response.body.message : err))
-        }
+      .catch(translateError)
 
-        cb(null, res.body.pid)
-      })
+    return res.body.pid
   }
 
   /**
@@ -243,27 +217,19 @@ class Client {
    * @param {function(Error, (Object|string))} cb
    * @returns {void}
    */
-  getConfig (key, cb) {
-    if (typeof key === 'function') {
-      cb = key
-      key = undefined
-    }
-
+  async getConfig (key) {
     const qr = { id: this._id }
 
     if (key) {
       qr.key = key
     }
-    request
+
+    const res = await request
       .get(`${this.baseUrl}/config`)
       .query(qr)
-      .end((err, res) => {
-        if (err) {
-          return cb(new Error(err.response ? err.response.body.message : err))
-        }
+      .catch(translateError)
 
-        cb(null, res.body.config)
-      })
+    return res.body.config
   }
 
   /**
@@ -274,17 +240,11 @@ class Client {
    * @param {function(Error)} cb
    * @returns {void}
    */
-  setConfig (key, value, cb) {
-    request.put(`${this.baseUrl}/config`)
+  async setConfig (key, value) {
+    await request.put(`${this.baseUrl}/config`)
       .send({ key, value })
       .query({ id: this._id })
-      .end((err) => {
-        if (err) {
-          return cb(new Error(err.response ? err.response.body.message : err))
-        }
-
-        cb(null)
-      })
+      .catch(translateError)
   }
 }
 

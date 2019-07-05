@@ -2,7 +2,6 @@
 
 const defaultsDeep = require('lodash.defaultsdeep')
 const clone = require('lodash.clone')
-const series = require('async/series')
 const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
 const Daemon = require('./ipfsd-daemon')
@@ -34,31 +33,25 @@ class FactoryDaemon {
    * *Here for completeness*
    *
    * @param {String} type - the type of the node
-   * @param {function(Error, string): void} callback
-   * @returns {void}
+   * @returns {Promise}
    */
-  tmpDir (type, callback) {
-    callback(null, tmpDir(type === 'js'))
+  tmpDir (type) {
+    return tmpDir(type === 'js')
   }
 
   /**
    * Get the version of the IPFS Daemon.
    *
    * @param {Object} [options={}]
-   * @param {function(Error, (string|Object)): void} callback - Receives `Error` or `version` that might be one of the following:
+   * @returns {Promise} - Resolves to `version` that might be one of the following:
    * - if type is `go` a version string like `ipfs version <version number>`
    * - if type is `js` a version string like `js-ipfs version <version number>`
    * - if type is `proc` an object with the following properties:
    *    - version - the ipfs version
    *    - repo - the repo version
    *    - commit - the commit hash for this version
-   * @returns {void}
    */
-  version (options, callback) {
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
+  version (options = {}) {
     options = Object.assign(
       { IpfsClient: this.options.IpfsClient },
       options,
@@ -68,7 +61,7 @@ class FactoryDaemon {
     // TODO: (2) This spawns a whole daemon just to get his version? There is
     // a way to get the version while the daemon is offline...
     const d = new Daemon(options)
-    d.version(callback)
+    return d.version()
   }
 
   /**
@@ -78,12 +71,7 @@ class FactoryDaemon {
    * @param {function(Error, Daemon): void} callback - Callback receives Error or a Daemon instance, Daemon has a `api` property which is an `ipfs-http-client` instance.
    * @returns {void}
    */
-  spawn (options, callback) {
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
-
+  async spawn (options = {}) {
     // TODO this options parsing is daunting. Refactor and move to a separate
     // func documenting what it is trying to do.
     options = defaultsDeep(
@@ -125,18 +113,15 @@ class FactoryDaemon {
 
     const node = new Daemon(options)
 
-    series([
-      (cb) => options.init
-        ? node.init(options.initOptions, cb)
-        : cb(null, node),
-      (cb) => options.start
-        ? node.start(options.args, cb)
-        : cb()
-    ], (err) => {
-      if (err) { return callback(err) }
+    if (options.init) {
+      await node.init(options.initOptions)
+    }
 
-      callback(null, node)
-    })
+    if (options.start) {
+      await node.start(options.args)
+    }
+
+    return node
   }
 }
 

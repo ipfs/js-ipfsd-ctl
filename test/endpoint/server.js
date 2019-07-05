@@ -12,21 +12,18 @@ const portUsed = require('detect-port')
 describe('endpoint server', () => {
   let server
 
-  it('.start', function (done) {
+  it('.start', async function () {
     this.timeout(10 * 1000)
     server = new Server({ port: 12345 })
 
-    server.start((err) => {
-      expect(err).to.not.exist()
-      portUsed(12345, (err, port) => {
-        expect(err).to.not.exist()
-        expect(port).to.not.equal(12345)
-        done()
-      })
-    })
+    await server.start()
+
+    const port = await portUsed(12345)
+
+    expect(port).to.not.equal(12345)
   })
 
-  it('.stop', (done) => {
-    server.stop(done)
+  it('.stop', async () => {
+    await server.stop()
   })
 })

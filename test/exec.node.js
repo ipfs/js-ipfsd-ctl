@@ -10,6 +10,7 @@ const isrunning = require('is-running')
 const path = require('path')
 const exec = require('../src/utils/exec')
 const os = require('os')
+const delay = require('delay')
 
 const isWindows = os.platform() === 'win32'
 
@@ -19,30 +20,16 @@ function token () {
   return Math.random().toString().substr(2)
 }
 
-function psExpect (pid, shouldBeRunning, grace, callback) {
-  setTimeout(() => {
-    const actual = isrunning(pid)
+async function psExpect (pid, shouldBeRunning, grace) {
+  await delay(200)
 
-    if (actual !== shouldBeRunning && grace > 0) {
-      return psExpect(pid, shouldBeRunning, --grace, callback)
-    }
+  const actual = isrunning(pid)
 
-    callback(null, actual)
-  }, 200)
-}
-
-function makeCheck (n, done) {
-  let i = 0
-
-  return (err) => {
-    if (err) {
-      return done(err)
-    }
-
-    if (++i === n) {
-      done()
-    }
+  if (actual !== shouldBeRunning && grace > 0) {
+    return psExpect(pid, shouldBeRunning, --grace)
   }
+
+  return actual
 }
 
 // TODO The test vector, `tail` is no longer a good test vector as it is not
@@ -58,11 +45,11 @@ describe('exec', () => {
     return
   }
 
-  it('captures stderr and stdout', (done) => {
+  it('captures stderr and stdout', async () => {
     let stdout = ''
     let stderr = ''
 
-    exec(process.execPath, [
+    await exec(process.execPath, [
       path.resolve(path.join(__dirname, 'fixtures', 'talky.js'))
     ], {
       stdout: (data) => {
@@ -71,84 +58,72 @@ describe('exec', () => {
       stderr: (data) => {
         stderr += String(data)
       }
-    }, (error) => {
-      expect(error).to.not.exist()
-      expect(stdout).to.equal('hello\n')
-      expect(stderr).to.equal('world\n')
-
-      done()
     })
+
+    expect(stdout).to.equal('hello\n')
+    expect(stderr).to.equal('world\n')
   })
 
-  it('survives process errors and captures exit code and stderr', (done) => {
-    exec(process.execPath, [
-      path.resolve(path.join(__dirname, 'fixtures', 'error.js'))
-    ], {}, (error) => {
-      expect(error.message).to.contain('Goodbye cruel world!')
-
-      done()
-    })
+  it('survives process errors and captures exit code and stderr', async () => {
+    try {
+      await exec(process.execPath, [
+        path.resolve(path.join(__dirname, 'fixtures', 'error.js'))
+      ])
+      expect.fail('Should have errored')
+    } catch (err) {
+      expect(err.exitCode).to.equal(1)
+      expect(err.stderr).to.contain('Goodbye cruel world!')
+    }
   })
 
-  it('SIGTERM kills hang', (done) => {
+  it('SIGTERM kills hang', async () => {
     const tok = token()
-
-    const check = makeCheck(2, done)
     const hang = 'tail -f /dev/null'.split(' ')
     const args = hang.concat(tok)
+    const p = exec(args[0], args.slice(1))
 
-    const p = exec(args[0], args.slice(1), {}, (err) => {
-      expect(err).to.exist()
+    let running = await psExpect(p.pid, true, 10)
+    expect(running).to.be.ok()
+
+    p.kill('SIGTERM') // should kill it
+
+    running = await psExpect(p.pid, false, 10)
+    expect(running).to.not.be.ok()
+
+    try {
+      await p
+      expect.fail('Should have errored')
+    } catch (err) {
       expect(err.killed).to.be.ok()
       expect(err.signal).to.equal('SIGTERM')
-      check()
-    })
-
-    psExpect(p.pid, true, 10, (err, running) => {
-      expect(err).to.not.exist()
-      expect(running).to.be.ok()
-
-      p.kill('SIGTERM') // should kill it
-      psExpect(p.pid, false, 10, (err, running) => {
-        expect(err).to.not.exist()
-        expect(running).to.not.be.ok()
-        check()
-      })
-    })
+    }
   })
 
-  it('SIGKILL kills survivor', (done) => {
-    const check = makeCheck(2, done)
-
+  it('SIGKILL kills survivor', async () => {
     const tok = token()
+    const p = exec(survivor, [tok], {})
 
-    const p = exec(survivor, [tok], {}, (err) => {
-      expect(err).to.exist()
+    let running = await psExpect(p.pid, true, 10)
+    expect(running).to.be.ok()
+
+    // should not kill it
+    p.kill('SIGTERM')
+
+    running = await psExpect(p.pid, true, 10)
+    expect(running).to.be.ok()
+
+    // will kill it
+    p.kill('SIGKILL')
+
+    running = await psExpect(p.pid, false, 50)
+    expect(running).to.not.be.ok()
+
+    try {
+      await p
+      expect.fail('Should have errored')
+    } catch (err) {
       expect(err.killed).to.be.ok()
       expect(err.signal).to.equal('SIGKILL')
-      check()
-    })
-
-    psExpect(p.pid, true, 10, (err, running) => {
-      expect(err).to.not.exist()
-      expect(running).to.be.ok()
-
-      // should not kill it
-      p.kill('SIGTERM')
-
-      psExpect(p.pid, true, 10, (err, running) => {
-        expect(err).to.not.exist()
-        expect(running).to.be.ok()
-
-        // will kill it
-        p.kill('SIGKILL')
-
-        psExpect(p.pid, false, 50, (err, running) => {
-          expect(err).to.not.exist()
-          expect(running).to.not.be.ok()
-          check()
-        })
-      })
-    })
+    }
   })
 })

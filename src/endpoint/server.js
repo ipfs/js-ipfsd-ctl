@@ -1,6 +1,6 @@
 'use strict'
 
-const Hapi = require('hapi')
+const Hapi = require('@hapi/hapi')
 const routes = require('./routes')
 
 /**
@@ -22,12 +22,8 @@ class Server {
    * @param {function(Error, Hapi.Server): void} cb
    * @returns {void}
    */
-  start (cb) {
-    cb = cb || (() => {})
-
-    this.server = new Hapi.Server()
-
-    this.server.connection({
+  async start () {
+    this.server = new Hapi.Server({
       port: this.port,
       host: 'localhost',
       routes: {
@@ -37,13 +33,9 @@ class Server {
 
     routes(this.server)
 
-    this.server.start((err) => {
-      if (err) {
-        return cb(err)
-      }
+    await this.server.start()
 
-      cb(null, this.server)
-    })
+    return this.server
   }
 
   /**
@@ -52,10 +44,8 @@ class Server {
    * @param {function(err: Error)} [cb] - {@link https://github.com/hapijs/hapi/blob/v16.6.2/API.md#serverstopoptions-callback Hapi docs}
    * @returns {void}
    */
-  stop (cb) {
-    cb = cb || (() => {})
-
-    this.server.stop(cb)
+  stop () {
+    return this.server.stop()
   }
 }
 

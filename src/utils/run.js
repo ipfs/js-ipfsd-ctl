@@ -4,7 +4,7 @@ const os = require('os')
 const isWindows = os.platform() === 'win32'
 const exec = require('./exec')
 
-module.exports = (node, args, opts, callback) => {
+module.exports = (node, args, opts = {}) => {
   let executable = node.exec
 
   if (isWindows && executable.endsWith('.js')) {
@@ -16,5 +16,5 @@ module.exports = (node, args, opts, callback) => {
   // Don't pass on arguments that were passed into the node executable
   opts.execArgv = []
 
-  return exec(executable, args, opts, callback)
+  return exec(executable, args, opts)
 }

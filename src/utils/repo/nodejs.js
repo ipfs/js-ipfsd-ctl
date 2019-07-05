@@ -3,29 +3,33 @@
 const os = require('os')
 const path = require('path')
 const hat = require('hat')
-const rimraf = require('rimraf')
-const fs = require('fs')
+const fs = require('fs-extra')
 
-function removeRepo (dir, callback) {
-  fs.access(dir, (err) => {
-    if (err) {
+function removeRepo (dir) {
+  try {
+    return fs.remove(dir)
+  } catch (err) {
+    if (err.code === 'ENOENT') {
       // Does not exist so all good
-      return callback()
+      return
     }
 
-    rimraf(dir, callback)
-  })
+    throw err
+  }
 }
 
 function createTempRepoPath () {
   return path.join(os.tmpdir(), '/ipfs-test-' + hat())
 }
 
-function repoExists (repoPath, cb) {
-  fs.access(`${repoPath}/config`, (err) => {
-    if (err) { return cb(null, false) }
-    cb(null, true)
-  })
+async function repoExists (repoPath) {
+  try {
+    await fs.access(`${repoPath}/config`)
+
+    return true
+  } catch (err) {
+    return false
+  }
 }
 
 module.exports = {

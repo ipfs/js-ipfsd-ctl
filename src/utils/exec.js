@@ -6,12 +6,7 @@ const path = require('path')
 const execa = require('execa')
 const noop = () => {}
 
-function exec (cmd, args, opts, callback) {
-  if (typeof opts === 'function') {
-    callback = opts
-    opts = {}
-  }
-
+function exec (cmd, args, opts) {
   opts = Object.assign({}, {
     stdout: noop,
     stderr: noop
@@ -21,12 +16,6 @@ function exec (cmd, args, opts, callback) {
   const command = execa(cmd, args, { env: opts.env })
   command.stderr.on('data', opts.stderr)
   command.stdout.on('data', opts.stdout)
-  command
-    .then(r => {
-      callback(null, r)
-    }, err => {
-      callback(err)
-    })
 
   return command
 }

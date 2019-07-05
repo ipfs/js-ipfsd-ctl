@@ -3,7 +3,6 @@
 const multiaddr = require('multiaddr')
 const defaultsDeep = require('lodash.defaultsdeep')
 const defaults = require('lodash.defaults')
-const waterfall = require('async/waterfall')
 const debug = require('debug')
 const EventEmitter = require('events')
 const repoUtils = require('./utils/repo/nodejs')
@@ -129,15 +128,9 @@ class InProc extends EventEmitter {
    * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
    * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
    * @param {string} [initOptions.pass] - The passphrase of the keychain.
-   * @param {function (Error, InProc)} callback
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  init (initOptions, callback) {
-    if (typeof initOptions === 'function') {
-      callback = initOptions
-      initOptions = {}
-    }
-
+  async init (initOptions = {}) {
     const bits = initOptions.keysize ? initOptions.bits : this.bits
     // do not just set a default keysize,
     // in case we decide to change it at
@@ -146,22 +139,18 @@ class InProc extends EventEmitter {
       initOptions.bits = bits
       log(`initializing with keysize: ${bits}`)
     }
-    this.exec.init(initOptions, (err) => {
-      if (err) {
-        return callback(err)
-      }
 
-      const self = this
-      waterfall([
-        (cb) => this.getConfig(cb),
-        (conf, cb) => this.replaceConfig(defaults({}, this.opts.config, conf), cb)
-      ], (err) => {
-        if (err) { return callback(err) }
-        self.clean = false
-        self.initialized = true
-        return callback(null, this)
-      })
-    })
+    await this.exec.init(initOptions)
+
+    const self = this
+    const conf = await this.getConfig()
+
+    await this.replaceConfig(defaults({}, this.opts.config, conf))
+
+    self.clean = false
+    self.initialized = true
+
+    return this
   }
 
   /**
@@ -169,78 +158,55 @@ class InProc extends EventEmitter {
    * If the node was marked as `disposable` this will be called
    * automatically when the process is exited.
    *
-   * @param {function(Error)} callback
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  cleanup (callback) {
+  cleanup () {
     if (this.clean) {
-      return callback()
+      return
     }
 
-    repoUtils.removeRepo(this.path, callback)
+    return repoUtils.removeRepo(this.path)
   }
 
   /**
    * Start the daemon.
    *
-   * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
-   * @param {function(Error, IpfsClient)} callback
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  start (flags, callback) {
-    if (typeof flags === 'function') {
-      callback = flags
-      flags = undefined // not used
-    }
+  async start () {
+    await this.exec.start()
 
-    this.exec.start((err) => {
-      if (err) {
-        return callback(err)
-      }
+    this._started = true
+    this.api = this.exec
 
-      this._started = true
-      this.api = this.exec
-      this.exec.config.get((err, conf) => {
-        if (err) {
-          return callback(err)
-        }
+    const conf = await this.exec.config.get()
 
-        this._apiAddr = conf.Addresses.API
-        this._gatewayAddr = conf.Addresses.Gateway
+    this._apiAddr = conf.Addresses.API
+    this._gatewayAddr = conf.Addresses.Gateway
 
-        this.api.apiHost = multiaddr(conf.Addresses.API).nodeAddress().host
-        this.api.apiPort = multiaddr(conf.Addresses.API).nodeAddress().port
+    this.api.apiHost = multiaddr(conf.Addresses.API).nodeAddress().host
+    this.api.apiPort = multiaddr(conf.Addresses.API).nodeAddress().port
 
-        callback(null, this.api)
-      })
-    })
+    return this.api
   }
 
   /**
    * Stop the daemon.
    *
-   * @param {function(Error)} [callback]
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  stop (callback) {
-    callback = callback || function noop () {}
-
+  async stop () {
     if (!this.exec) {
-      return callback()
+      return
     }
 
-    this.exec.stop((err) => {
-      if (err) {
-        return callback(err)
-      }
+    await this.exec.stop()
 
-      this._started = false
-      if (this.disposable) {
-        return this.cleanup(callback)
-      }
+    this._started = false
 
-      return callback()
-    })
+    if (this.disposable) {
+      return this.cleanup()
+    }
   }
 
   /**
@@ -249,11 +215,10 @@ class InProc extends EventEmitter {
    * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
    * if the process hasn't exited yet.
    *
-   * @param {function()} callback - Called when the process was killed.
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  killProcess (callback) {
-    this.stop(callback)
+  killProcess () {
+    return this.stop()
   }
 
   /**
@@ -271,16 +236,10 @@ class InProc extends EventEmitter {
    * If no `key` is passed, the whole config is returned as an object.
    *
    * @param {string} [key] - A specific config to retrieve.
-   * @param {function(Error, (Object|string))} callback
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  getConfig (key, callback) {
-    if (typeof key === 'function') {
-      callback = key
-      key = undefined
-    }
-
-    this.exec.config.get(key, callback)
+  getConfig (key) {
+    return this.exec.config.get(key)
   }
 
   /**
@@ -288,32 +247,29 @@ class InProc extends EventEmitter {
    *
    * @param {string} key
    * @param {string} value
-   * @param {function(Error)} callback
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  setConfig (key, value, callback) {
-    this.exec.config.set(key, value, callback)
+  setConfig (key, value) {
+    return this.exec.config.set(key, value)
   }
 
   /**
    * Replace the current config with the provided one
    *
    * @param {Object} config
-   * @param {function(Error)} callback
-   * @return {undefined}
+   * @return {Promise}
    */
-  replaceConfig (config, callback) {
-    this.exec.config.replace(config, callback)
+  replaceConfig (config) {
+    return this.exec.config.replace(config)
   }
 
   /**
    * Get the version of ipfs
    *
-   * @param {function(Error, string)} callback
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  version (callback) {
-    this.exec.version(callback)
+  version () {
+    return this.exec.version()
   }
 }
 

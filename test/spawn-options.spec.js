@@ -2,20 +2,16 @@
 /* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
-const series = require('async/series')
-const waterfall = require('async/waterfall')
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const fs = require('fs')
+const fs = require('fs-extra')
 const isNode = require('detect-node')
 const hat = require('hat')
 const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')
-const once = require('once')
-
 const tests = [
   { type: 'go', bits: 1024 },
   { type: 'js', bits: 512 },
@@ -40,15 +36,19 @@ describe('Spawn options', function () {
       f = IPFSFactory.create(fOpts)
     })
 
-    it('f.version', function (done) {
+    it('f.version', async function () {
       this.timeout(20 * 1000)
 
-      f.version({ type: fOpts.type, exec: fOpts.exec }, (err, version) => {
-        expect(err).to.not.exist()
-        if (fOpts.type === 'proc') { version = version.version }
-        expect(version).to.be.eql(VERSION_STRING)
-        done()
+      let version = await f.version({
+        type: fOpts.type,
+        exec: fOpts.exec
       })
+
+      if (fOpts.type === 'proc') {
+        version = version.version
+      }
+
+      expect(version).to.be.eql(VERSION_STRING)
     })
 
     describe('init and start', () => {
@@ -58,16 +58,14 @@ describe('Spawn options', function () {
         let ipfsd
         let repoPath
 
-        before((done) => {
-          f.tmpDir(fOpts.type, (err, tmpDir) => {
-            expect(err).to.not.exist()
-            repoPath = tmpDir
-            prevRepoPath = repoPath
-            done()
-          })
+        before(async () => {
+          const tmpDir = await f.tmpDir(fOpts.type)
+
+          repoPath = tmpDir
+          prevRepoPath = repoPath
         })
 
-        it('f.spawn', (done) => {
+        it('f.spawn', async () => {
           const options = {
             repoPath: repoPath,
             init: false,
@@ -76,87 +74,65 @@ describe('Spawn options', function () {
             initOptions: { bits: fOpts.bits, profile: 'test' }
           }
 
-          f.spawn(options, (err, _ipfsd) => {
-            expect(err).to.not.exist()
-            expect(_ipfsd).to.exist()
-            expect(_ipfsd.api).to.not.exist()
-            expect(_ipfsd.initialized).to.eql(false)
+          ipfsd = await f.spawn(options)
+          expect(ipfsd).to.exist()
+          expect(ipfsd.api).to.not.exist()
+          expect(ipfsd.initialized).to.eql(false)
 
-            ipfsd = _ipfsd
-            repoPath = _ipfsd.repoPath
-            done()
-          })
+          repoPath = ipfsd.repoPath
         })
 
-        it('ipfsd.init', function (done) {
+        it('ipfsd.init', async function () {
           this.timeout(20 * 1000)
 
-          ipfsd.init((err) => {
-            expect(err).to.not.exist()
-            expect(ipfsd.initialized).to.be.ok()
-            done()
-          })
+          await ipfsd.init()
+          expect(ipfsd.initialized).to.be.ok()
         })
 
-        it('ipfsd.start', function (done) {
+        it('ipfsd.start', async function () {
           this.timeout(20 * 1000)
 
-          ipfsd.start((err, api) => {
-            expect(err).to.not.exist()
-            expect(api).to.exist()
-            expect(api.id).to.exist()
-            done()
-          })
+          const api = await ipfsd.start()
+          expect(api).to.exist()
+          expect(api.id).to.exist()
         })
 
-        it('ipfsd.stop', function (done) {
+        it('ipfsd.stop', async function () {
           this.timeout(20 * 1000)
 
-          ipfsd.stop(done)
+          await ipfsd.stop()
         })
       })
 
       describe('spawn from an initialized repo', () => {
         let ipfsd
 
-        it('f.spawn', function (done) {
+        it('f.spawn', async function () {
           this.timeout(20 * 1000)
 
-          const options = {
+          ipfsd = await f.spawn({
             repoPath: prevRepoPath,
             init: false,
             start: false,
             disposable: false
-          }
-
-          f.spawn(options, (err, _ipfsd) => {
-            expect(err).to.not.exist()
-            expect(_ipfsd).to.exist()
-
-            ipfsd = _ipfsd
-
-            expect(ipfsd.api).to.not.exist()
-            expect(ipfsd.initialized).to.eql(true)
-
-            done()
           })
+          expect(ipfsd).to.exist()
+          expect(ipfsd.api).to.not.exist()
+          expect(ipfsd.initialized).to.eql(true)
         })
 
-        it('ipfsd.start', function (done) {
+        it('ipfsd.start', async function () {
           this.timeout(20 * 1000)
 
-          ipfsd.start((err, api) => {
-            expect(err).to.not.exist()
-            expect(api).to.exist()
-            expect(api.id).to.exist()
-            done()
-          })
+          const api = await ipfsd.start()
+          expect(api).to.exist()
+          expect(api.id).to.exist()
         })
 
-        it('ipfsd.stop', function (done) {
+        it('ipfsd.stop', async function () {
           this.timeout(20 * 1000)
 
-          ipfsd.stop(done)
+          await ipfsd.stop()
         })
       })
     })
@@ -164,25 +140,19 @@ describe('Spawn options', function () {
     describe('spawn a node and attach api', () => {
       let ipfsd
 
-      it('create init and start node', function (done) {
+      it('create init and start node', async function () {
         this.timeout(20 * 1000)
 
-        f.spawn({ initOptions: { bits: fOpts.bits, profile: 'test' } },
-          (err, _ipfsd) => {
-            expect(err).to.not.exist()
-            expect(_ipfsd).to.exist()
-            expect(_ipfsd.api).to.exist()
-            expect(_ipfsd.api.id).to.exist()
-
-            ipfsd = _ipfsd
-            done()
-          })
+        ipfsd = await f.spawn({ initOptions: { bits: fOpts.bits, profile: 'test' } })
+        expect(ipfsd).to.exist()
+        expect(ipfsd.api).to.exist()
+        expect(ipfsd.api.id).to.exist()
       })
 
-      it('ipfsd.stop', function (done) {
+      it('ipfsd.stop', async function () {
         this.timeout(20 * 1000)
 
-        ipfsd.stop(done)
+        await ipfsd.stop()
       })
     })
 
@@ -203,36 +173,43 @@ describe('Spawn options', function () {
         ]
       }
 
-      it('swarm contains default addrs', function (done) {
+      it('swarm contains default addrs', async function () {
         this.timeout(20 * 1000)
 
         if (!isNode && fOpts.type === 'proc') {
           this.skip()
         }
 
-        f.spawn({
+        const ipfsd = await f.spawn({
           defaultAddrs: true,
           initOptions: {
             bits: fOpts.bits,
             profile: 'test'
           }
-        }, (err, ipfsd) => {
-          expect(err).to.not.exist()
-          ipfsd.getConfig('Addresses.Swarm', (err, config) => {
-            expect(err).to.not.exist()
-            if (fOpts.type !== 'proc') {
-              config = JSON.parse(config)
-            }
-
-            expect(config).to.deep.equal(addrs[fOpts.type])
-            ipfsd.stop(done)
-          })
         })
+
+        let config = await ipfsd.getConfig('Addresses.Swarm')
+
+        if (fOpts.type !== 'proc') {
+          config = JSON.parse(config)
+        }
+
+        expect(config).to.deep.equal(addrs[fOpts.type])
+
+        await ipfsd.stop()
       })
     })
 
     describe('custom config options', () => {
-      it('custom config', function (done) {
+      let ipfsd
+
+      after(async () => {
+        if (ipfsd) {
+          await ipfsd.stop()
+        }
+      })
+
+      it('custom config', async function () {
         this.timeout(50 * 1000)
 
         const addr = '/ip4/127.0.0.1/tcp/5678'
@@ -247,38 +224,33 @@ describe('Spawn options', function () {
           Bootstrap: ['/dns4/wss0.bootstrap.libp2p.io/tcp/443/wss/ipfs/QmZMxNdpMkewiVZLMRxaNxUeZpDUb34pWjZ1kZvsd16Zic']
         }
 
-        const options = { config: config, initOptions: { bits: fOpts.bits, profile: 'test' } }
-
-        waterfall([
-          (cb) => f.spawn(options, cb),
-          (ipfsd, cb) => ipfsd.getConfig('Addresses.API', (err, config) => {
-            expect(err).to.not.exist()
-            expect(config).to.eql(addr)
-            cb(null, ipfsd)
-          }),
-          (ipfsd, cb) => ipfsd.getConfig('Addresses.Swarm', (err, config) => {
-            expect(err).to.not.exist()
-
-            // TODO why would this not be always the same type?
-            if (typeof config === 'string') {
-              config = JSON.parse(config)
-            }
-            expect(config).to.eql([swarmAddr1])
-            // expect(config).to.include(swarmAddr1)
-            cb(null, ipfsd)
-          }),
-          (ipfsd, cb) => ipfsd.getConfig('Bootstrap', (err, bootstrapConfig) => {
-            expect(err).to.not.exist()
-            if (typeof bootstrapConfig === 'string') {
-              bootstrapConfig = JSON.parse(bootstrapConfig)
-            }
-            expect(bootstrapConfig).to.deep.equal(config.Bootstrap)
-            cb(null, ipfsd)
-          })
-        ], (err, ipfsd) => {
-          expect(err).to.not.exist()
-          ipfsd.stop(done)
+        ipfsd = await f.spawn({
+          config: config,
+          initOptions: {
+            bits: fOpts.bits,
+            profile: 'test'
+          }
         })
+
+        const apiConfig = await ipfsd.getConfig('Addresses.API')
+        expect(apiConfig).to.eql(addr)
+
+        let swarmConfig = await ipfsd.getConfig('Addresses.Swarm')
+
+        // TODO why would this not be always the same type?
+        if (typeof swarmConfig === 'string') {
+          swarmConfig = JSON.parse(swarmConfig)
+        }
+        expect(swarmConfig).to.eql([swarmAddr1])
+        expect(swarmConfig).to.include(swarmAddr1)
+
+        let bootstrapConfig = await ipfsd.getConfig('Bootstrap')
+
+        if (typeof bootstrapConfig === 'string') {
+          bootstrapConfig = JSON.parse(bootstrapConfig)
+        }
+
+        expect(bootstrapConfig).to.deep.equal(config.Bootstrap)
       })
     })
 
@@ -290,15 +262,11 @@ describe('Spawn options', function () {
       let ipfsd
       let repoPath
 
-      before((done) => {
-        f.tmpDir(fOpts.type, (err, tmpDir) => {
-          expect(err).to.not.exist()
-          repoPath = tmpDir
-          done()
-        })
+      before(async () => {
+        repoPath = await f.tmpDir(fOpts.type)
       })
 
-      it('allows passing custom repo path to spawn', function (done) {
+      it('allows passing custom repo path to spawn', async function () {
         this.timeout(20 * 1000)
 
         const config = {
@@ -321,30 +289,19 @@ describe('Spawn options', function () {
           initOptions: { bits: fOpts.bits, profile: 'test' }
         }
 
-        series([
-          (cb) => f.spawn(options, (err, _ipfsd) => {
-            expect(err).to.not.exist()
-            ipfsd = _ipfsd
-            cb()
-          }),
-          (cb) => {
-            ipfsd.init(cb)
-          },
-          (cb) => {
-            ipfsd.start(cb)
-          }
-        ], (err) => {
-          expect(err).to.not.exist()
-          if (isNode) {
-            // We can only check if it really got created when run in Node.js
-            expect(fs.existsSync(repoPath)).to.be.ok()
-          }
-          done()
-        })
+        ipfsd = await f.spawn(options)
+        await ipfsd.init()
+        await ipfsd.start()
+
+        if (isNode) {
+          // We can only check if it really got created when run in Node.js
+          expect(fs.existsSync(repoPath)).to.be.ok()
+        }
       })
 
-      after((done) => {
-        ipfsd.stop(() => ipfsd.cleanup(done))
+      after(async () => {
+        await ipfsd.stop()
+        await ipfsd.cleanup()
       })
     })
 
@@ -353,7 +310,7 @@ describe('Spawn options', function () {
 
       let ipfsd
 
-      it('spawn with pubsub', function (done) {
+      it('spawn with pubsub', async function () {
         this.timeout(20 * 1000)
 
         const options = {
@@ -361,123 +318,86 @@ describe('Spawn options', function () {
           initOptions: { bits: fOpts.bits, profile: 'test' }
         }
 
-        f.spawn(options, (err, _ipfsd) => {
-          expect(err).to.not.exist()
-          ipfsd = _ipfsd
-          done()
-        })
+        ipfsd = await f.spawn(options)
       })
 
-      it('check that pubsub was enabled', (done) => {
+      it('check that pubsub was enabled', () => {
         const topic = `test-topic-${hat()}`
         const data = Buffer.from('hey there')
 
-        const handler = (msg) => {
-          expect(msg.data).to.eql(data)
-          expect(msg).to.have.property('seqno')
-          expect(Buffer.isBuffer(msg.seqno)).to.eql(true)
-          expect(msg).to.have.property('topicIDs').eql([topic])
-          done()
-        }
+        return new Promise(async (resolve, reject) => {
+          const handler = (msg) => {
+            try {
+              expect(msg.data).to.eql(data)
+              expect(msg).to.have.property('seqno')
+              expect(Buffer.isBuffer(msg.seqno)).to.eql(true)
+              expect(msg).to.have.property('topicIDs').eql([topic])
+              resolve()
+            } catch (err) {
+              reject(err)
+            }
+          }
 
-        ipfsd.api.pubsub.subscribe(topic, handler, (err) => {
-          expect(err).to.not.exist()
+          await ipfsd.api.pubsub.subscribe(topic, handler)
           ipfsd.api.pubsub.publish(topic, data)
         })
       })
 
-      it('ipfsd.stop', function (done) {
+      it('ipfsd.stop', async function () {
         this.timeout(20 * 1000)
-        ipfsd.stop(done)
+        await ipfsd.stop()
       })
     })
 
     describe('change config while running', () => {
       let ipfsd
 
-      before(function (done) {
+      before(async function () {
         this.timeout(20 * 1000)
-        f.spawn({ initOptions: { bits: fOpts.bits, profile: 'test' } },
-          (err, _ipfsd) => {
-            expect(err).to.not.exist()
-            ipfsd = _ipfsd
-            done()
-          })
-      })
-
-      after(function (done) {
-        this.timeout(20 * 1000)
-        ipfsd.stop(done)
-      })
-
-      it('ipfsd.getConfig', (done) => {
-        ipfsd.getConfig((err, config) => {
-          expect(err).to.not.exist()
-          expect(config).to.exist()
-          done()
+        ipfsd = await f.spawn({
+          initOptions: {
+            bits: fOpts.bits,
+            profile: 'test'
+          }
         })
       })
 
-      it('ipfsd.getConfig of specific value', (done) => {
-        ipfsd.getConfig('Bootstrap', (err, config) => {
-          expect(err).to.not.exist()
-          expect(config).to.exist()
-          done()
-        })
+      after(async function () {
+        this.timeout(20 * 1000)
+        await ipfsd.stop()
       })
 
-      it('Should set a config value', function (done) {
+      it('ipfsd.getConfig', async () => {
+        const config = await ipfsd.getConfig()
+        expect(config).to.exist()
+      })
+
+      it('ipfsd.getConfig of specific value', async () => {
+        const config = await ipfsd.getConfig('Bootstrap')
+        expect(config).to.exist()
+      })
+
+      it('Should set a config value', async function () {
         this.timeout(20 * 1000)
 
-        series([
-          (cb) => ipfsd.setConfig('Bootstrap', 'null', cb),
-          (cb) => ipfsd.getConfig('Bootstrap', cb)
-        ], (err, res) => {
-          expect(err).to.not.exist()
-          expect(res[1]).to.eql('null')
-          done()
-        })
+        await ipfsd.setConfig('Bootstrap', 'null')
+        const res = await ipfsd.getConfig('Bootstrap')
+
+        expect(res).to.eql('null')
       })
 
-      it('error on invalid config', function (done) {
+      it('error on invalid config', async function () {
         // TODO: fix this - js doesn't fail on invalid config
-        if (fOpts.type !== 'go') { return this.skip() }
+        if (fOpts.type !== 'go') {
+          return this.skip()
+        }
 
-        ipfsd.setConfig('Bootstrap', 'true', (err) => {
-          expect(err.message)
-            .to.match(/(?:Error: )?failed to set config value/mgi)
-          done()
-        })
-      })
-    })
-
-    describe(`don't callback twice on error`, () => {
-      if (fOpts.type !== 'proc') { return }
-      it('spawn with error', (done) => {
-        this.timeout(20 * 1000)
-        // `once.strict` should throw if its called more than once
-        const callback = once.strict((err, ipfsd) => {
-          if (err) { return done(err) }
-
-          ipfsd.once('error', () => {}) // avoid EventEmitter throws
-
-          // Do an operation, just to make sure we're working
-          ipfsd.api.id((err) => {
-            if (err) {
-              return done(err)
-            }
-
-            // Do something to make stopping fail
-            ipfsd.exec._repo.close((err) => {
-              if (err) { return done(err) }
-              ipfsd.stop((err) => {
-                expect(err).to.exist()
-                done()
-              })
-            })
-          })
-        })
-        f.spawn(callback)
+        try {
+          await ipfsd.setConfig('Bootstrap', 'true')
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.message).to.contain('failed to set config value')
+        }
       })
     })
   }))

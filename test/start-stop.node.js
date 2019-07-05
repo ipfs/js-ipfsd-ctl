@@ -7,11 +7,10 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const async = require('async')
 const fs = require('fs')
 const path = require('path')
 const isrunning = require('is-running')
-
+const delay = require('delay')
 const findIpfsExecutable = require('../src/utils/find-ipfs-executable')
 const tempDir = require('../src/utils/tmp-dir')
 const IPFSFactory = require('../src')
@@ -35,24 +34,20 @@ tests.forEach((fOpts) => {
       let pid
       let stopped = false
 
-      before(function (done) {
+      before(async function () {
         this.timeout(50 * 1000)
 
         const f = IPFSFactory.create(dfConfig)
 
-        f.spawn({
+        ipfsd = await f.spawn({
           init: true,
           start: false,
           disposable: true,
           initOptions: { bits: fOpts.bits, profile: 'test' }
-        }, (err, _ipfsd) => {
-          expect(err).to.not.exist()
-          expect(_ipfsd).to.exist()
-
-          ipfsd = _ipfsd
-          repoPath = ipfsd.path
-          done()
         })
+        expect(ipfsd).to.exist()
+
+        repoPath = ipfsd.path
       })
 
       it('should return a node', () => {
@@ -63,89 +58,80 @@ tests.forEach((fOpts) => {
         expect(exec).to.include.string(ipfsd.exec)
       })
 
-      it('daemon should not be running', (done) => {
-        ipfsd.pid((pid) => {
-          expect(pid).to.not.exist()
-          done()
-        })
+      it('daemon should not be running', async () => {
+        const pid = await ipfsd.pid()
+        expect(pid).to.not.exist()
       })
 
-      it('.start', function (done) {
+      it('.start', async function () {
         this.timeout(20 * 1000)
 
-        ipfsd.start((err, ipfs) => {
-          expect(err).to.not.exist()
+        api = await ipfsd.start()
+        pid = await ipfsd.pid()
 
-          ipfsd.pid((_pid) => {
-            pid = _pid
-            api = ipfs
-
-            expect(isrunning(pid)).to.be.ok()
-            done()
-          })
-        })
+        expect(isrunning(pid)).to.be.ok()
       })
 
       it('is running', () => {
         expect(api.id).to.exist()
       })
 
-      it('.stop', function (done) {
+      it('.stop', async function () {
         this.timeout(20 * 1000)
 
-        ipfsd.stop((err) => {
-          expect(err).to.not.exist()
-          let tries = 5
+        await ipfsd.stop()
 
-          const interval = setInterval(() => {
-            const running = isrunning(pid)
-            if (!running || tries-- <= 0) {
-              clearInterval(interval)
-              expect(running).to.not.be.ok()
-              stopped = true
-              done()
-            }
-          }, 200)
-        })
+        for (let i = 0; i < 5; i++) {
+          const running = isrunning(pid)
+
+          if (!running) {
+            stopped = true
+
+            return
+          }
+
+          delay(200)
+        }
+
+        expect.fail('Did not stop')
       })
 
-      it('is stopped', function (done) {
+      it('is stopped', async function () {
         // shutdown grace period is already 10500
         this.timeout(20 * 1000)
 
-        ipfsd.pid((pid) => {
-          expect(pid).to.not.exist()
-          expect(stopped).to.equal(true)
-          expect(fs.existsSync(path.join(ipfsd.path, 'repo.lock'))).to.not.be.ok()
-          expect(fs.existsSync(path.join(ipfsd.path, 'api'))).to.not.be.ok()
-          done()
-        })
+        const pid = await ipfsd.pid()
+
+        expect(pid).to.not.exist()
+        expect(stopped).to.equal(true)
+        expect(fs.existsSync(path.join(ipfsd.path, 'repo.lock'))).to.not.be.ok()
+        expect(fs.existsSync(path.join(ipfsd.path, 'api'))).to.not.be.ok()
       })
 
       it('repo should cleaned up', () => {
         expect(fs.existsSync(repoPath)).to.not.be.ok()
       })
 
-      it('fail on start with non supported flags', function (done) {
+      it('fail on start with non supported flags', async function () {
         // TODO js-ipfs doesn't fail on unrecognized args.
         // Decided what should be the desired behaviour
-        if (fOpts.type === 'js') { return this.skip() }
+        if (fOpts.type === 'js') {
+          return this.skip()
+        }
 
         const df = IPFSFactory.create(dfConfig)
 
-        df.spawn({
+        const ipfsd = await df.spawn({
           start: false,
           initOptions: { bits: fOpts.bits, profile: 'test' }
-        }, (err, ipfsd) => {
-          expect(err).to.not.exist()
-          ipfsd.start(['--should-not-exist'], (err) => {
-            expect(err).to.exist()
-            expect(err.message)
-              .to.match(/unknown option "should-not-exist"/)
-
-            done()
-          })
         })
+
+        try {
+          await ipfsd.start(['--should-not-exist'])
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.message).to.contain('unknown option "should-not-exist"')
+        }
       })
     })
 
@@ -156,24 +142,20 @@ tests.forEach((fOpts) => {
       let pid
       let stopped = false
 
-      before(function (done) {
+      before(async function () {
         this.timeout(50 * 1000)
 
         const f = IPFSFactory.create(dfConfig)
 
-        f.spawn({
+        ipfsd = await f.spawn({
           init: true,
           start: false,
           disposable: true,
           initOptions: { bits: fOpts.bits, profile: 'test' }
-        }, (err, _ipfsd) => {
-          expect(err).to.not.exist()
-          expect(_ipfsd).to.exist()
-
-          ipfsd = _ipfsd
-          repoPath = ipfsd.path
-          done()
         })
+
+        expect(ipfsd).to.exist()
+        repoPath = ipfsd.path
       })
 
       it('should return a node', () => {
@@ -184,103 +166,89 @@ tests.forEach((fOpts) => {
         expect(exec).to.include.string(ipfsd.exec)
       })
 
-      it('daemon should not be running', (done) => {
-        ipfsd.pid((pid) => {
-          expect(pid).to.not.exist()
-          done()
-        })
+      it('daemon should not be running', async () => {
+        const pid = await ipfsd.pid()
+        expect(pid).to.not.exist()
       })
 
-      it('.start', function (done) {
+      it('.start', async function () {
         this.timeout(20 * 1000)
 
-        ipfsd.start((err, ipfs) => {
-          expect(err).to.not.exist()
+        api = await ipfsd.start()
+        pid = await ipfsd.pid()
 
-          ipfsd.pid((_pid) => {
-            pid = _pid
-            api = ipfs
-
-            expect(isrunning(pid)).to.be.ok()
-            done()
-          })
-        })
+        expect(isrunning(pid)).to.be.ok()
       })
 
       it('is running', () => {
         expect(api.id).to.exist()
       })
 
-      it('.stop with timeout', function (done) {
+      it('.stop with timeout', async function () {
         this.timeout(15000 + 10) // should not take longer than timeout
-        ipfsd.stop(15000, (err) => {
-          expect(err).to.not.exist()
-          stopped = !isrunning(pid)
-          expect(stopped).to.be.ok()
-          done()
-        })
+
+        await ipfsd.stop(15000)
+
+        stopped = !isrunning(pid)
+        expect(stopped).to.be.ok()
       })
 
-      it('is stopped', function (done) {
+      it('is stopped', async function () {
         // shutdown grace period is already 10500
         this.timeout(20 * 1000)
 
-        ipfsd.pid((pid) => {
-          expect(pid).to.not.exist()
-          expect(stopped).to.equal(true)
-          expect(fs.existsSync(path.join(ipfsd.path, 'repo.lock'))).to.not.be.ok()
-          expect(fs.existsSync(path.join(ipfsd.path, 'api'))).to.not.be.ok()
-          done()
-        })
+        const pid = await ipfsd.pid()
+        expect(pid).to.not.exist()
+        expect(stopped).to.equal(true)
+        expect(fs.existsSync(path.join(ipfsd.path, 'repo.lock'))).to.not.be.ok()
+        expect(fs.existsSync(path.join(ipfsd.path, 'api'))).to.not.be.ok()
       })
 
       it('repo should cleaned up', () => {
         expect(fs.existsSync(repoPath)).to.not.be.ok()
       })
 
-      it('fail on start with non supported flags', function (done) {
+      it('fail on start with non supported flags', async function () {
         // TODO js-ipfs doesn't fail on unrecognized args.
         // Decided what should be the desired behaviour
-        if (fOpts.type === 'js') { return this.skip() }
+        if (fOpts.type === 'js') {
+          return this.skip()
+        }
 
         const df = IPFSFactory.create(dfConfig)
 
-        df.spawn({
+        const ipfsd = await df.spawn({
           start: false,
           initOptions: { bits: fOpts.bits, profile: 'test' }
-        }, (err, ipfsd) => {
-          expect(err).to.not.exist()
-          ipfsd.start(['--should-not-exist'], (err) => {
-            expect(err).to.exist()
-            expect(err.message)
-              .to.match(/unknown option "should-not-exist"/)
-
-            done()
-          })
         })
+
+        try {
+          await ipfsd.start(['--should-not-exist'])
+          expect.fail('Should have errored')
+        } catch (err) {
+          expect(err.message).to.contain('unknown option "should-not-exist"')
+        }
       })
     })
 
     describe('start and stop with custom exec path', () => {
       let ipfsd
-      before(function (done) {
+      before(async function () {
         this.timeout(50 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
 
-        df.spawn({
+        ipfsd = await df.spawn({
           exec,
           initOptions: { bits: fOpts.bits, profile: 'test' }
-        }, (err, daemon) => {
-          expect(err).to.not.exist()
-          expect(daemon).to.exist()
-
-          ipfsd = daemon
-          done()
         })
+
+        expect(ipfsd).to.exist()
       })
 
-      after((done) => ipfsd.stop(done))
+      after(async () => {
+        await ipfsd.stop()
+      })
 
       it('should return a node', () => {
         expect(ipfsd).to.exist()
@@ -294,25 +262,23 @@ tests.forEach((fOpts) => {
     describe('start and stop with custom ENV exec path', () => {
       let ipfsd
 
-      before(function (done) {
+      before(async function () {
         this.timeout(50 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
 
         process.env = Object.assign({}, process.env, fOpts.type === 'go'
           ? { IPFS_GO_EXEC: exec } : { IPFS_JS_EXEC: exec })
-        df.spawn({
+        ipfsd = await df.spawn({
           initOptions: { bits: fOpts.bits, profile: 'test' }
-        }, (err, daemon) => {
-          expect(err).to.not.exist()
-          expect(daemon).to.exist()
-
-          ipfsd = daemon
-          done()
         })
+
+        expect(ipfsd).to.exist()
       })
 
-      after((done) => ipfsd.stop(done))
+      after(async () => {
+        await ipfsd.stop()
+      })
 
       it('should return a node', () => {
         expect(ipfsd).to.exist()
@@ -327,47 +293,44 @@ tests.forEach((fOpts) => {
       let ipfsd
       let exec
 
-      before(function (done) {
+      before(async function () {
         this.timeout(50 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
         exec = findIpfsExecutable(fOpts.type)
 
-        df.spawn({
+        ipfsd = await df.spawn({
           exec,
           initOptions: { bits: fOpts.bits, profile: 'test' }
-        }, (err, daemon) => {
-          expect(err).to.not.exist()
-          expect(daemon).to.exist()
-
-          ipfsd = daemon
-          done()
         })
+
+        expect(ipfsd).to.exist()
       })
 
-      after((done) => ipfsd.stop(done))
+      after(async () => {
+        await ipfsd.stop()
+      })
 
       it('should return a node', () => {
         expect(ipfsd).to.exist()
       })
 
-      it('shoul attach to running node', function (done) {
+      it('should attach to running node', async function () {
         this.timeout(50 * 1000)
 
         const df = IPFSFactory.create(dfConfig)
-        df.spawn({
+        const daemon = await df.spawn({
           initOptions: { bits: fOpts.bits, profile: 'test' },
           repoPath: ipfsd.repoPath,
           disposable: false
-        }, (err, daemon) => {
-          expect(err).to.not.exist()
-          daemon.start((err, api) => {
-            expect(err).to.not.exist()
-            expect(api).to.exist()
-            expect(ipfsd.apiAddr).to.be.eql(daemon.apiAddr)
-            daemon.stop(done)
-          })
         })
+
+        const api = await daemon.start()
+
+        expect(api).to.exist()
+        expect(ipfsd.apiAddr).to.be.eql(daemon.apiAddr)
+
+        await daemon.stop()
       })
     })
 
@@ -375,111 +338,101 @@ tests.forEach((fOpts) => {
       this.timeout(20 * 1000)
 
       let ipfsd
-      before((done) => {
+      before(async () => {
         const df = IPFSFactory.create(dfConfig)
         const exec = path.join('invalid', 'exec', 'ipfs')
 
-        df.spawn({
+        ipfsd = await df.spawn({
           init: false,
           start: false,
           exec: exec,
           initOptions: { bits: fOpts.bits, profile: 'test' }
-        }, (err, daemon) => {
-          expect(err).to.not.exist()
-          expect(daemon).to.exist()
-
-          ipfsd = daemon
-          done()
         })
+
+        expect(ipfsd).to.exist()
       })
 
-      after((done) => ipfsd.stop(done))
+      after(async () => {
+        await ipfsd.stop()
+      })
 
-      it('should fail on init', (done) => {
-        ipfsd.init((err, node) => {
+      it('should fail on init', async () => {
+        try {
+          await ipfsd.init()
+          expect.fail('Should have errored')
+        } catch (err) {
           expect(err).to.exist()
-          expect(node).to.not.exist()
-          done()
-        })
+        }
       })
     })
 
     describe('start and stop multiple times', () => {
       let ipfsd
 
-      before(function (done) {
+      before(async function () {
         this.timeout(20 * 1000)
 
         const f = IPFSFactory.create(dfConfig)
 
-        async.series([
-          (cb) => f.spawn({
-            init: false,
-            start: false,
-            disposable: false,
-            repoPath: tempDir(fOpts.type),
-            initOptions: { bits: fOpts.bits, profile: 'test' },
-            config: {
-              Addresses: {
-                Swarm: [`/ip4/127.0.0.1/tcp/0`],
-                API: `/ip4/127.0.0.1/tcp/0`,
-                Gateway: `/ip4/127.0.0.1/tcp/0`
-              }
+        ipfsd = await f.spawn({
+          init: false,
+          start: false,
+          disposable: false,
+          repoPath: tempDir(fOpts.type),
+          initOptions: {
+            bits: fOpts.bits,
+            profile: 'test'
+          },
+          config: {
+            Addresses: {
+              Swarm: [`/ip4/127.0.0.1/tcp/0`],
+              API: `/ip4/127.0.0.1/tcp/0`,
+              Gateway: `/ip4/127.0.0.1/tcp/0`
             }
-          }, (err, daemon) => {
-            expect(err).to.not.exist()
-            expect(daemon).to.exist()
+          }
+        })
 
-            ipfsd = daemon
-            cb()
-          }),
-          (cb) => ipfsd.init(cb),
-          (cb) => ipfsd.start(cb)
-        ], done)
+        expect(ipfsd).to.exist()
+
+        await ipfsd.init()
+        await ipfsd.start()
       })
 
       it('should return a node', function () {
         expect(ipfsd).to.exist()
       })
 
-      it('daemon should be running', function (done) {
-        ipfsd.pid((pid) => {
-          expect(pid).to.exist()
-          done()
-        })
+      it('daemon should be running', async function () {
+        const pid = await ipfsd.pid()
+
+        expect(pid).to.exist()
       })
 
-      it('.stop', function (done) {
+      it('.stop', async function () {
         this.timeout(20 * 1000)
 
-        ipfsd.stop((err) => {
-          expect(err).to.not.exist()
-          ipfsd.pid((pid) => {
-            expect(pid).to.not.exist()
-            done()
-          })
-        })
+        await ipfsd.stop()
+
+        const pid = await ipfsd.pid()
+
+        expect(pid).to.not.exist()
       })
 
-      it('.start', function (done) {
+      it('.start', async function () {
         this.timeout(20 * 1000)
 
-        ipfsd.start((err) => {
-          expect(err).to.not.exist()
-          ipfsd.pid((pid) => {
-            expect(pid).to.exist()
-            done()
-          })
-        })
+        await ipfsd.start()
+
+        const pid = await ipfsd.pid()
+
+        expect(pid).to.exist()
       })
 
-      it('.stop and cleanup', function (done) {
+      it('.stop and cleanup', async function () {
         this.timeout(20 * 1000)
 
-        ipfsd.stop((err) => {
-          expect(err).to.not.exist()
-          ipfsd.cleanup(done)
-        })
+        await ipfsd.stop()
+        await ipfsd.cleanup()
       })
     })
   })
