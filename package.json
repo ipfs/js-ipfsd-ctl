@@ -70,7 +70,7 @@
     "execa": "^2.0.2",
     "fs-extra": "^8.1.0",
     "hat": "~0.0.3",
-    "ipfs-http-client": "^32.0.1",
+    "ipfs-http-client": "^33.0.2",
     "joi": "^14.3.1",
     "lodash.clone": "^4.5.0",
     "lodash.defaults": "^4.2.0",
