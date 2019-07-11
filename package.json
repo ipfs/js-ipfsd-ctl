@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.44.0",
+  "version": "0.44.1",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
@@ -130,6 +130,7 @@
     "Vasco Santos <vasco.santos@moxy.studio>",
     "Vasco Santos <vasco.santos@ua.pt>",
     "Volker Mische <volker.mische@gmail.com>",
+    "dependabot-preview[bot] <27856297+dependabot-preview[bot]@users.noreply.github.com>",
     "edsilv <e.silverton@gmail.com>",
     "greenkeeperio-bot <support@greenkeeper.io>",
     "haad <haad@headbanggames.com>",
