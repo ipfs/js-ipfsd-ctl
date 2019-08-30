@@ -43,6 +43,8 @@ class InProc extends EventEmitter {
     this.opts.args.forEach((arg) => {
       if (arg === '--enable-pubsub-experiment') {
         this.opts.EXPERIMENTAL.pubsub = true
+      } else if (arg === '--enable-pubsub') {
+        this.opts.pubsub = true
       } else if (arg === '--enable-sharding-experiment') {
         this.opts.EXPERIMENTAL.sharding = true
       } else if (arg === '--enable-namesys-pubsub') {
