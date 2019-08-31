@@ -314,7 +314,7 @@ describe('Spawn options', function () {
         this.timeout(20 * 1000)
 
         const options = {
-          args: ['--enable-pubsub-experiment'],
+          args: [fOpts.type !== 'go' ? '--enable-pubsub' : '--enable-pubsub-experiment'],
           initOptions: { bits: fOpts.bits, profile: 'test' }
         }
 
@@ -325,7 +325,7 @@ describe('Spawn options', function () {
         const topic = `test-topic-${hat()}`
         const data = Buffer.from('hey there')
 
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => { // eslint-disable-line no-async-promise-executor
           const handler = (msg) => {
             try {
               expect(msg.data).to.eql(data)

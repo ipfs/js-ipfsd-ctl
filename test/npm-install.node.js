@@ -41,11 +41,11 @@ types.forEach((type) => {
     })
 
     it('has the correct path when installed with npm3', async () => {
-      let execPath = type === 'js'
+      const execPath = type === 'js'
         ? 'ipfsd-ctl-test/node_modules/ipfs/src/cli'
         : 'ipfsd-ctl-test/node_modules/go-ipfs-dep/go-ipfs'
 
-      let npm3Path = path.join(tmp, execPath)
+      const npm3Path = path.join(tmp, execPath)
 
       await fs.mkdirp(npm3Path)
       fs.writeFileSync(path.join(npm3Path, appName))

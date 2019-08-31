@@ -39,12 +39,15 @@ class InProc extends EventEmitter {
       pubsub: false,
       sharding: false
     })
+    this.opts.pubsub = defaultsDeep({}, opts.pubsub, {
+      enabled: false
+    })
 
     this.opts.args.forEach((arg) => {
       if (arg === '--enable-pubsub-experiment') {
         this.opts.EXPERIMENTAL.pubsub = true
       } else if (arg === '--enable-pubsub') {
-        this.opts.pubsub = true
+        this.opts.pubsub.enabled = true
       } else if (arg === '--enable-sharding-experiment') {
         this.opts.EXPERIMENTAL.sharding = true
       } else if (arg === '--enable-namesys-pubsub') {
@@ -68,6 +71,7 @@ class InProc extends EventEmitter {
       offline: this.opts.offline,
       EXPERIMENTAL: this.opts.EXPERIMENTAL,
       libp2p: this.opts.libp2p,
+      pubsub: this.opts.pubsub,
       config: this.opts.config,
       relay: this.opts.relay
     })
