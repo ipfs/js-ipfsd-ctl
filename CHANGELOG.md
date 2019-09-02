@@ -1,3 +1,18 @@
+<a name="0.45.0"></a>
+# [0.45.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.44.2...v0.45.0) (2019-09-02)
+
+
+### Features
+
+* pubsub flag defaults ([#363](https://github.com/ipfs/js-ipfsd-ctl/issues/363)) ([6958239](https://github.com/ipfs/js-ipfsd-ctl/commit/6958239))
+
+
+### BREAKING CHANGES
+
+* removes the experimental flag of pubsub and makes it enable by default
+
+
+
 <a name="0.44.2"></a>
 ## [0.44.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.44.1...v0.44.2) (2019-08-30)
 
