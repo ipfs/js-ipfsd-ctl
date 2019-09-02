@@ -15,7 +15,7 @@ const routeConfig = {
   }
 }
 
-let nodes = {}
+const nodes = {}
 
 /**
  * @namespace EndpointServerRoutes

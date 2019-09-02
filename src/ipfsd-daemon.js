@@ -29,7 +29,7 @@ const NON_DISPOSABLE_GRACE_PERIOD = 10500 * 3
 
 function translateError (err) {
   // get the actual error message to be the err.message
-  let message = err.message
+  const message = err.message
   err.message = err.stderr
   err.stderr = message
 
@@ -240,7 +240,7 @@ class Daemon {
 
     let output = ''
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => { // eslint-disable-line no-async-promise-executor
       this.subprocess = run(this, args, {
         env: this.env,
         stderr: (data) => {
