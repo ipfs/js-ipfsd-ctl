@@ -75,7 +75,7 @@
     "lodash.clone": "^4.5.0",
     "lodash.defaults": "^4.2.0",
     "lodash.defaultsdeep": "^4.6.1",
-    "multiaddr": "^6.1.0",
+    "multiaddr": "^7.0.0",
     "safe-json-stringify": "^1.2.0",
     "superagent": "^5.0.5"
   },
