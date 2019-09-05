@@ -314,7 +314,7 @@ describe('Spawn options', function () {
         this.timeout(20 * 1000)
 
         const options = {
-          args: [fOpts.type !== 'go' ? '--enable-pubsub' : '--enable-pubsub-experiment'],
+          args: ['--enable-namesys-pubsub'],
           initOptions: { bits: fOpts.bits, profile: 'test' }
         }
 
