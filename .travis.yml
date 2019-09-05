@@ -7,20 +7,18 @@ stages:
 
 node_js:
   - '10'
+  - '12'
 
 os:
   - linux
   - osx
+  - windows
 
 script: npx nyc -s npm run test:node -- --bail
 after_success: npx nyc report --reporter=text-lcov > coverage.lcov && npx codecov
 
 jobs:
   include:
-    - os: windows
-      filter_secrets: false
-      cache: false
-      
     - stage: check
       script:
         - npx aegir build --bundlesize
@@ -32,13 +30,17 @@ jobs:
       name: chrome
       addons:
         chrome: stable
-      script: npx aegir test -t browser
+      script: 
+        - npx aegir test -t browser
+        - npx aegir test -t webworker
 
     - stage: test
       name: firefox
       addons:
         firefox: latest
-      script: npx aegir test -t browser -- --browsers FirefoxHeadless
+      script: 
+        - npx aegir test -t browser -- --browsers FirefoxHeadless
+        - npx aegir test -t webworker -- --browsers FirefoxHeadless
 
 notifications:
   email: false
