@@ -1,3 +1,18 @@
+<a name="0.46.0"></a>
+# [0.46.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.45.1...v0.46.0) (2019-09-05)
+
+
+### Features
+
+* remove pubsub flags ([#366](https://github.com/ipfs/js-ipfsd-ctl/issues/366)) ([3d4b943](https://github.com/ipfs/js-ipfsd-ctl/commit/3d4b943))
+
+
+### BREAKING CHANGES
+
+* pubsub flags for in-proc daemons will not set values anymore
+
+
+
 <a name="0.45.1"></a>
 ## [0.45.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.45.0...v0.45.1) (2019-09-03)
 
