@@ -114,7 +114,7 @@ class FactoryDaemon {
 
     const node = new Daemon(options)
     if (options.init && options.start && options.type === 'js') {
-      const configPath = configFile(options.type, options.config)
+      const configPath = await configFile(options.type, options.config)
       const args = options.args.concat([
         '--init',
         '--init-config', configPath,
