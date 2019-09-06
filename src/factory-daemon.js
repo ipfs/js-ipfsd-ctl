@@ -7,6 +7,7 @@ const tmpDir = require('./utils/tmp-dir')
 const Daemon = require('./ipfsd-daemon')
 const defaultConfig = require('./defaults/config.json')
 const defaultOptions = require('./defaults/options.json')
+const { configFile } = require('./utils/config-file')
 
 /** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
 
@@ -112,6 +113,17 @@ class FactoryDaemon {
     options.initOptions = defaultsDeep({}, this.options.initOptions, options.initOptions)
 
     const node = new Daemon(options)
+    if (options.init && options.start && options.type === 'js') {
+      const configPath = configFile(options.type, options.config)
+      const args = options.args.concat([
+        '--init',
+        '--init-config', configPath,
+        '--init-profile', options.initOptions.profile
+      ])
+      await node.start(args)
+
+      return node
+    }
 
     if (options.init) {
       await node.init(options.initOptions)

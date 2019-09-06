@@ -20,6 +20,7 @@ const tmpDir = require('./utils/tmp-dir')
 const findIpfsExecutable = require('./utils/find-ipfs-executable')
 const setConfigValue = require('./utils/set-config-value')
 const run = require('./utils/run')
+const { configFile } = require('./utils/config-file')
 
 // amount of ms to wait before sigkill
 const GRACE_PERIOD = 10500
@@ -180,12 +181,19 @@ class Daemon {
       }
     }
 
+    if (this.opts.type === 'js') {
+      const configPath = await configFile('js', this.opts.config)
+      args.push(`--init-config`, configPath)
+    }
+
     await run(this, args, { env: this.env })
       .catch(translateError)
 
-    const conf = await this.getConfig()
+    if (this.opts.type === 'go') {
+      const conf = await this.getConfig()
 
-    await this.replaceConfig(defaults({}, this.opts.config, conf))
+      await this.replaceConfig(defaults({}, this.opts.config, conf))
+    }
 
     this.clean = false
     this.initialized = true
@@ -215,7 +223,7 @@ class Daemon {
    * @return {Promise}
    */
   start (flags = []) {
-    const args = ['daemon'].concat(flags || [])
+    const args = ['daemon'].concat(flags)
 
     const setApiAddr = (addr) => {
       this._apiAddr = multiaddr(addr)

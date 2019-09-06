@@ -2,5 +2,6 @@
   "type": "go",
   "disposable": true,
   "start": true,
-  "init": true
+  "init": true,
+  "args": []
 }
