@@ -64,7 +64,8 @@ class InProc extends EventEmitter {
       EXPERIMENTAL: this.opts.EXPERIMENTAL,
       libp2p: this.opts.libp2p,
       config: this.opts.config,
-      relay: this.opts.relay
+      relay: this.opts.relay,
+      silent: this.opts.silent
     })
 
     // TODO: should this be wrapped in a process.nextTick(), for context:

@@ -91,6 +91,7 @@ class FactoryInProc {
 
     options.type = this.options.type
     options.exec = options.exec || this.options.exec
+    options.silent = options.silent || true
 
     if (typeof options.exec !== 'function') {
       throw new Error(`'type' proc requires 'exec' to be a coderef`)
