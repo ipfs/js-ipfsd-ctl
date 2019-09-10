@@ -1,8 +1,8 @@
 'use strict'
 
 const hat = require('hat')
-const Joi = require('joi')
-const boom = require('boom')
+const Joi = require('@hapi/joi')
+const boom = require('@hapi/boom')
 const defaults = require('lodash.defaultsdeep')
 const FactoryDaemon = require('../factory-daemon')
 const tmpDir = require('../utils/tmp-dir')

@@ -4,7 +4,7 @@ const createServer = require('./src').createServer
 
 const server = createServer() // using defaults
 module.exports = {
-  bundlesize: { maxSize: '270kB' },
+  bundlesize: { maxSize: '280kB' },
   karma: {
     files: [{
       pattern: 'test/fixtures/**/*',

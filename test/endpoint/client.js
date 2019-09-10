@@ -9,7 +9,7 @@ chai.use(dirtyChai)
 
 const hat = require('hat')
 
-const boom = require('boom')
+const boom = require('@hapi/boom')
 const proxyquire = require('proxyquire')
 const superagent = require('superagent')
 const mock = require('superagent-mocker')(superagent)
