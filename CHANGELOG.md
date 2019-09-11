@@ -1,3 +1,13 @@
+<a name="0.46.1"></a>
+## [0.46.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.46.0...v0.46.1) (2019-09-11)
+
+
+### Bug Fixes
+
+* make proc silent by default ([a62bd97](https://github.com/ipfs/js-ipfsd-ctl/commit/a62bd97))
+
+
+
 <a name="0.46.0"></a>
 # [0.46.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.45.1...v0.46.0) (2019-09-05)
 
