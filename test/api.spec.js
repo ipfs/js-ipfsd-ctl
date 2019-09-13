@@ -10,7 +10,7 @@ chai.use(dirtyChai)
 const multiaddr = require('multiaddr')
 const path = require('path')
 const DaemonFactory = require('../src')
-const isNode = require('detect-node')
+const { isNode } = require('ipfs-utils/src/env')
 
 const tests = [
   { type: 'go' },

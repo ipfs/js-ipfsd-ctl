@@ -8,7 +8,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const fs = require('fs')
-const isNode = require('detect-node')
+const { isNode } = require('ipfs-utils/src/env')
 const path = require('path')
 const flatten = require('../src/utils/flatten')
 const tempDir = require('../src/utils/tmp-dir')

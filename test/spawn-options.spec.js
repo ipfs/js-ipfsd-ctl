@@ -8,7 +8,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const fs = require('fs-extra')
-const isNode = require('detect-node')
+const { isNode } = require('ipfs-utils/src/env')
 const hat = require('hat')
 const IPFSFactory = require('../src')
 const JSIPFS = require('ipfs')

@@ -1,7 +1,7 @@
 'use strict'
 
-const isNode = require('detect-node')
 const defaults = require('lodash.defaultsdeep')
+const { isEnvWithDom } = require('ipfs-utils/src/env')
 
 const FactoryDaemon = require('./factory-daemon')
 const FactoryInProc = require('./factory-in-proc')
@@ -26,7 +26,7 @@ const Server = require('./endpoint/server')
  * @returns {(FactoryDaemon|FactoryClient|FactoryInProc)}
  */
 const create = (opts) => {
-  const options = defaults({}, opts, { remote: !isNode })
+  const options = defaults({}, opts, { remote: isEnvWithDom })
 
   if (options.type === 'proc') {
     return new FactoryInProc(options)
