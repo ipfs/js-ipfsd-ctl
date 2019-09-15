@@ -66,6 +66,7 @@ class FactoryClient {
    * @return {Promise}
    */
   async spawn (options = {}) {
+    console.log('Start spawn')
     const res = await request
       .post(`${this.baseUrl}/spawn`)
       .send({ options: options, type: this.options.type })
