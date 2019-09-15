@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.46.1",
+  "version": "0.46.2",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
