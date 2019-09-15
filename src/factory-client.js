@@ -71,6 +71,8 @@ class FactoryClient {
       .send({ options: options, type: this.options.type })
 
     const apiAddr = res.body.api ? res.body.api.apiAddr : ''
+    console.log('TCL: spawn -> apiAddr', apiAddr)
+    console.log('TCL: spawn -> res', res.body)
     const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 
     const ipfsd = new DaemonClient(
