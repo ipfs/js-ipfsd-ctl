@@ -1,3 +1,13 @@
+<a name="0.46.2"></a>
+## [0.46.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.46.1...v0.46.2) (2019-09-15)
+
+
+### Bug Fixes
+
+* fix electron ([#375](https://github.com/ipfs/js-ipfsd-ctl/issues/375)) ([6be5027](https://github.com/ipfs/js-ipfsd-ctl/commit/6be5027))
+
+
+
 <a name="0.46.1"></a>
 ## [0.46.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.46.0...v0.46.1) (2019-09-11)
 
