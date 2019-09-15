@@ -69,7 +69,6 @@ class FactoryClient {
     const res = await request
       .post(`${this.baseUrl}/spawn`)
       .send({ options: options, type: this.options.type })
-
     const apiAddr = res.body.api ? res.body.api.apiAddr : ''
     const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
 

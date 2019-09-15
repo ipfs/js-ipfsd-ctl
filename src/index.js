@@ -1,7 +1,7 @@
 'use strict'
 
-const isNode = require('detect-node')
 const defaults = require('lodash.defaultsdeep')
+const { isNode } = require('ipfs-utils/src/env')
 
 const FactoryDaemon = require('./factory-daemon')
 const FactoryInProc = require('./factory-in-proc')
