@@ -67,10 +67,11 @@ class FactoryClient {
    */
   async spawn (options = {}) {
     console.log('Start spawn')
+    const s = Date.now()
     const res = await request
       .post(`${this.baseUrl}/spawn`)
       .send({ options: options, type: this.options.type })
-
+    console.log(Date.now() - s)
     const apiAddr = res.body.api ? res.body.api.apiAddr : ''
     console.log('TCL: spawn -> apiAddr', apiAddr)
     const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
