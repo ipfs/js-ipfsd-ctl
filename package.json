@@ -64,7 +64,7 @@
   "dependencies": {
     "@hapi/boom": "^7.4.3",
     "@hapi/hapi": "^18.3.2",
-    "@hapi/joi": "^15.1.1",
+    "@hapi/joi": "^16.0.1",
     "debug": "^4.1.1",
     "dexie": "^2.0.4",
     "execa": "^2.0.4",
