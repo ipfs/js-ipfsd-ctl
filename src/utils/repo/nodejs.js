@@ -2,38 +2,44 @@
 
 const os = require('os')
 const path = require('path')
-const hat = require('hat')
 const fs = require('fs-extra')
+const debug = require('debug')
+const log = debug('ipfsd-ctl')
 
-function removeRepo (dir) {
+const removeRepo = async (dir) => {
   try {
-    return fs.remove(dir)
+    await fs.remove(dir)
   } catch (err) {
-    if (err.code === 'ENOENT') {
-      // Does not exist so all good
-      return
-    }
-
-    throw err
+    // ignore
   }
 }
 
-function createTempRepoPath () {
-  return path.join(os.tmpdir(), '/ipfs-test-' + hat())
+const repoExists = async (repoPath) => {
+  const exists = await fs.pathExists(`${repoPath}/config`)
+  return exists
 }
 
-async function repoExists (repoPath) {
-  try {
-    await fs.access(`${repoPath}/config`)
+const defaultRepo = (type) => {
+  path.join(
+    os.homedir(),
+    type === 'js' ? '.jsipfs' : '.ipfs'
+  )
+}
 
-    return true
+const checkForRunningApi = (path) => {
+  let api
+  try {
+    api = fs.readFileSync(`${path}/api`)
   } catch (err) {
-    return false
+    log(`Unable to open api file: ${err}`)
   }
+
+  return api ? api.toString() : null
 }
 
 module.exports = {
-  createTempRepoPath,
   removeRepo,
-  repoExists
+  repoExists,
+  defaultRepo,
+  checkForRunningApi
 }

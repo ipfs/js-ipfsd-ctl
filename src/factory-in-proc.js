@@ -1,13 +1,9 @@
 'use strict'
 
-const defaults = require('lodash.defaultsdeep')
-const clone = require('lodash.clone')
-const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
-const repoUtils = require('./utils/repo/nodejs')
 const InProc = require('./ipfsd-in-proc')
+const merge = require('merge-options')
 const defaultConfig = require('./defaults/config.json')
-const defaultOptions = require('./defaults/options.json')
 
 /** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
 
@@ -37,7 +33,7 @@ class FactoryInProc {
    * @returns {Promise}
    */
   tmpDir () {
-    return tmpDir(true)
+    return Promise.resolve(tmpDir(true))
   }
 
   /**
@@ -46,74 +42,46 @@ class FactoryInProc {
    * @param {Object} [options={}]
    * @returns {Promise}
    */
-  version (options = {}) {
-    return new Promise((resolve, reject) => {
-      const node = new InProc(options)
-      node.once('ready', () => {
-        node.version()
-          .then(resolve, reject)
-      })
-      node.once('error', reject)
-    })
+  async version (options = {}) {
+    const node = new InProc(options)
+    const v = await node.version()
+    return v
   }
 
   /**
    * Spawn JSIPFS instances
    *
-   * @param {SpawnOptions} [opts={}] - various config options and ipfs config parameters
-   * @returns {Promise} - Resolves to an array with an `ipfs-instance` attached to the node and a `Node`
+   * @param {SpawnOptions} [options={}] - various config options and ipfs config parameters
+   * @returns {Promise<InProc>} - Resolves to an array with an `ipfs-instance` attached to the node and a `Node`
    */
-  async spawn (opts = {}) {
-    const options = defaults({}, opts, defaultOptions)
-    options.init = typeof options.init !== 'undefined'
-      ? options.init
-      : true
-
-    if (options.disposable) {
-      options.config = defaults({}, options.config, defaultConfig)
-    } else {
-      const nonDisposableConfig = clone(defaultConfig)
-      options.init = false
-      options.start = false
-
-      const defaultRepo = path.join(
-        process.env.HOME || process.env.USERPROFILE || '',
-        options.isJs ? '.jsipfs' : '.ipfs'
-      )
-
-      options.repoPath = options.repoPath || (process.env.IPFS_PATH || defaultRepo)
-      options.config = defaults({}, options.config, nonDisposableConfig)
-    }
+  async spawn (options = {}) {
+    const daemonOptions = merge({
+      exec: this.options.exec,
+      type: this.options.type,
+      IpfsApi: this.options.IpfsApi,
+      disposable: true,
+      start: options.disposable !== false,
+      init: options.disposable !== false,
+      config: defaultConfig,
+      silent: true
+    }, options)
 
     if (options.defaultAddrs) {
-      delete options.config.Addresses
+      delete daemonOptions.config.Addresses
     }
 
-    options.type = this.options.type
-    options.exec = options.exec || this.options.exec
-    options.silent = options.silent || true
-
-    if (typeof options.exec !== 'function') {
+    if (typeof this.options.exec !== 'function') {
       throw new Error(`'type' proc requires 'exec' to be a coderef`)
     }
 
-    const node = new InProc(options)
+    const node = new InProc(daemonOptions)
 
-    await new Promise((resolve, reject) => {
-      node.once('error', reject)
-      node.once('ready', () => {
-        resolve()
-      })
-    })
-
-    node.initialized = await repoUtils.repoExists(node.path)
-
-    if (options.init) {
-      await node.init()
+    if (daemonOptions.init) {
+      await node.init(daemonOptions.initOptions)
     }
 
-    if (options.start) {
-      await node.start(options.args)
+    if (daemonOptions.start) {
+      await node.start(daemonOptions.args)
     }
 
     return node

@@ -4,23 +4,22 @@ const IpfsClient = require('ipfs-http-client')
 const multiaddr = require('multiaddr')
 const fs = require('fs-extra')
 const path = require('path')
-const defaults = require('lodash.defaults')
+const merge = require('merge-options')
 const debug = require('debug')
 const os = require('os')
 const hat = require('hat')
 const log = debug('ipfsd-ctl:daemon')
-const daemonLog = {
-  info: debug('ipfsd-ctl:daemon:stdout'),
-  err: debug('ipfsd-ctl:daemon:stderr')
-}
-
 const safeStringify = require('safe-json-stringify')
-
 const tmpDir = require('./utils/tmp-dir')
 const findIpfsExecutable = require('./utils/find-ipfs-executable')
 const setConfigValue = require('./utils/set-config-value')
 const run = require('./utils/run')
+const { checkForRunningApi, defaultRepo } = require('./utils/repo/nodejs')
 
+const daemonLog = {
+  info: debug('ipfsd-ctl:daemon:stdout'),
+  err: debug('ipfsd-ctl:daemon:stderr')
+}
 // amount of ms to wait before sigkill
 const GRACE_PERIOD = 10500
 
@@ -44,76 +43,41 @@ function translateError (err) {
  * @param {Typedefs.SpawnOptions} [opts]
  */
 class Daemon {
-  constructor (opts) {
+  constructor (opts = { type: 'go' }) {
     const rootPath = process.env.testpath
       ? process.env.testpath
       : __dirname
 
-    this.opts = opts || { type: 'go' }
-    const td = tmpDir(this.opts.type === 'js')
-    this.path = this.opts.disposable
-      ? td
-      : (this.opts.repoPath || td)
-    this.disposable = this.opts.disposable
-
-    if (process.env.IPFS_EXEC) {
-      log('WARNING: The use of IPFS_EXEC is deprecated, ' +
-        'please use IPFS_GO_EXEC or IPFS_JS_EXEC respectively!')
-
-      if (this.opts.type === 'go') {
-        process.env.IPFS_GO_EXEC = process.env.IPFS_EXEC
-      } else {
-        process.env.IPFS_JS_EXEC = process.env.IPFS_EXEC
-      }
-
-      delete process.env.IPFS_EXEC
-    }
-
+    this.opts = opts
     const envExec = this.opts.type === 'go' ? process.env.IPFS_GO_EXEC : process.env.IPFS_JS_EXEC
     this.exec = this.opts.exec || envExec || findIpfsExecutable(this.opts.type, rootPath)
+    this._env = Object.assign({}, process.env, this.opts.env)
+    this.path = this.opts.disposable
+      ? tmpDir(this.opts.type === 'js')
+      : (this.opts.repoPath || defaultRepo(this.opts.type))
+    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
+    this.disposable = this.opts.disposable
     this.subprocess = null
     this.initialized = fs.existsSync(this.path)
+    this.started = false
     this.clean = true
-    this._apiAddr = null
-    this._gatewayAddr = null
-    this._started = false
+    this.apiAddr = null
+    this.gatewayAddr = null
     /** @member {IpfsClient} */
     this.api = null
-    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
-    this._env = Object.assign({}, process.env, this.opts.env)
   }
 
-  /**
-   * Running node api
-   * @member {String}
-   */
-  get runningNodeApi () {
-    let api
-    try {
-      api = fs.readFileSync(`${this.repoPath}/api`)
-    } catch (err) {
-      log(`Unable to open api file: ${err}`)
-    }
-
-    return api ? api.toString() : null
+  setApi (addr) {
+    this.apiAddr = multiaddr(addr)
+    this.api = (this.opts.IpfsClient || IpfsClient)(addr)
+    this.api.apiHost = this.apiAddr.nodeAddress().address
+    this.api.apiPort = this.apiAddr.nodeAddress().port
   }
 
-  /**
-   * Address of connected IPFS API.
-   *
-   * @member {Multiaddr}
-   */
-  get apiAddr () {
-    return this._apiAddr
-  }
-
-  /**
-   * Address of connected IPFS HTTP Gateway.
-   *
-   * @member {Multiaddr}
-   */
-  get gatewayAddr () {
-    return this._gatewayAddr
+  setGateway (addr) {
+    this.gatewayAddr = multiaddr(addr)
+    this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+    this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
   }
 
   /**
@@ -123,15 +87,6 @@ class Daemon {
    */
   get repoPath () {
     return this.path
-  }
-
-  /**
-   * Is the node started
-   *
-   * @member {boolean}
-   */
-  get started () {
-    return this._started
   }
 
   /**
@@ -152,7 +107,18 @@ class Daemon {
    * @param {string} [initOptions.pass] - The passphrase of the keychain.
    * @returns {Promise}
    */
-  async init (initOptions = {}) {
+  async init (initOptions) {
+    if (this.initialized && initOptions) {
+      throw new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`)
+    }
+
+    if (this.initialized) {
+      this.clean = false
+      return this
+    }
+
+    initOptions = initOptions || {}
+
     if (initOptions.directory && initOptions.directory !== this.path) {
       this.path = initOptions.directory
     }
@@ -182,10 +148,9 @@ class Daemon {
 
     await run(this, args, { env: this.env })
       .catch(translateError)
-
     const conf = await this.getConfig()
 
-    await this.replaceConfig(defaults({}, this.opts.config, conf))
+    await this.replaceConfig(merge(conf, this.opts.config))
 
     this.clean = false
     this.initialized = true
@@ -200,12 +165,11 @@ class Daemon {
    */
   async cleanup () {
     if (this.clean) {
-      return
+      return this
     }
 
-    this.clean = true
-
     await fs.remove(this.path)
+    this.clean = true
   }
 
   /**
@@ -216,25 +180,12 @@ class Daemon {
    */
   start (flags = []) {
     const args = ['daemon'].concat(flags || [])
-
-    const setApiAddr = (addr) => {
-      this._apiAddr = multiaddr(addr)
-      this.api = (this.opts.IpfsClient || IpfsClient)(addr)
-      this.api.apiHost = this.apiAddr.nodeAddress().address
-      this.api.apiPort = this.apiAddr.nodeAddress().port
-    }
-
-    const setGatewayAddr = (addr) => {
-      this._gatewayAddr = multiaddr(addr)
-      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
-    }
-
-    const api = this.runningNodeApi
+    // Check if a daemon is already running
+    const api = checkForRunningApi(this.path)
 
     if (api) {
-      setApiAddr(api)
-      this._started = true
+      this.setApi(api)
+      this.started = true
       return this.api
     }
 
@@ -263,16 +214,16 @@ class Daemon {
           const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
 
           if (apiMatch && apiMatch.length > 0) {
-            setApiAddr(apiMatch[1])
+            this.setApi(apiMatch[1])
           }
 
           if (gwMatch && gwMatch.length > 0) {
-            setGatewayAddr(gwMatch[1])
+            this.setGateway(gwMatch[1])
           }
 
           if (output.match(/(?:daemon is running|Daemon is ready)/)) {
             // we're good
-            this._started = true
+            this.started = true
             resolve(this.api)
           }
         }
@@ -294,11 +245,19 @@ class Daemon {
    * @return {Promise}
    */
   async stop (timeout) {
-    if (!this.subprocess) {
-      return
+    if (!this.started) {
+      return this
     }
-
+    if (!this.subprocess) {
+      return this
+    }
+    await this.api.stop()
+    // TODO this should call this.api.stop
     await this.killProcess(timeout)
+
+    if (this.disposable) {
+      return this.cleanup()
+    }
   }
 
   /**
@@ -333,7 +292,7 @@ class Daemon {
       subprocess.once('exit', () => {
         log('killed', subprocess.pid)
         clearTimeout(grace)
-        this._started = false
+        this.started = false
 
         if (this.disposable) {
           return this.cleanup().then(resolve, reject)
@@ -405,9 +364,6 @@ class Daemon {
   async replaceConfig (config) {
     const tmpFile = path.join(os.tmpdir(), hat())
 
-    // TODO: we're using tmp file here until
-    // https://github.com/ipfs/js-ipfs/pull/785
-    // is ready
     await fs.writeFile(tmpFile, safeStringify(config))
     await run(this, ['config', 'replace', `${tmpFile}`], { env: this.env })
       .catch(translateError)

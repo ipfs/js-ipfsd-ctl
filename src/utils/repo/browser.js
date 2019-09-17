@@ -1,27 +1,37 @@
 'use strict'
 
-const hat = require('hat')
-const Dexie = require('dexie').default
-
-function createTempRepoPath () {
-  return '/ipfs-' + hat()
-}
-
 function removeRepo (repoPath) {
-  Dexie.delete(repoPath)
+  self.indexedDB.deleteDatabase(repoPath)
+  return Promise.resolve()
 }
 
-async function repoExists (repoPath) {
-  const db = new Dexie(repoPath)
-  const store = await db.open(repoPath)
-  const table = store.table(repoPath)
-  const count = await table.count()
+function repoExists (repoPath) {
+  return new Promise((resolve, reject) => {
+    var req = self.indexedDB.open(repoPath)
+    var existed = true
+    req.onerror = () => reject(req.error)
+    req.onsuccess = function () {
+      req.result.close()
+      if (!existed) { self.indexedDB.deleteDatabase(repoPath) }
+      resolve(existed)
+    }
+    req.onupgradeneeded = function () {
+      existed = false
+    }
+  })
+}
 
-  return count > 0
+function defaultRepo (type) {
+  return 'ipfs'
+}
+
+function checkForRunningApi (path) {
+  return null
 }
 
 module.exports = {
-  createTempRepoPath,
   removeRepo,
-  repoExists
+  repoExists,
+  defaultRepo,
+  checkForRunningApi
 }

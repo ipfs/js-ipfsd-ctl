@@ -2,6 +2,8 @@
 
 const request = require('superagent')
 const DaemonClient = require('./ipfsd-client')
+const merge = require('merge-options')
+const defaultConfig = require('./defaults/config.json')
 
 /** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
 
@@ -33,12 +35,14 @@ class FactoryClient {
    * Utility method to get a temporary directory
    * useful in browsers to be able to generate temp
    * repos manually
+   * @param {boolean} isJS
    *
    * @returns {Promise}
    */
-  async tmpDir () {
+  async tmpDir (isJS) {
     const res = await request
       .get(`${this.baseUrl}/util/tmp-dir`)
+      .query({ type: isJS ? 'js' : 'go' })
 
     return res.body.tmpDir
   }
@@ -66,19 +70,28 @@ class FactoryClient {
    * @return {Promise}
    */
   async spawn (options = {}) {
+    const daemonOptions = merge({
+      exec: this.options.exec,
+      type: this.options.type,
+      IpfsClient: this.options.IpfsClient,
+      disposable: true,
+      start: options.disposable !== false,
+      init: options.disposable !== false,
+      config: defaultConfig
+    }, options)
+
+    if (options.defaultAddrs) {
+      delete daemonOptions.config.Addresses
+    }
+
     const res = await request
       .post(`${this.baseUrl}/spawn`)
-      .send({ options: options, type: this.options.type })
-    const apiAddr = res.body.api ? res.body.api.apiAddr : ''
-    const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
+      .send(daemonOptions)
 
     const ipfsd = new DaemonClient(
       this.baseUrl,
-      res.body.id,
-      res.body.initialized,
-      apiAddr,
-      gatewayAddr,
-      { IpfsClient: this.options.IpfsClient }
+      res.body,
+      daemonOptions
     )
 
     return ipfsd
