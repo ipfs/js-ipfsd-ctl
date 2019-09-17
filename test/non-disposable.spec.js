@@ -4,7 +4,7 @@
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
-const isNode = require('detect-node')
+const { isNode } = require('ipfs-utils/src/env')
 const IPFSFactory = require('../src')
 
 const expect = chai.expect
