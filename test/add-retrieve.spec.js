@@ -15,7 +15,6 @@ const tests = [
 ]
 
 describe('data can be put and fetched', function () {
-  this.timeout(10000)
   tests.forEach((dfOpts) => describe(`${dfOpts.type}`, () => {
     let ipfsd
 
