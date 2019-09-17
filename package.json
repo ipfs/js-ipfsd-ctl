@@ -70,7 +70,7 @@
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
     "hat": "~0.0.3",
-    "ipfs-http-client": "ipfs/js-ipfs-http-client#fix/fix-electron",
+    "ipfs-http-client": "^36.1.0",
     "ipfs-utils": "^0.3.0",
     "lodash.clone": "^4.5.0",
     "lodash.defaults": "^4.2.0",
