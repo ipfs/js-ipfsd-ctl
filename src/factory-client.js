@@ -25,7 +25,7 @@ class FactoryClient {
     this.options = options
 
     if (options.type === 'proc') {
-      throw new Error(`'proc' is not supported in client mode`)
+      throw new Error('\'proc\' is not supported in client mode')
     }
 
     this.baseUrl = `${options.secure ? 'https://' : 'http://'}${options.host}:${options.port}`

@@ -71,7 +71,7 @@ class FactoryInProc {
     }
 
     if (typeof this.options.exec !== 'function') {
-      throw new Error(`'type' proc requires 'exec' to be a coderef`)
+      throw new Error('\'type\' proc requires \'exec\' to be a coderef')
     }
 
     const node = new InProc(daemonOptions)

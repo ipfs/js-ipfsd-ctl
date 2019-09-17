@@ -340,9 +340,9 @@ tests.forEach((fOpts) => {
           },
           config: {
             Addresses: {
-              Swarm: [`/ip4/127.0.0.1/tcp/0`],
-              API: `/ip4/127.0.0.1/tcp/0`,
-              Gateway: `/ip4/127.0.0.1/tcp/0`
+              Swarm: ['/ip4/127.0.0.1/tcp/0'],
+              API: '/ip4/127.0.0.1/tcp/0',
+              Gateway: '/ip4/127.0.0.1/tcp/0'
             }
           }
         })
