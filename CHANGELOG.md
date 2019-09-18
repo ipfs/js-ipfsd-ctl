@@ -1,3 +1,13 @@
+<a name="0.47.1"></a>
+## [0.47.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.47.0...v0.47.1) (2019-09-18)
+
+
+### Bug Fixes
+
+* use local options instead of instance to check "exec" ([38a730d](https://github.com/ipfs/js-ipfsd-ctl/commit/38a730d))
+
+
+
 <a name="0.47.0"></a>
 # [0.47.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.46.3...v0.47.0) (2019-09-18)
 
