@@ -69,7 +69,7 @@
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
     "hat": "~0.0.3",
-    "ipfs-http-client": "^36.1.0",
+    "ipfs-http-client": "^37.0.1",
     "ipfs-utils": "^0.3.0",
     "merge-options": "^1.0.1",
     "multiaddr": "^7.0.0",
