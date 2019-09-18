@@ -3,7 +3,7 @@
 const hat = require('hat')
 const Joi = require('@hapi/joi')
 const boom = require('@hapi/boom')
-const defaults = require('lodash.defaultsdeep')
+const merge = require('merge-options')
 const FactoryDaemon = require('../factory-daemon')
 const tmpDir = require('../utils/tmp-dir')
 
@@ -27,11 +27,13 @@ module.exports = (server) => {
   server.route({
     method: 'GET',
     path: '/util/tmp-dir',
-    handler: (request) => {
+    handler: async (request) => {
       const type = request.query.type || 'go'
-      const path = tmpDir(type === 'js')
-
-      return { tmpDir: path }
+      try {
+        return { tmpDir: await tmpDir(type === 'js') }
+      } catch (err) {
+        throw boom.badRequest(err.message)
+      }
     }
   })
 
@@ -68,28 +70,18 @@ module.exports = (server) => {
       const f = new FactoryDaemon({ type: payload.type })
 
       try {
-        const ipfsd = await f.spawn(payload.options)
+        const ipfsd = await f.spawn(payload)
         const id = hat()
-        const initialized = ipfsd.initialized
         nodes[id] = ipfsd
 
-        let api = null
-
-        if (nodes[id].started) {
-          api = {
-            apiAddr: nodes[id].apiAddr
-              ? nodes[id].apiAddr.toString()
-              : '',
-            gatewayAddr: nodes[id].gatewayAddr
-              ? nodes[id].gatewayAddr.toString()
-              : ''
-          }
-        }
-
         return {
-          id,
-          api,
-          initialized
+          _id: id,
+          apiAddr: ipfsd.apiAddr ? ipfsd.apiAddr.toString() : '',
+          gatewayAddr: ipfsd.gatewayAddr ? ipfsd.gatewayAddr.toString() : '',
+          initialized: ipfsd.initialized,
+          started: ipfsd.started,
+          _env: ipfsd._env,
+          path: ipfsd.path
         }
       } catch (err) {
         throw boom.badRequest(err.message)
@@ -135,10 +127,8 @@ module.exports = (server) => {
         await nodes[id].start(flags)
 
         return {
-          api: {
-            apiAddr: nodes[id].apiAddr.toString(),
-            gatewayAddr: nodes[id].gatewayAddr.toString()
-          }
+          apiAddr: nodes[id].apiAddr.toString(),
+          gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : ''
         }
       } catch (err) {
         throw boom.badRequest(err.message)
@@ -206,7 +196,7 @@ module.exports = (server) => {
     path: '/stop',
     handler: async (request, h) => {
       const id = request.query.id
-      const timeout = request.payload.timeout
+      const timeout = request.payload && request.payload.timeout
 
       try {
         await nodes[id].stop(timeout)
@@ -230,7 +220,7 @@ module.exports = (server) => {
     path: '/kill',
     handler: async (request, h) => {
       const id = request.query.id
-      const timeout = request.payload.timeout
+      const timeout = request.payload && request.payload.timeout
 
       try {
         await nodes[id].killProcess(timeout)
@@ -277,13 +267,13 @@ module.exports = (server) => {
         throw boom.badRequest(err.message)
       }
     },
-    config: defaults({}, {
+    config: merge(routeConfig, {
       validate: {
         query: {
           key: Joi.string().optional()
         }
       }
-    }, routeConfig)
+    })
   })
 
   /*
@@ -305,13 +295,13 @@ module.exports = (server) => {
 
       return h.response().code(200)
     },
-    config: defaults({}, {
+    config: merge(routeConfig, {
       validate: {
         payload: {
           key: Joi.string(),
           value: Joi.any()
         }
       }
-    }, routeConfig)
+    })
   })
 }

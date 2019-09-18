@@ -4,113 +4,74 @@ const request = require('superagent')
 const IpfsClient = require('ipfs-http-client')
 const multiaddr = require('multiaddr')
 
-function createApi (apiAddr, gwAddr, IpfsClient) {
-  let api
-  if (apiAddr) {
-    api = IpfsClient(apiAddr)
-    api.apiHost = multiaddr(apiAddr).nodeAddress().address
-    api.apiPort = multiaddr(apiAddr).nodeAddress().port
-  }
-
-  if (api && gwAddr) {
-    api.gatewayHost = multiaddr(gwAddr).nodeAddress().address
-    api.gatewayPort = multiaddr(gwAddr).nodeAddress().port
-  }
-
-  return api
-}
-
-function translateError (err) {
-  let message = err.message
-
-  if (err.response && err.response.body && err.response.body.message) {
-    message = err.response.body.message
-  }
-
-  const output = new Error(message)
-  output.status = err.status
-  output.response = err.response
-  output.stack = err.stack
-  output.message = message
-
-  throw output
-}
-
 /**
  * Creates an instance of Client.
  *
  * @param {*} baseUrl
  * @param {*} _id
  * @param {*} initialized
- * @param {*} apiAddr
- * @param {*} gwAddrs
  * @param {*} options
  */
 class Client {
-  constructor (baseUrl, _id, initialized, apiAddr, gwAddrs, options) {
-    this.options = options || {}
+  constructor (baseUrl, remoteState, options = {}) {
+    this.options = options
     this.baseUrl = baseUrl
-    this._id = _id
-    this._apiAddr = multiaddr(apiAddr)
-    this._gwAddr = multiaddr(gwAddrs)
-    this.initialized = initialized
-    this.started = false
-    this.api = createApi(apiAddr, gwAddrs, this.options.IpfsClient || IpfsClient)
+    this._id = remoteState._id
+    this.path = remoteState.path
+    this.initialized = remoteState.initialized
+    this.started = remoteState.started
+    this.clean = true
+    this.apiAddr = null
+    this.gatewayAddr = null
+    this.api = null
+
+    if (this.started) {
+      this.setApi(remoteState.apiAddr)
+      this.setGateway(remoteState.gatewayAddr)
+    }
   }
 
-  /**
-   * Get the address of connected IPFS API.
-   *
-   * @returns {Multiaddr}
-   */
-  get apiAddr () {
-    return this._apiAddr
+  setApi (addr) {
+    if (addr) {
+      this.apiAddr = multiaddr(addr)
+      this.api = (this.options.IpfsClient || IpfsClient)(addr)
+      this.api.apiHost = this.apiAddr.nodeAddress().address
+      this.api.apiPort = this.apiAddr.nodeAddress().port
+    }
   }
 
-  /**
-   * Set the address of connected IPFS API.
-   *
-   * @param {Multiaddr} addr
-   * @returns {void}
-   */
-  set apiAddr (addr) {
-    this._apiAddr = addr
-  }
-
-  /**
-   * Get the address of connected IPFS HTTP Gateway.
-   *
-   * @returns {Multiaddr}
-   */
-  get gatewayAddr () {
-    return this._gwAddr
-  }
-
-  /**
-   * Set the address of connected IPFS Gateway.
-   *
-   * @param {Multiaddr} addr
-   * @returns {void}
-   */
-  set gatewayAddr (addr) {
-    this._gwAddr = addr
+  setGateway (addr) {
+    if (addr) {
+      this.gatewayAddr = multiaddr(addr)
+      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+    }
   }
 
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOpts={}]
-   * @param {number} [initOpts.keysize=2048] - The bit size of the identiy key.
-   * @param {string} [initOpts.directory=IPFS_PATH] - The location of the repo.
-   * @param {function (Error, Node)} cb
-   * @returns {undefined}
+   * @param {Object} [initOptions]
+   * @param {number} [initOptions.keysize=2048] - The bit size of the identiy key.
+   * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
+   * @returns {Promise<Client>}
    */
-  async init (initOpts = {}) {
+  async init (initOptions) {
+    if (this.initialized && initOptions) {
+      throw new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`)
+    }
+    if (this.initialized) {
+      this.clean = false
+      return this
+    }
+
+    initOptions = initOptions || {}
+
+    // TODO probably needs to change config like the other impl
     const res = await request
       .post(`${this.baseUrl}/init`)
       .query({ id: this._id })
-      .send({ initOpts })
-      .catch(translateError)
+      .send({ initOptions })
 
     this.initialized = res.body.initialized
 
@@ -122,36 +83,47 @@ class Client {
    * If the node was marked as `disposable` this will be called
    * automatically when the process is exited.
    *
-   * @param {function(Error)} cb
-   * @returns {undefined}
+   * @returns {Promise}
    */
-  cleanup () {
-    return request
+  async cleanup () {
+    if (this.clean) {
+      return this
+    }
+
+    await request
       .post(`${this.baseUrl}/cleanup`)
       .query({ id: this._id })
-      .catch(translateError)
+
+    this.clean = true
   }
 
   /**
    * Start the daemon.
    *
    * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
-   * @param {function(Error, IpfsClient)} cb
-   * @returns {undefined}
+   * @returns {Promise<IpfsClient>}
    */
   async start (flags = []) {
+    if (this.started) {
+      return this.api
+    }
     const res = await request
       .post(`${this.baseUrl}/start`)
       .query({ id: this._id })
       .send({ flags })
-      .catch(translateError)
 
     this.started = true
 
-    const apiAddr = res.body.api ? res.body.api.apiAddr : ''
-    const gatewayAddr = res.body.api ? res.body.api.gatewayAddr : ''
+    const apiAddr = res.body ? res.body.apiAddr : ''
+    const gatewayAddr = res.body ? res.body.gatewayAddr : ''
 
-    this.api = createApi(apiAddr, gatewayAddr, this.options.IpfsClient || IpfsClient)
+    if (apiAddr) {
+      this.setApi(apiAddr)
+    }
+
+    if (gatewayAddr) {
+      this.setGateway(gatewayAddr)
+    }
 
     return this.api
   }
@@ -159,18 +131,20 @@ class Client {
   /**
    * Stop the daemon.
    *
-   * @param {integer|undefined} timeout - Grace period to wait before force stopping the node
-   * @param {function(Error)} [cb]
-   * @returns {undefined}
+   * @param {number} [timeout] - Grace period to wait before force stopping the node
+   * @returns {Promise<Client>}
    */
   async stop (timeout) {
+    if (!this.started) {
+      return this
+    }
     await request
       .post(`${this.baseUrl}/stop`)
       .query({ id: this._id })
       .send({ timeout })
-      .catch(translateError)
-
     this.started = false
+
+    return this
   }
 
   /**
@@ -179,31 +153,29 @@ class Client {
    * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
    * if the process hasn't exited yet.
    *
-   * @param {integer|undefined} timeout - Grace period to wait before force stopping the node
-   * @param {function()} [cb] - Called when the process was killed.
-   * @returns {undefined}
+   * @param {number} [timeout] - Grace period to wait before force stopping the node
+   * @returns {Promise<Client>}
    */
   async killProcess (timeout) {
     await request
       .post(`${this.baseUrl}/kill`)
       .query({ id: this._id })
       .send({ timeout })
-      .catch(translateError)
 
     this.started = false
+
+    return this
   }
 
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @param {function(Error, number): void} cb - receives the pid
-   * @returns {void}
+   * @returns {Promise<number>}
    */
   async pid () {
     const res = await request
       .get(`${this.baseUrl}/pid`)
       .query({ id: this._id })
-      .catch(translateError)
 
     return res.body.pid
   }
@@ -214,20 +186,12 @@ class Client {
    * If no `key` is passed, the whole config is returned as an object.
    *
    * @param {string} [key] - A specific config to retrieve.
-   * @param {function(Error, (Object|string))} cb
-   * @returns {void}
+   * @returns {Promise<Any>}
    */
   async getConfig (key) {
-    const qr = { id: this._id }
-
-    if (key) {
-      qr.key = key
-    }
-
     const res = await request
       .get(`${this.baseUrl}/config`)
-      .query(qr)
-      .catch(translateError)
+      .query({ id: this._id, key })
 
     return res.body.config
   }
@@ -237,14 +201,12 @@ class Client {
    *
    * @param {string} key
    * @param {string} value
-   * @param {function(Error)} cb
-   * @returns {void}
+   * @returns {Promise<void>}
    */
   async setConfig (key, value) {
     await request.put(`${this.baseUrl}/config`)
       .send({ key, value })
       .query({ id: this._id })
-      .catch(translateError)
   }
 }
 

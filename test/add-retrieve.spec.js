@@ -14,30 +14,24 @@ const tests = [
   { type: 'proc', exec: JSIPFS, bits: 512 }
 ]
 
-describe('data can be put and fetched', () => {
+describe('data can be put and fetched', function () {
+  this.timeout(30000)
   tests.forEach((dfOpts) => describe(`${dfOpts.type}`, () => {
     let ipfsd
 
     before(async function () {
-      this.timeout(30 * 1000)
-
       const f = IPFSFactory.create(dfOpts)
 
-      ipfsd = await f.spawn({ initOptions: { bits: dfOpts.bits, profile: 'test' } })
+      ipfsd = await f.spawn({ initOptions: { profile: 'test' } })
 
       expect(ipfsd).to.exist()
       expect(ipfsd.api).to.exist()
       expect(ipfsd.api).to.have.property('id')
     })
 
-    after(async function () {
-      this.timeout(20 * 1000)
-      await ipfsd.stop()
-    })
+    after(() => ipfsd.stop())
 
     it('put and fetch a block', async function () {
-      this.timeout(20 * 1000)
-
       const data = Buffer.from('blorb')
       const block = await ipfsd.api.block.put(data)
       const cidStr = block.cid.toBaseEncodedString()

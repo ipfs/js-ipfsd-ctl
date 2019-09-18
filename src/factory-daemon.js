@@ -1,12 +1,9 @@
 'use strict'
 
-const defaultsDeep = require('lodash.defaultsdeep')
-const clone = require('lodash.clone')
-const path = require('path')
 const tmpDir = require('./utils/tmp-dir')
 const Daemon = require('./ipfsd-daemon')
+const merge = require('merge-options')
 const defaultConfig = require('./defaults/config.json')
-const defaultOptions = require('./defaults/options.json')
 
 /** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
 
@@ -22,7 +19,7 @@ class FactoryDaemon {
     if (options && options.type === 'proc') {
       throw new Error('This Factory does not know how to spawn in proc nodes')
     }
-    this.options = Object.assign({}, { type: 'go' }, options)
+    this.options = merge({ type: 'go' }, options)
   }
 
   /**
@@ -36,7 +33,7 @@ class FactoryDaemon {
    * @returns {Promise}
    */
   tmpDir (type) {
-    return tmpDir(type === 'js')
+    return Promise.resolve(tmpDir(type === 'js'))
   }
 
   /**
@@ -68,57 +65,31 @@ class FactoryDaemon {
    * Spawn an IPFS node, either js-ipfs or go-ipfs
    *
    * @param {SpawnOptions} [options={}] - Various config options and ipfs config parameters
-   * @param {function(Error, Daemon): void} callback - Callback receives Error or a Daemon instance, Daemon has a `api` property which is an `ipfs-http-client` instance.
-   * @returns {void}
+   * @returns {Promise<Daemon>}
    */
   async spawn (options = {}) {
-    // TODO this options parsing is daunting. Refactor and move to a separate
-    // func documenting what it is trying to do.
-    options = defaultsDeep(
-      { IpfsClient: this.options.IpfsClient },
-      options,
-      defaultOptions
-    )
-
-    options.init = typeof options.init !== 'undefined'
-      ? options.init
-      : true
-
-    if (!options.disposable) {
-      const nonDisposableConfig = clone(defaultConfig)
-      options.init = false
-      options.start = false
-
-      const defaultRepo = path.join(
-        process.env.HOME || process.env.USERPROFILE,
-        options.isJs
-          ? '.jsipfs'
-          : '.ipfs'
-      )
-
-      options.repoPath = options.repoPath ||
-        (process.env.IPFS_PATH || defaultRepo)
-      options.config = defaultsDeep({}, options.config, nonDisposableConfig)
-    } else {
-      options.config = defaultsDeep({}, options.config, defaultConfig)
-    }
+    const daemonOptions = merge({
+      exec: this.options.exec,
+      type: this.options.type,
+      IpfsClient: this.options.IpfsClient,
+      disposable: true,
+      start: options.disposable !== false,
+      init: options.disposable !== false,
+      config: defaultConfig
+    }, options)
 
     if (options.defaultAddrs) {
-      delete options.config.Addresses
+      delete daemonOptions.config.Addresses
     }
 
-    options.type = this.options.type
-    options.exec = options.exec || this.options.exec
-    options.initOptions = defaultsDeep({}, this.options.initOptions, options.initOptions)
+    const node = new Daemon(daemonOptions)
 
-    const node = new Daemon(options)
-
-    if (options.init) {
-      await node.init(options.initOptions)
+    if (daemonOptions.init) {
+      await node.init(daemonOptions.initOptions)
     }
 
-    if (options.start) {
-      await node.start(options.args)
+    if (daemonOptions.start) {
+      await node.start(daemonOptions.args)
     }
 
     return node

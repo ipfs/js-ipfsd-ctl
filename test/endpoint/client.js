@@ -32,14 +32,13 @@ describe('client', () => {
 
       it('should handle valid request', async () => {
         mock.post('http://localhost:9999/spawn', (req) => {
-          expect(req.body.options.opt1).to.equal('hello!')
+          expect(req.body.opt1).to.equal('hello!')
           return {
             body: {
-              id: hat(),
-              api: {
-                apiAddr: '/ip4/127.0.0.1/tcp/5001',
-                gatewayAddr: '/ip4/127.0.0.1/tcp/8080'
-              }
+              _id: hat(),
+              apiAddr: '/ip4/127.0.0.1/tcp/5001',
+              gatewayAddr: '/ip4/127.0.0.1/tcp/8080',
+              started: true
             }
           }
         })
@@ -57,7 +56,7 @@ describe('client', () => {
         mock.clearRoutes()
       })
 
-      it('should handle valid request', async () => {
+      it('should handle invalid request', async () => {
         const badReq = boom.badRequest()
 
         mock.post('http://localhost:9999/spawn', () => {
@@ -108,6 +107,8 @@ describe('client', () => {
 
       it('should handle valid request', async () => {
         const badReq = boom.badRequest()
+        // reset node
+        node.initialized = false
 
         mock.post('http://localhost:9999/init', () => {
           return {
@@ -150,6 +151,9 @@ describe('client', () => {
 
       it('should handle invalid request', async () => {
         const badReq = boom.badRequest()
+
+        // reset node
+        node.clean = false
 
         mock.post('http://localhost:9999/cleanup', () => {
           return {
@@ -204,6 +208,8 @@ describe('client', () => {
 
       it('should handle invalid request', async () => {
         const badReq = boom.badRequest()
+        // reset node
+        node.started = false
 
         mock.post('http://localhost:9999/start', () => {
           return {
@@ -246,7 +252,8 @@ describe('client', () => {
 
       it('should handle invalid request', async () => {
         const badReq = boom.badRequest()
-
+        // reset node
+        node.started = true
         mock.post('http://localhost:9999/stop', () => {
           return {
             status: badReq.output.statusCode,
@@ -288,7 +295,8 @@ describe('client', () => {
 
       it('should handle invalid request', async () => {
         const badReq = boom.badRequest()
-
+        // reset node
+        node.started = true
         mock.post('http://localhost:9999/stop', () => {
           return {
             status: badReq.output.statusCode,

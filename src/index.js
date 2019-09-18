@@ -1,7 +1,7 @@
 'use strict'
 
-const defaults = require('lodash.defaultsdeep')
 const { isNode } = require('ipfs-utils/src/env')
+const merge = require('merge-options')
 
 const FactoryDaemon = require('./factory-daemon')
 const FactoryInProc = require('./factory-in-proc')
@@ -23,10 +23,10 @@ const Server = require('./endpoint/server')
  * - js - spawn js-ipfs daemon
  * - proc - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `IPFSFactory.create({type: 'proc', exec: require('ipfs') })`.
  * @param {Object} IpfsClient - A custom IPFS API constructor to use instead of the packaged one `js-ipfs-http-client`.
- * @returns {(FactoryDaemon|FactoryClient|FactoryInProc)}
+ * @returns {(FactoryDaemon|FactoryInProc|FactoryClient)}
  */
 const create = (opts) => {
-  const options = defaults({}, opts, { remote: !isNode })
+  const options = merge({ remote: !isNode }, opts)
 
   if (options.type === 'proc') {
     return new FactoryInProc(options)

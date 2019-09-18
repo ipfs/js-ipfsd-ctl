@@ -1,15 +1,10 @@
 'use strict'
 
 const multiaddr = require('multiaddr')
-const defaultsDeep = require('lodash.defaultsdeep')
-const defaults = require('lodash.defaults')
-const debug = require('debug')
-const EventEmitter = require('events')
-const repoUtils = require('./utils/repo/nodejs')
-
-const log = debug('ipfsd-ctl:in-proc')
-
-let IPFS = null
+const IpfsClient = require('ipfs-http-client')
+const merge = require('merge-options')
+const tmpDir = require('./utils/tmp-dir')
+const { repoExists, removeRepo, checkForRunningApi, defaultRepo } = require('./utils/repo/nodejs')
 
 /**
  * ipfsd for a js-ipfs instance (aka in-process IPFS node)
@@ -17,27 +12,23 @@ let IPFS = null
  * @param {Object} [opts]
  * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
  */
-class InProc extends EventEmitter {
-  constructor (opts) {
-    super()
-    this.opts = opts || {}
-
-    IPFS = this.opts.exec
-
+class InProc {
+  constructor (opts = {}) {
+    this.opts = opts
     this.opts.args = this.opts.args || []
-    this.path = this.opts.repoPath || repoUtils.createTempRepoPath()
-    this.disposable = this.opts.disposable
-    this.clean = true
-    this._apiAddr = null
-    this._gatewayAddr = null
-    this._started = false
-    this.api = null
-    this.initialized = false
+    this.path = this.opts.disposable
+      ? tmpDir(this.opts.type === 'js')
+      : (this.opts.repoPath || defaultRepo(this.opts.type))
     this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
+    this.disposable = this.opts.disposable
+    this.initialized = false
+    this.started = false
+    this.clean = true
+    this.apiAddr = null
+    this.gatewayAddr = null
+    this.api = null
 
-    this.opts.EXPERIMENTAL = defaultsDeep({}, opts.EXPERIMENTAL, {
-      sharding: false
-    })
+    this.opts.EXPERIMENTAL = merge({ sharding: false }, opts.EXPERIMENTAL)
 
     this.opts.args.forEach((arg) => {
       if (arg === '--enable-sharding-experiment') {
@@ -54,42 +45,39 @@ class InProc extends EventEmitter {
         throw new Error(`Unknown argument ${arg}`)
       }
     })
+  }
 
-    this.exec = new IPFS({
+  async setExec () {
+    if (this.api !== null) {
+      return this
+    }
+
+    const IPFS = this.opts.exec
+
+    this.api = await IPFS.create({
       repo: this.path,
       init: false,
       start: false,
       pass: this.opts.pass,
-      offline: this.opts.offline,
       EXPERIMENTAL: this.opts.EXPERIMENTAL,
       libp2p: this.opts.libp2p,
       config: this.opts.config,
-      relay: this.opts.relay,
       silent: this.opts.silent
     })
-
-    // TODO: should this be wrapped in a process.nextTick(), for context:
-    // https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/#why-use-process-nexttick
-    this.exec.once('error', err => this.emit('error', err))
-    this.exec.once('ready', () => this.emit('ready'))
+    return this
   }
 
-  /**
-   * Get the address of connected IPFS API.
-   *
-   * @member {Multiaddr}
-   */
-  get apiAddr () {
-    return this._apiAddr
+  setApi (addr) {
+    this.apiAddr = multiaddr(addr)
+    this.api = (this.opts.IpfsApi || IpfsClient)(addr)
+    this.api.apiHost = this.apiAddr.nodeAddress().address
+    this.api.apiPort = this.apiAddr.nodeAddress().port
   }
 
-  /**
-   * Get the address of connected IPFS HTTP Gateway.
-   *
-   * @member {Multiaddr}
-   */
-  get gatewayAddr () {
-    return this._gatewayAddr
+  setGateway (addr) {
+    this.gatewayAddr = multiaddr(addr)
+    this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+    this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
   }
 
   /**
@@ -99,15 +87,6 @@ class InProc extends EventEmitter {
    */
   get repoPath () {
     return this.path
-  }
-
-  /**
-   * Is the node started
-   *
-   * @member {boolean}
-   */
-  get started () {
-    return this._started
   }
 
   /**
@@ -128,26 +107,28 @@ class InProc extends EventEmitter {
    * @param {string} [initOptions.pass] - The passphrase of the keychain.
    * @returns {Promise}
    */
-  async init (initOptions = {}) {
-    const bits = initOptions.keysize ? initOptions.bits : this.bits
-    // do not just set a default keysize,
-    // in case we decide to change it at
-    // the daemon level in the future
-    if (bits) {
-      initOptions.bits = bits
-      log(`initializing with keysize: ${bits}`)
+  async init (initOptions) {
+    const initialized = await repoExists(this.path)
+    if (initialized && initOptions) {
+      throw new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`)
     }
 
-    await this.exec.init(initOptions)
+    if (initialized) {
+      this.initialized = true
+      this.clean = false
+      return this
+    }
 
-    const self = this
+    // Repo not initialized
+    initOptions = initOptions || {}
+
+    await this.setExec()
+    await this.api.init(initOptions)
+
     const conf = await this.getConfig()
-
-    await this.replaceConfig(defaults({}, this.opts.config, conf))
-
-    self.clean = false
-    self.initialized = true
-
+    await this.replaceConfig(merge(conf, this.opts.config))
+    this.clean = false
+    this.initialized = true
     return this
   }
 
@@ -158,12 +139,12 @@ class InProc extends EventEmitter {
    *
    * @returns {Promise}
    */
-  cleanup () {
+  async cleanup () {
     if (this.clean) {
-      return
+      return this
     }
-
-    return repoUtils.removeRepo(this.path)
+    await removeRepo(this.path)
+    this.clean = true
   }
 
   /**
@@ -172,18 +153,17 @@ class InProc extends EventEmitter {
    * @returns {Promise}
    */
   async start () {
-    await this.exec.start()
+    // Check if a daemon is already running
+    const api = checkForRunningApi(this.path)
+    if (api) {
+      this.setApi(api)
+      this.started = true
+      return this.api
+    }
 
-    this._started = true
-    this.api = this.exec
-
-    const conf = await this.exec.config.get()
-
-    this._apiAddr = conf.Addresses.API
-    this._gatewayAddr = conf.Addresses.Gateway
-
-    this.api.apiHost = multiaddr(conf.Addresses.API).nodeAddress().host
-    this.api.apiPort = multiaddr(conf.Addresses.API).nodeAddress().port
+    await this.setExec()
+    await this.api.start()
+    this.started = true
 
     return this.api
   }
@@ -194,13 +174,13 @@ class InProc extends EventEmitter {
    * @returns {Promise}
    */
   async stop () {
-    if (!this.exec) {
-      return
+    if (!this.api || !this.started) {
+      return this
     }
 
-    await this.exec.stop()
+    await this.api.stop()
 
-    this._started = false
+    this.started = false
 
     if (this.disposable) {
       return this.cleanup()
@@ -237,7 +217,7 @@ class InProc extends EventEmitter {
    * @returns {Promise}
    */
   getConfig (key) {
-    return this.exec.config.get(key)
+    return this.api.config.get(key)
   }
 
   /**
@@ -248,7 +228,7 @@ class InProc extends EventEmitter {
    * @returns {Promise}
    */
   setConfig (key, value) {
-    return this.exec.config.set(key, value)
+    return this.api.config.set(key, value)
   }
 
   /**
@@ -258,7 +238,7 @@ class InProc extends EventEmitter {
    * @return {Promise}
    */
   replaceConfig (config) {
-    return this.exec.config.replace(config)
+    return this.api.config.replace(config)
   }
 
   /**
@@ -266,8 +246,9 @@ class InProc extends EventEmitter {
    *
    * @returns {Promise}
    */
-  version () {
-    return this.exec.version()
+  async version () {
+    await this.setExec()
+    return this.api.version()
   }
 }
 

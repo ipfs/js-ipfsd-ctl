@@ -289,51 +289,6 @@ tests.forEach((fOpts) => {
       })
     })
 
-    describe('should detect and attach to running node', () => {
-      let ipfsd
-      let exec
-
-      before(async function () {
-        this.timeout(50 * 1000)
-
-        const df = IPFSFactory.create(dfConfig)
-        exec = findIpfsExecutable(fOpts.type)
-
-        ipfsd = await df.spawn({
-          exec,
-          initOptions: { bits: fOpts.bits, profile: 'test' }
-        })
-
-        expect(ipfsd).to.exist()
-      })
-
-      after(async () => {
-        await ipfsd.stop()
-      })
-
-      it('should return a node', () => {
-        expect(ipfsd).to.exist()
-      })
-
-      it('should attach to running node', async function () {
-        this.timeout(50 * 1000)
-
-        const df = IPFSFactory.create(dfConfig)
-        const daemon = await df.spawn({
-          initOptions: { bits: fOpts.bits, profile: 'test' },
-          repoPath: ipfsd.repoPath,
-          disposable: false
-        })
-
-        const api = await daemon.start()
-
-        expect(api).to.exist()
-        expect(ipfsd.apiAddr).to.be.eql(daemon.apiAddr)
-
-        await daemon.stop()
-      })
-    })
-
     describe('should fail on invalid exec path', function () {
       this.timeout(20 * 1000)
 
@@ -385,9 +340,9 @@ tests.forEach((fOpts) => {
           },
           config: {
             Addresses: {
-              Swarm: [`/ip4/127.0.0.1/tcp/0`],
-              API: `/ip4/127.0.0.1/tcp/0`,
-              Gateway: `/ip4/127.0.0.1/tcp/0`
+              Swarm: ['/ip4/127.0.0.1/tcp/0'],
+              API: '/ip4/127.0.0.1/tcp/0',
+              Gateway: '/ip4/127.0.0.1/tcp/0'
             }
           }
         })
