@@ -70,7 +70,7 @@ class FactoryInProc {
       delete daemonOptions.config.Addresses
     }
 
-    if (typeof this.options.exec !== 'function') {
+    if (typeof daemonOptions.exec !== 'function') {
       throw new Error('\'type\' proc requires \'exec\' to be a coderef')
     }
 
