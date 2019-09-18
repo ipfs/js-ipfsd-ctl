@@ -1,3 +1,13 @@
+<a name="0.47.0"></a>
+# [0.47.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.46.3...v0.47.0) (2019-09-18)
+
+
+### Bug Fixes
+
+* fix non-disposable and normalises behaviour ([#379](https://github.com/ipfs/js-ipfsd-ctl/issues/379)) ([b502bd4](https://github.com/ipfs/js-ipfsd-ctl/commit/b502bd4)), closes [#305](https://github.com/ipfs/js-ipfsd-ctl/issues/305) [#276](https://github.com/ipfs/js-ipfsd-ctl/issues/276) [#354](https://github.com/ipfs/js-ipfsd-ctl/issues/354) [#330](https://github.com/ipfs/js-ipfsd-ctl/issues/330) [#329](https://github.com/ipfs/js-ipfsd-ctl/issues/329)
+
+
+
 <a name="0.46.3"></a>
 ## [0.46.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.46.2...v0.46.3) (2019-09-15)
 
