@@ -58,7 +58,6 @@ class FactoryInProc {
     const daemonOptions = merge({
       exec: this.options.exec,
       type: this.options.type,
-      IpfsApi: this.options.IpfsApi,
       disposable: true,
       start: options.disposable !== false,
       init: options.disposable !== false,
