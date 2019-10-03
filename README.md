@@ -101,7 +101,7 @@ Install one or both of the following modules:
   - `type` - the daemon type, see below the options
     - `go` - spawn go-ipfs daemon
     - `js` - spawn js-ipfs daemon
-    - `proc` - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `DaemonFactory.create({type: 'proc', exec: require('ipfs') })`.
+    - `proc` - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `IPFSFactory.create({type: 'proc', exec: require('ipfs') })`.
   - `IpfsClient` - A custom IPFS API constructor to use instead of the packaged one
 
 **example:** See [Usage](#usage)
