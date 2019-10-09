@@ -69,10 +69,10 @@
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
     "hat": "~0.0.3",
-    "ipfs-http-client": "^37.0.2",
+    "ipfs-http-client": "^38.2.0",
     "ipfs-utils": "^0.4.0",
     "merge-options": "^1.0.1",
-    "multiaddr": "^7.0.0",
+    "multiaddr": "^6.1.1",
     "safe-json-stringify": "^1.2.0",
     "superagent": "^5.0.5"
   },
