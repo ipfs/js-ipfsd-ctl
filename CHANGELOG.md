@@ -1,3 +1,13 @@
+<a name="0.47.3"></a>
+## [0.47.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.47.2...v0.47.3) (2019-10-10)
+
+
+### Bug Fixes
+
+* revert multiaddr ([#393](https://github.com/ipfs/js-ipfsd-ctl/issues/393)) ([9faca56](https://github.com/ipfs/js-ipfsd-ctl/commit/9faca56))
+
+
+
 <a name="0.47.2"></a>
 ## [0.47.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.47.1...v0.47.2) (2019-09-20)
 
