@@ -20,8 +20,8 @@ const tests = [
 
 describe('ipfsd.api for Daemons', () => {
   tests.forEach((dfOpts) => describe(`${dfOpts.type}`, () => {
-    const API_PORT = 5101
-    const GW_PORT = 8180
+    const API_PORT = '5101'
+    const GW_PORT = '8180'
 
     const config = {
       Addresses: {
