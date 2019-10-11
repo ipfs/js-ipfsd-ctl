@@ -64,7 +64,10 @@ const createTestsInterface = (createOptions = {}) => {
 
     // Spawn with merged options
     const node = await ipfsFactory.spawn(merge(
-      { initOptions: { profile: 'test' } },
+      {
+        initOptions: { profile: 'test' },
+        preload: { enabled: false }
+      },
       options.spawnOptions,
       createOptions.spawnOptions
     ))
