@@ -13,16 +13,7 @@ const Server = require('./endpoint/server')
  *
  * @static
  * @function
- * @param {Object} [opts={}]
- * @param {boolean} [opts.remote] - Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
- * @param {number} [opts.port=43134] - Remote endpoint port.
- * @param {string} [opts.exec] - IPFS executable path. ipfsd-ctl will attempt to locate it by default.
- * If you desire to spawn js-ipfs instances in the same process, pass the reference to the module instead (e.g exec: `require('ipfs')`)
- * @param {string} [opts.type] - The daemon type, see below the options:
- * - go - spawn go-ipfs daemon
- * - js - spawn js-ipfs daemon
- * - proc - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `IPFSFactory.create({type: 'proc', exec: require('ipfs') })`.
- * @param {Object} IpfsClient - A custom IPFS API constructor to use instead of the packaged one `js-ipfs-http-client`.
+ * @param {FactoryOptions} [opts={}]
  * @returns {(FactoryDaemon|FactoryInProc|FactoryClient)}
  */
 const create = (opts) => {
@@ -53,10 +44,82 @@ const createServer = (options) => {
   return new Server(options)
 }
 
+/**
+ *
+ * Create a interface for tests setup
+ *
+ * @param {TestsInterfaceOptions} createOptions
+ * @returns {TestsInterface}
+ */
+const createTestsInterface = (createOptions = {}) => {
+  // Managed nodes
+  const nodes = []
+
+  const createNode = async (options = {}) => {
+    // Create factory with merged options
+    const ipfsFactory = create(merge(
+      options.factoryOptions,
+      createOptions.factoryOptions
+    ))
+
+    // Spawn with merged options
+    const node = await ipfsFactory.spawn(merge(
+      { initOptions: { profile: 'test' } },
+      options.spawnOptions,
+      createOptions.spawnOptions
+    ))
+
+    // Add `peerId`
+    const id = await node.api.id()
+    node.api.peerId = id
+
+    return node
+  }
+
+  return {
+    node: createNode,
+    setup: async (options) => {
+      const node = await createNode(options)
+      nodes.push(node)
+      return node.api
+    },
+    teardown: () => {
+      return Promise.all(nodes.map(n => n.stop()))
+    }
+  }
+}
+
 module.exports = {
   create,
-  createServer
+  createServer,
+  createTestsInterface
 }
+
+/** @ignore @typedef {import("./ipfsd-daemon")} Daemon */
+
+/**
+ * @callback TestsInterfaceCreateNode
+ * @param {TestsInterfaceOptions} options
+ * @return {Promise<Daemon>} Returns a IPFSd-ctl Daemon
+ */
+
+/**
+ * @callback TestsInterfaceSetup
+ * @param {TestsInterfaceOptions} options
+ * @return {Promise<IpfsClient>} Returns an IPFS core API
+ */
+
+/**
+ * @callback TestsInterfaceTeardown
+ * @return {Promise<void>}
+ */
+
+/**
+ * @typedef {object} TestsInterface - Creates and pre-configured interface to use in tests
+ * @property {TestsInterfaceCreateNode} node - Create a single unmanaged IPFSd-ctl Daemon
+ * @property {TestsInterfaceSetup} setup - Setup a managed node and returns an IPFS Core API
+ * @property {TestsInterfaceTeardown} teardown - Stop all managed nodes
+ */
 
 /**
  * @typedef {Object} SpawnOptions
@@ -70,4 +133,23 @@ module.exports = {
  * @property {Object} [config] - IPFS configuration options. {@link https://github.com/ipfs/js-ipfs#optionsconfig IPFS config}
  * @property {Object} env - Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
  *
+ */
+
+/**
+ * @typedef {Object} FactoryOptions
+ * @property {boolean} [remote] - Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
+ * @property {number} [port=43134] - Remote endpoint port. (Defaults to 43134)
+ * @property {string} [exec] - IPFS executable path. ipfsd-ctl will attempt to locate it by default.
+ * If you desire to spawn js-ipfs instances in the same process, pass the reference to the module instead (e.g exec: `require('ipfs')`)
+ * @property {string} [type] - The daemon type, see below the options:
+ * - go - spawn go-ipfs daemon
+ * - js - spawn js-ipfs daemon
+ * - proc - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `IPFSFactory.create({type: 'proc', exec: require('ipfs') })`.
+ * @property {Object} [IpfsClient] - A custom IPFS API constructor to use instead of the packaged one `js-ipfs-http-client`.
+ */
+
+/**
+ * @typedef {Object} TestsInterfaceOptions
+ * @property {FactoryOptions} [factoryOptions] - FactoryOptions
+ * @property {SpawnOptions} [spawnOptions] - SpawnOptions
  */
