@@ -39,10 +39,12 @@ function translateError (err) {
  * ipfsd for a go-ipfs or js-ipfs daemon
  * Create a new node.
  *
- * @class
- * @param {Typedefs.SpawnOptions} [opts]
  */
 class Daemon {
+  /**
+   * @constructor
+   * @param {Typedefs.SpawnOptions} [opts]
+   */
   constructor (opts = { type: 'go' }) {
     const rootPath = process.env.testpath
       ? process.env.testpath
