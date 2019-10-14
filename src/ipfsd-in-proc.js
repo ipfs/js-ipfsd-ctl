@@ -62,7 +62,11 @@ class InProc {
       EXPERIMENTAL: this.opts.EXPERIMENTAL,
       libp2p: this.opts.libp2p,
       config: this.opts.config,
-      silent: this.opts.silent
+      silent: this.opts.silent,
+      relay: this.opts.relay,
+      preload: this.opts.preload,
+      ipld: this.opts.ipld,
+      connectionManager: this.opts.connectionManager
     })
     return this
   }
