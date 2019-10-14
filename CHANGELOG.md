@@ -1,3 +1,13 @@
+<a name="0.47.4"></a>
+## [0.47.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.47.3...v0.47.4) (2019-10-14)
+
+
+### Bug Fixes
+
+* support more ipfs options ([#396](https://github.com/ipfs/js-ipfsd-ctl/issues/396)) ([2a9706e](https://github.com/ipfs/js-ipfsd-ctl/commit/2a9706e))
+
+
+
 <a name="0.47.3"></a>
 ## [0.47.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.47.2...v0.47.3) (2019-10-10)
 
