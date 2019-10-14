@@ -30,7 +30,7 @@ class InProc {
 
     this.opts.EXPERIMENTAL = merge({ sharding: false }, opts.EXPERIMENTAL)
 
-    this.opts.args.forEach((arg) => {
+    this.opts.args.forEach((arg, index) => {
       if (arg === '--enable-sharding-experiment') {
         this.opts.EXPERIMENTAL.sharding = true
       } else if (arg === '--enable-namesys-pubsub') {
@@ -40,9 +40,7 @@ class InProc {
       } else if (arg === '--offline') {
         this.opts.offline = true
       } else if (arg.startsWith('--pass')) {
-        this.opts.pass = arg.split(' ').slice(1).join(' ')
-      } else {
-        throw new Error(`Unknown argument ${arg}`)
+        this.opts.pass = this.opts.args[index + 1]
       }
     })
   }
