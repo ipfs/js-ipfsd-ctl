@@ -6,7 +6,9 @@ const fs = require('fs-extra')
 const merge = require('merge-options')
 const debug = require('debug')
 const execa = require('execa')
-const tempy = require('tempy')
+const hat = require('hat')
+const path = require('path')
+const os = require('os')
 const log = debug('ipfsd-ctl:daemon')
 const safeStringify = require('safe-json-stringify')
 const { checkForRunningApi } = require('./utils/repo')
@@ -328,7 +330,7 @@ class Daemon {
    * @returns {Promise}
    */
   async replaceConfig (config) {
-    const tmpFile = tempy.file()
+    const tmpFile = path.join(os.tmpdir(), hat())
 
     await fs.writeFile(tmpFile, safeStringify(config))
     await execa(
