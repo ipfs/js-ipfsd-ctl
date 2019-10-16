@@ -4,6 +4,6 @@ const os = require('os')
 const path = require('path')
 const hat = require('hat')
 
-module.exports = (isJs) => {
-  return path.join(os.tmpdir(), `${isJs ? 'jsipfs' : 'ipfs'}_${hat()}`)
+module.exports = (type) => {
+  return path.join(os.tmpdir(), `${type === 'js' ? 'jsipfs' : 'ipfs'}_${hat()}`)
 }

@@ -3,15 +3,14 @@
 const hat = require('hat')
 const Joi = require('@hapi/joi')
 const boom = require('@hapi/boom')
-const merge = require('merge-options')
 const FactoryDaemon = require('../factory-daemon')
 const tmpDir = require('../utils/tmp-dir')
 
-const routeConfig = {
+const routeOptions = {
   validate: {
-    query: {
+    query: Joi.object({
       id: Joi.string().alphanum().required()
-    }
+    })
   }
 }
 
@@ -30,7 +29,7 @@ module.exports = (server) => {
     handler: async (request) => {
       const type = request.query.type || 'go'
       try {
-        return { tmpDir: await tmpDir(type === 'js') }
+        return { tmpDir: await tmpDir(type) }
       } catch (err) {
         throw boom.badRequest(err.message)
       }
@@ -67,10 +66,10 @@ module.exports = (server) => {
       const payload = request.payload || {}
 
       // TODO: use the ../src/index.js so that the right Factory is picked
-      const f = new FactoryDaemon({ type: payload.type })
+      const f = new FactoryDaemon(payload)
 
       try {
-        const ipfsd = await f.spawn(payload)
+        const ipfsd = await f.spawn(payload.ipfsOptions)
         const id = hat()
         nodes[id] = ipfsd
 
@@ -80,7 +79,7 @@ module.exports = (server) => {
           gatewayAddr: ipfsd.gatewayAddr ? ipfsd.gatewayAddr.toString() : '',
           initialized: ipfsd.initialized,
           started: ipfsd.started,
-          _env: ipfsd._env,
+          _env: ipfsd.env,
           path: ipfsd.path
         }
       } catch (err) {
@@ -100,7 +99,7 @@ module.exports = (server) => {
       const payload = request.payload || {}
 
       try {
-        await nodes[id].init(payload.initOpts)
+        await nodes[id].init(payload.opts)
 
         return {
           initialized: nodes[id].initialized
@@ -109,7 +108,7 @@ module.exports = (server) => {
         throw boom.badRequest(err.message)
       }
     },
-    config: routeConfig
+    options: routeOptions
   })
 
   /*
@@ -120,11 +119,9 @@ module.exports = (server) => {
     path: '/start',
     handler: async (request) => {
       const id = request.query.id
-      const payload = request.payload || {}
-      const flags = payload.flags || []
 
       try {
-        await nodes[id].start(flags)
+        await nodes[id].start()
 
         return {
           apiAddr: nodes[id].apiAddr.toString(),
@@ -134,7 +131,7 @@ module.exports = (server) => {
         throw boom.badRequest(err.message)
       }
     },
-    config: routeConfig
+    options: routeOptions
   })
 
   /*
@@ -148,7 +145,7 @@ module.exports = (server) => {
 
       return { apiAddr: nodes[id].apiAddr.toString() }
     },
-    config: routeConfig
+    options: routeOptions
   })
 
   /*
@@ -163,7 +160,7 @@ module.exports = (server) => {
 
       return { getawayAddr: nodes[id].gatewayAddr.toString() }
     },
-    config: routeConfig
+    options: routeOptions
   })
 
   /*
@@ -185,7 +182,7 @@ module.exports = (server) => {
         throw boom.badRequest(err.message)
       }
     },
-    config: routeConfig
+    options: routeOptions
   })
 
   /*
@@ -206,7 +203,7 @@ module.exports = (server) => {
         throw boom.badRequest(err.message)
       }
     },
-    config: routeConfig
+    options: routeOptions
   })
 
   /*
@@ -230,7 +227,7 @@ module.exports = (server) => {
         throw boom.badRequest(err.message)
       }
     },
-    config: routeConfig
+    options: routeOptions
   })
 
   /*
@@ -244,7 +241,7 @@ module.exports = (server) => {
 
       return { pid: nodes[id].pid }
     },
-    config: routeConfig
+    options: routeOptions
   })
 
   /*
@@ -267,13 +264,14 @@ module.exports = (server) => {
         throw boom.badRequest(err.message)
       }
     },
-    config: merge(routeConfig, {
+    options: {
       validate: {
-        query: {
+        query: Joi.object({
+          id: Joi.string().alphanum().required(),
           key: Joi.string().optional()
-        }
+        })
       }
-    })
+    }
   })
 
   /*
@@ -295,13 +293,14 @@ module.exports = (server) => {
 
       return h.response().code(200)
     },
-    config: merge(routeConfig, {
+    options: {
       validate: {
-        payload: {
+        query: Joi.object({
+          id: Joi.string().alphanum().required(),
           key: Joi.string(),
           value: Joi.any()
-        }
+        })
       }
-    })
+    }
   })
 }

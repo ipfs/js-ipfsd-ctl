@@ -4,18 +4,17 @@
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
+const merge = require('merge-options')
 const expect = chai.expect
 chai.use(dirtyChai)
 
 const { isNode } = require('ipfs-utils/src/env')
 const hat = require('hat')
 const IPFSFactory = require('../src')
-const JSIPFS = require('ipfs')
-const { repoExists } = require('./../src/utils/repo/nodejs')
 const tests = [
-  { type: 'go', bits: 1024 },
-  { type: 'js', bits: 512 },
-  { type: 'proc', exec: JSIPFS, bits: 512 }
+  { type: 'go' },
+  { type: 'js' },
+  { type: 'proc' }
 ]
 
 const jsVersion = require('ipfs/package.json').version
@@ -37,10 +36,7 @@ describe('Spawn options', function () {
     })
 
     it('f.version', async function () {
-      let version = await f.version({
-        type: fOpts.type,
-        exec: fOpts.exec
-      })
+      let version = await f.version()
 
       if (fOpts.type === 'proc') {
         version = version.version
@@ -51,7 +47,7 @@ describe('Spawn options', function () {
 
     describe('spawn a node and attach api', () => {
       it('create init and start node', async function () {
-        const ipfsd = await f.spawn({ initOptions: { bits: fOpts.bits, profile: 'test' } })
+        const ipfsd = await f.spawn()
         expect(ipfsd).to.exist()
         expect(ipfsd.api).to.exist()
         expect(ipfsd.api.id).to.exist()
@@ -59,8 +55,7 @@ describe('Spawn options', function () {
       })
     })
 
-    // TODO re-enable when jenkins runs tests in isolation
-    describe.skip('spawn with default swarm addrs', () => {
+    describe('spawn with default swarm addrs', () => {
       const addrs = {
         go: [
           '/ip4/0.0.0.0/tcp/4001',
@@ -82,14 +77,8 @@ describe('Spawn options', function () {
         if (!isNode && fOpts.type === 'proc') {
           this.skip()
         }
-
-        const ipfsd = await f.spawn({
-          defaultAddrs: true,
-          initOptions: {
-            bits: fOpts.bits,
-            profile: 'test'
-          }
-        })
+        const f = await IPFSFactory.create(merge(fOpts, { defaultAddrs: true }))
+        const ipfsd = await f.spawn()
 
         let config = await ipfsd.getConfig('Addresses.Swarm')
 
@@ -118,11 +107,7 @@ describe('Spawn options', function () {
         }
 
         const ipfsd = await f.spawn({
-          config: config,
-          initOptions: {
-            bits: fOpts.bits,
-            profile: 'test'
-          }
+          config: config
         })
         const apiConfig = await ipfsd.getConfig('Addresses.API')
         expect(apiConfig).to.eql(addr)
@@ -147,40 +132,14 @@ describe('Spawn options', function () {
       })
     })
 
-    describe('custom repo path', () => {
-      // We can only check if it really got created when run in Node.js
-      if (!isNode) { return }
-
-      it('allows passing custom repo path to spawn', async function () {
-        const repoPath = await f.tmpDir(fOpts.type)
-        const options = {
-          disposable: false,
-          init: true,
-          start: true,
-          repoPath: repoPath,
-          initOptions: { bits: fOpts.bits, profile: 'test' }
-        }
-
-        const ipfsd = await f.spawn(options)
-        const exists = await repoExists(repoPath)
-        expect(exists).to.be.true()
-        await ipfsd.stop()
-        await ipfsd.cleanup()
-      })
-    })
-
     describe('f.spawn with args', () => {
       if (!isNode && fOpts.type !== 'proc') { return }
 
       it('check that pubsub was enabled', async () => {
         const topic = `test-topic-${hat()}`
         const data = Buffer.from('hey there')
-        const options = {
-          args: ['--enable-namesys-pubsub'],
-          initOptions: { bits: fOpts.bits, profile: 'test' }
-        }
-
-        const ipfsd = await f.spawn(options)
+        const f = await IPFSFactory.create(merge(fOpts, { args: ['--enable-namesys-pubsub'] }))
+        const ipfsd = await f.spawn()
 
         return new Promise(async (resolve, reject) => { // eslint-disable-line no-async-promise-executor
           const handler = async (msg) => {
@@ -207,12 +166,7 @@ describe('Spawn options', function () {
       let ipfsd
 
       before(async function () {
-        ipfsd = await f.spawn({
-          initOptions: {
-            bits: fOpts.bits,
-            profile: 'test'
-          }
-        })
+        ipfsd = await f.spawn()
       })
 
       after(async function () {

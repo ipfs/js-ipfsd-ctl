@@ -9,6 +9,7 @@ chai.use(dirtyChai)
 
 const fs = require('fs')
 const path = require('path')
+const merge = require('merge-options')
 const isrunning = require('is-running')
 const delay = require('delay')
 const findIpfsExecutable = require('../src/utils/find-ipfs-executable')
@@ -18,8 +19,8 @@ const IPFSFactory = require('../src')
 const dfBaseConfig = require('./utils/df-config-nodejs')
 
 const tests = [
-  { type: 'go', bits: 1024 },
-  { type: 'js', bits: 512 }
+  { type: 'go' },
+  { type: 'js' }
 ]
 
 tests.forEach((fOpts) => {
@@ -40,10 +41,8 @@ tests.forEach((fOpts) => {
         const f = IPFSFactory.create(dfConfig)
 
         ipfsd = await f.spawn({
-          init: true,
-          start: false,
-          disposable: true,
-          initOptions: { bits: fOpts.bits, profile: 'test' }
+          init: { profiles: ['test'] },
+          start: false
         })
         expect(ipfsd).to.exist()
 
@@ -119,15 +118,15 @@ tests.forEach((fOpts) => {
           return this.skip()
         }
 
-        const df = IPFSFactory.create(dfConfig)
+        const df = IPFSFactory.create(merge({ args: ['--should-not-exist'] }, dfConfig))
 
         const ipfsd = await df.spawn({
           start: false,
-          initOptions: { bits: fOpts.bits, profile: 'test' }
+          init: { profiles: ['test'] }
         })
 
         try {
-          await ipfsd.start(['--should-not-exist'])
+          await ipfsd.start()
           expect.fail('Should have errored')
         } catch (err) {
           expect(err.message).to.contain('unknown option "should-not-exist"')
@@ -148,10 +147,8 @@ tests.forEach((fOpts) => {
         const f = IPFSFactory.create(dfConfig)
 
         ipfsd = await f.spawn({
-          init: true,
-          start: false,
-          disposable: true,
-          initOptions: { bits: fOpts.bits, profile: 'test' }
+          init: { profiles: ['test'] },
+          start: false
         })
 
         expect(ipfsd).to.exist()
@@ -215,15 +212,15 @@ tests.forEach((fOpts) => {
           return this.skip()
         }
 
-        const df = IPFSFactory.create(dfConfig)
+        const df = IPFSFactory.create(merge(dfConfig, { args: ['--should-not-exist'] }))
 
         const ipfsd = await df.spawn({
           start: false,
-          initOptions: { bits: fOpts.bits, profile: 'test' }
+          init: { profiles: ['test'] }
         })
 
         try {
-          await ipfsd.start(['--should-not-exist'])
+          await ipfsd.start()
           expect.fail('Should have errored')
         } catch (err) {
           expect(err.message).to.contain('unknown option "should-not-exist"')
@@ -236,11 +233,11 @@ tests.forEach((fOpts) => {
       before(async function () {
         this.timeout(50 * 1000)
 
-        const df = IPFSFactory.create(dfConfig)
+        const df = IPFSFactory.create(merge({ ipfsBin: exec }, dfConfig))
 
         ipfsd = await df.spawn({
           exec,
-          initOptions: { bits: fOpts.bits, profile: 'test' }
+          initOptions: { profile: 'test' }
         })
 
         expect(ipfsd).to.exist()
@@ -269,8 +266,9 @@ tests.forEach((fOpts) => {
 
         process.env = Object.assign({}, process.env, fOpts.type === 'go'
           ? { IPFS_GO_EXEC: exec } : { IPFS_JS_EXEC: exec })
+
         ipfsd = await df.spawn({
-          initOptions: { bits: fOpts.bits, profile: 'test' }
+          init: { profiles: ['test'] }
         })
 
         expect(ipfsd).to.exist()
@@ -294,14 +292,13 @@ tests.forEach((fOpts) => {
 
       let ipfsd
       before(async () => {
-        const df = IPFSFactory.create(dfConfig)
-        const exec = path.join('invalid', 'exec', 'ipfs')
+        const df = IPFSFactory.create(merge(dfConfig, {
+          ipfsBin: path.join('invalid', 'exec', 'ipfs')
+        }))
 
         ipfsd = await df.spawn({
-          init: false,
           start: false,
-          exec: exec,
-          initOptions: { bits: fOpts.bits, profile: 'test' }
+          init: false
         })
 
         expect(ipfsd).to.exist()
@@ -313,7 +310,7 @@ tests.forEach((fOpts) => {
 
       it('should fail on init', async () => {
         try {
-          await ipfsd.init()
+          await ipfsd.init({ profile: 'test' })
           expect.fail('Should have errored')
         } catch (err) {
           expect(err).to.exist()
@@ -327,29 +324,19 @@ tests.forEach((fOpts) => {
       before(async function () {
         this.timeout(20 * 1000)
 
-        const f = IPFSFactory.create(dfConfig)
+        const f = IPFSFactory.create(merge({ disposable: false }, dfConfig))
 
         ipfsd = await f.spawn({
           init: false,
           start: false,
-          disposable: false,
-          repoPath: tempDir(fOpts.type),
-          initOptions: {
-            bits: fOpts.bits,
-            profile: 'test'
-          },
-          config: {
-            Addresses: {
-              Swarm: ['/ip4/127.0.0.1/tcp/0'],
-              API: '/ip4/127.0.0.1/tcp/0',
-              Gateway: '/ip4/127.0.0.1/tcp/0'
-            }
-          }
+          repo: tempDir(fOpts.type)
         })
 
         expect(ipfsd).to.exist()
 
-        await ipfsd.init()
+        await ipfsd.init({
+          profile: 'test'
+        })
         await ipfsd.start()
       })
 

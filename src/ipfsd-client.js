@@ -1,19 +1,22 @@
 'use strict'
 
 const request = require('superagent')
-const IpfsClient = require('ipfs-http-client')
 const multiaddr = require('multiaddr')
+const merge = require('merge-options')
+
+/** @ignore @typedef {import("./index").FactoryOptions} FactoryOptions */
 
 /**
  * Creates an instance of Client.
- *
- * @param {*} baseUrl
- * @param {*} _id
- * @param {*} initialized
- * @param {*} options
  */
 class Client {
-  constructor (baseUrl, remoteState, options = {}) {
+  /**
+   *
+   * @param {string} baseUrl
+   * @param {Object} remoteState
+   * @param {FactoryOptions} options
+   */
+  constructor (baseUrl, remoteState, options) {
     this.options = options
     this.baseUrl = baseUrl
     this._id = remoteState._id
@@ -34,7 +37,7 @@ class Client {
   setApi (addr) {
     if (addr) {
       this.apiAddr = multiaddr(addr)
-      this.api = (this.options.IpfsClient || IpfsClient)(addr)
+      this.api = (this.options.ipfsHttp.ref)(addr)
       this.api.apiHost = this.apiAddr.nodeAddress().address
       this.api.apiPort = this.apiAddr.nodeAddress().port
     }
@@ -51,13 +54,11 @@ class Client {
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOptions]
-   * @param {number} [initOptions.keysize=2048] - The bit size of the identiy key.
-   * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
+   * @param {Object} [initOptions] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
    * @returns {Promise<Client>}
    */
   async init (initOptions) {
-    if (this.initialized && initOptions) {
+    if (this.initialized && typeof initOptions === 'object') {
       throw new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`)
     }
     if (this.initialized) {
@@ -65,13 +66,18 @@ class Client {
       return this
     }
 
-    initOptions = initOptions || {}
+    const opts = merge(
+      {
+        emptyRepo: false,
+        bits: 2048
+      },
+      initOptions === true ? {} : initOptions
+    )
 
-    // TODO probably needs to change config like the other impl
     const res = await request
       .post(`${this.baseUrl}/init`)
       .query({ id: this._id })
-      .send({ initOptions })
+      .send({ opts })
 
     this.initialized = res.body.initialized
 
@@ -100,17 +106,16 @@ class Client {
   /**
    * Start the daemon.
    *
-   * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
    * @returns {Promise<IpfsClient>}
    */
-  async start (flags = []) {
+  async start () {
     if (this.started) {
       return this.api
     }
     const res = await request
       .post(`${this.baseUrl}/start`)
       .query({ id: this._id })
-      .send({ flags })
+      .send()
 
     this.started = true
 

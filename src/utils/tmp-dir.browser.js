@@ -2,8 +2,8 @@
 
 const hat = require('hat')
 
-module.exports = (isJs) => {
-  return (isJs
+module.exports = (type) => {
+  return (type === 'js'
     ? 'jsipfs_'
     : 'ipfs_'
   ) + hat()

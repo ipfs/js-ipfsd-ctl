@@ -1,26 +1,24 @@
 'use strict'
 
 const multiaddr = require('multiaddr')
-const IpfsClient = require('ipfs-http-client')
 const merge = require('merge-options')
-const tmpDir = require('./utils/tmp-dir')
-const { repoExists, removeRepo, checkForRunningApi, defaultRepo } = require('./utils/repo/nodejs')
+const { repoExists, removeRepo, checkForRunningApi } = require('./utils/repo')
+
+/** @ignore @typedef {import("./index").IpfsOptions} IpfsOptions */
+/** @ignore @typedef {import("./index").FactoryOptions} FactoryOptions */
 
 /**
  * ipfsd for a js-ipfs instance (aka in-process IPFS node)
- *
- * @param {Object} [opts]
- * @param {Object} [opts.env={}] - Additional environment settings, passed to executing shell.
  */
 class InProc {
+  /**
+   * @constructor
+   * @param {FactoryOptions} [opts]
+   */
   constructor (opts = {}) {
     this.opts = opts
-    this.opts.args = this.opts.args || []
-    this.path = this.opts.disposable
-      ? tmpDir(this.opts.type === 'js')
-      : (this.opts.repoPath || defaultRepo(this.opts.type))
-    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
-    this.disposable = this.opts.disposable
+    this.path = this.opts.ipfsOptions.repo
+    this.disposable = opts.disposable
     this.initialized = false
     this.started = false
     this.clean = true
@@ -28,19 +26,19 @@ class InProc {
     this.gatewayAddr = null
     this.api = null
 
-    this.opts.EXPERIMENTAL = merge({ sharding: false }, opts.EXPERIMENTAL)
+    this.opts.ipfsOptions.EXPERIMENTAL = merge({ sharding: false }, opts.ipfsOptions.EXPERIMENTAL)
 
     this.opts.args.forEach((arg, index) => {
       if (arg === '--enable-sharding-experiment') {
-        this.opts.EXPERIMENTAL.sharding = true
+        this.opts.ipfsOptions.EXPERIMENTAL.sharding = true
       } else if (arg === '--enable-namesys-pubsub') {
-        this.opts.EXPERIMENTAL.ipnsPubsub = true
+        this.opts.ipfsOptions.EXPERIMENTAL.ipnsPubsub = true
       } else if (arg === '--enable-dht-experiment') {
-        this.opts.EXPERIMENTAL.dht = true
+        this.opts.ipfsOptions.EXPERIMENTAL.dht = true
       } else if (arg === '--offline') {
-        this.opts.offline = true
+        this.opts.ipfsOptions.offline = true
       } else if (arg.startsWith('--pass')) {
-        this.opts.pass = this.opts.args[index + 1]
+        this.opts.ipfsOptions.pass = this.opts.args[index + 1]
       }
     })
   }
@@ -50,28 +48,14 @@ class InProc {
       return this
     }
 
-    const IPFS = this.opts.exec
-
-    this.api = await IPFS.create({
-      repo: this.path,
-      init: false,
-      start: false,
-      pass: this.opts.pass,
-      EXPERIMENTAL: this.opts.EXPERIMENTAL,
-      libp2p: this.opts.libp2p,
-      config: this.opts.config,
-      silent: this.opts.silent,
-      relay: this.opts.relay,
-      preload: this.opts.preload,
-      ipld: this.opts.ipld,
-      connectionManager: this.opts.connectionManager
-    })
+    const IPFS = this.opts.ipfsApi.ref
+    this.api = await IPFS.create(this.opts.ipfsOptions)
     return this
   }
 
   setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = (this.opts.IpfsApi || IpfsClient)(addr)
+    this.api = (this.opts.ipfsHttp.ref)(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
@@ -83,35 +67,14 @@ class InProc {
   }
 
   /**
-   * Get the current repo path
-   *
-   * @member {string}
-   */
-  get repoPath () {
-    return this.path
-  }
-
-  /**
-   * Is the environment
-   *
-   * @member {Object}
-   */
-  get env () {
-    throw new Error('Not implemented!')
-  }
-
-  /**
    * Initialize a repo.
    *
-   * @param {Object} [initOptions={}]
-   * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
-   * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
-   * @param {string} [initOptions.pass] - The passphrase of the keychain.
+   * @param {Object} [initOptions={}] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
    * @returns {Promise}
    */
   async init (initOptions) {
     const initialized = await repoExists(this.path)
-    if (initialized && initOptions) {
+    if (initialized && typeof initOptions === 'object') {
       throw new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`)
     }
 
@@ -122,13 +85,21 @@ class InProc {
     }
 
     // Repo not initialized
-    initOptions = initOptions || {}
+    const opts = merge(
+      {
+        emptyRepo: false,
+        bits: 2048
+      },
+      initOptions === true ? {} : initOptions
+    )
 
     await this.setExec()
-    await this.api.init(initOptions)
+    if (!this.opts.ipfsOptions.init) {
+      await this.api.init(opts)
+    }
 
     const conf = await this.getConfig()
-    await this.replaceConfig(merge(conf, this.opts.config))
+    await this.replaceConfig(merge(conf, this.opts.ipfsOptions.config))
     this.clean = false
     this.initialized = true
     return this
@@ -164,7 +135,9 @@ class InProc {
     }
 
     await this.setExec()
-    await this.api.start()
+    if (!this.opts.ipfsOptions.start) {
+      await this.api.start()
+    }
     this.started = true
 
     return this.api

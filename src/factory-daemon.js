@@ -4,22 +4,44 @@ const tmpDir = require('./utils/tmp-dir')
 const Daemon = require('./ipfsd-daemon')
 const merge = require('merge-options')
 const defaultConfig = require('./defaults/config.json')
+const findBin = require('./utils/find-ipfs-executable')
+const { defaultRepo } = require('./utils/repo')
+const fs = require('fs')
 
-/** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
+/** @ignore @typedef {import("./index").IpfsOptions} IpfsOptions */
+/** @ignore @typedef {import("./index").FactoryOptions} FactoryOptions */
 
 /**
  * Creates an instance of FactoryDaemon.
- *
- * @param {Object} options
- * @param {string} [options.type='go'] - 'go' or 'js'
- * @param {string} [options.exec] - the path of the daemon executable
  */
 class FactoryDaemon {
+  /**
+   * @param {FactoryOptions} options
+   */
   constructor (options) {
-    if (options && options.type === 'proc') {
-      throw new Error('This Factory does not know how to spawn in proc nodes')
-    }
-    this.options = merge({ type: 'go' }, options)
+    /** @type FactoryOptions */
+    this.options = merge({
+      host: 'localhost',
+      port: 43134,
+      secure: false,
+      type: 'go',
+      defaultAddrs: false,
+      disposable: true,
+      env: process.env,
+      args: [],
+      ipfsHttp: {
+        path: require.resolve('ipfs-http-client'),
+        ref: require('ipfs-http-client')
+      },
+      ipfsApi: {
+        path: require.resolve('ipfs'),
+        ref: require('ipfs')
+      },
+      ipfsBin: findBin(options.type || 'go')
+    }, options)
+
+    this.options.ipfsHttp.path = fs.realpathSync(this.options.ipfsHttp.path)
+    this.options.ipfsApi.path = fs.realpathSync(this.options.ipfsApi.path)
   }
 
   /**
@@ -27,19 +49,15 @@ class FactoryDaemon {
    * useful in browsers to be able to generate temp
    * repos manually
    *
-   * *Here for completeness*
-   *
-   * @param {String} type - the type of the node
    * @returns {Promise}
    */
-  tmpDir (type) {
-    return Promise.resolve(tmpDir(type === 'js'))
+  tmpDir () {
+    return Promise.resolve(tmpDir(this.options.type))
   }
 
   /**
    * Get the version of the IPFS Daemon.
    *
-   * @param {Object} [options={}]
    * @returns {Promise} - Resolves to `version` that might be one of the following:
    * - if type is `go` a version string like `ipfs version <version number>`
    * - if type is `js` a version string like `js-ipfs version <version number>`
@@ -48,48 +66,55 @@ class FactoryDaemon {
    *    - repo - the repo version
    *    - commit - the commit hash for this version
    */
-  version (options = {}) {
-    options = Object.assign(
-      { IpfsClient: this.options.IpfsClient },
-      options,
-      { type: this.options.type, exec: this.options.exec }
-    )
+  version () {
     // TODO: (1) this should check to see if it is looking for Go or JS
     // TODO: (2) This spawns a whole daemon just to get his version? There is
     // a way to get the version while the daemon is offline...
-    const d = new Daemon(options)
+    const d = new Daemon(merge({
+      ipfsOptions: {
+        start: true,
+        init: true,
+        config: defaultConfig,
+        repo: tmpDir(this.options.type)
+      }
+    }, this.options))
     return d.version()
   }
 
   /**
    * Spawn an IPFS node, either js-ipfs or go-ipfs
    *
-   * @param {SpawnOptions} [options={}] - Various config options and ipfs config parameters
+   * @param {IpfsOptions} [options={}] - Various config options and ipfs config parameters
    * @returns {Promise<Daemon>}
    */
   async spawn (options = {}) {
-    const daemonOptions = merge({
-      exec: this.options.exec,
-      type: this.options.type,
-      IpfsClient: this.options.IpfsClient,
-      disposable: true,
-      start: options.disposable !== false,
-      init: options.disposable !== false,
-      config: defaultConfig
-    }, options)
+    const ipfsOptions = merge(
+      {
+        start: this.options.disposable !== false,
+        init: this.options.disposable !== false,
+        config: defaultConfig,
+        repo: this.options.disposable
+          ? tmpDir(this.options.type)
+          : defaultRepo(this.options.type)
+      },
+      this.options.ipfsOptions,
+      options
+    )
 
-    if (options.defaultAddrs) {
-      delete daemonOptions.config.Addresses
+    if (this.options.defaultAddrs) {
+      delete ipfsOptions.config.Addresses
     }
 
-    const node = new Daemon(daemonOptions)
+    const node = new Daemon(merge({
+      ipfsOptions
+    }, this.options))
 
-    if (daemonOptions.init) {
-      await node.init(daemonOptions.initOptions)
+    if (ipfsOptions.init) {
+      await node.init(ipfsOptions.init)
     }
 
-    if (daemonOptions.start) {
-      await node.start(daemonOptions.args)
+    if (ipfsOptions.start) {
+      await node.start()
     }
 
     return node
