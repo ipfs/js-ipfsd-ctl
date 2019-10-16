@@ -32,7 +32,7 @@ describe('client', () => {
 
       it('should handle valid request', async () => {
         mock.post('http://localhost:9999/spawn', (req) => {
-          expect(req.body.opt1).to.equal('hello!')
+          expect(req.body.ipfsOptions.opt1).to.equal('hello!')
           return {
             body: {
               _id: hat(),

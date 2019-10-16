@@ -6,12 +6,11 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 const IPFSFactory = require('../src')
-const JSIPFS = require('ipfs')
 
 const tests = [
-  { type: 'go', bits: 1024 },
-  { type: 'js', bits: 512 },
-  { type: 'proc', exec: JSIPFS, bits: 512 }
+  { type: 'go' },
+  { type: 'js' },
+  { type: 'proc' }
 ]
 
 describe('data can be put and fetched', function () {
@@ -22,7 +21,7 @@ describe('data can be put and fetched', function () {
     before(async function () {
       const f = IPFSFactory.create(dfOpts)
 
-      ipfsd = await f.spawn({ initOptions: { profile: 'test' } })
+      ipfsd = await f.spawn()
 
       expect(ipfsd).to.exist()
       expect(ipfsd.api).to.exist()

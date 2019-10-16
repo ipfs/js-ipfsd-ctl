@@ -8,7 +8,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 const isrunning = require('is-running')
 const path = require('path')
-const exec = require('../src/utils/exec')
+const execa = require('execa')
 const os = require('os')
 const delay = require('delay')
 
@@ -49,24 +49,20 @@ describe('exec', () => {
     let stdout = ''
     let stderr = ''
 
-    await exec(process.execPath, [
+    const p = execa(process.execPath, [
       path.resolve(path.join(__dirname, 'fixtures', 'talky.js'))
-    ], {
-      stdout: (data) => {
-        stdout += String(data)
-      },
-      stderr: (data) => {
-        stderr += String(data)
-      }
-    })
+    ])
+    p.stderr.on('data', d => (stderr += d.toString()))
+    p.stdout.on('data', d => (stdout += d.toString()))
 
+    await p
     expect(stdout).to.equal('hello\n')
     expect(stderr).to.equal('world\n')
   })
 
   it('survives process errors and captures exit code and stderr', async () => {
     try {
-      await exec(process.execPath, [
+      await execa(process.execPath, [
         path.resolve(path.join(__dirname, 'fixtures', 'error.js'))
       ])
       expect.fail('Should have errored')
@@ -80,7 +76,7 @@ describe('exec', () => {
     const tok = token()
     const hang = 'tail -f /dev/null'.split(' ')
     const args = hang.concat(tok)
-    const p = exec(args[0], args.slice(1))
+    const p = execa(args[0], args.slice(1))
 
     let running = await psExpect(p.pid, true, 10)
     expect(running).to.be.ok()
@@ -101,7 +97,7 @@ describe('exec', () => {
 
   it('SIGKILL kills survivor', async () => {
     const tok = token()
-    const p = exec(survivor, [tok], {})
+    const p = execa(survivor, [tok], {})
 
     let running = await psExpect(p.pid, true, 10)
     expect(running).to.be.ok()

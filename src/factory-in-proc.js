@@ -4,23 +4,39 @@ const tmpDir = require('./utils/tmp-dir')
 const InProc = require('./ipfsd-in-proc')
 const merge = require('merge-options')
 const defaultConfig = require('./defaults/config.json')
+const { defaultRepo } = require('./utils/repo')
 
-/** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
+/** @ignore @typedef {import("./index").IpfsOptions} IpfsOptions */
+/** @ignore @typedef {import("./index").FactoryOptions} FactoryOptions */
 
 /**
  * Factory to spawn in-proc JS-IPFS instances (aka in process nodes)
- * @class
- * @param {Object} options
- * @param {String} [options.type='proc'] - one of 'go', 'js' or 'proc', in this case this needs to be 'proc'
- * @param {String} [options.exec] - the path of the daemon executable or IPFS class in the case of `proc`
  */
 class FactoryInProc {
+  /**
+   * @param {FactoryOptions} options
+   */
   constructor (options) {
-    options = options || {}
-    if (options.type !== 'proc') {
-      throw new Error('This Factory only knows how to create in proc nodes')
-    }
-    this.options = options
+    /** @type FactoryOptions */
+    this.options = merge({
+      host: 'localhost',
+      port: 43134,
+      secure: false,
+      type: 'js',
+      defaultAddrs: false,
+      disposable: true,
+      env: process.env,
+      args: [],
+      ipfsHttp: {
+        path: require.resolve('ipfs-http-client'),
+        ref: require('ipfs-http-client')
+      },
+      ipfsApi: {
+        path: require.resolve('ipfs'),
+        ref: require('ipfs')
+      }
+      // ipfsBin: findBin(options.type || 'js')
+    }, options)
   }
 
   /**
@@ -28,22 +44,26 @@ class FactoryInProc {
    * useful in browsers to be able to generate temp
    * repos manually
    *
-   * *Here for completeness*
-   *
    * @returns {Promise}
    */
   tmpDir () {
-    return Promise.resolve(tmpDir(true))
+    return Promise.resolve(tmpDir(this.options.type))
   }
 
   /**
    * Get the version of the currently used go-ipfs binary.
    *
-   * @param {Object} [options={}]
    * @returns {Promise}
    */
-  async version (options = {}) {
-    const node = new InProc(options)
+  async version () {
+    const node = new InProc(merge({
+      ipfsOptions: {
+        start: true,
+        init: true,
+        config: defaultConfig,
+        repo: tmpDir(this.options.type)
+      }
+    }, this.options))
     const v = await node.version()
     return v
   }
@@ -51,37 +71,36 @@ class FactoryInProc {
   /**
    * Spawn JSIPFS instances
    *
-   * @param {SpawnOptions} [options={}] - various config options and ipfs config parameters
+   * @param {IpfsOptions} [options={}] - various config options and ipfs config parameters
    * @returns {Promise<InProc>} - Resolves to an array with an `ipfs-instance` attached to the node and a `Node`
    */
   async spawn (options = {}) {
-    const daemonOptions = merge({
-      exec: this.options.exec,
-      type: this.options.type,
-      IpfsApi: this.options.IpfsApi,
-      disposable: true,
-      start: options.disposable !== false,
-      init: options.disposable !== false,
+    const ipfsOptions = merge({
+      silent: true,
+      start: this.options.disposable !== false,
+      init: this.options.disposable !== false,
       config: defaultConfig,
-      silent: true
-    }, options)
+      repo: this.options.disposable
+        ? tmpDir(this.options.type)
+        : defaultRepo(this.options.type)
+    },
+    this.options.ipfsOptions,
+    options)
 
-    if (options.defaultAddrs) {
-      delete daemonOptions.config.Addresses
+    if (this.options.defaultAddrs) {
+      delete ipfsOptions.config.Addresses
     }
 
-    if (typeof daemonOptions.exec !== 'function') {
-      throw new Error('\'type\' proc requires \'exec\' to be a coderef')
+    const node = new InProc(merge({
+      ipfsOptions
+    }, this.options))
+
+    if (ipfsOptions.init) {
+      await node.init(ipfsOptions.init)
     }
 
-    const node = new InProc(daemonOptions)
-
-    if (daemonOptions.init) {
-      await node.init(daemonOptions.initOptions)
-    }
-
-    if (daemonOptions.start) {
-      await node.start(daemonOptions.args)
+    if (ipfsOptions.start) {
+      await node.start()
     }
 
     return node

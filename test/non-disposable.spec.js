@@ -11,9 +11,9 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const tests = [
-  { type: 'go', bits: 1024 },
-  { type: 'js', bits: 512 },
-  { type: 'proc', exec: require('ipfs'), bits: 512 }
+  { type: 'go', disposable: false },
+  { type: 'js', disposable: false },
+  { type: 'proc', disposable: false }
 ]
 
 tests.forEach((fOpts) => {
@@ -38,8 +38,7 @@ tests.forEach((fOpts) => {
       const df = IPFSFactory.create(fOpts)
       try {
         await df.spawn({
-          repoPath: daemon.path,
-          disposable: false,
+          repo: daemon.path,
           init: true
         })
         throw new Error('Should throw')
@@ -55,8 +54,7 @@ tests.forEach((fOpts) => {
 
       const df = IPFSFactory.create(fOpts)
       const ipfsd = await df.spawn({
-        repoPath: daemon.path,
-        disposable: false,
+        repo: daemon.path,
         init: true,
         start: true
       })
@@ -71,8 +69,7 @@ tests.forEach((fOpts) => {
       }
       const df = IPFSFactory.create(fOpts)
       const ipfsd = await df.spawn({
-        repoPath: daemon.path,
-        disposable: false,
+        repo: daemon.path,
         init: true
       })
 
@@ -83,11 +80,9 @@ tests.forEach((fOpts) => {
 
     it('should not init and start', async () => {
       const df = IPFSFactory.create(fOpts)
-      const path = await df.tmpDir(fOpts.type === 'js')
+      const path = await df.tmpDir(fOpts.type)
       const ipfsd = await df.spawn({
-        initOptions: { bits: fOpts.bits },
-        repoPath: path,
-        disposable: false
+        repo: path
       })
       expect(ipfsd.api).to.not.exist()
       expect(ipfsd.initialized).to.be.false()
@@ -98,11 +93,9 @@ tests.forEach((fOpts) => {
 
     it('should init and start', async () => {
       const df = IPFSFactory.create(fOpts)
-      const path = await df.tmpDir(fOpts.type === 'js')
+      const path = await df.tmpDir(fOpts.type)
       const ipfsd = await df.spawn({
-        initOptions: { bits: fOpts.bits },
-        repoPath: path,
-        disposable: false,
+        repo: path,
         start: true,
         init: true
       })
@@ -115,33 +108,25 @@ tests.forEach((fOpts) => {
 
     it('should only init', async () => {
       const df = IPFSFactory.create(fOpts)
-      const path = await df.tmpDir(fOpts.type === 'js')
+      const path = await df.tmpDir(fOpts.type)
       const ipfsd = await df.spawn({
-        initOptions: { bits: fOpts.bits },
-        repoPath: path,
-        disposable: false,
+        repo: path,
         init: true
       })
       expect(ipfsd.initialized).to.be.true()
       expect(ipfsd.started).to.be.false()
-      // await ipfsd.stop()
-      // await ipfsd.cleanup()
     })
 
     it('should only init manualy', async () => {
       const df = IPFSFactory.create(fOpts)
-      const path = await df.tmpDir(fOpts.type === 'js')
+      const path = await df.tmpDir(fOpts.type)
       const ipfsd = await df.spawn({
-        initOptions: { bits: fOpts.bits },
-        repoPath: path,
-        disposable: false
+        repo: path
       })
       expect(ipfsd.initialized).to.be.false()
       await ipfsd.init()
       expect(ipfsd.initialized).to.be.true()
       expect(ipfsd.started).to.be.false()
-      // await ipfsd.stop()
-      // await ipfsd.cleanup()
     })
   })
 })

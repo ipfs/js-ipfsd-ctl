@@ -4,45 +4,54 @@ const request = require('superagent')
 const DaemonClient = require('./ipfsd-client')
 const merge = require('merge-options')
 const defaultConfig = require('./defaults/config.json')
+// const findBin = require('./utils/find-ipfs-executable')
 
-/** @ignore @typedef {import("./index").SpawnOptions} SpawnOptions */
+/** @ignore @typedef {import("./index").IpfsOptions} IpfsOptions */
+/** @ignore @typedef {import("./index").FactoryOptions} FactoryOptions */
 
 /**
  * Exposes the same Factory API but uses a remote endpoint to create the Daemons/Nodes
- * @param {Object} options
  */
 class FactoryClient {
-  constructor (options) {
-    options = options || {}
-    if (!options.host) { options.host = 'localhost' }
-    if (!options.port) { options.port = 43134 }
-    if (!options.type) { options.type = 'go' }
-    if (typeof options.host === 'number') {
-      options.port = options.host
-      options.host = 'localhost'
-    }
+  /**
+   * @param {FactoryOptions} options
+   */
+  constructor (options = {}) {
+    /** @type FactoryOptions */
+    this.options = merge({
+      host: 'localhost',
+      port: 43134,
+      secure: false,
+      type: 'go',
+      defaultAddrs: false,
+      disposable: true,
+      env: process.env,
+      args: [],
+      ipfsHttp: {
+        path: require.resolve('ipfs-http-client'),
+        ref: require('ipfs-http-client')
+      },
+      ipfsApi: {
+        path: require.resolve('ipfs'),
+        ref: require('ipfs')
+      }
+      // ipfsBin: findBin(options.type || 'go')
+    }, options)
 
-    this.options = options
-
-    if (options.type === 'proc') {
-      throw new Error('\'proc\' is not supported in client mode')
-    }
-
-    this.baseUrl = `${options.secure ? 'https://' : 'http://'}${options.host}:${options.port}`
+    this.baseUrl = `${this.options.secure ? 'https://' : 'http://'}${this.options.host}:${this.options.port}`
   }
 
   /**
    * Utility method to get a temporary directory
    * useful in browsers to be able to generate temp
    * repos manually
-   * @param {boolean} isJS
    *
    * @returns {Promise}
    */
-  async tmpDir (isJS) {
+  async tmpDir () {
     const res = await request
       .get(`${this.baseUrl}/util/tmp-dir`)
-      .query({ type: isJS ? 'js' : 'go' })
+      .query({ type: this.options.type })
 
     return res.body.tmpDir
   }
@@ -50,15 +59,12 @@ class FactoryClient {
   /**
    * Get the version of the IPFS Daemon.
    *
-   * @param {Object} [options={}]
    * @returns {Promise}
    */
-  async version (options = {}) {
-    options = options || { type: this.options.type }
-
+  async version () {
     const res = await request
       .get(`${this.baseUrl}/version`)
-      .query(options)
+      .query({ type: this.options.type })
 
     return res.body.version
   }
@@ -66,32 +72,40 @@ class FactoryClient {
   /**
    * Spawn a remote daemon using ipfs-http-client
    *
-   * @param {SpawnOptions} [options={}]
+   * @param {IpfsOptions} [options={}] - Same as js-ipfs https://github.com/ipfs/js-ipfs#ipfs-constructor
    * @return {Promise}
    */
   async spawn (options = {}) {
-    const daemonOptions = merge({
-      exec: this.options.exec,
-      type: this.options.type,
-      IpfsClient: this.options.IpfsClient,
-      disposable: true,
-      start: options.disposable !== false,
-      init: options.disposable !== false,
+    const ipfsOptions = merge({
+      start: this.options.disposable !== false,
+      init: this.options.disposable !== false,
       config: defaultConfig
-    }, options)
+    },
+    this.options.ipfsOptions,
+    options)
 
-    if (options.defaultAddrs) {
-      delete daemonOptions.config.Addresses
+    if (this.options.defaultAddrs) {
+      delete ipfsOptions.config.Addresses
     }
 
     const res = await request
       .post(`${this.baseUrl}/spawn`)
-      .send(daemonOptions)
+      .send(merge(
+        {
+          ipfsOptions
+        },
+        this.options
+      ))
 
     const ipfsd = new DaemonClient(
       this.baseUrl,
       res.body,
-      daemonOptions
+      merge(
+        {
+          ipfsOptions
+        },
+        this.options
+      )
     )
 
     return ipfsd

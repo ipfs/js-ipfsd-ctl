@@ -17,7 +17,10 @@ const Server = require('./endpoint/server')
  * @returns {(FactoryDaemon|FactoryInProc|FactoryClient)}
  */
 const create = (opts) => {
-  const options = merge({ remote: !isNode }, opts)
+  /** @type FactoryOptions */
+  const options = merge({
+    remote: !isNode
+  }, opts)
 
   if (options.type === 'proc') {
     return new FactoryInProc(options)
@@ -58,19 +61,19 @@ const createTestsInterface = (createOptions = {}) => {
   const createNode = async (options = {}) => {
     // Create factory with merged options
     const ipfsFactory = create(merge(
-      options.factoryOptions,
-      createOptions.factoryOptions
+      {
+        ipfsOptions: {
+          init: { profiles: ['test'] },
+          preload: { enabled: false }
+
+        }
+      },
+      createOptions,
+      options
     ))
 
     // Spawn with merged options
-    const node = await ipfsFactory.spawn(merge(
-      {
-        initOptions: { profile: 'test' },
-        preload: { enabled: false }
-      },
-      options.spawnOptions,
-      createOptions.spawnOptions
-    ))
+    const node = await ipfsFactory.spawn()
 
     // Add `peerId`
     const id = await node.api.id()
@@ -125,34 +128,48 @@ module.exports = {
  */
 
 /**
- * @typedef {Object} SpawnOptions
- * @property {Boolean} [init=true] - Should the node be initialized.
- * @property {Object} initOptions - Should be of the form `{bits: <size>}`, which sets the desired key size.
- * @property {Boolean} [start=true] - Should the node be started.
- * @property {string} [repoPath] - The repository path to use for this node, ignored if node is disposable.
- * @property {Boolean} [disposable=true] - A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
- * @property {Boolean} [defaultAddrs=false] - Use the daemon default Swarm addrs.
- * @property {String[]} [args] - Array of cmd line arguments to be passed to the IPFS daemon.
- * @property {Object} [config] - IPFS configuration options. {@link https://github.com/ipfs/js-ipfs#optionsconfig IPFS config}
- * @property {Object} env - Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
- *
+ * Same as https://github.com/ipfs/js-ipfs/blob/master/README.md#ipfs-constructor
+ * @typedef {Object} IpfsOptions
+ * @property {string|Object} [repo] - The file path at which to store the IPFS node’s data. Alternatively, you can set up a customized storage system by providing an ipfs.Repo instance.
+ * @property {boolean|Object} [init=true] - Initialize the repo when creating the IPFS node. Instead of a boolean, you may provide an object with custom initialization options. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
+ * @property {boolean} [start=true] - If false, do not automatically start the IPFS node. Instead, you’ll need to manually call node.start() yourself.
+ * @property {string} [pass=null] - A passphrase to encrypt/decrypt your keys.
+ * @property {boolean} [silent=false] - Prevents all logging output from the IPFS node.
+ * @property {object} [relay] - Configure circuit relay. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsrelay Default: `{ enabled: true, hop: { enabled: false, active: false } }`
+ * @property {object} [preload] - Configure remote preload nodes. The remote will preload content added on this node, and also attempt to preload objects requested by this node. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionspreload Default: `{ enabled: true, addresses: [...]`
+ * @property {object} [EXPERIMENTAL] - Enable and configure experimental features. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsexperimental Default: `{ ipnsPubsub: false, sharding: false }`
+ * @property  {object} [config] - Modify the default IPFS node config. This object will be merged with the default config; it will not replace it. The default config is documented in the js-ipfs config file docs. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconfig
+ * @property {object} [ipld] - Modify the default IPLD config. This object will be merged with the default config; it will not replace it. Check IPLD docs for more information on the available options. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsipld
+ * @property {object|function} [libp2p] - The libp2p option allows you to build your libp2p node by configuration, or via a bundle function. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionslibp2p
+ * @property {object} [connectionManager] - Configure the libp2p connection manager. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconnectionmanager
+ * @property {Array} [profiles] - Profiles to transform the config.
  */
 
 /**
  * @typedef {Object} FactoryOptions
  * @property {boolean} [remote] - Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
  * @property {number} [port=43134] - Remote endpoint port. (Defaults to 43134)
- * @property {string} [exec] - IPFS executable path. ipfsd-ctl will attempt to locate it by default.
- * If you desire to spawn js-ipfs instances in the same process, pass the reference to the module instead (e.g exec: `require('ipfs')`)
+ * @property {string} [host=localhost] - Remote endpoint host. (Defaults to localhost)
+ * @property {string} [secure=false] - Remote endpoint uses http or https. (Defaults to false)
+ * @property {Boolean} [defaultAddrs=false] - Use the daemon default Swarm addrs.
+ * @property {Boolean} [disposable=true] - A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
  * @property {string} [type] - The daemon type, see below the options:
  * - go - spawn go-ipfs daemon
  * - js - spawn js-ipfs daemon
- * - proc - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `IPFSFactory.create({type: 'proc', exec: require('ipfs') })`.
- * @property {Object} [IpfsClient] - A custom IPFS API constructor to use instead of the packaged one `js-ipfs-http-client`.
+ * - proc - spawn in-process js-ipfs instance
+ * @property {Object} [ipfsHttp] - Setup IPFS HTTP client to be used by ctl.
+ * @property {Object} [ipfsHttp.ref] - Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
+ * @property {string} [ipfsHttp.path] - Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
+ * @property {Object} [ipfsApi] - Setup IPFS API to be used by ctl.
+ * @property {Object} [ipfsApi.ref] - Reference to a IPFS API object. (defaults to the local require(`ipfs`))
+ * @property {string} [ipfsApi.path] - Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
+ * @property {String} [ipfsBin] - Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
+ * @property {Object} [env] - Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
+ * @property {IpfsOptions} [ipfsOptions] - Options for the IPFS instance
  */
 
 /**
  * @typedef {Object} TestsInterfaceOptions
  * @property {FactoryOptions} [factoryOptions] - FactoryOptions
- * @property {SpawnOptions} [spawnOptions] - SpawnOptions
+ * @property {SpawnOptions} [IpfsOptions] - SpawnOptions
  */
