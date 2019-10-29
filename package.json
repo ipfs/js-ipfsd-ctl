@@ -72,7 +72,7 @@
     "ipfs-http-client": "^38.2.0",
     "ipfs-utils": "^0.4.0",
     "merge-options": "^1.0.1",
-    "multiaddr": "^6.1.1",
+    "multiaddr": "^7.2.0",
     "safe-json-stringify": "^1.2.0",
     "superagent": "^5.0.5"
   },
