@@ -4,27 +4,16 @@
 // Start a remote disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const DaemonFactory = require('ipfsd-ctl')
-const df = DaemonFactory.create({ remote: true })
-const server = DaemonFactory.createServer()
+const { createNode, createServer } = require('../../src')
+const server = createServer()
 
-server.start((err) => {
-  if (err) {
-    throw err
-  }
+async function run () {
+  await server.start()
+  const node = await createNode({ remote: true })
 
-  df.spawn((err, ipfsd) => {
-    if (err) {
-      throw err
-    }
+  console.log(await node.api.id())
+  await node.stop()
+  await server.stop()
+}
 
-    ipfsd.api.id((err, id) => {
-      if (err) {
-        throw err
-      }
-
-      console.log(id)
-      ipfsd.stop(() => server.stop())
-    })
-  })
-})
+run()

@@ -1,41 +1,98 @@
 'use strict'
 
-const { isNode } = require('ipfs-utils/src/env')
 const merge = require('merge-options')
-
-const FactoryDaemon = require('./factory-daemon')
-const FactoryInProc = require('./factory-in-proc')
-const FactoryClient = require('./factory-client')
 const Server = require('./endpoint/server')
+const Factory = require('./factory')
+const testsConfig = require('./config')
+
+/** @typedef {import("./ipfsd-daemon")} Daemon */
+/** @typedef {import("./ipfsd-client")} Client */
+/** @typedef {import("./ipfsd-in-proc")} InProc */
 
 /**
- * Create a Factory
+ * Creates a factory
  *
- * @static
- * @function
- * @param {FactoryOptions} [opts={}]
- * @returns {(FactoryDaemon|FactoryInProc|FactoryClient)}
+ * @param {FactoryOptions} options
+ * @returns {Factory}
  */
-const create = (opts) => {
+const createFactory = (options) => {
+  return new Factory(options)
+}
+
+/**
+ * Creates a node
+ *
+ * @param {FactoryOptions} [options]
+ * @returns {Promise<Daemon | Client | InProc>}
+ */
+const createNode = (options) => {
+  const f = new Factory(options)
+  return f.spawn()
+}
+/**
+ * Create a node for tests
+ *
+ * @param {FactoryOptions} [opts={}]
+ * @returns {Promise<Daemon | Client | InProc>}
+ */
+const createTestsNode = async (opts = {}) => {
   /** @type FactoryOptions */
   const options = merge({
-    remote: !isNode
+    ipfsOptions: {
+      config: testsConfig(opts),
+      init: {
+        bits: opts.type === 'js' ? 512 : 1024,
+        profiles: ['test']
+      },
+      preload: { enabled: false }
+
+    }
   }, opts)
 
-  if (options.type === 'proc') {
-    return new FactoryInProc(options)
-  } else if (options.remote) {
-    return new FactoryClient(options)
-  } else {
-    return new FactoryDaemon(options)
+  const node = await createNode(options)
+  if (node.started) {
+    // Add `peerId`
+    const id = await node.api.id()
+    node.api.peerId = id
+  }
+
+  return node
+}
+
+/**
+ *
+ * Create a interface for tests setup
+ *
+ * @param {FactoryOptions} createOptions
+ * @returns {TestsInterface}
+ */
+const createTestsInterface = (createOptions = {}) => {
+  // Managed nodes
+  const nodes = []
+
+  const spawn = (options = {}) => {
+    // Create factory with merged options
+    return createTestsNode(merge(
+      createOptions,
+      options
+    ))
+  }
+
+  return {
+    nodes,
+    node: spawn,
+    setup: async (options) => {
+      const node = await spawn(options)
+      nodes.push(node)
+      return node.api
+    },
+    teardown: () => Promise.all(nodes.map(n => n.stop()))
   }
 }
 
 /**
  * Create a Endpoint Server
  *
- * @static
- * @function
  * @param {(Object|number)} options - Configuration options or just the port.
  * @param {number} options.port - Port to start the server on.
  * @returns {Server}
@@ -44,74 +101,26 @@ const createServer = (options) => {
   if (typeof options === 'number') {
     options = { port: options }
   }
-  return new Server(options)
-}
-
-/**
- *
- * Create a interface for tests setup
- *
- * @param {TestsInterfaceOptions} createOptions
- * @returns {TestsInterface}
- */
-const createTestsInterface = (createOptions = {}) => {
-  // Managed nodes
-  const nodes = []
-
-  const createNode = async (options = {}) => {
-    // Create factory with merged options
-    const ipfsFactory = create(merge(
-      {
-        ipfsOptions: {
-          init: { profiles: ['test'] },
-          preload: { enabled: false }
-
-        }
-      },
-      createOptions,
-      options
-    ))
-
-    // Spawn with merged options
-    const node = await ipfsFactory.spawn()
-
-    // Add `peerId`
-    const id = await node.api.id()
-    node.api.peerId = id
-
-    return node
-  }
-
-  return {
-    node: createNode,
-    setup: async (options) => {
-      const node = await createNode(options)
-      nodes.push(node)
-      return node.api
-    },
-    teardown: () => {
-      return Promise.all(nodes.map(n => n.stop()))
-    }
-  }
+  return new Server(options, createFactory)
 }
 
 module.exports = {
-  create,
-  createServer,
-  createTestsInterface
+  createFactory,
+  createNode,
+  createTestsNode,
+  createTestsInterface,
+  createServer
 }
 
-/** @ignore @typedef {import("./ipfsd-daemon")} Daemon */
-
 /**
- * @callback TestsInterfaceCreateNode
- * @param {TestsInterfaceOptions} options
+ * @callback TestsInterfaceNode
+ * @param {FactoryOptions} options
  * @return {Promise<Daemon>} Returns a IPFSd-ctl Daemon
  */
 
 /**
  * @callback TestsInterfaceSetup
- * @param {TestsInterfaceOptions} options
+ * @param {FactoryOptions} options
  * @return {Promise<IpfsClient>} Returns an IPFS core API
  */
 
@@ -122,9 +131,10 @@ module.exports = {
 
 /**
  * @typedef {object} TestsInterface - Creates and pre-configured interface to use in tests
- * @property {TestsInterfaceCreateNode} node - Create a single unmanaged IPFSd-ctl Daemon
+ * @property {TestsInterfaceNode} node - Create a single unmanaged IPFSd-ctl Daemon
  * @property {TestsInterfaceSetup} setup - Setup a managed node and returns an IPFS Core API
  * @property {TestsInterfaceTeardown} teardown - Stop all managed nodes
+ * @property {Array<Daemon | Client | InProc>} nodes - List of the managed nodes
  */
 
 /**
@@ -142,21 +152,22 @@ module.exports = {
  * @property {object} [ipld] - Modify the default IPLD config. This object will be merged with the default config; it will not replace it. Check IPLD docs for more information on the available options. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsipld
  * @property {object|function} [libp2p] - The libp2p option allows you to build your libp2p node by configuration, or via a bundle function. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionslibp2p
  * @property {object} [connectionManager] - Configure the libp2p connection manager. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconnectionmanager
- * @property {Array} [profiles] - Profiles to transform the config.
+ * @property {boolean} [offline=false] - Run the node offline.
  */
 
 /**
  * @typedef {Object} FactoryOptions
  * @property {boolean} [remote] - Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
- * @property {number} [port=43134] - Remote endpoint port. (Defaults to 43134)
  * @property {string} [host=localhost] - Remote endpoint host. (Defaults to localhost)
+ * @property {number} [port=43134] - Remote endpoint port. (Defaults to 43134)
  * @property {string} [secure=false] - Remote endpoint uses http or https. (Defaults to false)
- * @property {Boolean} [defaultAddrs=false] - Use the daemon default Swarm addrs.
  * @property {Boolean} [disposable=true] - A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
  * @property {string} [type] - The daemon type, see below the options:
  * - go - spawn go-ipfs daemon
  * - js - spawn js-ipfs daemon
  * - proc - spawn in-process js-ipfs instance
+ * @property {Object} [env] - Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
+ * @property {Array} [args] - Custom cli args.
  * @property {Object} [ipfsHttp] - Setup IPFS HTTP client to be used by ctl.
  * @property {Object} [ipfsHttp.ref] - Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
  * @property {string} [ipfsHttp.path] - Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
@@ -164,12 +175,5 @@ module.exports = {
  * @property {Object} [ipfsApi.ref] - Reference to a IPFS API object. (defaults to the local require(`ipfs`))
  * @property {string} [ipfsApi.path] - Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
  * @property {String} [ipfsBin] - Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
- * @property {Object} [env] - Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
  * @property {IpfsOptions} [ipfsOptions] - Options for the IPFS instance
- */
-
-/**
- * @typedef {Object} TestsInterfaceOptions
- * @property {FactoryOptions} [factoryOptions] - FactoryOptions
- * @property {SpawnOptions} [IpfsOptions] - SpawnOptions
  */

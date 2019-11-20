@@ -14,9 +14,7 @@ module.exports = {
     }]
   },
   hooks: {
-    browser: {
       pre: () => server.start(),
       post: () => server.stop()
-    }
   }
 }

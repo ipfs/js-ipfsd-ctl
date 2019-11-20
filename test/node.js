@@ -2,6 +2,5 @@
 
 'use strict'
 
-require('./exec.node')
-require('./start-stop.node')
-require('./endpoint')
+require('./node.routes')
+require('./node.utils')

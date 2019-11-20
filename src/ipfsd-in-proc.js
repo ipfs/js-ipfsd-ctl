@@ -2,20 +2,25 @@
 
 const multiaddr = require('multiaddr')
 const merge = require('merge-options')
-const { repoExists, removeRepo, checkForRunningApi } = require('./utils/repo')
+const { repoExists, removeRepo, checkForRunningApi } = require('./utils')
+const debug = require('debug')
 
+const daemonLog = {
+  info: debug('ipfsd-ctl:proc:stdout'),
+  err: debug('ipfsd-ctl:proc:stderr')
+}
 /** @ignore @typedef {import("./index").IpfsOptions} IpfsOptions */
 /** @ignore @typedef {import("./index").FactoryOptions} FactoryOptions */
 
 /**
- * ipfsd for a js-ipfs instance (aka in-process IPFS node)
+ * Factory to spawn in-proc JS-IPFS instances (aka in process nodes)
  */
 class InProc {
   /**
-   * @constructor
-   * @param {FactoryOptions} [opts]
+   * @param {FactoryOptions} opts
    */
-  constructor (opts = {}) {
+  constructor (opts) {
+    /** @type FactoryOptions */
     this.opts = opts
     this.path = this.opts.ipfsOptions.repo
     this.disposable = opts.disposable
@@ -25,22 +30,6 @@ class InProc {
     this.apiAddr = null
     this.gatewayAddr = null
     this.api = null
-
-    this.opts.ipfsOptions.EXPERIMENTAL = merge({ sharding: false }, opts.ipfsOptions.EXPERIMENTAL)
-
-    this.opts.args.forEach((arg, index) => {
-      if (arg === '--enable-sharding-experiment') {
-        this.opts.ipfsOptions.EXPERIMENTAL.sharding = true
-      } else if (arg === '--enable-namesys-pubsub') {
-        this.opts.ipfsOptions.EXPERIMENTAL.ipnsPubsub = true
-      } else if (arg === '--enable-dht-experiment') {
-        this.opts.ipfsOptions.EXPERIMENTAL.dht = true
-      } else if (arg === '--offline') {
-        this.opts.ipfsOptions.offline = true
-      } else if (arg.startsWith('--pass')) {
-        this.opts.ipfsOptions.pass = this.opts.args[index + 1]
-      }
-    })
   }
 
   async setExec () {
@@ -49,18 +38,26 @@ class InProc {
     }
 
     const IPFS = this.opts.ipfsApi.ref
-    this.api = await IPFS.create(this.opts.ipfsOptions)
+    this.api = await IPFS.create(merge({ silent: true }, this.opts.ipfsOptions))
     return this
   }
 
-  setApi (addr) {
+  /**
+   * @private
+   * @param {string} addr
+   */
+  _setApi (addr) {
     this.apiAddr = multiaddr(addr)
     this.api = (this.opts.ipfsHttp.ref)(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
 
-  setGateway (addr) {
+  /**
+   * @private
+   * @param {string} addr
+   */
+  _setGateway (addr) {
     this.gatewayAddr = multiaddr(addr)
     this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
     this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
@@ -73,13 +70,8 @@ class InProc {
    * @returns {Promise}
    */
   async init (initOptions) {
-    const initialized = await repoExists(this.path)
-    if (initialized && typeof initOptions === 'object') {
-      throw new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`)
-    }
-
-    if (initialized) {
-      this.initialized = true
+    this.initialized = await repoExists(this.path)
+    if (this.initialized) {
       this.clean = false
       return this
     }
@@ -90,16 +82,14 @@ class InProc {
         emptyRepo: false,
         bits: 2048
       },
-      initOptions === true ? {} : initOptions
+      typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
+      typeof initOptions === 'boolean' ? {} : initOptions
     )
 
     await this.setExec()
     if (!this.opts.ipfsOptions.init) {
       await this.api.init(opts)
     }
-
-    const conf = await this.getConfig()
-    await this.replaceConfig(merge(conf, this.opts.ipfsOptions.config))
     this.clean = false
     this.initialized = true
     return this
@@ -113,11 +103,11 @@ class InProc {
    * @returns {Promise}
    */
   async cleanup () {
-    if (this.clean) {
-      return this
+    if (!this.clean) {
+      await removeRepo(this.path)
+      this.clean = true
     }
-    await removeRepo(this.path)
-    this.clean = true
+    return this
   }
 
   /**
@@ -129,7 +119,7 @@ class InProc {
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
     if (api) {
-      this.setApi(api)
+      this._setApi(api)
       this.started = true
       return this.api
     }
@@ -140,6 +130,7 @@ class InProc {
     }
     this.started = true
 
+    daemonLog.info(await this.api.id())
     return this.api
   }
 
@@ -154,24 +145,12 @@ class InProc {
     }
 
     await this.api.stop()
-
     this.started = false
 
     if (this.disposable) {
-      return this.cleanup()
+      await this.cleanup()
     }
-  }
-
-  /**
-   * Kill the `ipfs daemon` process.
-   *
-   * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
-   * if the process hasn't exited yet.
-   *
-   * @returns {Promise}
-   */
-  killProcess () {
-    return this.stop()
+    return this
   }
 
   /**

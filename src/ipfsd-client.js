@@ -1,49 +1,66 @@
 'use strict'
 
-const request = require('superagent')
 const multiaddr = require('multiaddr')
 const merge = require('merge-options')
+const debug = require('debug')
+const ky = require('ky-universal').default
 
-/** @ignore @typedef {import("./index").FactoryOptions} FactoryOptions */
+const daemonLog = {
+  info: debug('ipfsd-ctl:client:stdout'),
+  err: debug('ipfsd-ctl:client:stderr')
+}
 
+/** @typedef {import("./index").FactoryOptions} FactoryOptions */
+/** @typedef {import("./ipfsd-daemon")} Daemon */
+/** @typedef {import("ipfs")} IPFS */
 /**
  * Creates an instance of Client.
+ * @class
  */
 class Client {
   /**
-   *
+   * @constructor
    * @param {string} baseUrl
    * @param {Object} remoteState
    * @param {FactoryOptions} options
    */
   constructor (baseUrl, remoteState, options) {
-    this.options = options
+    this.opts = options
     this.baseUrl = baseUrl
-    this._id = remoteState._id
+    this.id = remoteState.id
     this.path = remoteState.path
     this.initialized = remoteState.initialized
     this.started = remoteState.started
-    this.clean = true
+    this.disposable = remoteState.disposable
+    this.clean = remoteState.clean
     this.apiAddr = null
     this.gatewayAddr = null
     this.api = null
 
     if (this.started) {
-      this.setApi(remoteState.apiAddr)
-      this.setGateway(remoteState.gatewayAddr)
+      this._setApi(remoteState.apiAddr)
+      this._setGateway(remoteState.gatewayAddr)
     }
   }
 
-  setApi (addr) {
+  /**
+   * @private
+   * @param {string} addr
+   */
+  _setApi (addr) {
     if (addr) {
       this.apiAddr = multiaddr(addr)
-      this.api = (this.options.ipfsHttp.ref)(addr)
+      this.api = (this.opts.ipfsHttp.ref)(addr)
       this.api.apiHost = this.apiAddr.nodeAddress().address
       this.api.apiPort = this.apiAddr.nodeAddress().port
     }
   }
 
-  setGateway (addr) {
+  /**
+   * @private
+   * @param {string} addr
+   */
+  _setGateway (addr) {
     if (addr) {
       this.gatewayAddr = multiaddr(addr)
       this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
@@ -55,12 +72,9 @@ class Client {
    * Initialize a repo.
    *
    * @param {Object} [initOptions] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
-   * @returns {Promise<Client>}
+   * @returns {Promise<Daemon>}
    */
   async init (initOptions) {
-    if (this.initialized && typeof initOptions === 'object') {
-      throw new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`)
-    }
     if (this.initialized) {
       this.clean = false
       return this
@@ -71,16 +85,16 @@ class Client {
         emptyRepo: false,
         bits: 2048
       },
-      initOptions === true ? {} : initOptions
+      typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
+      typeof initOptions === 'boolean' ? {} : initOptions
     )
 
-    const res = await request
-      .post(`${this.baseUrl}/init`)
-      .query({ id: this._id })
-      .send({ opts })
-
-    this.initialized = res.body.initialized
-
+    const res = await ky.post(
+        `${this.baseUrl}/init`,
+        { searchParams: { id: this.id }, json: opts }
+    ).json()
+    this.initialized = res.initialized
+    this.clean = false
     return this
   }
 
@@ -89,46 +103,48 @@ class Client {
    * If the node was marked as `disposable` this will be called
    * automatically when the process is exited.
    *
-   * @returns {Promise}
+   * @returns {Promise<Daemon>}
    */
   async cleanup () {
     if (this.clean) {
       return this
     }
 
-    await request
-      .post(`${this.baseUrl}/cleanup`)
-      .query({ id: this._id })
-
+    await ky.post(
+        `${this.baseUrl}/cleanup`,
+        { searchParams: { id: this.id } }
+    )
     this.clean = true
+    return this
   }
 
   /**
    * Start the daemon.
    *
-   * @returns {Promise<IpfsClient>}
+   * @returns {Promise<IPFS>}
    */
   async start () {
     if (this.started) {
       return this.api
     }
-    const res = await request
-      .post(`${this.baseUrl}/start`)
-      .query({ id: this._id })
-      .send()
 
+    const res = await ky.post(
+        `${this.baseUrl}/start`,
+        { searchParams: { id: this.id } }
+    ).json()
     this.started = true
 
-    const apiAddr = res.body ? res.body.apiAddr : ''
-    const gatewayAddr = res.body ? res.body.gatewayAddr : ''
+    const apiAddr = res ? res.apiAddr : ''
+    const gatewayAddr = res ? res.gatewayAddr : ''
 
     if (apiAddr) {
-      this.setApi(apiAddr)
+      this._setApi(apiAddr)
     }
 
     if (gatewayAddr) {
-      this.setGateway(gatewayAddr)
+      this._setGateway(gatewayAddr)
     }
+    daemonLog.info(await this.api.id())
 
     return this.api
   }
@@ -136,38 +152,22 @@ class Client {
   /**
    * Stop the daemon.
    *
-   * @param {number} [timeout] - Grace period to wait before force stopping the node
-   * @returns {Promise<Client>}
+   * @returns {Promise<Daemon>}
    */
-  async stop (timeout) {
+  async stop () {
     if (!this.started) {
       return this
     }
-    await request
-      .post(`${this.baseUrl}/stop`)
-      .query({ id: this._id })
-      .send({ timeout })
+
+    await ky.post(
+      `${this.baseUrl}/stop`,
+      { searchParams: { id: this.id } }
+    )
     this.started = false
 
-    return this
-  }
-
-  /**
-   * Kill the `ipfs daemon` process.
-   *
-   * First `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent
-   * if the process hasn't exited yet.
-   *
-   * @param {number} [timeout] - Grace period to wait before force stopping the node
-   * @returns {Promise<Client>}
-   */
-  async killProcess (timeout) {
-    await request
-      .post(`${this.baseUrl}/kill`)
-      .query({ id: this._id })
-      .send({ timeout })
-
-    this.started = false
+    if (this.disposable) {
+      await this.cleanup()
+    }
 
     return this
   }
@@ -178,40 +178,25 @@ class Client {
    * @returns {Promise<number>}
    */
   async pid () {
-    const res = await request
-      .get(`${this.baseUrl}/pid`)
-      .query({ id: this._id })
+    const res = await ky.get(
+        `${this.baseUrl}/pid`,
+        { searchParams: { id: this.id } }
+    ).json()
 
-    return res.body.pid
+    return res.pid
   }
 
   /**
-   * Call `ipfs config`
+   * Get the version of ipfs
    *
-   * If no `key` is passed, the whole config is returned as an object.
-   *
-   * @param {string} [key] - A specific config to retrieve.
-   * @returns {Promise<Any>}
+   * @returns {Promise<String>}
    */
-  async getConfig (key) {
-    const res = await request
-      .get(`${this.baseUrl}/config`)
-      .query({ id: this._id, key })
-
-    return res.body.config
-  }
-
-  /**
-   * Set a config value.
-   *
-   * @param {string} key
-   * @param {string} value
-   * @returns {Promise<void>}
-   */
-  async setConfig (key, value) {
-    await request.put(`${this.baseUrl}/config`)
-      .send({ key, value })
-      .query({ id: this._id })
+  async version () {
+    const res = await ky.get(
+        `${this.baseUrl}/version`,
+        { searchParams: { id: this.id } }
+    ).json()
+    return res.version
   }
 }
 

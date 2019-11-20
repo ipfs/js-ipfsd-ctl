@@ -1,57 +1,24 @@
 /* eslint no-console: 0 */
 'use strict'
 
-const IPFS = require('ipfs')
+const { createNode } = require('../../src')
 
-const DaemonFactory = require('ipfsd-ctl')
+async function run () {
+  const node = await createNode({ type: 'go' })
+  console.log('alice')
+  console.log(await node.api.id())
+  await node.stop()
 
-DaemonFactory
-  .create({ type: 'go' })
-  .spawn((err, ipfsd) => {
-    if (err) {
-      throw err
-    }
+  const nodeJs = await createNode({ type: 'js' })
+  console.log('alice')
+  console.log(await nodeJs.api.id())
+  await nodeJs.stop()
 
-    ipfsd.api.id((err, id) => {
-      if (err) {
-        throw err
-      }
-      console.log('alice')
-      console.log(id)
-      ipfsd.stop()
-    })
-  })
+  const nodeProc = await createNode({ type: 'proc' })
+  console.log('bob')
+  console.log(await nodeProc.api.id())
+  await nodeProc.stop()
+  process.exit()
+}
 
-DaemonFactory
-  .create({ type: 'js' })
-  .spawn((err, ipfsd) => {
-    if (err) {
-      throw err
-    }
-
-    ipfsd.api.id((err, id) => {
-      if (err) {
-        throw err
-      }
-      console.log('bob')
-      console.log(id)
-      ipfsd.stop()
-    })
-  })
-
-DaemonFactory
-  .create({ type: 'proc' })
-  .spawn({ exec: IPFS }, (err, ipfsd) => {
-    if (err) {
-      throw err
-    }
-
-    ipfsd.api.id((err, id) => {
-      if (err) {
-        throw err
-      }
-      console.log('bob')
-      console.log(id)
-      ipfsd.stop(() => process.exit(0))
-    })
-  })
+run()

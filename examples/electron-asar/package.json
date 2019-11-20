@@ -3,16 +3,16 @@
   "private": true,
   "main": "./app.js",
   "dependencies": {
-    "ipfsd-ctl": "file:../..",
-    "go-ipfs-dep": "~0.4.13",
-    "ipfs-repo": "~0.18.5"
+    "go-ipfs-dep": "~0.4.22",
+    "ipfs": "^0.39.0-rc.2",
+    "ipfsd-ctl": "file:../.."
   },
   "devDependencies": {
-    "electron": "^1.7.6",
-    "electron-packager": "^9.0.0"
+    "electron": "^6.0.12",
+    "electron-packager": "^14.0.6"
   },
   "scripts": {
     "start": "electron .",
-    "package": "electron-packager ./ --overwrite --asar.unpackDir=node_modules/go-ipfs-dep"
+    "package": "electron-packager . --overwrite"
   }
 }
