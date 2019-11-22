@@ -44,7 +44,7 @@ npm install --save ipfsd-ctl
 const IPFSFactory = require('ipfsd-ctl')
 const f = IPFSFactory.create()
 
-const ipfs = await f.spawn()
+const ipfsd = await f.spawn()
 const id = await ipfsd.api.id()
 
 console.log(id)
