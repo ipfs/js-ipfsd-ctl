@@ -18,7 +18,7 @@ const removeRepo = async (repoPath) => {
 }
 
 const repoExists = async (repoPath) => {
-  const exists = await fs.pathExists(`${repoPath}/config`)
+  const exists = await fs.pathExists(path.join(repoPath, 'config'))
   return exists
 }
 
@@ -32,7 +32,7 @@ const defaultRepo = (type) => {
 const checkForRunningApi = (path) => {
   let api
   try {
-    api = fs.readFileSync(`${path}/api`)
+    api = fs.readFileSync(path.join(path, 'api'))
   } catch (err) {
     log('Unable to open api file')
   }

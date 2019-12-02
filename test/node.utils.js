@@ -5,6 +5,7 @@
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const os = require('os')
+const path = require('path')
 
 const isWindows = os.platform() === 'win32'
 const expect = chai.expect
@@ -25,17 +26,17 @@ describe('utils node version', function () {
     })
     it('should return from node modules', () => {
       expect(findBin('js')).to.be.contain('node_modules/ipfs/src/cli/bin.js')
-      expect(findBin('go')).to.be.contain('/node_modules/go-ipfs-dep/go-ipfs/ipfs')
+      expect(findBin('go')).to.be.contain('node_modules/go-ipfs-dep/go-ipfs/ipfs')
       if (isWindows) {
-        expect(findBin('go')).to.be.contain('/node_modules/go-ipfs-dep/go-ipfs/ipfs.exe')
+        expect(findBin('go')).to.be.contain('node_modules/go-ipfs-dep/go-ipfs/ipfs.exe')
       }
     })
   })
 
   it('tmpDir should return correct path', () => {
-    expect(tmpDir('js')).to.be.contain(os.tmpdir() + '/js_ipfs_')
-    expect(tmpDir('go')).to.be.contain(os.tmpdir() + '/go_ipfs_')
-    expect(tmpDir()).to.be.contain(os.tmpdir() + '/_ipfs_')
+    expect(tmpDir('js')).to.be.contain(path.join(os.tmpdir(), 'js_ipfs_'))
+    expect(tmpDir('go')).to.be.contain(path.join(os.tmpdir(), 'go_ipfs_'))
+    expect(tmpDir()).to.be.contain(path.join(os.tmpdir(), '_ipfs_'))
   })
 
   describe('checkForRunningApi', () => {
@@ -50,9 +51,9 @@ describe('utils node version', function () {
   })
 
   it('defaultRepo should return path', () => {
-    expect(defaultRepo('js')).to.be.eq(os.homedir() + '/.jsipfs')
-    expect(defaultRepo('go')).to.be.eq(os.homedir() + '/.ipfs')
-    expect(defaultRepo('kjkjdsk')).to.be.eq(os.homedir() + '/.ipfs')
+    expect(defaultRepo('js')).to.be.eq(path.join(os.homedir(), '.jsipfs'))
+    expect(defaultRepo('go')).to.be.eq(path.join(os.homedir(), '.ipfs'))
+    expect(defaultRepo('kjkjdsk')).to.be.eq(path.join(os.homedir(), '.ipfs'))
   })
 
   it('removeRepo should work', async () => {
