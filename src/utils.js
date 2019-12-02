@@ -29,10 +29,10 @@ const defaultRepo = (type) => {
   )
 }
 
-const checkForRunningApi = (path) => {
+const checkForRunningApi = (repoPath) => {
   let api
   try {
-    api = fs.readFileSync(path.join(path, 'api'))
+    api = fs.readFileSync(path.join(repoPath, 'api'))
   } catch (err) {
     log('Unable to open api file')
   }
