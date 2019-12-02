@@ -25,10 +25,10 @@ describe('utils node version', function () {
       delete process.env.IPFS_GO_EXEC
     })
     it('should return from node modules', () => {
-      expect(findBin('js')).to.be.contain('node_modules/ipfs/src/cli/bin.js')
-      expect(findBin('go')).to.be.contain('node_modules/go-ipfs-dep/go-ipfs/ipfs')
+      expect(findBin('js')).to.be.contain(path.join('node_modules', 'ipfs', 'src', 'cli', 'bin.js'))
+      expect(findBin('go')).to.be.contain(path.join('node_modules', 'go-ipfs-dep', 'go-ipfs', 'ipfs'))
       if (isWindows) {
-        expect(findBin('go')).to.be.contain('node_modules/go-ipfs-dep/go-ipfs/ipfs.exe')
+        expect(findBin('go')).to.be.contain(path.join('node_modules', 'go-ipfs-dep', 'go-ipfs', 'ipfs.exe'))
       }
     })
   })
