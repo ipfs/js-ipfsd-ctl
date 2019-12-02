@@ -5,7 +5,7 @@ const chai = require('chai')
 const merge = require('merge-options')
 const dirtyChai = require('dirty-chai')
 const chaiPromise = require('chai-as-promised')
-const { createFactory, createTestsInterface, createTestsNode } = require('../src')
+const { create, createTestsInterface, createTestsNode } = require('../src')
 const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
 const testConfig = require('../src/config')
@@ -50,7 +50,7 @@ describe('Node API', () => {
     describe('should work with a initialized repo', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const f = createFactory(opts)
+          const f = create(opts)
           const node = await f.spawn({ config: testConfig(opts), repo: setup.nodes[0].path })
 
           await node.init()
@@ -68,7 +68,7 @@ describe('Node API', () => {
     describe('should work with all the options', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const f = createFactory(opts)
+          const f = create(opts)
           const node = await f.spawn({ repo: await f.tmpDir() })
 
           if (opts.type === 'js') {
@@ -192,7 +192,7 @@ describe('Node API', () => {
     describe('should not clean with disposable false', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const f = createFactory({ ...opts, disposable: false })
+          const f = create({ ...opts, disposable: false })
           const node = await f.spawn({
             config: testConfig(opts),
             repo: await f.tmpDir()

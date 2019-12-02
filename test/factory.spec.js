@@ -4,7 +4,7 @@
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const { isNode } = require('ipfs-utils/src/env')
-const { createFactory } = require('../src')
+const { create } = require('../src')
 
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -20,7 +20,7 @@ const types = [
 describe('`Factory tmpDir()` should return correct temporary dir', () => {
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const factory = createFactory(opts)
+      const factory = create(opts)
       const dir = await factory.tmpDir()
       expect(dir).to.exist()
 
@@ -43,7 +43,7 @@ describe('`Factory tmpDir()` should return correct temporary dir', () => {
 describe('`Factory version()` should return correct temporary dir', () => {
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const factory = await createFactory(opts)
+      const factory = await create(opts)
       const version = await factory.version()
 
       if (opts.type === 'go') {
@@ -65,7 +65,7 @@ describe('`Factory spawn()` ', () => {
   describe('should return a node with api', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await createFactory(opts)
+        const factory = await create(opts)
         const node = await factory.spawn()
         expect(node).to.exist()
         expect(node.api).to.exist()
@@ -78,7 +78,7 @@ describe('`Factory spawn()` ', () => {
   describe('should return a disposable node by default', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await createFactory(opts)
+        const factory = await create(opts)
         const node = await factory.spawn()
 
         expect(node.started).to.be.true()
@@ -93,7 +93,7 @@ describe('`Factory spawn()` ', () => {
   describe('should return a non disposable node', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await createFactory({ ...opts, disposable: false })
+        const factory = await create({ ...opts, disposable: false })
         const tmpDir = await factory.tmpDir()
         const node = await factory.spawn({ repo: tmpDir })
         expect(node.started).to.be.false()

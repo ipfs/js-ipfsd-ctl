@@ -15,7 +15,7 @@ const testsConfig = require('./config')
  * @param {FactoryOptions} options
  * @returns {Factory}
  */
-const createFactory = (options) => {
+const create = (options) => {
   return new Factory(options)
 }
 
@@ -101,11 +101,11 @@ const createServer = (options) => {
   if (typeof options === 'number') {
     options = { port: options }
   }
-  return new Server(options, createFactory)
+  return new Server(options, create)
 }
 
 module.exports = {
-  createFactory,
+  create,
   createNode,
   createTestsNode,
   createTestsInterface,

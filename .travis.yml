@@ -40,5 +40,16 @@ jobs:
       script: 
         - npx aegir test -t browser -t webworker --bail --timeout 30000 -- --browsers FirefoxHeadless
 
+    - stage: test
+      name: electron-main
+      os: osx
+      script:
+        - npx aegir test -t electron-main --bail --timeout 30000
+
+    - stage: test
+      name: electron-renderer
+      os: osx
+      script:
+        - npx aegir test -t electron-renderer --bail --timeout 30000
 notifications:
   email: false

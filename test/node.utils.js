@@ -12,7 +12,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const { findBin, tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
-const { createFactory, createNode } = require('../src')
+const { create, createNode } = require('../src')
 
 describe('utils node version', function () {
   describe('findBin', () => {
@@ -57,7 +57,7 @@ describe('utils node version', function () {
   })
 
   it('removeRepo should work', async () => {
-    const f = createFactory({
+    const f = create({
       type: 'proc',
       disposable: false
     })

@@ -8,7 +8,7 @@ chai.use(dirtyChai)
 
 const Hapi = require('@hapi/hapi')
 const routes = require('../src/endpoint/routes')
-const { createFactory } = require('../src')
+const { create } = require('../src')
 
 describe('routes', () => {
   let id
@@ -16,7 +16,7 @@ describe('routes', () => {
 
   before(() => {
     server = new Hapi.Server({ port: 43134 })
-    routes(server, createFactory)
+    routes(server, create)
   })
 
   after(async () => {

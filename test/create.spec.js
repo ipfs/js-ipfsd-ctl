@@ -3,7 +3,7 @@
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
-const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
+const { isNode, isBrowser, isWebWorker } = require('ipfs-utils/src/env')
 const { createNode, createTestsNode, createTestsInterface, createServer } = require('../src')
 const Client = require('../src/ipfsd-client')
 const Daemon = require('../src/ipfsd-daemon')
@@ -12,11 +12,11 @@ const Proc = require('../src/ipfsd-in-proc')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-describe('`create` should return the correct class', () => {
+describe('`createNode` should return the correct class', () => {
   it('for type `js` ', async () => {
     const f = await createNode({ type: 'js', disposable: false })
 
-    if (isBrowser || isWebWorker) {
+    if (!isNode) {
       expect(f).to.be.instanceOf(Client)
     } else {
       expect(f).to.be.instanceOf(Daemon)
@@ -25,7 +25,7 @@ describe('`create` should return the correct class', () => {
   it('for type `go` ', async () => {
     const f = await createNode({ type: 'go', disposable: false })
 
-    if (isBrowser || isWebWorker) {
+    if (!isNode) {
       expect(f).to.be.instanceOf(Client)
     } else {
       expect(f).to.be.instanceOf(Daemon)

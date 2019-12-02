@@ -9,7 +9,7 @@ chai.use(dirtyChai)
 
 const { isEnvWithDom } = require('ipfs-utils/src/env')
 const { findBin, tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
-const { createFactory, createNode } = require('../src')
+const { create, createNode } = require('../src')
 
 describe('utils browser version', function () {
   if (isEnvWithDom) {
@@ -49,7 +49,7 @@ describe('utils browser version', function () {
 
     describe('repoExists', () => {
       it('should resolve true when repo exists', async () => {
-        const f = createFactory({ type: 'proc' })
+        const f = create({ type: 'proc' })
         const node = await f.spawn({ repo: 'ipfs_test' })
         expect(await repoExists('ipfs_test')).to.be.true()
         await node.stop()
