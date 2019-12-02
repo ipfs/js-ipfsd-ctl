@@ -6,6 +6,7 @@ const dirtyChai = require('dirty-chai')
 const { isNode } = require('ipfs-utils/src/env')
 const { createFactory } = require('../src')
 const os = require('os')
+const path = require('path')
 
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -26,13 +27,13 @@ describe('`Factory tmpDir()` should return correct temporary dir', () => {
       expect(dir).to.exist()
 
       if (opts.type === 'go' && isNode) {
-        expect(dir).to.contain(`${os.tmpdir()}/go_ipfs_`)
+        expect(dir).to.contain('go_ipfs_')
       }
       if (opts.type === 'js' && isNode) {
-        expect(dir).to.contain(`${os.tmpdir()}/js_ipfs_`)
+        expect(dir).to.contain('js_ipfs_')
       }
       if (opts.type === 'proc' && isNode) {
-        expect(dir).to.contain(`${os.tmpdir()}/proc_ipfs_`)
+        expect(dir).to.contain('proc_ipfs_')
       }
       if (opts.type === 'proc' && !isNode) {
         expect(dir).to.contain('proc_ipfs_')
