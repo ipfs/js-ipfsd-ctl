@@ -5,8 +5,6 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const { isNode } = require('ipfs-utils/src/env')
 const { createFactory } = require('../src')
-const os = require('os')
-const path = require('path')
 
 const expect = chai.expect
 chai.use(dirtyChai)
