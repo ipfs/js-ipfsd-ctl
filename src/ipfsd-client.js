@@ -3,7 +3,9 @@
 const multiaddr = require('multiaddr')
 const merge = require('merge-options')
 const debug = require('debug')
-const ky = require('ky-universal').default
+const kyOriginal = require('ky-universal').default
+
+const ky = kyOriginal.extend({ timeout: false })
 
 const daemonLog = {
   info: debug('ipfsd-ctl:client:stdout'),

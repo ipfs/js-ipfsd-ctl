@@ -1,11 +1,13 @@
 'use strict'
 const merge = require('merge-options')
-const ky = require('ky-universal').default
+const kyOriginal = require('ky-universal').default
 const { defaultRepo, tmpDir, findBin } = require('./utils')
 const { isNode } = require('ipfs-utils/src/env')
 const IPFSdDaemon = require('./ipfsd-daemon')
 const IPFSdClient = require('./ipfsd-client')
 const IPFSdProc = require('./ipfsd-in-proc')
+
+const ky = kyOriginal.extend({ timeout: false })
 
 /** @typedef {import("./index").FactoryOptions} FactoryOptions */
 /** @typedef {import("./index").IpfsOptions} IpfsOptions */
