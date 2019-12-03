@@ -117,7 +117,7 @@ Returns a **[TestsInterface](#TestsInterface)**
 `teardown()` **Function** Stops all controlled nodes created by `setup`
 
 ### `createServer([options])`
-Create a Endpoint Server.
+Create an Endpoint Server.
 
 - `options` **[Object]** Factory options. Defaults to: `{ port: 43134 }`
   - `port` **number** Port to start the server on.
