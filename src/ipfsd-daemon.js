@@ -251,8 +251,7 @@ class Daemon {
     if (!this.subprocess) {
       return this
     }
-    await this.api.stop()
-    // TODO this should call this.api.stop
+
     await this.killProcess(timeout)
 
     if (this.disposable) {
