@@ -52,15 +52,15 @@
   "dependencies": {
     "@hapi/boom": "^8.0.1",
     "@hapi/hapi": "^18.3.2",
-    "@hapi/joi": "^16.1.7",
+    "@hapi/joi": "^16.1.8",
     "debug": "^4.1.1",
-    "execa": "^3.2.0",
+    "execa": "^3.4.0",
     "fs-extra": "^8.1.0",
     "go-ipfs-dep": "~0.4.22",
-    "ipfs": "0.40.0-rc.0",
-    "ipfs-http-client": "^39.0.0",
+    "ipfs": "0.40.0",
+    "ipfs-http-client": "^40.0.1",
     "ipfs-utils": "^0.4.0",
-    "ky": "^0.16.0",
+    "ky": "^0.16.1",
     "ky-universal": "^0.3.0",
     "merge-options": "^2.0.0",
     "multiaddr": "^6.1.1",
@@ -74,7 +74,7 @@
     "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
     "husky": "^3.1.0",
-    "lint-staged": "^9.4.2"
+    "lint-staged": "^9.5.0"
   },
   "repository": {
     "type": "git",

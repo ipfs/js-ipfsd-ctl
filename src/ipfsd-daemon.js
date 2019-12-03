@@ -199,7 +199,7 @@ class Daemon {
       this.subprocess.stdout.on('data', data => daemonLog.info(data.toString()))
 
       const readyHandler = data => {
-        output += data
+        output += data.toString()
         const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
         const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
 

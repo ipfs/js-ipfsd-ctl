@@ -15,22 +15,20 @@ const deleteDb = (path) => {
  * @param {string} repoPath
  */
 const removeRepo = async (repoPath) => {
-  const path = `level-js-${repoPath}`
-  await deleteDb(path)
-  await deleteDb(path + '/keys')
-  await deleteDb(path + '/blocks')
-  await deleteDb(path + '/datastore')
+  await deleteDb(repoPath)
+  await deleteDb(repoPath + '/keys')
+  await deleteDb(repoPath + '/blocks')
+  await deleteDb(repoPath + '/datastore')
 }
 
 const repoExists = (repoPath) => {
-  const path = `level-js-${repoPath}`
   return new Promise((resolve, reject) => {
-    var req = self.indexedDB.open(path)
+    var req = self.indexedDB.open(repoPath)
     var existed = true
     req.onerror = () => reject(req.error)
     req.onsuccess = function () {
       req.result.close()
-      if (!existed) { self.indexedDB.deleteDatabase(path) }
+      if (!existed) { self.indexedDB.deleteDatabase(repoPath) }
       resolve(existed)
     }
     req.onupgradeneeded = function () {
