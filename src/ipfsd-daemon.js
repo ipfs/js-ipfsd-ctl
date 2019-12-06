@@ -173,7 +173,7 @@ class Daemon {
       args.push('--offline')
     }
     if (opts.preload && this.opts.type === 'js') {
-      args.push('--enable-preload', Boolean(opts.preload.enable))
+      args.push('--enable-preload', Boolean(opts.preload.enabled))
     }
     if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.sharding) {
       args.push('--enable-sharding-experiment')
