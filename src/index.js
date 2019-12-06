@@ -1,13 +1,9 @@
 'use strict'
 
-const merge = require('merge-options')
 const Server = require('./endpoint/server')
 const Factory = require('./factory')
-const testsConfig = require('./config')
 
-/** @typedef {import("./ipfsd-daemon")} Daemon */
-/** @typedef {import("./ipfsd-client")} Client */
-/** @typedef {import("./ipfsd-in-proc")} InProc */
+/** @typedef {import("./ipfsd-daemon")} Controller */
 
 /**
  * Creates a factory
@@ -15,79 +11,19 @@ const testsConfig = require('./config')
  * @param {FactoryOptions} options
  * @returns {Factory}
  */
-const create = (options) => {
+const createFactory = (options) => {
   return new Factory(options)
 }
 
 /**
  * Creates a node
  *
- * @param {FactoryOptions} [options]
- * @returns {Promise<Daemon | Client | InProc>}
+ * @param {ControllerOptions} [options]
+ * @returns {Promise<Controller>}
  */
-const createNode = (options) => {
-  const f = new Factory(options)
-  return f.spawn()
-}
-/**
- * Create a node for tests
- *
- * @param {FactoryOptions} [opts={}]
- * @returns {Promise<Daemon | Client | InProc>}
- */
-const createTestsNode = async (opts = {}) => {
-  /** @type FactoryOptions */
-  const options = merge({
-    ipfsOptions: {
-      config: testsConfig(opts),
-      init: {
-        bits: opts.type === 'js' ? 512 : 1024,
-        profiles: ['test']
-      },
-      preload: { enabled: false }
-
-    }
-  }, opts)
-
-  const node = await createNode(options)
-  if (node.started) {
-    // Add `peerId`
-    const id = await node.api.id()
-    node.api.peerId = id
-  }
-
-  return node
-}
-
-/**
- *
- * Create a interface for tests setup
- *
- * @param {FactoryOptions} createOptions
- * @returns {TestsInterface}
- */
-const createTestsInterface = (createOptions = {}) => {
-  // Managed nodes
-  const nodes = []
-
-  const spawn = (options = {}) => {
-    // Create factory with merged options
-    return createTestsNode(merge(
-      createOptions,
-      options
-    ))
-  }
-
-  return {
-    nodes,
-    node: spawn,
-    setup: async (options) => {
-      const node = await spawn(options)
-      nodes.push(node)
-      return node.api
-    },
-    teardown: () => Promise.all(nodes.map(n => n.stop()))
-  }
+const createController = (options) => {
+  const f = new Factory()
+  return f.spawn(options)
 }
 
 /**
@@ -101,41 +37,14 @@ const createServer = (options) => {
   if (typeof options === 'number') {
     options = { port: options }
   }
-  return new Server(options, create)
+  return new Server(options, createFactory)
 }
 
 module.exports = {
-  create,
-  createNode,
-  createTestsNode,
-  createTestsInterface,
+  createFactory,
+  createController,
   createServer
 }
-
-/**
- * @callback TestsInterfaceNode
- * @param {FactoryOptions} options
- * @return {Promise<Daemon>} Returns a IPFSd-ctl Daemon
- */
-
-/**
- * @callback TestsInterfaceSetup
- * @param {FactoryOptions} options
- * @return {Promise<IpfsClient>} Returns an IPFS core API
- */
-
-/**
- * @callback TestsInterfaceTeardown
- * @return {Promise<void>}
- */
-
-/**
- * @typedef {object} TestsInterface - Creates and pre-configured interface to use in tests
- * @property {TestsInterfaceNode} node - Create a single unmanaged IPFSd-ctl Daemon
- * @property {TestsInterfaceSetup} setup - Setup a managed node and returns an IPFS Core API
- * @property {TestsInterfaceTeardown} teardown - Stop all managed nodes
- * @property {Array<Daemon | Client | InProc>} nodes - List of the managed nodes
- */
 
 /**
  * Same as https://github.com/ipfs/js-ipfs/blob/master/README.md#ipfs-constructor
@@ -156,24 +65,31 @@ module.exports = {
  */
 
 /**
- * @typedef {Object} FactoryOptions
- * @property {boolean} [remote] - Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
- * @property {string} [host=localhost] - Remote endpoint host. (Defaults to localhost)
- * @property {number} [port=43134] - Remote endpoint port. (Defaults to 43134)
- * @property {string} [secure=false] - Remote endpoint uses http or https. (Defaults to false)
+ * @typedef {Object} ControllerOptions
+ * @property {boolean} [test=false] - Flag to activate custom config for tests.
+ * @property {boolean} [remote] - Use remote endpoint to spawn the controllers. Defaults to `true` when not in node.
  * @property {Boolean} [disposable=true] - A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
  * @property {string} [type] - The daemon type, see below the options:
- * - go - spawn go-ipfs daemon
- * - js - spawn js-ipfs daemon
- * - proc - spawn in-process js-ipfs instance
+ * - go - spawn go-ipfs daemon node
+ * - js - spawn js-ipfs daemon node
+ * - proc - spawn in-process js-ipfs node
  * @property {Object} [env] - Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
  * @property {Array} [args] - Custom cli args.
- * @property {Object} [ipfsHttp] - Setup IPFS HTTP client to be used by ctl.
- * @property {Object} [ipfsHttp.ref] - Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
- * @property {string} [ipfsHttp.path] - Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
- * @property {Object} [ipfsApi] - Setup IPFS API to be used by ctl.
- * @property {Object} [ipfsApi.ref] - Reference to a IPFS API object. (defaults to the local require(`ipfs`))
- * @property {string} [ipfsApi.path] - Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
+ * @property {Object} [ipfsHttpModule] - Setup IPFS HTTP client to be used by ctl.
+ * @property {Object} [ipfsHttpModule.ref] - Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
+ * @property {string} [ipfsHttpModule.path] - Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
+ * @property {Object} [ipfsModule] - Setup IPFS API to be used by ctl.
+ * @property {Object} [ipfsModule.ref] - Reference to a IPFS API object. (defaults to the local require(`ipfs`))
+ * @property {string} [ipfsModule.path] - Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
  * @property {String} [ipfsBin] - Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
- * @property {IpfsOptions} [ipfsOptions] - Options for the IPFS instance
+ * @property {IpfsOptions} [ipfsOptions] - Options for the IPFS node.
+ */
+
+/**
+ * @typedef {Object} FactoryOptions
+ * @property {string} [endpoint] - Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134').
+ * @property {boolean} [test=false] - Flag to activate custom config for tests for all spawned controllers.
+ * @property {ControllerOptions} [js] - Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+ * @property {ControllerOptions} [go] - Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+ * @property {ControllerOptions} [proc] - Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.
  */

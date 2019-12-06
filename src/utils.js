@@ -45,9 +45,7 @@ const findBin = (type) => {
     return process.env.IPFS_JS_EXEC || require.resolve('ipfs/src/cli/bin.js')
   }
 
-  if (type === 'go') {
-    return process.env.IPFS_GO_EXEC || require.resolve(`go-ipfs-dep/go-ipfs/${isWindows ? 'ipfs.exe' : 'ipfs'}`)
-  }
+  return process.env.IPFS_GO_EXEC || require.resolve(`go-ipfs-dep/go-ipfs/${isWindows ? 'ipfs.exe' : 'ipfs'}`)
 }
 
 const tmpDir = (type = '') => {

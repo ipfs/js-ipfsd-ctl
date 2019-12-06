@@ -1,49 +1,57 @@
 'use strict'
 const merge = require('merge-options')
 const kyOriginal = require('ky-universal').default
-const { defaultRepo, tmpDir, findBin } = require('./utils')
+const { tmpDir, findBin } = require('./utils')
 const { isNode } = require('ipfs-utils/src/env')
-const IPFSdDaemon = require('./ipfsd-daemon')
-const IPFSdClient = require('./ipfsd-client')
-const IPFSdProc = require('./ipfsd-in-proc')
+const ControllerDaemon = require('./ipfsd-daemon')
+const ControllerRemote = require('./ipfsd-client')
+const ControllerProc = require('./ipfsd-in-proc')
+const testsConfig = require('./config')
 
-const ky = kyOriginal.extend({ timeout: false })
-
+/** @typedef {import("./index").ControllerOptions} ControllerOptions */
 /** @typedef {import("./index").FactoryOptions} FactoryOptions */
 /** @typedef {import("./index").IpfsOptions} IpfsOptions */
 
+const ky = kyOriginal.extend({ timeout: false })
+const defaults = {
+  remote: !isNode,
+  disposable: true,
+  test: false,
+  type: 'go',
+  env: {},
+  args: [],
+  ipfsHttpModule: {
+    path: require.resolve('ipfs-http-client'),
+    ref: require('ipfs-http-client')
+  },
+  ipfsModule: {
+    path: require.resolve('ipfs'),
+    ref: require('ipfs')
+  },
+  ipfsBin: findBin('go'),
+  ipfsOptions: {}
+}
+
 /**
- * Factory class to spawn ipfsd daemons
+ * Factory class to spawn ipfsd controllers
  */
 class Factory {
   /**
-     *
-     * @param {FactoryOptions} options
-     */
+   *
+   * @param {FactoryOptions} options
+   */
   constructor (options = {}) {
     /** @type FactoryOptions */
     this.opts = merge({
-      remote: !isNode,
-      host: 'localhost',
-      port: 43134,
-      secure: false,
-      disposable: true,
-      type: 'go',
-      env: {},
-      args: [],
-      ipfsHttp: {
-        path: require.resolve('ipfs-http-client'),
-        ref: require('ipfs-http-client')
-      },
-      ipfsApi: {
-        path: require.resolve('ipfs'),
-        ref: require('ipfs')
-      },
-      ipfsBin: findBin(options.type || 'go'),
-      ipfsOptions: {}
+      test: false,
+      endpoint: 'http://localhost:43134',
+      js: merge(defaults, { test: options.test || false, type: 'js', ipfsBin: findBin('js') }),
+      go: merge(defaults, { test: options.test || false }),
+      proc: merge(defaults, { test: options.test || false, type: 'proc', ipfsBin: findBin('js') })
     }, options)
 
-    this.baseUrl = `${this.opts.secure ? 'https://' : 'http://'}${this.opts.host}:${this.opts.port}`
+    /** @type ControllerDaemon[] */
+    this.controllers = []
   }
 
   /**
@@ -51,94 +59,94 @@ class Factory {
    * useful in browsers to be able to generate temp
    * repos manually
    *
+   * @param {ControllerOptions} options - Controller type
+   *
    * @returns {Promise<String>}
    */
-  async tmpDir () {
-    if (this.opts.remote) {
+  async tmpDir (options) {
+    options = merge(defaults, options)
+    if (options.remote) {
       const res = await ky.get(
-        `${this.baseUrl}/util/tmp-dir`,
-        { searchParams: { type: this.opts.type } }
+        `${this.opts.endpoint}/util/tmp-dir`,
+        { searchParams: { type: options.type } }
       ).json()
 
       return res.tmpDir
     }
 
-    return Promise.resolve(tmpDir(this.opts.type))
+    return Promise.resolve(tmpDir(options.type))
   }
 
-  /**
-   * Get the version of the IPFS Daemon.
-   *
-   * @returns {Promise<String>}
-   */
-  async version () {
-    const f = new Factory(this.opts)
-    const node = await f.spawn()
-    const version = await node.version()
-
-    await node.stop()
-
-    return version
-  }
-
-  /**
-   * Spawn a IPFS node
-   * @param {IpfsOptions} options
-   * @returns {Promise<IPFSdDaemon | IPFSdClient | IPFSdProc>}
-   */
-  async spawn (options = {}) {
-    if (this.opts.type !== 'proc' && this.opts.remote) { // spawn remote node
-      const res = await ky.post(
-        `${this.baseUrl}/spawn`,
-        {
-          json: merge(
-            this.opts,
-            {
-              remote: false, // avoid recursive spawning
-              ipfsOptions: options // let the remote do defaults
-            }
-          )
-        }
-      ).json()
-      return new IPFSdClient(
-        this.baseUrl,
-        res,
-        this.opts
-      )
-    }
-
-    const ipfsOptions = merge(
+  async _spawnRemote (options) {
+    const res = await ky.post(
+      `${this.opts.endpoint}/spawn`,
       {
-        start: this.opts.disposable !== false,
-        init: this.opts.disposable !== false,
-        repo: this.opts.disposable
-          ? tmpDir(this.opts.type)
-          : defaultRepo(this.opts.type)
-      },
-      this.opts.ipfsOptions,
+        json: { ...options, remote: false } // avoid recursive spawning
+      }
+    ).json()
+    return new ControllerRemote(
+      this.opts.endpoint,
+      res,
+      options
+    )
+  }
+
+  /**
+   * Spawn an IPFSd Controller
+   * @param {ControllerOptions} options
+   * @returns {Promise<ControllerDaemon>}
+   */
+  async spawn (options = { }) {
+    const opts = merge(
+      this.opts[options.type || 'go'],
       options
     )
 
-    let node
-    // spawn in-proc node
-    if (this.opts.type === 'proc') {
-      node = new IPFSdProc({ ...this.opts, ipfsOptions })
+    // IPFS options defaults
+    const ipfsOptions = merge(
+      {
+        start: false,
+        init: false
+      },
+      opts.test ? {
+        config: testsConfig(opts),
+        preload: { enabled: false }
+      } : {},
+      opts.ipfsOptions
+    )
+
+    let ctl
+    if (opts.type === 'proc') {
+      // spawn in-proc controller
+      ctl = new ControllerProc({ ...opts, ipfsOptions })
+    } else if (opts.remote) {
+      // spawn remote controller
+      ctl = await this._spawnRemote({ ...opts, ipfsOptions })
     } else {
-      // spawn daemon node
-      node = new IPFSdDaemon({ ...this.opts, ipfsOptions })
+      // spawn daemon controller
+      ctl = new ControllerDaemon({ ...opts, ipfsOptions })
     }
 
-    // Init node
-    if (ipfsOptions.init) {
-      await node.init(ipfsOptions.init)
+    // Save the controller
+    this.controllers.push(ctl)
+
+    // Auto init and start controller
+    if (opts.disposable && (!options.ipfsOptions || (options.ipfsOptions && options.ipfsOptions.init !== false))) {
+      await ctl.init(ipfsOptions.init)
+    }
+    if (opts.disposable && (!options.ipfsOptions || (options.ipfsOptions && options.ipfsOptions.start !== false))) {
+      await ctl.start()
     }
 
-    // Start node
-    if (ipfsOptions.start) {
-      await node.start()
-    }
+    return ctl
+  }
 
-    return node
+  /**
+   * Stop all controllers
+   * @returns {Promise<ControllerDaemon[]>}
+   */
+  clean () {
+    return Promise.all(this.controllers.map(n => n.stop()))
   }
 }
 

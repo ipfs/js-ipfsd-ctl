@@ -68,9 +68,9 @@ module.exports = (server, createFactory) => {
     handler: async (request) => {
       const opts = request.payload || {}
       try {
-        const ipfsd = createFactory(opts)
+        const ipfsd = createFactory()
         const id = nanoid()
-        nodes[id] = await ipfsd.spawn(opts.ipfsOptions)
+        nodes[id] = await ipfsd.spawn(opts)
         return {
           id: id,
           apiAddr: nodes[id].apiAddr ? nodes[id].apiAddr.toString() : '',
@@ -122,8 +122,9 @@ module.exports = (server, createFactory) => {
 
       try {
         await nodes[id].start()
+
         return {
-          apiAddr: nodes[id].apiAddr.toString(),
+          apiAddr: nodes[id].apiAddr ? nodes[id].apiAddr.toString() : '',
           gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : ''
         }
       } catch (err) {

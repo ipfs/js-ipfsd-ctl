@@ -4,24 +4,24 @@
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const { isNode } = require('ipfs-utils/src/env')
-const { create } = require('../src')
+const { createFactory } = require('../src')
 
 const expect = chai.expect
 chai.use(dirtyChai)
 
 const types = [
-  { type: 'js' },
-  { type: 'go' },
-  { type: 'proc' },
-  { type: 'js', remote: true },
-  { type: 'go', remote: true }
+  { type: 'js', test: true },
+  { type: 'go', test: true },
+  { type: 'proc', test: true },
+  { type: 'js', remote: true, test: true },
+  { type: 'go', remote: true, test: true }
 ]
 
 describe('`Factory tmpDir()` should return correct temporary dir', () => {
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const factory = create(opts)
-      const dir = await factory.tmpDir()
+      const factory = createFactory()
+      const dir = await factory.tmpDir(opts)
       expect(dir).to.exist()
 
       if (opts.type === 'go' && isNode) {
@@ -40,33 +40,12 @@ describe('`Factory tmpDir()` should return correct temporary dir', () => {
   }
 })
 
-describe('`Factory version()` should return correct temporary dir', () => {
-  for (const opts of types) {
-    it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const factory = await create(opts)
-      const version = await factory.version()
-
-      if (opts.type === 'go') {
-        expect(version).to.be.contain('ipfs version')
-      }
-
-      if (opts.type === 'js') {
-        expect(version).to.be.contain('js-ipfs version:')
-      }
-
-      if (opts.type === 'proc') {
-        expect(version).to.have.keys(['version', 'repo', 'commit'])
-      }
-    })
-  }
-})
-
 describe('`Factory spawn()` ', () => {
   describe('should return a node with api', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await create(opts)
-        const node = await factory.spawn()
+        const factory = await createFactory()
+        const node = await factory.spawn(opts)
         expect(node).to.exist()
         expect(node.api).to.exist()
         expect(node.api.id).to.exist()
@@ -78,8 +57,8 @@ describe('`Factory spawn()` ', () => {
   describe('should return a disposable node by default', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await create(opts)
-        const node = await factory.spawn()
+        const factory = await createFactory()
+        const node = await factory.spawn(opts)
 
         expect(node.started).to.be.true()
         expect(node.initialized).to.be.true()
@@ -93,12 +72,43 @@ describe('`Factory spawn()` ', () => {
   describe('should return a non disposable node', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await create({ ...opts, disposable: false })
-        const tmpDir = await factory.tmpDir()
-        const node = await factory.spawn({ repo: tmpDir })
+        const factory = await createFactory()
+        const tmpDir = await factory.tmpDir(opts)
+        const node = await factory.spawn({ ...opts, disposable: false, ipfsOptions: { repo: tmpDir } })
         expect(node.started).to.be.false()
         expect(node.initialized).to.be.false()
         expect(node.path).to.be.eq(tmpDir)
+      })
+    }
+  })
+
+  describe('`Factory.clean()` should stop all nodes', () => {
+    for (const opts of types) {
+      it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
+        const factory = createFactory(opts)
+        await factory.spawn(opts)
+        await factory.spawn(opts)
+        await factory.clean()
+        expect(factory.controllers[0].started).to.be.false()
+        expect(factory.controllers[1].started).to.be.false()
+      })
+    }
+  })
+
+  describe('`Factory.clean()` should not error when controller already stop', () => {
+    for (const opts of types) {
+      it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
+        const factory = createFactory(opts)
+        await factory.spawn(opts)
+        const c = await factory.spawn(opts)
+        await c.stop()
+        try {
+          await factory.clean()
+        } catch (error) {
+          expect(error).to.not.exist()
+        }
+        expect(factory.controllers[0].started).to.be.false()
+        expect(factory.controllers[1].started).to.be.false()
       })
     }
   })

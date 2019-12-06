@@ -6,17 +6,15 @@ const debug = require('debug')
 const kyOriginal = require('ky-universal').default
 
 const ky = kyOriginal.extend({ timeout: false })
-
 const daemonLog = {
   info: debug('ipfsd-ctl:client:stdout'),
   err: debug('ipfsd-ctl:client:stderr')
 }
 
-/** @typedef {import("./index").FactoryOptions} FactoryOptions */
-/** @typedef {import("./ipfsd-daemon")} Daemon */
-/** @typedef {import("ipfs")} IPFS */
+/** @typedef {import("./index").ControllerOptions} ControllerOptions */
+
 /**
- * Creates an instance of Client.
+ * Controller for remote nodes
  * @class
  */
 class Client {
@@ -24,7 +22,7 @@ class Client {
    * @constructor
    * @param {string} baseUrl
    * @param {Object} remoteState
-   * @param {FactoryOptions} options
+   * @param {ControllerOptions} options
    */
   constructor (baseUrl, remoteState, options) {
     this.opts = options
@@ -35,14 +33,9 @@ class Client {
     this.started = remoteState.started
     this.disposable = remoteState.disposable
     this.clean = remoteState.clean
-    this.apiAddr = null
-    this.gatewayAddr = null
     this.api = null
-
-    if (this.started) {
-      this._setApi(remoteState.apiAddr)
-      this._setGateway(remoteState.gatewayAddr)
-    }
+    this.apiAddr = this._setApi(remoteState.apiAddr)
+    this.gatewayAddr = this._setGateway(remoteState.gatewayAddr)
   }
 
   /**
@@ -52,7 +45,7 @@ class Client {
   _setApi (addr) {
     if (addr) {
       this.apiAddr = multiaddr(addr)
-      this.api = (this.opts.ipfsHttp.ref)(addr)
+      this.api = (this.opts.ipfsHttpModule.ref)(addr)
       this.api.apiHost = this.apiAddr.nodeAddress().address
       this.api.apiPort = this.apiAddr.nodeAddress().port
     }
@@ -74,18 +67,19 @@ class Client {
    * Initialize a repo.
    *
    * @param {Object} [initOptions] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
-   * @returns {Promise<Daemon>}
+   * @returns {Promise<Client>}
    */
   async init (initOptions) {
     if (this.initialized) {
-      this.clean = false
       return this
     }
 
     const opts = merge(
       {
         emptyRepo: false,
-        bits: 2048
+        bits: this.opts.test ? 1024 : 2048,
+        profiles: this.opts.test ? ['test'] : []
+
       },
       typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
       typeof initOptions === 'boolean' ? {} : initOptions
@@ -105,7 +99,7 @@ class Client {
    * If the node was marked as `disposable` this will be called
    * automatically when the process is exited.
    *
-   * @returns {Promise<Daemon>}
+   * @returns {Promise<Client>}
    */
   async cleanup () {
     if (this.clean) {
@@ -123,38 +117,32 @@ class Client {
   /**
    * Start the daemon.
    *
-   * @returns {Promise<IPFS>}
+   * @returns {Promise<Client>}
    */
   async start () {
-    if (this.started) {
-      return this.api
+    if (!this.started) {
+      const res = await ky.post(
+              `${this.baseUrl}/start`,
+              { searchParams: { id: this.id } }
+      ).json()
+
+      this._setApi(res.apiAddr)
+      this._setGateway(res.gatewayAddr)
+
+      this.started = true
     }
 
-    const res = await ky.post(
-        `${this.baseUrl}/start`,
-        { searchParams: { id: this.id } }
-    ).json()
-    this.started = true
-
-    const apiAddr = res ? res.apiAddr : ''
-    const gatewayAddr = res ? res.gatewayAddr : ''
-
-    if (apiAddr) {
-      this._setApi(apiAddr)
-    }
-
-    if (gatewayAddr) {
-      this._setGateway(gatewayAddr)
-    }
-    daemonLog.info(await this.api.id())
-
-    return this.api
+    // Add `peerId`
+    const id = await this.api.id()
+    this.api.peerId = id
+    daemonLog.info(id)
+    return this
   }
 
   /**
    * Stop the daemon.
    *
-   * @returns {Promise<Daemon>}
+   * @returns {Promise<Client>}
    */
   async stop () {
     if (!this.started) {

@@ -9,7 +9,7 @@ chai.use(dirtyChai)
 
 const { isEnvWithDom } = require('ipfs-utils/src/env')
 const { findBin, tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
-const { create, createNode } = require('../src')
+const { createFactory, createController } = require('../src')
 
 describe('utils browser version', function () {
   if (isEnvWithDom) {
@@ -32,14 +32,15 @@ describe('utils browser version', function () {
     })
 
     it('removeRepo should work', async () => {
-      const node = await createNode({
+      const ctl = await createController({
+        test: true,
         type: 'proc',
         disposable: false,
         ipfsOptions: { repo: 'ipfs_test_remove' }
       })
-      await node.init()
-      await node.start()
-      await node.stop()
+      await ctl.init()
+      await ctl.start()
+      await ctl.stop()
       await removeRepo('ipfs_test_remove')
       expect(await repoExists('ipfs_test_remove')).to.be.false()
       expect(await repoExists('ipfs_test_remove/keys')).to.be.false()
@@ -49,8 +50,8 @@ describe('utils browser version', function () {
 
     describe('repoExists', () => {
       it('should resolve true when repo exists', async () => {
-        const f = create({ type: 'proc' })
-        const node = await f.spawn({ repo: 'ipfs_test' })
+        const f = createFactory({ test: true })
+        const node = await f.spawn({ type: 'proc', ipfsOptions: { repo: 'ipfs_test' } })
         expect(await repoExists('ipfs_test')).to.be.true()
         await node.stop()
       })

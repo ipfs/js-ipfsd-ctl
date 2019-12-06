@@ -4,7 +4,7 @@
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const { isNode, isBrowser, isWebWorker } = require('ipfs-utils/src/env')
-const { createNode, createTestsNode, createTestsInterface, createServer } = require('../src')
+const { createFactory, createController, createServer } = require('../src')
 const Client = require('../src/ipfsd-client')
 const Daemon = require('../src/ipfsd-daemon')
 const Proc = require('../src/ipfsd-in-proc')
@@ -12,9 +12,9 @@ const Proc = require('../src/ipfsd-in-proc')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-describe('`createNode` should return the correct class', () => {
+describe('`createController` should return the correct class', () => {
   it('for type `js` ', async () => {
-    const f = await createNode({ type: 'js', disposable: false })
+    const f = await createController({ type: 'js', disposable: false })
 
     if (!isNode) {
       expect(f).to.be.instanceOf(Client)
@@ -23,7 +23,7 @@ describe('`createNode` should return the correct class', () => {
     }
   })
   it('for type `go` ', async () => {
-    const f = await createNode({ type: 'go', disposable: false })
+    const f = await createController({ type: 'go', disposable: false })
 
     if (!isNode) {
       expect(f).to.be.instanceOf(Client)
@@ -32,50 +32,50 @@ describe('`createNode` should return the correct class', () => {
     }
   })
   it('for type `proc` ', async () => {
-    const f = await createNode({ type: 'proc', disposable: false })
+    const f = await createController({ type: 'proc', disposable: false })
 
     expect(f).to.be.instanceOf(Proc)
   })
 
   it('for remote', async () => {
-    const f = await createNode({ remote: true, disposable: false })
+    const f = await createController({ remote: true, disposable: false })
 
     expect(f).to.be.instanceOf(Client)
   })
 })
 
 const types = [
-  { type: 'js' },
-  { type: 'go' },
-  { type: 'proc' },
-  { type: 'js', remote: true },
-  { type: 'go', remote: true }
+  { type: 'js', test: true },
+  { type: 'go', test: true },
+  { type: 'proc', test: true },
+  { type: 'js', test: true, remote: true },
+  { type: 'go', test: true, remote: true }
 ]
 
-describe('`createNodeTests` should return daemon with peerId when started', () => {
+describe('`createController` should return daemon with peerId when started', () => {
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const node = await createTestsNode(opts)
+      const node = await createController(opts)
       expect(node.api.peerId).to.exist()
       await node.stop()
     })
   }
 })
 
-describe('`createNodeTests` should return daemon with test profile', () => {
+describe('`createController({test: true})` should return daemon with test profile', () => {
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const node = await createTestsNode(opts)
+      const node = await createController(opts)
       expect(await node.api.config.get('Bootstrap')).to.be.empty()
       await node.stop()
     })
   }
 })
 
-describe('`createNodeTests` should return daemon with correct config', () => {
+describe('`createController({test: true})` should return daemon with correct config', () => {
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const node = await createTestsNode(opts)
+      const node = await createController(opts)
       const swarm = await node.api.config.get('Addresses.Swarm')
 
       if ((isBrowser || isWebWorker) && opts.type !== 'proc') {
@@ -100,38 +100,13 @@ describe('`createNodeTests` should return daemon with correct config', () => {
   }
 })
 
-describe('`createTestsInterface.node()` should return daemon with test profile', () => {
+describe('`createFactory({test: true})` should return daemon with test profile', () => {
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const tests = createTestsInterface(opts)
-      const node = await tests.node()
+      const factory = createFactory({ test: true })
+      const node = await factory.spawn(opts)
       expect(await node.api.config.get('Bootstrap')).to.be.empty()
-      await node.stop()
-    })
-  }
-})
-
-describe('`createTestsInterface.setup()` should return api with test profile', () => {
-  for (const opts of types) {
-    it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const tests = createTestsInterface(opts)
-      const api = await tests.setup()
-      expect(await api.config.get('Bootstrap')).to.be.empty()
-      await tests.teardown()
-      expect(tests.nodes[0].started).to.be.false()
-    })
-  }
-})
-
-describe('`createTestsInterface.teardown()` should stop all nodes', () => {
-  for (const opts of types) {
-    it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const tests = createTestsInterface(opts)
-      await tests.setup()
-      await tests.setup()
-      await tests.teardown()
-      expect(tests.nodes[0].started).to.be.false()
-      expect(tests.nodes[1].started).to.be.false()
+      await factory.clean()
     })
   }
 })

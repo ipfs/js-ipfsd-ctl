@@ -1,4 +1,3 @@
-/* eslint-disable no-async-promise-executor */
 'use strict'
 
 const multiaddr = require('multiaddr')
@@ -10,7 +9,7 @@ const nanoid = require('nanoid')
 const path = require('path')
 const os = require('os')
 const tempWrite = require('temp-write')
-const { checkForRunningApi, repoExists } = require('./utils')
+const { checkForRunningApi, repoExists, tmpDir, defaultRepo } = require('./utils')
 
 const daemonLog = {
   info: debug('ipfsd-ctl:daemon:stdout'),
@@ -21,31 +20,29 @@ function translateError (err) {
   // get the actual error message to be the err.message
   err.message = `${err.stdout} \n\n ${err.stderr} \n\n ${err.message} \n\n`
 
-  throw err
+  return err
 }
 
-/** @typedef {import("./index").FactoryOptions} FactoryOptions */
-/** @typedef {import("ipfs")} IPFS */
+/** @typedef {import("./index").ControllerOptions} ControllerOptions */
 
 /**
- * ipfsd for a go-ipfs or js-ipfs daemon
- * Create a new node.
+ * Controller for daemon nodes
  * @class
  *
  */
 class Daemon {
   /**
    * @constructor
-   * @param {FactoryOptions} [opts]
+   * @param {ControllerOptions} [opts]
    */
   constructor (opts) {
+    /** @type ControllerOptions */
     this.opts = opts
     // make sure we have real paths
-    this.opts.ipfsHttp.path = fs.realpathSync(this.opts.ipfsHttp.path)
-    this.opts.ipfsApi.path = fs.realpathSync(this.opts.ipfsApi.path)
+    this.opts.ipfsHttpModule.path = fs.realpathSync(this.opts.ipfsHttpModule.path)
     this.opts.ipfsBin = fs.realpathSync(this.opts.ipfsBin)
 
-    this.path = this.opts.ipfsOptions.repo
+    this.path = this.opts.ipfsOptions.repo || (opts.disposable ? tmpDir(opts.type) : defaultRepo(opts.type))
     this.exec = this.opts.ipfsBin
     this.env = merge({ IPFS_PATH: this.path }, this.opts.env)
     this.disposable = this.opts.disposable
@@ -64,7 +61,7 @@ class Daemon {
    */
   _setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = require(this.opts.ipfsHttp.path)(addr)
+    this.api = require(this.opts.ipfsHttpModule.path)(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
@@ -95,7 +92,8 @@ class Daemon {
     const opts = merge(
       {
         emptyRepo: false,
-        bits: 2048
+        bits: this.opts.test ? 1024 : 2048,
+        profiles: this.opts.test ? ['test'] : []
       },
       typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
       typeof initOptions === 'boolean' ? {} : initOptions
@@ -132,8 +130,10 @@ class Daemon {
 
     // default-config only for Go
     if (this.opts.type === 'go') {
-      const conf = await this._getConfig()
-      await this._replaceConfig(merge(conf, this.opts.ipfsOptions.config))
+      await this._replaceConfig(merge(
+        await this._getConfig(),
+        this.opts.ipfsOptions.config
+      ))
     }
 
     this.clean = false
@@ -158,9 +158,9 @@ class Daemon {
   /**
    * Start the daemon.
    *
-   * @return {Promise<IPFS>}
+   * @return {Promise<Daemon>}
    */
-  start () {
+  async start () {
     const args = ['daemon']
     const opts = this.opts.ipfsOptions
     // add custom args
@@ -186,47 +186,47 @@ class Daemon {
     const api = checkForRunningApi(this.path)
     if (api) {
       this._setApi(api)
-      this.started = true
-      return this.api
+    } else {
+      let output = ''
+      const ready = new Promise((resolve, reject) => {
+        this.subprocess = execa(this.exec, args, {
+          env: this.env
+        })
+        this.subprocess.stderr.on('data', data => daemonLog.err(data.toString()))
+        this.subprocess.stdout.on('data', data => daemonLog.info(data.toString()))
+
+        const readyHandler = data => {
+          output += data.toString()
+          const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
+          const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
+
+          if (apiMatch && apiMatch.length > 0) {
+            this._setApi(apiMatch[1])
+          }
+
+          if (gwMatch && gwMatch.length > 0) {
+            this._setGateway(gwMatch[1])
+          }
+
+          if (output.match(/(?:daemon is running|Daemon is ready)/)) {
+            // we're good
+            this.started = true
+            this.subprocess.stdout.off('data', readyHandler)
+            resolve(this.api)
+          }
+        }
+        this.subprocess.stdout.on('data', readyHandler)
+        this.subprocess.catch(err => reject(translateError(err)))
+      })
+      await ready
     }
 
-    let output = ''
-    return new Promise(async (resolve, reject) => {
-      this.subprocess = execa(this.exec, args, {
-        env: this.env
-      })
-      this.subprocess.stderr.on('data', data => daemonLog.err(data.toString()))
-      this.subprocess.stdout.on('data', data => daemonLog.info(data.toString()))
+    this.started = true
+    // Add `peerId`
+    const id = await this.api.id()
+    this.api.peerId = id
 
-      const readyHandler = data => {
-        output += data.toString()
-        const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
-        const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
-
-        if (apiMatch && apiMatch.length > 0) {
-          this._setApi(apiMatch[1])
-        }
-
-        if (gwMatch && gwMatch.length > 0) {
-          this._setGateway(gwMatch[1])
-        }
-
-        if (output.match(/(?:daemon is running|Daemon is ready)/)) {
-          // we're good
-          this.started = true
-          this.subprocess.stdout.off('data', readyHandler)
-          resolve(this.api)
-        }
-      }
-      this.subprocess.stdout.on('data', readyHandler)
-
-      try {
-        await this.subprocess
-          .catch(translateError)
-      } catch (err) {
-        reject(err)
-      }
-    })
+    return this
   }
 
   /**

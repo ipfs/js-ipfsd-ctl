@@ -2,27 +2,26 @@
 
 const multiaddr = require('multiaddr')
 const merge = require('merge-options')
-const { repoExists, removeRepo, checkForRunningApi } = require('./utils')
+const { repoExists, removeRepo, checkForRunningApi, tmpDir, defaultRepo } = require('./utils')
 const debug = require('debug')
 
 const daemonLog = {
   info: debug('ipfsd-ctl:proc:stdout'),
   err: debug('ipfsd-ctl:proc:stderr')
 }
-/** @ignore @typedef {import("./index").IpfsOptions} IpfsOptions */
-/** @ignore @typedef {import("./index").FactoryOptions} FactoryOptions */
+/** @typedef {import("./index").ControllerOptions} ControllerOptions */
 
 /**
- * Factory to spawn in-proc JS-IPFS instances (aka in process nodes)
+ * Controller for in process nodes
  */
 class InProc {
   /**
-   * @param {FactoryOptions} opts
+   * @param {ControllerOptions} opts
    */
   constructor (opts) {
-    /** @type FactoryOptions */
+    /** @type ControllerOptions */
     this.opts = opts
-    this.path = this.opts.ipfsOptions.repo
+    this.path = this.opts.ipfsOptions.repo || (opts.disposable ? tmpDir(opts.type) : defaultRepo(opts.type))
     this.disposable = opts.disposable
     this.initialized = false
     this.started = false
@@ -34,12 +33,14 @@ class InProc {
 
   async setExec () {
     if (this.api !== null) {
-      return this
+      return
     }
 
-    const IPFS = this.opts.ipfsApi.ref
-    this.api = await IPFS.create(merge({ silent: true }, this.opts.ipfsOptions))
-    return this
+    const IPFS = this.opts.ipfsModule.ref
+    this.api = await IPFS.create(merge({
+      silent: true,
+      repo: this.path
+    }, this.opts.ipfsOptions))
   }
 
   /**
@@ -48,7 +49,7 @@ class InProc {
    */
   _setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = (this.opts.ipfsHttp.ref)(addr)
+    this.api = (this.opts.ipfsHttpModule.ref)(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
@@ -67,7 +68,7 @@ class InProc {
    * Initialize a repo.
    *
    * @param {Object} [initOptions={}] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
-   * @returns {Promise}
+   * @returns {Promise<InProc>}
    */
   async init (initOptions) {
     this.initialized = await repoExists(this.path)
@@ -80,16 +81,15 @@ class InProc {
     const opts = merge(
       {
         emptyRepo: false,
-        bits: 2048
+        bits: this.opts.test ? 1024 : 2048,
+        profiles: this.opts.test ? ['test'] : []
       },
       typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
       typeof initOptions === 'boolean' ? {} : initOptions
     )
 
     await this.setExec()
-    if (!this.opts.ipfsOptions.init) {
-      await this.api.init(opts)
-    }
+    await this.api.init(opts)
     this.clean = false
     this.initialized = true
     return this
@@ -100,7 +100,7 @@ class InProc {
    * If the node was marked as `disposable` this will be called
    * automatically when the process is exited.
    *
-   * @returns {Promise}
+   * @returns {Promise<InProc>}
    */
   async cleanup () {
     if (!this.clean) {
@@ -113,31 +113,30 @@ class InProc {
   /**
    * Start the daemon.
    *
-   * @returns {Promise}
+   * @returns {Promise<InProc>}
    */
   async start () {
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
     if (api) {
       this._setApi(api)
-      this.started = true
-      return this.api
-    }
-
-    await this.setExec()
-    if (!this.opts.ipfsOptions.start) {
+    } else {
+      await this.setExec()
       await this.api.start()
     }
-    this.started = true
 
-    daemonLog.info(await this.api.id())
-    return this.api
+    this.started = true
+    // Add `peerId`
+    const id = await this.api.id()
+    this.api.peerId = id
+    daemonLog.info(id)
+    return this
   }
 
   /**
    * Stop the daemon.
    *
-   * @returns {Promise}
+   * @returns {Promise<InProc>}
    */
   async stop () {
     if (!this.api || !this.started) {
@@ -163,42 +162,9 @@ class InProc {
   }
 
   /**
-   * Call `ipfs config`
-   *
-   * If no `key` is passed, the whole config is returned as an object.
-   *
-   * @param {string} [key] - A specific config to retrieve.
-   * @returns {Promise}
-   */
-  getConfig (key) {
-    return this.api.config.get(key)
-  }
-
-  /**
-   * Set a config value.
-   *
-   * @param {string} key
-   * @param {string} value
-   * @returns {Promise}
-   */
-  setConfig (key, value) {
-    return this.api.config.set(key, value)
-  }
-
-  /**
-   * Replace the current config with the provided one
-   *
-   * @param {Object} config
-   * @return {Promise}
-   */
-  replaceConfig (config) {
-    return this.api.config.replace(config)
-  }
-
-  /**
    * Get the version of ipfs
    *
-   * @returns {Promise}
+   * @returns {Promise<Object>}
    */
   async version () {
     await this.setExec()

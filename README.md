@@ -40,9 +40,8 @@ npm install --save ipfsd-ctl
 ```js
 // Start a disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
-
-const { create } = require('ipfsd-ctl')
-const factory = create()
+const Ctl = require('ipfsd-ctl')
+const factory = Ctl.createFactory()
 
 const ipfsd = await factory.spawn()
 const id = await ipfsd.api.id()
@@ -58,14 +57,14 @@ await ipfsd.stop()
 // Start a remote disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const { create, createServer } = require('ipfsd-ctl')
+const Ctl = require('ipfsd-ctl')
 
 const port = 9090
-const server = createServer(port)
-const f = create({ remote: true, port: port })
+const server = Ctl.createServer(port)
+const factory = Ctl.createFactory({ remote: true, endpoint: `http://localhost:${port}` })
 
 await server.start()
-const ipfsd = await f.spawn()
+const ipfsd = await factory.spawn()
 const id = await ipfsd.api.id()
 
 console.log(id)
@@ -83,41 +82,22 @@ await server.stop()
 
 ## API
 
-### `create([options])`
-Creates a factory.
+### `createFactory([options])`
+Creates a factory that can spawn multiple controllers and pre-define options for them.
 
 - `options` **[FactoryOptions](#FactoryOptions)** Factory options.
 
 Returns a **[Factory](#factory)**
 
-### `createNode([options])`
-Creates a node.
+### `createController([options])`
+Creates a controller.
 
-- `options` **[FactoryOptions](#FactoryOptions)** Factory options.
+- `options` **[ControllerOptions](#ControllerOptions)** Factory options.
 
-Returns a **[Node](#Node)**
-
-### `createNodeTests([options])`
-Creates a node with custom configuration for tests.
-
-- `options` **[FactoryOptions](#FactoryOptions)** Factory options.
-
-Returns a **[Node](#Node)**
-
-### `createTestsInterface([options])`
-Creates an interface to setup and teardown IPFS nodes for tests.
-
-- `options` **[FactoryOptions](#FactoryOptions)** Factory options.
-
-Returns a **[TestsInterface](#TestsInterface)**
-#### TestsInterface
-`nodes` **Array** List of the created controlled nodes.
-`node()` **Function** Creates a standalone node, this node will **NOT** be stopped by `teardown()`.
-`setup(options)` **Function(**[FactoryOptions](#FactoryOptions)**)** Creates a controlled node.
-`teardown()` **Function** Stops all controlled nodes created by `setup`
+Returns a **[Controller](#Controller)**
 
 ### `createServer([options])`
-Create an Endpoint Server.
+Create an Endpoint Server. This server is used by a client node to control a remote node. Example: Spawning a go-ipfs node from a browser.
 
 - `options` **[Object]** Factory options. Defaults to: `{ port: 43134 }`
   - `port` **number** Port to start the server on.
@@ -126,15 +106,13 @@ Returns a **Server**
 
 ### Factory
 
+#### `controllers`
+**Controller[]** List of all the controllers spawned.
+
 #### `tmpDir()`
 Create a temporary repo to create controllers manually.
 
 Returns **Promise&lt;String>** - Path to the repo.
-
-#### `version()`
-Get the version of the IPFS node.
-
-Returns **Promise&lt;String>**
 
 #### `spawn([options])`
 Creates a controller for a IPFS node.
@@ -142,12 +120,17 @@ Creates a controller for a IPFS node.
 
 Returns **Promise&lt;[Controller](#controller)>**
 
-### Node
-Class node controller for a IPFS node.
+#### `clean()`
+Cleans all controllers spawned.
 
-#### `new Node(options)`
+Returns **Promise&lt;[Controller](#controller)[]>**
 
-- `options` **[FactoryOptions](#FactoryOptions)**
+### Controller
+Class controller for a IPFS node.
+
+#### `new Controller(options)`
+
+- `options` **[ControllerOptions](#ControllerOptions)**
 
 #### `path`
 **String** Repo path.
@@ -210,29 +193,41 @@ Get the version of the controlled node.
 
 Returns **Promise&lt;string>**
 
+
 ### FactoryOptions
 
 Type: [Object]
 
 #### Properties
+-   `endpoint` **[string]** Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134').
+-   `test` **[boolean]** Flag to activate custom config for tests.
+-   `js` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `go` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `proc` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+
+
+### ControllerOptions
+
+Type: [Object]
+
+#### Properties
+-   `test` **[boolean]** Flag to activate custom config for tests.
 -   `remote` **[boolean]** Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
--   `host` **[string]** Remote endpoint host. (Defaults to localhost)
--   `port` **[number]** Remote endpoint port. (Defaults to 43134)
--   `secure` **[string]** Remote endpoint uses http or https. (Defaults to false)
 -   `disposable` **[boolean]** A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
--   `type` **[string]** The daemon type, see below the options:-   go - spawn go-ipfs daemon
+-   `type` **[string]** The daemon type, see below the options:
+    -   go - spawn go-ipfs daemon
     -   js - spawn js-ipfs daemon
-    -   proc - spawn in-process js-ipfs instance
+    -   proc - spawn in-process js-ipfs node
 -   `env` **[Object]** Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
 -   `args` **[Array]** Custom cli args.
--   `ipfsHttp` **[Object]** Setup IPFS HTTP client to be used by ctl.
-    -   `ipfsHttp.ref` **[Object]** Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
-    -   `ipfsHttp.path` **[string]** Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
--   `ipfsApi` **[Object]** Setup IPFS API to be used by ctl.
-    -   `ipfsApi.ref` **[Object]** Reference to a IPFS API object. (defaults to the local require(`ipfs`))
-    -   `ipfsApi.path` **[string]** Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
+-   `ipfsHttpModule` **[Object]** Define the `ipfs-http-client` package to be used by ctl. Both `ref` and `path` should be specified to make sure all node types (daemon, remote daemon, browser in process node, etc) use the correct version.
+    -   `ipfsHttpModule.ref` **[Object]** Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
+    -   `ipfsHttpModule.path` **[string]** Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
+-   `ipfsModule` **[Object]** Define the `ipfs` package to be used by ctl. Both `ref` and `path` should be specified to make sure all node types (daemon, remote daemon, browser in process node, etc) use the correct version.
+    -   `ipfsModule.ref` **[Object]** Reference to a IPFS API object. (defaults to the local require(`ipfs`))
+    -   `ipfsModule.path` **[string]** Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
 -   `ipfsBin` **[string]** Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
--   `ipfsOptions` **[IpfsOptions]** Options for the IPFS instance
+-   `ipfsOptions` **[IpfsOptions]** Options for the IPFS instance same as https://github.com/ipfs/js-ipfs#ipfs-constructor. `proc` nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.
 
 
 ## ipfsd-ctl environment variables

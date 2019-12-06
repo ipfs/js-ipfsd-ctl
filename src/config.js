@@ -2,7 +2,7 @@
 
 const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
 
-module.exports = ({ type, remote }) => {
+module.exports = ({ type }) => {
   let swarm
 
   // from the browser tell remote nodes to listen over WS

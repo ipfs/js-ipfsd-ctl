@@ -12,7 +12,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const { findBin, tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
-const { create, createNode } = require('../src')
+const { createFactory, createController } = require('../src')
 
 describe('utils node version', function () {
   describe('findBin', () => {
@@ -44,8 +44,8 @@ describe('utils node version', function () {
       expect(checkForRunningApi()).to.be.null()
     })
     it('should return path to api with running node', async () => {
-      const node = await createNode()
-      expect(checkForRunningApi(node.path)).to.be.eq('/ip4/127.0.0.1/tcp/5001')
+      const node = await createController({ test: true })
+      expect(checkForRunningApi(node.path)).to.be.contain('/ip4/127.0.0.1/tcp/')
       await node.stop()
     })
   })
@@ -57,12 +57,13 @@ describe('utils node version', function () {
   })
 
   it('removeRepo should work', async () => {
-    const f = create({
-      type: 'proc',
-      disposable: false
-    })
+    const f = createFactory({ test: true })
     const dir = await f.tmpDir()
-    const node = await f.spawn({ repo: dir })
+    const node = await f.spawn({
+      type: 'proc',
+      disposable: false,
+      ipfsOptions: { repo: dir }
+    })
     await node.init()
     await node.start()
     await node.stop()
@@ -72,7 +73,7 @@ describe('utils node version', function () {
 
   describe('repoExists', () => {
     it('should resolve true when repo exists', async () => {
-      const node = await createNode({ type: 'proc' })
+      const node = await createController({ type: 'proc', test: true })
       expect(await repoExists(node.path)).to.be.true()
       await node.stop()
     })
