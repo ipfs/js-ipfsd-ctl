@@ -70,10 +70,6 @@ class FactoryInProc {
       delete daemonOptions.config.Addresses
     }
 
-    if (typeof daemonOptions.exec !== 'function') {
-      throw new Error('\'type\' proc requires \'exec\' to be a coderef')
-    }
-
     const node = new InProc(daemonOptions)
 
     if (daemonOptions.init) {
