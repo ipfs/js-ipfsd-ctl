@@ -5,7 +5,7 @@ const chai = require('chai')
 const merge = require('merge-options')
 const dirtyChai = require('dirty-chai')
 const chaiPromise = require('chai-as-promised')
-const { createFactory } = require('../src')
+const { createFactory, createController } = require('../src')
 const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
 
@@ -48,7 +48,7 @@ describe('Controller API', () => {
     describe('should work with a initialized repo', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(merge(opts, { ipfsOptions: { repo: factory.controllers[0].path } }))
+          const ctl = await createController(merge(opts, { ipfsOptions: { repo: factory.controllers[0].path } }))
 
           await ctl.init()
           expect(ctl.initialized).to.be.true()
@@ -129,7 +129,7 @@ describe('Controller API', () => {
           if ((isBrowser || isWebWorker) && opts.type === 'proc') {
             return this.skip() // browser in proc can't attach to running node
           }
-          const ctl = await factory.spawn(merge(
+          const ctl = await createController(merge(
             opts,
             { ipfsOptions: { repo: factory.controllers[0].path } }
           ))
@@ -203,7 +203,8 @@ describe('Controller API', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const ctl = await factory.spawn(opts)
-
+          await ctl.init()
+          await ctl.start()
           await ctl.stop()
           expect(ctl.started).to.be.false()
           expect(ctl.clean).to.be.true()
@@ -215,7 +216,8 @@ describe('Controller API', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const ctl = await factory.spawn(opts)
-
+          await ctl.init()
+          await ctl.start()
           await ctl.stop()
           if (ctl.subprocess) {
             expect(ctl.subprocess.stderr.listeners('data')).to.be.empty()

@@ -139,7 +139,7 @@ class InProc {
    * @returns {Promise<InProc>}
    */
   async stop () {
-    if (!this.api || !this.started) {
+    if (!this.started) {
       return this
     }
 

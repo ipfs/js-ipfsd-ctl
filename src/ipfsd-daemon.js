@@ -238,9 +238,6 @@ class Daemon {
     if (!this.started) {
       return this
     }
-    if (!this.subprocess) {
-      return this
-    }
 
     await this.api.stop()
     this.subprocess.stderr.removeAllListeners()
@@ -250,7 +247,6 @@ class Daemon {
     if (this.disposable) {
       await this.cleanup()
     }
-
     return this
   }
 
