@@ -6,50 +6,50 @@ stages:
   - cov
 
 node_js:
-  - '10'
+  # - '10'
   - '12'
 
 os:
   - linux
-  - osx
-  - windows
+  # - osx
+  # - windows
 
-script: npx nyc -s npm run test:node -- --bail --timeout 60000
-after_success: npx nyc report --reporter=text-lcov > coverage.lcov && npx codecov
+script: npx nyc -s npm run test:node -- --timeout 120000
+# after_success: npx nyc report --reporter=text-lcov > coverage.lcov && npx codecov
 
 jobs:
   include:
-    - stage: check
-      script:
-        - npx aegir build --bundlesize
-        - npx aegir commitlint --travis
-        - npx aegir dep-check
-        - npm run lint
+    # - stage: check
+    #   script:
+    #     - npx aegir build --bundlesize
+    #     - npx aegir commitlint --travis
+    #     - npx aegir dep-check
+    #     - npm run lint
 
-    - stage: test
-      name: chrome
-      addons:
-        chrome: stable
-      script:
-        - npx aegir test -t browser -t webworker --bail --timeout 60000
+    # - stage: test
+    #   name: chrome
+    #   addons:
+    #     chrome: stable
+    #   script:
+    #     - npx aegir test -t browser -t webworker --bail --timeout 60000
 
-    - stage: test
-      name: firefox
-      addons:
-        firefox: latest
-      script:
-        - npx aegir test -t browser -t webworker --bail --timeout 60000 -- --browsers FirefoxHeadless
+    # - stage: test
+    #   name: firefox
+    #   addons:
+    #     firefox: latest
+    #   script:
+    #     - npx aegir test -t browser -t webworker --bail --timeout 60000 -- --browsers FirefoxHeadless
 
-    - stage: test
-      name: electron-main
-      os: osx
-      script:
-        - npx aegir test -t electron-main --bail --timeout 60000
+    # - stage: test
+    #   name: electron-main
+    #   os: osx
+    #   script:
+    #     - npx aegir test -t electron-main --bail --timeout 60000
 
-    - stage: test
-      name: electron-renderer
-      os: osx
-      script:
-        - npx aegir test -t electron-renderer --bail --timeout 60000
+    # - stage: test
+    #   name: electron-renderer
+    #   os: osx
+    #   script:
+    #     - npx aegir test -t electron-renderer --bail --timeout 60000
 notifications:
   email: false
