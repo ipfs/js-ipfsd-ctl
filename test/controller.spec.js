@@ -24,12 +24,9 @@ const types = [
 describe('Controller API', () => {
   const factory = createFactory({ test: true })
 
-  before(() => factory.spawn())
+  before(() => factory.spawn({ type: 'js' }))
 
-  after(function () {
-    this.timeout(60000)
-    return factory.clean()
-  })
+  after(() => factory.clean())
 
   describe('init', () => {
     describe('should work with defaults', () => {
