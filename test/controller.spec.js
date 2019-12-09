@@ -21,7 +21,7 @@ const types = [
   { type: 'go', remote: true, test: true, ipfsOptions: { init: false, start: false } }
 ]
 
-describe('Controller API', () => {
+describe.only('Controller API', () => {
   const factory = createFactory({ test: true })
 
   before(() => factory.spawn())

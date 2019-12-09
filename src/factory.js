@@ -148,7 +148,10 @@ class Factory {
   clean () {
     return Promise.all(this.controllers.map(n => {
       if (n.started) {
-        return n.stop()
+        console.log('stopping', n.opts.type)
+        return n.stop().then(n => {
+          console.log('stop', n.opts.type)
+        })
       }
       return n
     }))
