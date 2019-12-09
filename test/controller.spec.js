@@ -26,7 +26,10 @@ describe.only('Controller API', () => {
 
   before(() => factory.spawn())
 
-  after(() => factory.clean())
+  after(function () {
+    this.timeout(60000)
+    return factory.clean()
+  })
 
   describe('init', () => {
     describe('should work with defaults', () => {
