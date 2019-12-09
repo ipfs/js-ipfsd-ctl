@@ -140,7 +140,6 @@ class InProc {
    */
   async stop () {
     if (!this.started) {
-      console.log('skip proc')
       return this
     }
 
@@ -150,7 +149,6 @@ class InProc {
     if (this.disposable) {
       await this.cleanup()
     }
-    console.log('stop proc')
     return this
   }
 

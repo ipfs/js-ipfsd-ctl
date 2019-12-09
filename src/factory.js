@@ -146,15 +146,7 @@ class Factory {
    * @returns {Promise<ControllerDaemon[]>}
    */
   clean () {
-    return Promise.all(this.controllers.map(n => {
-      if (n.started) {
-        console.log('stopping', n.opts.type)
-        return n.stop().then(n => {
-          console.log('stop', n.opts.type)
-        })
-      }
-      return n
-    }))
+    return Promise.all(this.controllers.map(n => n.stop()))
   }
 }
 

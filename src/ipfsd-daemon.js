@@ -236,11 +236,9 @@ class Daemon {
    */
   async stop () {
     if (!this.started) {
-      console.log('skip daemon')
       return this
     }
 
-    console.log('call stop daemon with api')
     await this.api.stop()
     this.subprocess.stderr.removeAllListeners()
     this.subprocess.stdout.removeAllListeners()
@@ -249,7 +247,6 @@ class Daemon {
     if (this.disposable) {
       await this.cleanup()
     }
-    console.log('stop daemon')
     return this
   }
 
