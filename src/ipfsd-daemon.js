@@ -236,6 +236,7 @@ class Daemon {
    */
   async stop () {
     if (!this.started) {
+      console.log('skip daemon')
       return this
     }
 
@@ -247,6 +248,7 @@ class Daemon {
     if (this.disposable) {
       await this.cleanup()
     }
+    console.log('stop daemon')
     return this
   }
 

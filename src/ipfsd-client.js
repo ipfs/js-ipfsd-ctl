@@ -146,6 +146,7 @@ class Client {
    */
   async stop () {
     if (!this.started) {
+      console.log('skip remote')
       return this
     }
 
@@ -158,6 +159,7 @@ class Client {
     if (this.disposable) {
       await this.cleanup()
     }
+    console.log('stop remote')
 
     return this
   }

@@ -146,7 +146,12 @@ class Factory {
    * @returns {Promise<ControllerDaemon[]>}
    */
   clean () {
-    return Promise.all(this.controllers.map(n => n.stop()))
+    return Promise.all(this.controllers.map(n => {
+      if (n.started) {
+        return n.stop()
+      }
+      return n
+    }))
   }
 }
 
