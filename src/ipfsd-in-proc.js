@@ -1,7 +1,7 @@
 'use strict'
 
 const multiaddr = require('multiaddr')
-const merge = require('merge-options')
+const merge = require('merge-options').bind({ ignoreUndefined: true })
 const { repoExists, removeRepo, checkForRunningApi, tmpDir, defaultRepo } = require('./utils')
 const debug = require('debug')
 

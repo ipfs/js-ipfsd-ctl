@@ -1,7 +1,7 @@
 'use strict'
 
 const multiaddr = require('multiaddr')
-const merge = require('merge-options')
+const merge = require('merge-options').bind({ ignoreUndefined: true })
 const debug = require('debug')
 const kyOriginal = require('ky-universal').default
 

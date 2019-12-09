@@ -1,5 +1,5 @@
 'use strict'
-const merge = require('merge-options')
+const merge = require('merge-options').bind({ ignoreUndefined: true })
 const kyOriginal = require('ky-universal').default
 const { tmpDir, findBin } = require('./utils')
 const { isNode } = require('ipfs-utils/src/env')

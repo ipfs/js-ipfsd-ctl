@@ -2,7 +2,7 @@
 
 const multiaddr = require('multiaddr')
 const fs = require('fs-extra')
-const merge = require('merge-options')
+const merge = require('merge-options').bind({ ignoreUndefined: true })
 const debug = require('debug')
 const execa = require('execa')
 const nanoid = require('nanoid')
