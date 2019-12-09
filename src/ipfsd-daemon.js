@@ -240,6 +240,7 @@ class Daemon {
       return this
     }
 
+    console.log('call stop daemon with api')
     await this.api.stop()
     this.subprocess.stderr.removeAllListeners()
     this.subprocess.stdout.removeAllListeners()
