@@ -82,10 +82,11 @@ await server.stop()
 
 ## API
 
-### `createFactory([options])`
+### `createFactory([options], [overrides])`
 Creates a factory that can spawn multiple controllers and pre-define options for them.
 
-- `options` **[FactoryOptions](#FactoryOptions)** Factory options.
+- `options` **[ControllerOptions](#ControllerOptions)** Controllers options.
+- `overrides` **[ControllerOptionsOverrides](#ControllerOptionsOverrides)** Pre-defined options overrides per controller type.
 
 Returns a **[Factory](#factory)**
 
@@ -123,7 +124,7 @@ Returns **Promise&lt;[Controller](#controller)>**
 #### `clean()`
 Cleans all controllers spawned.
 
-Returns **Promise&lt;[Controller](#controller)[]>**
+Returns **Promise&lt;[Factory](#factory)>**
 
 ### Controller
 Class controller for a IPFS node.
@@ -194,13 +195,11 @@ Get the version of the controlled node.
 Returns **Promise&lt;string>**
 
 
-### FactoryOptions
+### ControllerOptionsOverrides
 
 Type: [Object]
 
 #### Properties
--   `endpoint` **[string]** Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134').
--   `test` **[boolean]** Flag to activate custom config for tests.
 -   `js` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
 -   `go` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
 -   `proc` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.

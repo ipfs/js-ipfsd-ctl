@@ -8,11 +8,12 @@ const Factory = require('./factory')
 /**
  * Creates a factory
  *
- * @param {FactoryOptions} options
+ * @param {ControllerOptions} options
+ * @param {ControllerOptionsOverrides} overrides
  * @returns {Factory}
  */
-const createFactory = (options) => {
-  return new Factory(options)
+const createFactory = (options, overrides) => {
+  return new Factory(options, overrides)
 }
 
 /**
@@ -68,6 +69,7 @@ module.exports = {
  * @typedef {Object} ControllerOptions
  * @property {boolean} [test=false] - Flag to activate custom config for tests.
  * @property {boolean} [remote] - Use remote endpoint to spawn the controllers. Defaults to `true` when not in node.
+ * @property {string} [endpoint] - Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134').
  * @property {Boolean} [disposable=true] - A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
  * @property {string} [type] - The daemon type, see below the options:
  * - go - spawn go-ipfs daemon node
@@ -86,9 +88,7 @@ module.exports = {
  */
 
 /**
- * @typedef {Object} FactoryOptions
- * @property {string} [endpoint] - Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134').
- * @property {boolean} [test=false] - Flag to activate custom config for tests for all spawned controllers.
+ * @typedef {Object} ControllerOptionsOverrides
  * @property {ControllerOptions} [js] - Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
  * @property {ControllerOptions} [go] - Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
  * @property {ControllerOptions} [proc] - Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.

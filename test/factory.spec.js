@@ -98,11 +98,11 @@ describe('`Factory spawn()` ', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
         const factory = createFactory(opts)
-        await factory.spawn(opts)
-        await factory.spawn(opts)
+        const ctl1 = await factory.spawn(opts)
+        const ctl2 = await factory.spawn(opts)
         await factory.clean()
-        expect(factory.controllers[0].started).to.be.false()
-        expect(factory.controllers[1].started).to.be.false()
+        expect(ctl1.started).to.be.false()
+        expect(ctl2.started).to.be.false()
       })
     }
   })
@@ -111,16 +111,16 @@ describe('`Factory spawn()` ', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
         const factory = createFactory(opts)
-        await factory.spawn(opts)
-        const c = await factory.spawn(opts)
-        await c.stop()
+        const ctl1 = await factory.spawn(opts)
+        const ctl2 = await factory.spawn(opts)
+        await ctl2.stop()
         try {
           await factory.clean()
         } catch (error) {
           expect(error).to.not.exist()
         }
-        expect(factory.controllers[0].started).to.be.false()
-        expect(factory.controllers[1].started).to.be.false()
+        expect(ctl1.started).to.be.false()
+        expect(ctl2.started).to.be.false()
       })
     }
   })

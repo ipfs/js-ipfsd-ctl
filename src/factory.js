@@ -9,12 +9,13 @@ const ControllerProc = require('./ipfsd-in-proc')
 const testsConfig = require('./config')
 
 /** @typedef {import("./index").ControllerOptions} ControllerOptions */
-/** @typedef {import("./index").FactoryOptions} FactoryOptions */
+/** @typedef {import("./index").ControllerOptionsOverrides} ControllerOptionsOverrides */
 /** @typedef {import("./index").IpfsOptions} IpfsOptions */
 
 const ky = kyOriginal.extend({ timeout: false })
 const defaults = {
   remote: !isNode,
+  endpoint: 'http://localhost:43134',
   disposable: true,
   test: false,
   type: 'go',
@@ -38,17 +39,19 @@ const defaults = {
 class Factory {
   /**
    *
-   * @param {FactoryOptions} options
+   * @param {ControllerOptions} options
+   * @param {ControllerOptionsOverrides} overrides - Pre-defined overrides per controller type
    */
-  constructor (options = {}) {
-    /** @type FactoryOptions */
-    this.opts = merge({
-      test: false,
-      endpoint: 'http://localhost:43134',
-      js: merge(defaults, { test: options.test || false, type: 'js', ipfsBin: findBin('js') }),
-      go: merge(defaults, { test: options.test || false }),
-      proc: merge(defaults, { test: options.test || false, type: 'proc', ipfsBin: findBin('js') })
-    }, options)
+  constructor (options = {}, overrides = {}) {
+    /** @type ControllerOptions */
+    this.opts = merge(defaults, options)
+
+    /** @type ControllerOptionsOverrides */
+    this.overrides = merge({
+      js: merge(this.opts, { type: 'js', ipfsBin: findBin('js') }),
+      go: this.opts,
+      proc: merge(this.opts, { type: 'proc', ipfsBin: findBin('js') })
+    }, overrides)
 
     /** @type ControllerDaemon[] */
     this.controllers = []
@@ -64,10 +67,10 @@ class Factory {
    * @returns {Promise<String>}
    */
   async tmpDir (options) {
-    options = merge(defaults, options)
+    options = merge(this.opts, options)
     if (options.remote) {
       const res = await ky.get(
-        `${this.opts.endpoint}/util/tmp-dir`,
+        `${options.endpoint}/util/tmp-dir`,
         { searchParams: { type: options.type } }
       ).json()
 
@@ -79,13 +82,13 @@ class Factory {
 
   async _spawnRemote (options) {
     const res = await ky.post(
-      `${this.opts.endpoint}/spawn`,
+      `${options.endpoint}/spawn`,
       {
         json: { ...options, remote: false } // avoid recursive spawning
       }
     ).json()
     return new ControllerRemote(
-      this.opts.endpoint,
+      options.endpoint,
       res,
       options
     )
@@ -98,7 +101,7 @@ class Factory {
    */
   async spawn (options = { }) {
     const opts = merge(
-      this.opts[options.type || 'go'],
+      this.overrides[options.type || 'go'],
       options
     )
 
@@ -145,8 +148,10 @@ class Factory {
    * Stop all controllers
    * @returns {Promise<ControllerDaemon[]>}
    */
-  clean () {
-    return Promise.all(this.controllers.map(n => n.stop()))
+  async clean () {
+    await Promise.all(this.controllers.map(n => n.stop()))
+    this.controllers = []
+    return this
   }
 }
 
