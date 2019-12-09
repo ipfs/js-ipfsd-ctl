@@ -45,21 +45,21 @@ describe.only('Controller API', () => {
       }
     })
 
-    // describe('should work with a initialized repo', () => {
-    //   for (const opts of types) {
-    //     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-    //       const ctl = await createController(merge(opts, { ipfsOptions: { repo: factory.controllers[0].path } }))
+    describe('should work with a initialized repo', () => {
+      for (const opts of types) {
+        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
+          const ctl = await createController(merge(opts, { ipfsOptions: { repo: factory.controllers[0].path } }))
 
-    //       await ctl.init()
-    //       expect(ctl.initialized).to.be.true()
-    //       expect(ctl.clean).to.be.false()
-    //       expect(ctl.started).to.be.false()
-    //       if (!(isBrowser || isWebWorker) || opts.type === 'proc') {
-    //         expect(await repoExists(factory.controllers[0].path)).to.be.true()
-    //       }
-    //     })
-    //   }
-    // })
+          await ctl.init()
+          expect(ctl.initialized).to.be.true()
+          expect(ctl.clean).to.be.false()
+          expect(ctl.started).to.be.false()
+          if (!(isBrowser || isWebWorker) || opts.type === 'proc') {
+            expect(await repoExists(factory.controllers[0].path)).to.be.true()
+          }
+        })
+      }
+    })
 
     describe('should work with all the options', () => {
       for (const opts of types) {
@@ -123,25 +123,25 @@ describe.only('Controller API', () => {
       }
     })
 
-    // describe('should attach to a running node', () => {
-    //   for (const opts of types) {
-    //     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async function () {
-    //       if ((isBrowser || isWebWorker) && opts.type === 'proc') {
-    //         return this.skip() // browser in proc can't attach to running node
-    //       }
-    //       const ctl = await createController(merge(
-    //         opts,
-    //         { ipfsOptions: { repo: factory.controllers[0].path } }
-    //       ))
+    describe('should attach to a running node', () => {
+      for (const opts of types) {
+        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async function () {
+          if ((isBrowser || isWebWorker) && opts.type === 'proc') {
+            return this.skip() // browser in proc can't attach to running node
+          }
+          const ctl = await createController(merge(
+            opts,
+            { ipfsOptions: { repo: factory.controllers[0].path } }
+          ))
 
-    //       await ctl.init()
-    //       await ctl.start()
-    //       expect(ctl.started).to.be.true()
-    //       const id = await ctl.api.id()
-    //       expect(factory.controllers[0].api.peerId.id).to.be.eq(id.id)
-    //     })
-    //   }
-    // })
+          await ctl.init()
+          await ctl.start()
+          expect(ctl.started).to.be.true()
+          const id = await ctl.api.id()
+          expect(factory.controllers[0].api.peerId.id).to.be.eq(id.id)
+        })
+      }
+    })
   })
 
   describe('cleanup', () => {

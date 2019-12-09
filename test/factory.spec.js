@@ -54,6 +54,18 @@ describe('`Factory spawn()` ', () => {
     }
   })
 
+  describe('should return ctl for tests when factory inititalized with test === true', () => {
+    for (const opts of types) {
+      it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
+        const factory = await createFactory({ test: true })
+        const ctl = await factory.spawn({ type: opts.type, remote: opts.remote })
+        expect(ctl).to.exist()
+        expect(ctl.opts.test).to.be.true()
+        await ctl.stop()
+      })
+    }
+  })
+
   describe('should return a disposable node by default', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
