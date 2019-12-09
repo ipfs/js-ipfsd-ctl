@@ -22,7 +22,7 @@ const types = [
 ]
 
 describe.only('Controller API', () => {
-  const factory = createFactory({ test: true })
+  const factory = createFactory()
 
   before(() => factory.spawn())
 
