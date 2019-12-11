@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "0.47.4",
+  "version": "1.0.0",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
@@ -106,6 +106,7 @@
     "Kristoffer Ström <kristoffer@rymdkoloni.se>",
     "Lars-Magnus Skog <ralphtheninja@riseup.net>",
     "Maciej Krüger <mkg20001@gmail.com>",
+    "Marcin Rataj <lidel@lidel.org>",
     "Richard Littauer <richard.littauer@gmail.com>",
     "Richard Schneider <makaretu@gmail.com>",
     "Scott Hardy <scott.the.hardy@gmail.com>",
