@@ -1,3 +1,120 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.47.4...v1.0.0) (2019-12-11)
+
+
+### Features
+
+* new ctl ([#395](https://github.com/ipfs/js-ipfsd-ctl/issues/395)) ([3dae276](https://github.com/ipfs/js-ipfsd-ctl/commit/3dae276))
+
+
+### BREAKING CHANGES
+
+* Problems: 
+- Browsers tests skipped cause ctl didn't support proper connectivity to remote nodes
+- We weren't able to tell ctl to use a specific commit of http-client, js-ipfs or cli
+- Options/config between the 3 types of daemons weren't consistent
+- Ctl didn't support remote "in process" daemon
+- IPFS options were handled manually inside ctl, so any change in js-ipfs would require a PR in ctl to support the new options or change to an option
+
+Related issues:
+- https://github.com/ipfs/js-ipfsd-ctl/issues/208
+- https://github.com/ipfs/js-ipfsd-ctl/issues/397
+- https://github.com/ipfs/js-ipfsd-ctl/issues/374
+- https://github.com/ipfs/js-ipfsd-ctl/issues/315
+- https://github.com/ipfs/js-ipfsd-ctl/issues/207
+- https://github.com/ipfs/js-ipfsd-ctl/issues/217
+- and more 
+ 
+Improvements:
+- better errors
+- DEBUG='ipfsd-ctl:*' everywhere
+- factories for tests with good defaults
+- options are properly merged everywhere
+- safer child_process exit `stop()`
+- faster stop()
+- IPFS Options are now the same format as https://github.com/ipfs/js-ipfs/blob/master/README.md#ipfs-constructor
+- Ctl can init, start and set config in one cmd (at least with js-ipfs)
+- better docs and jsdocs
+- we can now be sure which http-client, ipfs or go-ipfs is being used
+- utils functions actually work in the browser now
+- works in webworkers now
+- simpler and faster overall
+- disposable node actually clean themselves in the browser
+- better tests
+- ...
+- support electron
+- test in electron
+
+New: 
+- new method `createController` returns a spawned controller
+- createFactory as a second parameter to override options per type
+
+
+Changes: 
+- `create` change to `createFactory`
+- `createFactory` options changed   
+
+Old
+```md
+- `options` - optional object with:
+  - `remote` bool - use remote endpoint to spawn the nodes.
+  - `port` number - remote endpoint port. Defaults to 43134.
+  - `exec` - IPFS executable path. `ipfsd-ctl` will attempt to locate it by default. If you desire to spawn js-ipfs instances in the same process, pass the ref to the module instead (e.g `exec: require('ipfs')`)
+  - `type` - the daemon type, see below the options
+    - `go` - spawn go-ipfs daemon
+    - `js` - spawn js-ipfs daemon
+    - `proc` - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `DaemonFactory.create({type: 'proc', exec: require('ipfs') })`.
+  - `IpfsClient` - A custom IPFS API constructor to use instead of the packaged one
+```
+
+**New**
+```markdown
+-   `remote` [boolean] Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
+-   `test` [test=false] - Flag to activate custom config for tests.
+-   `endpoint` [endpoint] - Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134').
+-   `disposable` [Boolean] A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
+-   `type` [string] The daemon type, see below the options:-   go - spawn go-ipfs daemon
+    -   js - spawn js-ipfs daemon
+    -   proc - spawn in-process js-ipfs instance
+-   `env` [Object] Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
+-   `args` [Array] Custom cli args.
+-   `ipfsHttp` [Object] Setup IPFS HTTP client to be used by ctl.
+    -   `ipfsHttp.ref` [Object] Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
+    -   `ipfsHttp.path` [string] Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
+-   `ipfsApi` [Object] Setup IPFS API to be used by ctl.
+    -   `ipfsApi.ref` [Object] Reference to a IPFS API object. (defaults to the local require(`ipfs`))
+    -   `ipfsApi.path` [string] Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
+-   `ipfsBin` [String] Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
+-   `ipfsOptions` [IpfsOptions] Options for the IPFS instance
+```
+
+- Previous default ipfs config is only applied when `test` options equals `true`
+- `defaultAddrs` option was removed 
+- Spawn options are the same as `createFactory`
+
+Old
+```
+- `options` is an optional object the following properties:
+  - `init` bool (default true) or Object - should the node be initialized
+  - `initOptions` object - should be of the form `{bits: <size>}`, which sets the desired key size
+  - `start` bool (default true) - should the node be started
+  - `repoPath` string - the repository path to use for this node, ignored if node is disposable
+  - `disposable` bool (default true) - a new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits
+  - `defaultAddrs` bool (default false) - use the daemon default `Swarm` addrs
+  - `args` - array of cmd line arguments to be passed to ipfs daemon
+  - `config` - ipfs configuration options
+```
+
+**NEW**
+Same as js-ipfs constructor https://github.com/ipfs/js-ipfs#ipfs-constructor
+- ipfsd.killProcess removed not needed anymore
+- ipfsd.getConfig removed call ipfsd.api.config.get instead
+- ipfsd.setConfig removed, call ipfsd.api.config.set instead
+
+**Read the README for documention on the new api and options**
+
+
+
 <a name="0.47.4"></a>
 ## [0.47.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v0.47.3...v0.47.4) (2019-10-14)
 
