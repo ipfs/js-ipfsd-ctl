@@ -1,8 +1,8 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>ipfsd-ctl 0.47.4 | Documentation</title>
+  <title>ipfsd-ctl 1.0.0 | Documentation</title>
   <meta name='description' content='Spawn IPFS Daemons, JS or Go'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>ipfsd-ctl</h3>
-          <div class='mb1'><code>0.47.4</code></div>
+          <div class='mb1'><code>1.0.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -36,9 +36,29 @@
               
                 
                 <li><a
-                  href='#create'
+                  href='#createfactory'
                   class="">
-                  create
+                  createFactory
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#createfactory'
+                  class="">
+                  createFactory
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#createcontroller'
+                  class="">
+                  createController
                   
                 </a>
                 
@@ -56,9 +76,9 @@
               
                 
                 <li><a
-                  href='#spawnoptions'
+                  href='#ipfsoptions'
                   class="">
-                  SpawnOptions
+                  IpfsOptions
                   
                 </a>
                 
@@ -66,385 +86,21 @@
               
                 
                 <li><a
-                  href='#factorydaemon'
-                  class=" toggle-sibling">
-                  FactoryDaemon
-                  <span class='icon'>▸</span>
+                  href='#controlleroptions'
+                  class="">
+                  ControllerOptions
+                  
                 </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#factorydaemontmpdir'
-                        class='regular pre-open'>
-                        #tmpDir
-                      </a></li>
-                      
-                      <li><a
-                        href='#factorydaemonversion'
-                        class='regular pre-open'>
-                        #version
-                      </a></li>
-                      
-                      <li><a
-                        href='#factorydaemonspawn'
-                        class='regular pre-open'>
-                        #spawn
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
                 
                 </li>
               
                 
                 <li><a
-                  href='#daemon'
-                  class=" toggle-sibling">
-                  Daemon
-                  <span class='icon'>▸</span>
+                  href='#controlleroptionsoverrides'
+                  class="">
+                  ControllerOptionsOverrides
+                  
                 </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#daemonapi'
-                        class='regular pre-open'>
-                        #api
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonrepopath'
-                        class='regular pre-open'>
-                        #repoPath
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonenv'
-                        class='regular pre-open'>
-                        #env
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemoninit'
-                        class='regular pre-open'>
-                        #init
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemoncleanup'
-                        class='regular pre-open'>
-                        #cleanup
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonstart'
-                        class='regular pre-open'>
-                        #start
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonstop'
-                        class='regular pre-open'>
-                        #stop
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonkillprocess'
-                        class='regular pre-open'>
-                        #killProcess
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonpid'
-                        class='regular pre-open'>
-                        #pid
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemongetconfig'
-                        class='regular pre-open'>
-                        #getConfig
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonsetconfig'
-                        class='regular pre-open'>
-                        #setConfig
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonreplaceconfig'
-                        class='regular pre-open'>
-                        #replaceConfig
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonversion'
-                        class='regular pre-open'>
-                        #version
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#factoryinproc'
-                  class=" toggle-sibling">
-                  FactoryInProc
-                  <span class='icon'>▸</span>
-                </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#factoryinproctmpdir'
-                        class='regular pre-open'>
-                        #tmpDir
-                      </a></li>
-                      
-                      <li><a
-                        href='#factoryinprocversion'
-                        class='regular pre-open'>
-                        #version
-                      </a></li>
-                      
-                      <li><a
-                        href='#factoryinprocspawn'
-                        class='regular pre-open'>
-                        #spawn
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#inproc'
-                  class=" toggle-sibling">
-                  InProc
-                  <span class='icon'>▸</span>
-                </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#inprocrepopath'
-                        class='regular pre-open'>
-                        #repoPath
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprocenv'
-                        class='regular pre-open'>
-                        #env
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprocinit'
-                        class='regular pre-open'>
-                        #init
-                      </a></li>
-                      
-                      <li><a
-                        href='#inproccleanup'
-                        class='regular pre-open'>
-                        #cleanup
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprocstart'
-                        class='regular pre-open'>
-                        #start
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprocstop'
-                        class='regular pre-open'>
-                        #stop
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprockillprocess'
-                        class='regular pre-open'>
-                        #killProcess
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprocpid'
-                        class='regular pre-open'>
-                        #pid
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprocgetconfig'
-                        class='regular pre-open'>
-                        #getConfig
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprocsetconfig'
-                        class='regular pre-open'>
-                        #setConfig
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprocreplaceconfig'
-                        class='regular pre-open'>
-                        #replaceConfig
-                      </a></li>
-                      
-                      <li><a
-                        href='#inprocversion'
-                        class='regular pre-open'>
-                        #version
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#factoryclient'
-                  class=" toggle-sibling">
-                  FactoryClient
-                  <span class='icon'>▸</span>
-                </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#factoryclienttmpdir'
-                        class='regular pre-open'>
-                        #tmpDir
-                      </a></li>
-                      
-                      <li><a
-                        href='#factoryclientversion'
-                        class='regular pre-open'>
-                        #version
-                      </a></li>
-                      
-                      <li><a
-                        href='#factoryclientspawn'
-                        class='regular pre-open'>
-                        #spawn
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#client'
-                  class=" toggle-sibling">
-                  Client
-                  <span class='icon'>▸</span>
-                </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#clientinit'
-                        class='regular pre-open'>
-                        #init
-                      </a></li>
-                      
-                      <li><a
-                        href='#clientcleanup'
-                        class='regular pre-open'>
-                        #cleanup
-                      </a></li>
-                      
-                      <li><a
-                        href='#clientstart'
-                        class='regular pre-open'>
-                        #start
-                      </a></li>
-                      
-                      <li><a
-                        href='#clientstop'
-                        class='regular pre-open'>
-                        #stop
-                      </a></li>
-                      
-                      <li><a
-                        href='#clientkillprocess'
-                        class='regular pre-open'>
-                        #killProcess
-                      </a></li>
-                      
-                      <li><a
-                        href='#clientpid'
-                        class='regular pre-open'>
-                        #pid
-                      </a></li>
-                      
-                      <li><a
-                        href='#clientgetconfig'
-                        class='regular pre-open'>
-                        #getConfig
-                      </a></li>
-                      
-                      <li><a
-                        href='#clientsetconfig'
-                        class='regular pre-open'>
-                        #setConfig
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
                 
                 </li>
               
@@ -479,6 +135,434 @@
                   
                   
                 </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#ky'
+                  class="">
+                  ky
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#ky'
+                  class="">
+                  ky
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#ky'
+                  class="">
+                  ky
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#'
+                  class="">
+                  
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#constructor'
+                  class="">
+                  constructor
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#opts'
+                  class="">
+                  opts
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#overrides'
+                  class="">
+                  overrides
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#controllers'
+                  class="">
+                  controllers
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#tmpdir'
+                  class="">
+                  tmpDir
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#spawn'
+                  class="">
+                  spawn
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#clean'
+                  class="">
+                  clean
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#daemon'
+                  class=" toggle-sibling">
+                  Daemon
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#daemonopts'
+                        class='regular pre-open'>
+                        #opts
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemoninit'
+                        class='regular pre-open'>
+                        #init
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemoncleanup'
+                        class='regular pre-open'>
+                        #cleanup
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonstart'
+                        class='regular pre-open'>
+                        #start
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonstop'
+                        class='regular pre-open'>
+                        #stop
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonpid'
+                        class='regular pre-open'>
+                        #pid
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonversion'
+                        class='regular pre-open'>
+                        #version
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#daemon'
+                  class=" toggle-sibling">
+                  Daemon
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#daemonopts'
+                        class='regular pre-open'>
+                        #opts
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemoninit'
+                        class='regular pre-open'>
+                        #init
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemoncleanup'
+                        class='regular pre-open'>
+                        #cleanup
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonstart'
+                        class='regular pre-open'>
+                        #start
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonstop'
+                        class='regular pre-open'>
+                        #stop
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonpid'
+                        class='regular pre-open'>
+                        #pid
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonversion'
+                        class='regular pre-open'>
+                        #version
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#'
+                  class="">
+                  
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#'
+                  class="">
+                  
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#constructor'
+                  class="">
+                  constructor
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#init'
+                  class="">
+                  init
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#cleanup'
+                  class="">
+                  cleanup
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#start'
+                  class="">
+                  start
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#stop'
+                  class="">
+                  stop
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#pid'
+                  class="">
+                  pid
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#version'
+                  class="">
+                  version
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#'
+                  class="">
+                  
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#'
+                  class="">
+                  
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#constructor'
+                  class="">
+                  constructor
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#opts'
+                  class="">
+                  opts
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#init'
+                  class="">
+                  init
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#cleanup'
+                  class="">
+                  cleanup
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#start'
+                  class="">
+                  start
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#stop'
+                  class="">
+                  stop
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#pid'
+                  class="">
+                  pid
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#version'
+                  class="">
+                  version
+                  
+                </a>
                 
                 </li>
               
@@ -525,21 +609,20 @@
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='create'>
-      create
+    <h3 class='fl m0' id='createfactory'>
+      createFactory
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/index.js#L28-L38'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/index.js#L15-L17'>
       <span>src/index.js</span>
       </a>
     
   </div>
   
 
-  <p>Create a Factory</p>
-
-    <div class='pre p1 fill-light mt0'>create(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, IpfsClient: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): (<a href="#factorydaemon">FactoryDaemon</a> | <a href="#factoryinproc">FactoryInProc</a> | <a href="#factoryclient">FactoryClient</a>)</div>
+  
+    <div class='pre p1 fill-light mt0'>createFactory</div>
   
   
 
@@ -556,84 +639,89 @@
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-            = <code>{}</code>)</code>
+            <span class='code bold'>options</span> <code class='quiet'>(any)</code>
 	    
           </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.remote</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?</code>
-  </td>
-  <td class='break-word'><span>Use remote endpoint to spawn the nodes. Defaults to 
-<code>true</code>
- when not in node.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.port</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>43134</code>)
-  </td>
-  <td class='break-word'><span>Remote endpoint port.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.exec</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?</code>
-  </td>
-  <td class='break-word'><span>IPFS executable path. ipfsd-ctl will attempt to locate it by default.
-If you desire to spawn js-ipfs instances in the same process, pass the reference to the module instead (e.g exec: 
-<code>require('ipfs')</code>
-)
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.type</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?</code>
-  </td>
-  <td class='break-word'><span>The daemon type, see below the options:
-<ul>
-<li>go - spawn go-ipfs daemon</li>
-<li>js - spawn js-ipfs daemon</li>
-<li>proc - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: <code>IPFSFactory.create({type: 'proc', exec: require('ipfs') })</code>.</li>
-</ul>
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
           
         </div>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>IpfsClient</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    A custom IPFS API constructor to use instead of the packaged one 
-<code>js-ipfs-http-client</code>
-.
+            <span class='code bold'>overrides</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='createfactory'>
+      createFactory
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/index.js#L15-L17'>
+      <span>src/index.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Creates a factory</p>
+
+    <div class='pre p1 fill-light mt0'>createFactory</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>options</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>overrides</span> <code class='quiet'>(<a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a>)</code>
+	    
           </div>
           
         </div>
@@ -646,7 +734,80 @@ If you desire to spawn js-ipfs instances in the same process, pass the reference
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>(<a href="#factorydaemon">FactoryDaemon</a> | <a href="#factoryinproc">FactoryInProc</a> | <a href="#factoryclient">FactoryClient</a>)</code>:
+      <code>Factory</code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='createcontroller'>
+      createController
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/index.js#L25-L28'>
+      <span>src/index.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Creates a node</p>
+
+    <div class='pre p1 fill-light mt0'>createController</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>options</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>?)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Controller></code>:
         
 
       
@@ -679,7 +840,7 @@ If you desire to spawn js-ipfs instances in the same process, pass the reference
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/index.js#L49-L54'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/index.js#L37-L42'>
       <span>src/index.js</span>
       </a>
     
@@ -688,7 +849,7 @@ If you desire to spawn js-ipfs instances in the same process, pass the reference
 
   <p>Create a Endpoint Server</p>
 
-    <div class='pre p1 fill-light mt0'>createServer(options: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)): <a href="#server">Server</a></div>
+    <div class='pre p1 fill-light mt0'>createServer</div>
   
   
 
@@ -773,20 +934,21 @@ If you desire to spawn js-ipfs instances in the same process, pass the reference
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='spawnoptions'>
-      SpawnOptions
+    <h3 class='fl m0' id='ipfsoptions'>
+      IpfsOptions
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/index.js#L61-L73'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/index.js#L50-L66'>
       <span>src/index.js</span>
       </a>
     
   </div>
   
 
-  
-    <div class='pre p1 fill-light mt0'>SpawnOptions</div>
+  <p>Same as <a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#ipfs-constructor">https://github.com/ipfs/js-ipfs/blob/master/README.md#ipfs-constructor</a></p>
+
+    <div class='pre p1 fill-light mt0'>IpfsOptions</div>
   
     <p>
       Type:
@@ -809,67 +971,106 @@ If you desire to spawn js-ipfs instances in the same process, pass the reference
     <div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>init</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>?)</code>
-          : Should the node be initialized.
+          <span class='code bold'>repo</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)?)</code>
+          : The file path at which to store the IPFS node’s data. Alternatively, you can set up a customized storage system by providing an ipfs.Repo instance.
 
           
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>initOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-          : Should be of the form 
-<code>{bits: &#x3C;size>}</code>
-, which sets the desired key size.
+          <span class='code bold'>init</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)?)</code>
+          : Initialize the repo when creating the IPFS node. Instead of a boolean, you may provide an object with custom initialization options. 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit</a>
 
           
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>start</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>?)</code>
-          : Should the node be started.
+          <span class='code bold'>start</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?)</code>
+          : If false, do not automatically start the IPFS node. Instead, you’ll need to manually call node.start() yourself.
 
           
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>repoPath</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?)</code>
-          : The repository path to use for this node, ignored if node is disposable.
+          <span class='code bold'>pass</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?)</code>
+          : A passphrase to encrypt/decrypt your keys.
 
           
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>disposable</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>?)</code>
-          : A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
+          <span class='code bold'>silent</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?)</code>
+          : Prevents all logging output from the IPFS node.
 
           
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>defaultAddrs</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>?)</code>
-          : Use the daemon default Swarm addrs.
+          <span class='code bold'>relay</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>?)</code>
+          : Configure circuit relay. 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsrelay">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsrelay</a>
+ Default: 
+<code>{ enabled: true, hop: { enabled: false, active: false } }</code>
 
           
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>args</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>>?)</code>
-          : Array of cmd line arguments to be passed to the IPFS daemon.
+          <span class='code bold'>preload</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>?)</code>
+          : Configure remote preload nodes. The remote will preload content added on this node, and also attempt to preload objects requested by this node. 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionspreload">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionspreload</a>
+ Default: 
+<code>{ enabled: true, addresses: [...]</code>
 
           
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>config</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-          : IPFS configuration options. 
-<a href="https://github.com/ipfs/js-ipfs#optionsconfig">IPFS config</a>
+          <span class='code bold'>EXPERIMENTAL</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>?)</code>
+          : Enable and configure experimental features. 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsexperimental">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsexperimental</a>
+ Default: 
+<code>{ ipnsPubsub: false, sharding: false }</code>
 
           
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>env</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-          : Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
+          <span class='code bold'>config</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>?)</code>
+          : Modify the default IPFS node config. This object will be merged with the default config; it will not replace it. The default config is documented in the js-ipfs config file docs. 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconfig">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconfig</a>
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>ipld</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>?)</code>
+          : Modify the default IPLD config. This object will be merged with the default config; it will not replace it. Check IPLD docs for more information on the available options. 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsipld">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsipld</a>
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>libp2p</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">function</a>)?)</code>
+          : The libp2p option allows you to build your libp2p node by configuration, or via a bundle function. 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionslibp2p">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionslibp2p</a>
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>connectionManager</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>?)</code>
+          : Configure the libp2p connection manager. 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconnectionmanager">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconnectionmanager</a>
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>offline</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?)</code>
+          : Run the node offline.
 
           
         </div>
@@ -900,21 +1101,290 @@ If you desire to spawn js-ipfs instances in the same process, pass the reference
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='factorydaemon'>
-      FactoryDaemon
+    <h3 class='fl m0' id='controlleroptions'>
+      ControllerOptions
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-daemon.js#L17-L97'>
-      <span>src/factory-daemon.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/index.js#L68-L88'>
+      <span>src/index.js</span>
       </a>
     
   </div>
   
 
-  <p>Creates an instance of FactoryDaemon.</p>
+  
+    <div class='pre p1 fill-light mt0'>ControllerOptions</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
+    </p>
+  
+  
 
-    <div class='pre p1 fill-light mt0'>new FactoryDaemon(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>test</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?)</code>
+          : Flag to activate custom config for tests.
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>remote</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>?)</code>
+          : Use remote endpoint to spawn the controllers. Defaults to 
+<code>true</code>
+ when not in node.
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>endpoint</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?)</code>
+          : Endpoint URL to manage remote Controllers. (Defaults: '
+<a href="http://localhost:43134&#x27;">http://localhost:43134'</a>
+).
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>disposable</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>?)</code>
+          : A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>type</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?)</code>
+          : The daemon type, see below the options:
+<ul>
+<li>go - spawn go-ipfs daemon node</li>
+<li>js - spawn js-ipfs daemon node</li>
+<li>proc - spawn in-process js-ipfs node</li>
+</ul>
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>env</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
+          : Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>args</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>?)</code>
+          : Custom cli args.
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>ipfsHttpModule</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
+          : Setup IPFS HTTP client to be used by ctl.
+
+          
+            <ul>
+              
+                <li><code>ipfsHttpModule.ref</code> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?
+                  
+                  <p>Reference to a IPFS HTTP Client object. (defaults to the local require(<code>ipfs-http-client</code>))</p>
+</li>
+              
+                <li><code>ipfsHttpModule.path</code> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?
+                  
+                  <p>Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))</p>
+</li>
+              
+            </ul>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>ipfsModule</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
+          : Setup IPFS API to be used by ctl.
+
+          
+            <ul>
+              
+                <li><code>ipfsModule.ref</code> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?
+                  
+                  <p>Reference to a IPFS API object. (defaults to the local require(<code>ipfs</code>))</p>
+</li>
+              
+                <li><code>ipfsModule.path</code> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?
+                  
+                  <p>Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))</p>
+</li>
+              
+            </ul>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>ipfsBin</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>?)</code>
+          : Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>ipfsOptions</span> <code class='quiet'>(<a href="#ipfsoptions">IpfsOptions</a>?)</code>
+          : Options for the IPFS node.
+
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='controlleroptionsoverrides'>
+      ControllerOptionsOverrides
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/index.js#L90-L95'>
+      <span>src/index.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>ControllerOptionsOverrides</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>js</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>?)</code>
+          : Pre-defined defaults options for 
+<strong>JS</strong>
+ controllers these are deep merged with options passed to 
+<code>Factory.spawn(options)</code>
+.
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>go</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>?)</code>
+          : Pre-defined defaults options for 
+<strong>Go</strong>
+ controllers these are deep merged with options passed to 
+<code>Factory.spawn(options)</code>
+.
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>proc</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>?)</code>
+          : Pre-defined defaults options for 
+<strong>Proc</strong>
+ controllers these are deep merged with options passed to 
+<code>Factory.spawn(options)</code>
+.
+
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='server'>
+      Server
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/endpoint/server.js#L10-L54'>
+      <span>src/endpoint/server.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Creates an instance of Server.</p>
+
+    <div class='pre p1 fill-light mt0'>new Server(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, createFactory: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">function</a>)</div>
   
   
 
@@ -935,41 +1405,13 @@ If you desire to spawn js-ipfs instances in the same process, pass the reference
 	    
           </div>
           
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.type</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
-  
-    (default <code>&#39;go&#39;</code>)
-  </td>
-  <td class='break-word'><span>'go' or 'js'
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.exec</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?</code>
-  </td>
-  <td class='break-word'><span>the path of the daemon executable
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>createFactory</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">function</a>)</code>
+	    
+          </div>
           
         </div>
       
@@ -990,11 +1432,11 @@ If you desire to spawn js-ipfs instances in the same process, pass the reference
     <div class='py1 quiet mt1 prose-big'>Instance Members</div>
     <div class="clearfix">
   
-    <div class='border-bottom' id='factorydaemontmpdir'>
+    <div class='border-bottom' id='serverstart'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tmpDir(type)</span>
+            <span class='code strong strong truncate'>start()</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -1004,19 +1446,16 @@ If you desire to spawn js-ipfs instances in the same process, pass the reference
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-daemon.js#L35-L37'>
-      <span>src/factory-daemon.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/endpoint/server.js#L30-L43'>
+      <span>src/endpoint/server.js</span>
       </a>
     
   </div>
   
 
-  <p>Utility method to get a temporary directory
-useful in browsers to be able to generate temp
-repos manually</p>
-<p><em>Here for completeness</em></p>
+  <p>Start the server</p>
 
-    <div class='pre p1 fill-light mt0'>tmpDir(type: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Hapi.Server></div>
   
   
 
@@ -1027,20 +1466,6 @@ repos manually</p>
   
   
 
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>type</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
-	    the type of the node
-
-          </div>
-          
-        </div>
-      
-    </div>
   
 
   
@@ -1048,7 +1473,7 @@ repos manually</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Hapi.Server></code>:
         
 
       
@@ -1071,11 +1496,11 @@ repos manually</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='factorydaemonversion'>
+    <div class='border-bottom' id='serverstop'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>version(options)</span>
+            <span class='code strong strong truncate'>stop(options?)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -1085,16 +1510,16 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-daemon.js#L51-L62'>
-      <span>src/factory-daemon.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/endpoint/server.js#L51-L53'>
+      <span>src/endpoint/server.js</span>
       </a>
     
   </div>
   
 
-  <p>Get the version of the IPFS Daemon.</p>
+  <p>Stop the server</p>
 
-    <div class='pre p1 fill-light mt0'>version(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>stop(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
   
   
 
@@ -1111,9 +1536,9 @@ repos manually</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-            = <code>{}</code>)</code>
-	    
+            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>?)</code>
+	    <a href="https://hapi.dev/api/?v=18.4.0#-await-serverstopoptions">Hapi docs</a>
+
           </div>
           
         </div>
@@ -1127,99 +1552,6 @@ repos manually</p>
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        Resolves to 
-<code>version</code>
- that might be one of the following:
-<ul>
-<li>if type is <code>go</code> a version string like <code>ipfs version &#x3C;version number></code></li>
-<li>if type is <code>js</code> a version string like <code>js-ipfs version &#x3C;version number></code></li>
-<li>
-<p>if type is <code>proc</code> an object with the following properties:</p>
-<ul>
-<li>version - the ipfs version</li>
-<li>repo - the repo version</li>
-<li>commit - the commit hash for this version</li>
-</ul>
-</li>
-</ul>
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='factorydaemonspawn'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>spawn(options)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-daemon.js#L70-L96'>
-      <span>src/factory-daemon.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Spawn an IPFS node, either js-ipfs or go-ipfs</p>
-
-    <div class='pre p1 fill-light mt0'>spawn(options: <a href="#spawnoptions">SpawnOptions</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="#spawnoptions">SpawnOptions</a>
-            = <code>{}</code>)</code>
-	    Various config options and ipfs config parameters
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></code>:
         
 
       
@@ -1259,22 +1591,225 @@ repos manually</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='daemon'>
-      Daemon
+    <h3 class='fl m0' id='ky'>
+      ky
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L45-L388'>
-      <span>src/ipfsd-daemon.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L15-L15'>
+      <span>src/factory.js</span>
       </a>
     
   </div>
   
 
-  <p>ipfsd for a go-ipfs or js-ipfs daemon
-Create a new node.</p>
+  
+    <div class='pre p1 fill-light mt0'>ky</div>
+  
+  
 
-    <div class='pre p1 fill-light mt0'>new Daemon(opts: Typedefs.SpawnOptions?)</div>
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='ky'>
+      ky
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L15-L15'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>ky</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='ky'>
+      ky
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L15-L15'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>ky</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id=''>
+      
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L16-L34'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Factory class to spawn ipfsd controllers</p>
+
+    <div class='pre p1 fill-light mt0'></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='constructor'>
+      constructor
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L45-L58'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>constructor(options: <a href="#controlleroptions">ControllerOptions</a>, overrides: <a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a>)</div>
   
   
 
@@ -1291,8 +1826,445 @@ Create a new node.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>opts</span> <code class='quiet'>(Typedefs.SpawnOptions?
-            = <code>{type:&#39;go&#39;}</code>)</code>
+            <span class='code bold'>options</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>
+            = <code>{}</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>overrides</span> <code class='quiet'>(<a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a>
+            = <code>{}</code>)</code>
+	    Pre-defined overrides per controller type
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='opts'>
+      opts
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L47-L47'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>opts</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='overrides'>
+      overrides
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L50-L54'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>overrides</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='controllers'>
+      controllers
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L57-L57'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>controllers</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='tmpdir'>
+      tmpDir
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L69-L81'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Utility method to get a temporary directory
+useful in browsers to be able to generate temp
+repos manually</p>
+
+    <div class='pre p1 fill-light mt0'>tmpDir(options: <a href="#controlleroptions">ControllerOptions</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>options</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>)</code>
+	    Controller type
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='spawn'>
+      spawn
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L102-L145'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Spawn an IPFSd Controller</p>
+
+    <div class='pre p1 fill-light mt0'>spawn(options: <a href="#controlleroptions">ControllerOptions</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;ControllerDaemon></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>options</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>
+            = <code>{}</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;ControllerDaemon></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='clean'>
+      clean
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/factory.js#L151-L155'>
+      <span>src/factory.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Stop all controllers</p>
+
+    <div class='pre p1 fill-light mt0'>clean(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;ControllerDaemon>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;ControllerDaemon>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='daemon'>
+      Daemon
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L33-L329'>
+      <span>src/ipfsd-daemon.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>new Daemon(opts: any)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>opts</span> <code class='quiet'>(any)</code>
 	    
           </div>
           
@@ -1315,11 +2287,11 @@ Create a new node.</p>
     <div class='py1 quiet mt1 prose-big'>Instance Members</div>
     <div class="clearfix">
   
-    <div class='border-bottom' id='daemonapi'>
+    <div class='border-bottom' id='daemonopts'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>api</span>
+            <span class='code strong strong truncate'>opts</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -1329,7 +2301,7 @@ Create a new node.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L67-L67'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L40-L40'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -1337,134 +2309,7 @@ Create a new node.</p>
   
 
   
-    <div class='pre p1 fill-light mt0'>api</div>
-  
-    <p>
-      Type:
-      IpfsClient
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='daemonrepopath'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>repoPath</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L88-L90'>
-      <span>src/ipfsd-daemon.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Current repo path</p>
-
-    <div class='pre p1 fill-light mt0'>repoPath</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='daemonenv'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>env</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L97-L99'>
-      <span>src/ipfsd-daemon.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Shell environment variables</p>
-
-    <div class='pre p1 fill-light mt0'>env</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
-    </p>
+    <div class='pre p1 fill-light mt0'>opts</div>
   
   
 
@@ -1511,7 +2356,7 @@ Create a new node.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L110-L159'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L85-L143'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -1520,7 +2365,7 @@ Create a new node.</p>
 
   <p>Initialize a repo.</p>
 
-    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></div>
   
   
 
@@ -1539,55 +2384,10 @@ Create a new node.</p>
           <div>
             <span class='code bold'>initOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
             = <code>{}</code>)</code>
-	    
+	    @see 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit</a>
+
           </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>initOptions.bits</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>2048</code>)
-  </td>
-  <td class='break-word'><span>The bit size of the identiy key.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>initOptions.directory</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
-  
-    (default <code>IPFS_PATH</code>)
-  </td>
-  <td class='break-word'><span>The location of the repo.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>initOptions.pass</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?</code>
-  </td>
-  <td class='break-word'><span>The passphrase of the keychain.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
           
         </div>
       
@@ -1599,7 +2399,7 @@ Create a new node.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></code>:
         
 
       
@@ -1636,7 +2436,7 @@ Create a new node.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L166-L173'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L150-L156'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -1645,7 +2445,7 @@ Create a new node.</p>
 
   <p>Delete the repo that was being used. If the node was marked as disposable this will be called automatically when the process is exited.</p>
 
-    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></div>
   
   
 
@@ -1663,7 +2463,7 @@ Create a new node.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></code>:
         
 
       
@@ -1690,7 +2490,7 @@ Create a new node.</p>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>start(flags)</span>
+            <span class='code strong strong truncate'>start()</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -1700,7 +2500,7 @@ Create a new node.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L181-L239'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L163-L230'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -1709,7 +2509,7 @@ Create a new node.</p>
 
   <p>Start the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>start(flags: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></div>
   
   
 
@@ -1720,23 +2520,6 @@ Create a new node.</p>
   
   
 
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>flags</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
-            = <code>[]</code>)</code>
-	    Flags to be passed to the 
-<code>ipfs daemon</code>
- command.
-
-          </div>
-          
-        </div>
-      
-    </div>
   
 
   
@@ -1744,7 +2527,7 @@ Create a new node.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></code>:
         
 
       
@@ -1771,7 +2554,7 @@ Create a new node.</p>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>stop(timeout?)</span>
+            <span class='code strong strong truncate'>stop()</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -1781,7 +2564,7 @@ Create a new node.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L247-L261'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L237-L251'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -1790,7 +2573,7 @@ Create a new node.</p>
 
   <p>Stop the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>stop(timeout: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></div>
   
   
 
@@ -1801,20 +2584,6 @@ Create a new node.</p>
   
   
 
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>timeout</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?)</code>
-	    Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of 10500 ms will be used for disposable nodes and 10500 * 3 ms for non disposable nodes.
-
-          </div>
-          
-        </div>
-      
-    </div>
   
 
   
@@ -1822,89 +2591,7 @@ Create a new node.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='daemonkillprocess'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>killProcess(timeout?)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L275-L312'>
-      <span>src/ipfsd-daemon.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Kill the <code>ipfs daemon</code> process.</p>
-<p>If the HTTP API is established, then send 'shutdown' command; otherwise,
-process.kill(<code>SIGTERM</code>) is used.  In either case, if the process
-does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
-<p>Note: timeout is ignored for proc nodes</p>
-
-    <div class='pre p1 fill-light mt0'>killProcess(timeout: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>timeout</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>?)</code>
-	    Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of 10500 ms will be used for disposable nodes and 10500 * 3 ms for non disposable nodes.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></code>:
         
 
       
@@ -1941,7 +2628,7 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L319-L321'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L258-L263'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -1950,7 +2637,7 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
 
   <p>Get the pid of the <code>ipfs daemon</code> process.</p>
 
-    <div class='pre p1 fill-light mt0'>pid(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
+    <div class='pre p1 fill-light mt0'>pid(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>></div>
   
   
 
@@ -1968,251 +2655,7 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='daemongetconfig'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>getConfig(key = 'show')</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L331-L344'>
-      <span>src/ipfsd-daemon.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Call <code>ipfs config</code></p>
-<p>If no <code>key</code> is passed, the whole config is returned as an object.</p>
-
-    <div class='pre p1 fill-light mt0'>getConfig(key: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>key</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?
-            = <code>&#39;show&#39;</code>)</code>
-	    A specific config to retrieve.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='daemonsetconfig'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>setConfig(key, value)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L353-L356'>
-      <span>src/ipfsd-daemon.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Set a config value.</p>
-
-    <div class='pre p1 fill-light mt0'>setConfig(key: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>key</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The key of the config entry to change/set.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The config value to change/set.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='daemonreplaceconfig'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>replaceConfig(config)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L364-L371'>
-      <span>src/ipfsd-daemon.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Replace the current config with the provided one</p>
-
-    <div class='pre p1 fill-light mt0'>replaceConfig(config: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>config</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>></code>:
         
 
       
@@ -2249,7 +2692,7 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-daemon.js#L378-L387'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L319-L328'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2258,7 +2701,7 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
 
   <p>Get the version of ipfs</p>
 
-    <div class='pre p1 fill-light mt0'>version(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>version(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></div>
   
   
 
@@ -2276,7 +2719,7 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></code>:
         
 
       
@@ -2316,21 +2759,21 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='factoryinproc'>
-      FactoryInProc
+    <h3 class='fl m0' id='daemon'>
+      Daemon
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-in-proc.js#L17-L89'>
-      <span>src/factory-in-proc.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L33-L329'>
+      <span>src/ipfsd-daemon.js</span>
       </a>
     
   </div>
   
 
-  <p>Factory to spawn in-proc JS-IPFS instances (aka in process nodes)</p>
+  <p>Controller for daemon nodes</p>
 
-    <div class='pre p1 fill-light mt0'>new FactoryInProc(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
+    <div class='pre p1 fill-light mt0'>new Daemon(opts: <a href="#controlleroptions">ControllerOptions</a>?)</div>
   
   
 
@@ -2347,46 +2790,9 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>?)</code>
 	    
           </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.type</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code>
-  
-    (default <code>&#39;proc&#39;</code>)
-  </td>
-  <td class='break-word'><span>one of 'go', 'js' or 'proc', in this case this needs to be 'proc'
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.exec</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>?</code>
-  </td>
-  <td class='break-word'><span>the path of the daemon executable or IPFS class in the case of 
-<code>proc</code>
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
           
         </div>
       
@@ -2407,11 +2813,11 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
     <div class='py1 quiet mt1 prose-big'>Instance Members</div>
     <div class="clearfix">
   
-    <div class='border-bottom' id='factoryinproctmpdir'>
+    <div class='border-bottom' id='daemonopts'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tmpDir()</span>
+            <span class='code strong strong truncate'>opts</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -2421,347 +2827,15 @@ does not exit after 10.5 seconds then a <code>SIGKILL</code> is used.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-in-proc.js#L35-L37'>
-      <span>src/factory-in-proc.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L40-L40'>
+      <span>src/ipfsd-daemon.js</span>
       </a>
     
   </div>
   
 
-  <p>Utility method to get a temporary directory
-useful in browsers to be able to generate temp
-repos manually</p>
-<p><em>Here for completeness</em></p>
-
-    <div class='pre p1 fill-light mt0'>tmpDir(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
   
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='factoryinprocversion'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>version(options)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-in-proc.js#L45-L49'>
-      <span>src/factory-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Get the version of the currently used go-ipfs binary.</p>
-
-    <div class='pre p1 fill-light mt0'>version(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-            = <code>{}</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='factoryinprocspawn'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>spawn(options)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-in-proc.js#L57-L88'>
-      <span>src/factory-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Spawn JSIPFS instances</p>
-
-    <div class='pre p1 fill-light mt0'>spawn(options: <a href="#spawnoptions">SpawnOptions</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="#spawnoptions">SpawnOptions</a>
-            = <code>{}</code>)</code>
-	    various config options and ipfs config parameters
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></code>:
-        Resolves to an array with an 
-<code>ipfs-instance</code>
- attached to the node and a 
-<code>Node</code>
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-</div>
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='inproc'>
-      InProc
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L15-L257'>
-      <span>src/ipfsd-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>ipfsd for a js-ipfs instance (aka in-process IPFS node)</p>
-
-    <div class='pre p1 fill-light mt0'>new InProc(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?
-            = <code>{}</code>)</code>
-	    
-          </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>opts.env</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>
-  
-    (default <code>{}</code>)
-  </td>
-  <td class='break-word'><span>Additional environment settings, passed to executing shell.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
-    <div class="clearfix">
-  
-    <div class='border-bottom' id='inprocrepopath'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>repoPath</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L92-L94'>
-      <span>src/ipfsd-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Get the current repo path</p>
-
-    <div class='pre p1 fill-light mt0'>repoPath</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-    </p>
+    <div class='pre p1 fill-light mt0'>opts</div>
   
   
 
@@ -2794,68 +2868,7 @@ repos manually</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='inprocenv'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>env</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L101-L103'>
-      <span>src/ipfsd-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Is the environment</p>
-
-    <div class='pre p1 fill-light mt0'>env</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='inprocinit'>
+    <div class='border-bottom' id='daemoninit'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -2869,8 +2882,8 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L114-L137'>
-      <span>src/ipfsd-in-proc.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L85-L143'>
+      <span>src/ipfsd-daemon.js</span>
       </a>
     
   </div>
@@ -2878,7 +2891,7 @@ repos manually</p>
 
   <p>Initialize a repo.</p>
 
-    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></div>
   
   
 
@@ -2897,55 +2910,10 @@ repos manually</p>
           <div>
             <span class='code bold'>initOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
             = <code>{}</code>)</code>
-	    
+	    @see 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit</a>
+
           </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>initOptions.bits</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>2048</code>)
-  </td>
-  <td class='break-word'><span>The bit size of the identiy key.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>initOptions.directory</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
-  
-    (default <code>IPFS_PATH</code>)
-  </td>
-  <td class='break-word'><span>The location of the repo.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>initOptions.pass</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?</code>
-  </td>
-  <td class='break-word'><span>The passphrase of the keychain.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
           
         </div>
       
@@ -2957,7 +2925,7 @@ repos manually</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></code>:
         
 
       
@@ -2980,7 +2948,7 @@ repos manually</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='inproccleanup'>
+    <div class='border-bottom' id='daemoncleanup'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -2994,18 +2962,16 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L146-L152'>
-      <span>src/ipfsd-in-proc.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L150-L156'>
+      <span>src/ipfsd-daemon.js</span>
       </a>
     
   </div>
   
 
-  <p>Delete the repo that was being used.
-If the node was marked as <code>disposable</code> this will be called
-automatically when the process is exited.</p>
+  <p>Delete the repo that was being used. If the node was marked as disposable this will be called automatically when the process is exited.</p>
 
-    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></div>
   
   
 
@@ -3023,7 +2989,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></code>:
         
 
       
@@ -3046,7 +3012,7 @@ automatically when the process is exited.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='inprocstart'>
+    <div class='border-bottom' id='daemonstart'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -3060,8 +3026,8 @@ automatically when the process is exited.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L159-L173'>
-      <span>src/ipfsd-in-proc.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L163-L230'>
+      <span>src/ipfsd-daemon.js</span>
       </a>
     
   </div>
@@ -3069,7 +3035,7 @@ automatically when the process is exited.</p>
 
   <p>Start the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></div>
   
   
 
@@ -3087,7 +3053,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></code>:
         
 
       
@@ -3110,7 +3076,7 @@ automatically when the process is exited.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='inprocstop'>
+    <div class='border-bottom' id='daemonstop'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -3124,8 +3090,8 @@ automatically when the process is exited.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L180-L192'>
-      <span>src/ipfsd-in-proc.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L237-L251'>
+      <span>src/ipfsd-daemon.js</span>
       </a>
     
   </div>
@@ -3133,7 +3099,7 @@ automatically when the process is exited.</p>
 
   <p>Stop the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></div>
   
   
 
@@ -3151,7 +3117,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#daemon">Daemon</a>></code>:
         
 
       
@@ -3174,73 +3140,7 @@ automatically when the process is exited.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='inprockillprocess'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>killProcess()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L202-L204'>
-      <span>src/ipfsd-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Kill the <code>ipfs daemon</code> process.</p>
-<p>First <code>SIGTERM</code> is sent, after 10.5 seconds <code>SIGKILL</code> is sent
-if the process hasn't exited yet.</p>
-
-    <div class='pre p1 fill-light mt0'>killProcess(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='inprocpid'>
+    <div class='border-bottom' id='daemonpid'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -3254,8 +3154,8 @@ if the process hasn't exited yet.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L211-L213'>
-      <span>src/ipfsd-in-proc.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L258-L263'>
+      <span>src/ipfsd-daemon.js</span>
       </a>
     
   </div>
@@ -3263,7 +3163,7 @@ if the process hasn't exited yet.</p>
 
   <p>Get the pid of the <code>ipfs daemon</code> process.</p>
 
-    <div class='pre p1 fill-light mt0'>pid(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></div>
+    <div class='pre p1 fill-light mt0'>pid(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>></div>
   
   
 
@@ -3281,7 +3181,7 @@ if the process hasn't exited yet.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>></code>:
         
 
       
@@ -3304,248 +3204,7 @@ if the process hasn't exited yet.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='inprocgetconfig'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>getConfig(key?)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L223-L225'>
-      <span>src/ipfsd-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Call <code>ipfs config</code></p>
-<p>If no <code>key</code> is passed, the whole config is returned as an object.</p>
-
-    <div class='pre p1 fill-light mt0'>getConfig(key: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>key</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?)</code>
-	    A specific config to retrieve.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='inprocsetconfig'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>setConfig(key, value)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L234-L236'>
-      <span>src/ipfsd-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Set a config value.</p>
-
-    <div class='pre p1 fill-light mt0'>setConfig(key: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>key</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='inprocreplaceconfig'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>replaceConfig(config)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L244-L246'>
-      <span>src/ipfsd-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Replace the current config with the provided one</p>
-
-    <div class='pre p1 fill-light mt0'>replaceConfig(config: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>config</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='inprocversion'>
+    <div class='border-bottom' id='daemonversion'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -3559,8 +3218,8 @@ if the process hasn't exited yet.</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-in-proc.js#L253-L256'>
-      <span>src/ipfsd-in-proc.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-daemon.js#L319-L328'>
+      <span>src/ipfsd-daemon.js</span>
       </a>
     
   </div>
@@ -3568,7 +3227,7 @@ if the process hasn't exited yet.</p>
 
   <p>Get the version of ipfs</p>
 
-    <div class='pre p1 fill-light mt0'>version(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>version(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></div>
   
   
 
@@ -3586,7 +3245,7 @@ if the process hasn't exited yet.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></code>:
         
 
       
@@ -3626,327 +3285,123 @@ if the process hasn't exited yet.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='factoryclient'>
-      FactoryClient
+    <h3 class='fl m0' id=''>
+      
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-client.js#L14-L99'>
-      <span>src/factory-client.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Exposes the same Factory API but uses a remote endpoint to create the Daemons/Nodes</p>
-
-    <div class='pre p1 fill-light mt0'>new FactoryClient(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
-    <div class="clearfix">
-  
-    <div class='border-bottom' id='factoryclienttmpdir'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>tmpDir(isJS)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-client.js#L42-L48'>
-      <span>src/factory-client.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Utility method to get a temporary directory
-useful in browsers to be able to generate temp
-repos manually</p>
-
-    <div class='pre p1 fill-light mt0'>tmpDir(isJS: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>isJS</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='factoryclientversion'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>version(options)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-client.js#L56-L64'>
-      <span>src/factory-client.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Get the version of the IPFS Daemon.</p>
-
-    <div class='pre p1 fill-light mt0'>version(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-            = <code>{}</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='factoryclientspawn'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>spawn(options)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/factory-client.js#L72-L98'>
-      <span>src/factory-client.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Spawn a remote daemon using ipfs-http-client</p>
-
-    <div class='pre p1 fill-light mt0'>spawn(options: <a href="#spawnoptions">SpawnOptions</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="#spawnoptions">SpawnOptions</a>
-            = <code>{}</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-</div>
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='client'>
-      Client
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-client.js#L15-L211'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-client.js#L9-L12'>
       <span>src/ipfsd-client.js</span>
       </a>
     
   </div>
   
 
-  <p>Creates an instance of Client.</p>
+  
+    <div class='pre p1 fill-light mt0'></div>
+  
+  
 
-    <div class='pre p1 fill-light mt0'>new Client(baseUrl: any, remoteState: any, options: any, _id: any, initialized: any)</div>
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id=''>
+      
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-client.js#L9-L12'>
+      <span>src/ipfsd-client.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Controller for remote nodes</p>
+
+    <div class='pre p1 fill-light mt0'>new undefined()</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='constructor'>
+      constructor
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-client.js#L27-L39'>
+      <span>src/ipfsd-client.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>new constructor(baseUrl: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, remoteState: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, options: <a href="#controlleroptions">ControllerOptions</a>)</div>
   
   
 
@@ -3963,7 +3418,7 @@ repos manually</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>baseUrl</span> <code class='quiet'>(any)</code>
+            <span class='code bold'>baseUrl</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
 	    
           </div>
           
@@ -3971,7 +3426,7 @@ repos manually</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>remoteState</span> <code class='quiet'>(any)</code>
+            <span class='code bold'>remoteState</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
 	    
           </div>
           
@@ -3979,24 +3434,7 @@ repos manually</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>options</span> <code class='quiet'>(any
-            = <code>{}</code>)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>_id</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>initialized</span> <code class='quiet'>(any)</code>
+            <span class='code bold'>options</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>)</code>
 	    
           </div>
           
@@ -4016,24 +3454,26 @@ repos manually</p>
   
 
   
-    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
-    <div class="clearfix">
+
   
-    <div class='border-bottom' id='clientinit'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>init(initOptions?)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='init'>
+      init
+    </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-client.js#L59-L79'>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-client.js#L72-L95'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -4042,7 +3482,7 @@ repos manually</p>
 
   <p>Initialize a repo.</p>
 
-    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
+    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></div>
   
   
 
@@ -4060,46 +3500,10 @@ repos manually</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>initOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-	    
+	    @see 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit</a>
+
           </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>initOptions.keysize</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>2048</code>)
-  </td>
-  <td class='break-word'><span>The bit size of the identiy key.
-</span></td>
-</tr>
-
-
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>initOptions.directory</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
-  
-    (default <code>IPFS_PATH</code>)
-  </td>
-  <td class='break-word'><span>The location of the repo.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
           
         </div>
       
@@ -4111,7 +3515,7 @@ repos manually</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></code>:
         
 
       
@@ -4131,24 +3535,20 @@ repos manually</p>
   
 </section>
 
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='clientcleanup'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>cleanup()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='cleanup'>
+      cleanup
+    </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-client.js#L88-L98'>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-client.js#L104-L115'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -4159,7 +3559,7 @@ repos manually</p>
 If the node was marked as <code>disposable</code> this will be called
 automatically when the process is exited.</p>
 
-    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></div>
   
   
 
@@ -4177,7 +3577,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></code>:
         
 
       
@@ -4197,24 +3597,20 @@ automatically when the process is exited.</p>
   
 </section>
 
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='clientstart'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>start(flags)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='start'>
+      start
+    </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-client.js#L106-L129'>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-client.js#L122-L140'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -4223,7 +3619,7 @@ automatically when the process is exited.</p>
 
   <p>Start the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>start(flags: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;IpfsClient></div>
+    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></div>
   
   
 
@@ -4234,23 +3630,6 @@ automatically when the process is exited.</p>
   
   
 
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>flags</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
-            = <code>[]</code>)</code>
-	    Flags to be passed to the 
-<code>ipfs daemon</code>
- command.
-
-          </div>
-          
-        </div>
-      
-    </div>
   
 
   
@@ -4258,7 +3637,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;IpfsClient></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></code>:
         
 
       
@@ -4278,24 +3657,20 @@ automatically when the process is exited.</p>
   
 </section>
 
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='clientstop'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>stop(timeout?)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='stop'>
+      stop
+    </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-client.js#L137-L148'>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-client.js#L147-L163'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -4304,7 +3679,7 @@ automatically when the process is exited.</p>
 
   <p>Stop the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>stop(timeout: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
+    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></div>
   
   
 
@@ -4315,20 +3690,6 @@ automatically when the process is exited.</p>
   
   
 
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>timeout</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?)</code>
-	    Grace period to wait before force stopping the node
-
-          </div>
-          
-        </div>
-      
-    </div>
   
 
   
@@ -4336,7 +3697,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></code>:
         
 
       
@@ -4356,104 +3717,20 @@ automatically when the process is exited.</p>
   
 </section>
 
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='clientkillprocess'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>killProcess(timeout?)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-client.js#L159-L168'>
-      <span>src/ipfsd-client.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Kill the <code>ipfs daemon</code> process.</p>
-<p>First <code>SIGTERM</code> is sent, after 10.5 seconds <code>SIGKILL</code> is sent
-if the process hasn't exited yet.</p>
-
-    <div class='pre p1 fill-light mt0'>killProcess(timeout: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>timeout</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>?)</code>
-	    Grace period to wait before force stopping the node
-
-          </div>
           
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
         
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='clientpid'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>pid()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='pid'>
+      pid
+    </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-client.js#L175-L181'>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-client.js#L170-L177'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -4500,58 +3777,39 @@ if the process hasn't exited yet.</p>
   
 </section>
 
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='clientgetconfig'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>getConfig(key?)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='version'>
+      version
+    </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-client.js#L191-L197'>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-client.js#L184-L190'>
       <span>src/ipfsd-client.js</span>
       </a>
     
   </div>
   
 
-  <p>Call <code>ipfs config</code></p>
-<p>If no <code>key</code> is passed, the whole config is returned as an object.</p>
+  <p>Get the version of ipfs</p>
 
-    <div class='pre p1 fill-light mt0'>getConfig(key: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Any></div>
-  
-  
-
-  
-  
-  
-  
+    <div class='pre p1 fill-light mt0'>version(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></div>
   
   
 
   
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>key</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?)</code>
-	    A specific config to retrieve.
+  
+  
+  
+  
+  
 
-          </div>
-          
-        </div>
-      
-    </div>
   
 
   
@@ -4559,7 +3817,7 @@ if the process hasn't exited yet.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Any></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></code>:
         
 
       
@@ -4571,103 +3829,6 @@ if the process hasn't exited yet.</p>
   
 
   
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='clientsetconfig'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>setConfig(key, value)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/ipfsd-client.js#L206-L210'>
-      <span>src/ipfsd-client.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Set a config value.</p>
-
-    <div class='pre p1 fill-light mt0'>setConfig(key: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;void></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>key</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;void></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-</div>
 
   
 
@@ -4684,21 +3845,123 @@ if the process hasn't exited yet.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='server'>
-      Server
+    <h3 class='fl m0' id=''>
+      
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/endpoint/server.js#L11-L50'>
-      <span>src/endpoint/server.js</span>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L8-L11'>
+      <span>src/ipfsd-in-proc.js</span>
       </a>
     
   </div>
   
 
-  <p>Creates an instance of Server.</p>
+  
+    <div class='pre p1 fill-light mt0'></div>
+  
+  
 
-    <div class='pre p1 fill-light mt0'>new Server(options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id=''>
+      
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L8-L11'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Controller for in process nodes</p>
+
+    <div class='pre p1 fill-light mt0'></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='constructor'>
+      constructor
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L21-L32'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>constructor(opts: <a href="#controlleroptions">ControllerOptions</a>)</div>
   
   
 
@@ -4715,36 +3978,9 @@ if the process hasn't exited yet.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>)</code>
 	    
           </div>
-          
-          <table class='mt1 mb2 fixed-table h5 col-12'>
-            <colgroup>
-              <col width='30%' />
-              <col width='70%' />
-            </colgroup>
-            <thead>
-              <tr class='bold fill-light'>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody class='mt1'>
-              
-                <tr>
-  <td class='break-word'><span class='code bold'>options.port</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
-  
-    (default <code>43134</code>)
-  </td>
-  <td class='break-word'><span>Server port.
-</span></td>
-</tr>
-
-
-              
-            </tbody>
-          </table>
           
         </div>
       
@@ -4762,33 +3998,86 @@ if the process hasn't exited yet.</p>
   
 
   
-    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
-    <div class="clearfix">
+
   
-    <div class='border-bottom' id='serverstart'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>start(cb)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='opts'>
+      opts
+    </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/endpoint/server.js#L25-L39'>
-      <span>src/endpoint/server.js</span>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L23-L23'>
+      <span>src/ipfsd-in-proc.js</span>
       </a>
     
   </div>
   
 
-  <p>Start the server</p>
+  
+    <div class='pre p1 fill-light mt0'>opts</div>
+  
+  
 
-    <div class='pre p1 fill-light mt0'>start(cb: function (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a>, Hapi.Server): void): void</div>
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='init'>
+      init
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L73-L96'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Initialize a repo.</p>
+
+    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></div>
   
   
 
@@ -4805,8 +4094,11 @@ if the process hasn't exited yet.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>cb</span> <code class='quiet'>(function (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a>, Hapi.Server): void)</code>
-	    
+            <span class='code bold'>initOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
+            = <code>{}</code>)</code>
+	    @see 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit</a>
+
           </div>
           
         </div>
@@ -4819,7 +4111,7 @@ if the process hasn't exited yet.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>void</code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></code>:
         
 
       
@@ -4839,57 +4131,41 @@ if the process hasn't exited yet.</p>
   
 </section>
 
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='serverstop'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>stop(cb?)</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='cleanup'>
+      cleanup
+    </h3>
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://git@github.com/:ipfs/js-ipfsd-ctl/blob/7928c1eee092a9b96a59328294c84c9f065217a3/src/endpoint/server.js#L47-L49'>
-      <span>src/endpoint/server.js</span>
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L105-L111'>
+      <span>src/ipfsd-in-proc.js</span>
       </a>
     
   </div>
   
 
-  <p>Stop the server</p>
+  <p>Delete the repo that was being used.
+If the node was marked as <code>disposable</code> this will be called
+automatically when the process is exited.</p>
 
-    <div class='pre p1 fill-light mt0'>stop(cb: function (err: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a>)?): void</div>
-  
-  
-
-  
-  
-  
-  
+    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></div>
   
   
 
   
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>cb</span> <code class='quiet'>(function (err: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a>)?)</code>
-	    <a href="https://github.com/hapijs/hapi/blob/v16.6.2/API.md#serverstopoptions-callback">Hapi docs</a>
+  
+  
+  
+  
+  
 
-          </div>
-          
-        </div>
-      
-    </div>
   
 
   
@@ -4897,7 +4173,7 @@ if the process hasn't exited yet.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>void</code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></code>:
         
 
       
@@ -4917,10 +4193,238 @@ if the process hasn't exited yet.</p>
   
 </section>
 
-      </div>
-    </div>
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
   
-</div>
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='start'>
+      start
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L118-L134'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Start the daemon.</p>
+
+    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='stop'>
+      stop
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L141-L153'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Stop the daemon.</p>
+
+    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='pid'>
+      pid
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L160-L162'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Get the pid of the <code>ipfs daemon</code> process.</p>
+
+    <div class='pre p1 fill-light mt0'>pid(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='version'>
+      version
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/fe2c8c6f9d15b4383285d42e43e2cbc17c1d3102/src/ipfsd-in-proc.js#L169-L172'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Get the version of ipfs</p>
+
+    <div class='pre p1 fill-light mt0'>version(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
 
   
 
