@@ -15,8 +15,7 @@
 [Hugo Dias](https://github.com/hugomrdias)
 
 ## Notice
-This module is moving to async/await starting from **0.44.0**.   
-The last minor version to support callbacks is 0.43.0, any backports will merged to the branch `callbacks` and released under  `>0.43.0 <0.44.0`.
+Version 1.0.0 changed a bit the api and the options methods take so please read the documentation below.
 
 ## Table of Contents
 
