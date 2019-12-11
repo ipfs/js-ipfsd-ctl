@@ -2,7 +2,5 @@
 
 'use strict'
 
-require('./exec.node')
-require('./npm-install.node')
-require('./start-stop.node')
-require('./endpoint')
+require('./node.routes')
+require('./node.utils')

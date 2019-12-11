@@ -1,156 +1,140 @@
 'use strict'
 
-const IpfsClient = require('ipfs-http-client')
 const multiaddr = require('multiaddr')
 const fs = require('fs-extra')
-const path = require('path')
-const merge = require('merge-options')
+const merge = require('merge-options').bind({ ignoreUndefined: true })
 const debug = require('debug')
+const execa = require('execa')
+const nanoid = require('nanoid')
+const path = require('path')
 const os = require('os')
-const hat = require('hat')
-const log = debug('ipfsd-ctl:daemon')
-const safeStringify = require('safe-json-stringify')
-const tmpDir = require('./utils/tmp-dir')
-const findIpfsExecutable = require('./utils/find-ipfs-executable')
-const setConfigValue = require('./utils/set-config-value')
-const run = require('./utils/run')
-const { checkForRunningApi, defaultRepo } = require('./utils/repo/nodejs')
+const tempWrite = require('temp-write')
+const { checkForRunningApi, repoExists, tmpDir, defaultRepo } = require('./utils')
 
 const daemonLog = {
   info: debug('ipfsd-ctl:daemon:stdout'),
   err: debug('ipfsd-ctl:daemon:stderr')
 }
-// amount of ms to wait before sigkill
-const GRACE_PERIOD = 10500
-
-// amount of ms to wait before sigkill for non disposable repos
-const NON_DISPOSABLE_GRACE_PERIOD = 10500 * 3
 
 function translateError (err) {
   // get the actual error message to be the err.message
-  const message = err.message
-  err.message = err.stderr
-  err.stderr = message
+  err.message = `${err.stdout} \n\n ${err.stderr} \n\n ${err.message} \n\n`
 
-  throw err
+  return err
 }
 
+/** @typedef {import("./index").ControllerOptions} ControllerOptions */
+
 /**
- * ipfsd for a go-ipfs or js-ipfs daemon
- * Create a new node.
- *
+ * Controller for daemon nodes
  * @class
- * @param {Typedefs.SpawnOptions} [opts]
+ *
  */
 class Daemon {
-  constructor (opts = { type: 'go' }) {
-    const rootPath = process.env.testpath
-      ? process.env.testpath
-      : __dirname
-
+  /**
+   * @constructor
+   * @param {ControllerOptions} [opts]
+   */
+  constructor (opts) {
+    /** @type ControllerOptions */
     this.opts = opts
-    const envExec = this.opts.type === 'go' ? process.env.IPFS_GO_EXEC : process.env.IPFS_JS_EXEC
-    this.exec = this.opts.exec || envExec || findIpfsExecutable(this.opts.type, rootPath)
-    this._env = Object.assign({}, process.env, this.opts.env)
-    this.path = this.opts.disposable
-      ? tmpDir(this.opts.type === 'js')
-      : (this.opts.repoPath || defaultRepo(this.opts.type))
-    this.bits = this.opts.initOptions ? this.opts.initOptions.bits : null
+    // make sure we have real paths
+    this.opts.ipfsHttpModule.path = fs.realpathSync(this.opts.ipfsHttpModule.path)
+    this.opts.ipfsBin = fs.realpathSync(this.opts.ipfsBin)
+
+    this.path = this.opts.ipfsOptions.repo || (opts.disposable ? tmpDir(opts.type) : defaultRepo(opts.type))
+    this.exec = this.opts.ipfsBin
+    this.env = merge({ IPFS_PATH: this.path }, this.opts.env)
     this.disposable = this.opts.disposable
     this.subprocess = null
-    this.initialized = fs.existsSync(this.path)
+    this.initialized = false
     this.started = false
     this.clean = true
     this.apiAddr = null
     this.gatewayAddr = null
-    /** @member {IpfsClient} */
     this.api = null
   }
 
-  setApi (addr) {
+  /**
+   * @private
+   * @param {string} addr
+   */
+  _setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = (this.opts.IpfsClient || IpfsClient)(addr)
+    this.api = require(this.opts.ipfsHttpModule.path)(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
 
-  setGateway (addr) {
+  /**
+   * @private
+   * @param {string} addr
+   */
+  _setGateway (addr) {
     this.gatewayAddr = multiaddr(addr)
     this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
     this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
   }
 
   /**
-   * Current repo path
-   *
-   * @member {string}
-   */
-  get repoPath () {
-    return this.path
-  }
-
-  /**
-   * Shell environment variables
-   *
-   * @member {object}
-   */
-  get env () {
-    return this.path ? Object.assign({}, this._env, { IPFS_PATH: this.path }) : this._env
-  }
-
-  /**
    * Initialize a repo.
    *
-   * @param {Object} [initOptions={}]
-   * @param {number} [initOptions.bits=2048] - The bit size of the identiy key.
-   * @param {string} [initOptions.directory=IPFS_PATH] - The location of the repo.
-   * @param {string} [initOptions.pass] - The passphrase of the keychain.
-   * @returns {Promise}
+   * @param {Object} [initOptions={}] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
+   * @returns {Promise<Daemon>}
    */
   async init (initOptions) {
-    if (this.initialized && initOptions) {
-      throw new Error(`Repo already initialized can't use different options, ${JSON.stringify(initOptions)}`)
-    }
-
+    this.initialized = await repoExists(this.path)
     if (this.initialized) {
       this.clean = false
       return this
     }
 
-    initOptions = initOptions || {}
+    const opts = merge(
+      {
+        emptyRepo: false,
+        bits: this.opts.test ? 1024 : 2048,
+        profiles: this.opts.test ? ['test'] : []
+      },
+      typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
+      typeof initOptions === 'boolean' ? {} : initOptions
+    )
 
-    if (initOptions.directory && initOptions.directory !== this.path) {
-      this.path = initOptions.directory
-    }
-
-    const bits = initOptions.bits || this.bits
     const args = ['init']
-    // do not just set a default keysize,
-    // in case we decide to change it at
-    // the daemon level in the future
-    if (bits) {
-      args.push('-b')
-      args.push(bits)
-    }
-    if (initOptions.pass) {
-      args.push('--pass')
-      args.push('"' + initOptions.pass + '"')
-    }
-    if (initOptions.profile) {
-      // TODO: remove when JS IPFS supports profiles
-      if (this.opts.type === 'go') {
-        args.push('-p')
-        args.push(initOptions.profile)
-      } else {
-        log(`ignoring "profile" option, not supported for ${this.opts.type} node`)
-      }
+
+    // default-config only for JS
+    if (this.opts.ipfsOptions.config && this.opts.type === 'js') {
+      args.push(tempWrite.sync(JSON.stringify(this.opts.ipfsOptions.config)))
     }
 
-    await run(this, args, { env: this.env })
+    // Translate ipfs options to cli args
+    if (opts.bits) {
+      args.push('--bits', opts.bits)
+    }
+    if (opts.pass && this.opts.type === 'js') {
+      args.push('--pass', '"' + opts.pass + '"')
+    }
+    if (opts.emptyRepo) {
+      args.push('--empty-repo')
+    }
+    if (opts.profiles && Array.isArray(opts.profiles)) {
+      args.push('--profile', opts.profiles.join(','))
+    }
+
+    const { stdout, stderr } = await execa(this.exec, args, {
+      env: this.env
+    })
       .catch(translateError)
-    const conf = await this.getConfig()
 
-    await this.replaceConfig(merge(conf, this.opts.config))
+    daemonLog.info(stdout)
+    daemonLog.err(stderr)
+
+    // default-config only for Go
+    if (this.opts.type === 'go') {
+      await this._replaceConfig(merge(
+        await this._getConfig(),
+        this.opts.ipfsOptions.config
+      ))
+    }
 
     this.clean = false
     this.initialized = true
@@ -161,163 +145,121 @@ class Daemon {
   /**
    * Delete the repo that was being used. If the node was marked as disposable this will be called automatically when the process is exited.
    *
-   * @returns {Promise}
+   * @returns {Promise<Daemon>}
    */
   async cleanup () {
-    if (this.clean) {
-      return this
+    if (!this.clean) {
+      await fs.remove(this.path)
+      this.clean = true
     }
-
-    await fs.remove(this.path)
-    this.clean = true
+    return this
   }
 
   /**
    * Start the daemon.
    *
-   * @param {Array<string>} [flags=[]] - Flags to be passed to the `ipfs daemon` command.
-   * @return {Promise}
+   * @return {Promise<Daemon>}
    */
-  start (flags = []) {
-    const args = ['daemon'].concat(flags || [])
-    // Check if a daemon is already running
-    const api = checkForRunningApi(this.path)
+  async start () {
+    const args = ['daemon']
+    const opts = this.opts.ipfsOptions
+    // add custom args
+    args.push(...this.opts.args)
 
-    if (api) {
-      this.setApi(api)
-      this.started = true
-      return this.api
+    if (opts.pass && this.opts.type === 'js') {
+      args.push('--pass', '"' + opts.pass + '"')
+    }
+    if (opts.offline) {
+      args.push('--offline')
+    }
+    if (opts.preload && this.opts.type === 'js') {
+      args.push('--enable-preload', Boolean(opts.preload.enabled))
+    }
+    if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.sharding) {
+      args.push('--enable-sharding-experiment')
+    }
+    if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.ipnsPubsub) {
+      args.push('--enable-namesys-pubsub')
     }
 
-    let output = ''
+    // Check if a daemon is already running
+    const api = checkForRunningApi(this.path)
+    if (api) {
+      this._setApi(api)
+    } else {
+      let output = ''
+      const ready = new Promise((resolve, reject) => {
+        this.subprocess = execa(this.exec, args, {
+          env: this.env
+        })
+        this.subprocess.stderr.on('data', data => daemonLog.err(data.toString()))
+        this.subprocess.stdout.on('data', data => daemonLog.info(data.toString()))
 
-    return new Promise(async (resolve, reject) => { // eslint-disable-line no-async-promise-executor
-      this.subprocess = run(this, args, {
-        env: this.env,
-        stderr: (data) => {
-          data = String(data)
-
-          if (data) {
-            daemonLog.err(data.trim())
-          }
-        },
-        stdout: (data) => {
-          data = String(data)
-
-          if (data) {
-            daemonLog.info(data.trim())
-          }
-
-          output += data
-
+        const readyHandler = data => {
+          output += data.toString()
           const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
           const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
 
           if (apiMatch && apiMatch.length > 0) {
-            this.setApi(apiMatch[1])
+            this._setApi(apiMatch[1])
           }
 
           if (gwMatch && gwMatch.length > 0) {
-            this.setGateway(gwMatch[1])
+            this._setGateway(gwMatch[1])
           }
 
           if (output.match(/(?:daemon is running|Daemon is ready)/)) {
             // we're good
             this.started = true
+            this.subprocess.stdout.off('data', readyHandler)
             resolve(this.api)
           }
         }
+        this.subprocess.stdout.on('data', readyHandler)
+        this.subprocess.catch(err => reject(translateError(err)))
       })
+      await ready
+    }
 
-      try {
-        await this.subprocess
-          .catch(translateError)
-      } catch (err) {
-        reject(err)
-      }
-    })
+    this.started = true
+    // Add `peerId`
+    const id = await this.api.id()
+    this.api.peerId = id
+
+    return this
   }
 
   /**
    * Stop the daemon.
    *
-   * @param {number} [timeout] - Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of 10500 ms will be used for disposable nodes and 10500 * 3 ms for non disposable nodes.
-   * @return {Promise}
+   * @return {Promise<Daemon>}
    */
-  async stop (timeout) {
+  async stop () {
     if (!this.started) {
       return this
     }
-    if (!this.subprocess) {
-      return this
-    }
+
     await this.api.stop()
-    // TODO this should call this.api.stop
-    await this.killProcess(timeout)
+    this.subprocess.stderr.removeAllListeners()
+    this.subprocess.stdout.removeAllListeners()
+    this.started = false
 
     if (this.disposable) {
-      return this.cleanup()
+      await this.cleanup()
     }
-  }
-
-  /**
-   * Kill the `ipfs daemon` process.
-   *
-   * If the HTTP API is established, then send 'shutdown' command; otherwise,
-   * process.kill(`SIGTERM`) is used.  In either case, if the process
-   * does not exit after 10.5 seconds then a `SIGKILL` is used.
-   *
-   * Note: timeout is ignored for proc nodes
-   *
-   * @param {Number} [timeout] - Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of 10500 ms will be used for disposable nodes and 10500 * 3 ms for non disposable nodes.
-   * @returns {Promise}
-   */
-  killProcess (timeout) {
-    if (!timeout) {
-      timeout = this.disposable
-        ? GRACE_PERIOD
-        : NON_DISPOSABLE_GRACE_PERIOD
-    }
-
-    return new Promise((resolve, reject) => {
-      // need a local var for the closure, as we clear the var.
-      const subprocess = this.subprocess
-      this.subprocess = null
-
-      const grace = setTimeout(() => {
-        log('kill timeout, using SIGKILL', subprocess.pid)
-        subprocess.kill('SIGKILL')
-      }, timeout)
-
-      subprocess.once('exit', () => {
-        log('killed', subprocess.pid)
-        clearTimeout(grace)
-        this.started = false
-
-        if (this.disposable) {
-          return this.cleanup().then(resolve, reject)
-        }
-
-        resolve()
-      })
-
-      if (this.api) {
-        log('kill via api', subprocess.pid)
-        this.api.shutdown(() => null)
-      } else {
-        log('killing', subprocess.pid)
-        subprocess.kill('SIGTERM')
-      }
-    })
+    return this
   }
 
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @returns {number}
+   * @returns {Promise<Number>}
    */
   pid () {
-    return this.subprocess && this.subprocess.pid
+    if (this.subprocess) {
+      return Promise.resolve(this.subprocess.pid)
+    }
+    throw new Error('Daemon process is not running.')
   }
 
   /**
@@ -325,15 +267,19 @@ class Daemon {
    *
    * If no `key` is passed, the whole config is returned as an object.
    *
+   * @private
    * @param {string} [key] - A specific config to retrieve.
-   * @returns {Promise}
+   * @returns {Promise<Object|String>}
    */
-  async getConfig (key = 'show') {
+  async _getConfig (key = 'show') {
     const {
       stdout
-    } = await run(this, ['config', key], {
-      env: this.env
-    })
+    } = await execa(
+      this.exec,
+      ['config', key],
+      {
+        env: this.env
+      })
       .catch(translateError)
 
     if (key === 'show') {
@@ -344,41 +290,36 @@ class Daemon {
   }
 
   /**
-   * Set a config value.
-   *
-   * @param {string} key - The key of the config entry to change/set.
-   * @param {string} value - The config value to change/set.
-   * @returns {Promise}
-   */
-  setConfig (key, value) {
-    return setConfigValue(this, key, value)
-      .catch(translateError)
-  }
-
-  /**
    * Replace the current config with the provided one
    *
+   * @private
    * @param {object} config
-   * @returns {Promise}
+   * @returns {Promise<Daemon>}
    */
-  async replaceConfig (config) {
-    const tmpFile = path.join(os.tmpdir(), hat())
+  async _replaceConfig (config) {
+    const tmpFile = path.join(os.tmpdir(), nanoid())
 
-    await fs.writeFile(tmpFile, safeStringify(config))
-    await run(this, ['config', 'replace', `${tmpFile}`], { env: this.env })
+    await fs.writeFile(tmpFile, JSON.stringify(config))
+    await execa(
+      this.exec,
+      ['config', 'replace', `${tmpFile}`],
+      { env: this.env }
+    )
       .catch(translateError)
     await fs.unlink(tmpFile)
+
+    return this
   }
 
   /**
    * Get the version of ipfs
    *
-   * @returns {Promise}
+   * @returns {Promise<String>}
    */
   async version () {
     const {
       stdout
-    } = await run(this, ['version'], {
+    } = await execa(this.exec, ['version'], {
       env: this.env
     })
       .catch(translateError)

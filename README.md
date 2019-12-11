@@ -40,11 +40,10 @@ npm install --save ipfsd-ctl
 ```js
 // Start a disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
+const Ctl = require('ipfsd-ctl')
+const factory = Ctl.createFactory()
 
-const IPFSFactory = require('ipfsd-ctl')
-const f = IPFSFactory.create()
-
-const ipfsd = await f.spawn()
+const ipfsd = await factory.spawn()
 const id = await ipfsd.api.id()
 
 console.log(id)
@@ -58,14 +57,14 @@ await ipfsd.stop()
 // Start a remote disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const IPFSFactory = require('ipfsd-ctl')
+const Ctl = require('ipfsd-ctl')
 
 const port = 9090
-const server = IPFSFactory.createServer(port)
-const f = IPFSFactory.create({ remote: true, port: port })
+const server = Ctl.createServer(port)
+const factory = Ctl.createFactory({ remote: true, endpoint: `http://localhost:${port}` })
 
 await server.start()
-const ipfsd = await f.spawn()
+const ipfsd = await factory.spawn()
 const id = await ipfsd.api.id()
 
 console.log(id)
@@ -76,189 +75,159 @@ await server.stop()
 
 ## Disposable vs non Disposable nodes
 
-`ipfsd-ctl` can spawn `disposable` and `non-disposable` daemons.
+`ipfsd-ctl` can spawn `disposable` and `non-disposable` nodes.
 
-- `disposable`- Creates on a temporary repo which will be optionally initialized and started (the default), as well cleaned up on process exit. Great for tests.
-- `non-disposable` - Non disposable daemons will by default attach to any nodes running on the default or the supplied repo. Requires the user to initialize and start the node, as well as stop and cleanup afterwards. Additionally, a non-disposable will allow you to pass a custom repo using the `repoPath` option, if the `repoPath` is not defined, it will use the default repo for the node type (`$HOME/.ipfs` or `$HOME/.jsipfs`). The `repoPath` parameter is ignored for disposable nodes, as there is a risk of deleting a live repo.
-
-## Batteries not included. Bring your own IPFS executable.
-
-Install one or both of the following modules:
-
-- `ipfs` - `> npm i ipfs` - If you want to spawn js-ipfs nodes and/or daemons.
-- `go-ipfs-dep` - `> npm i go-ipfs-dep` - If you want to spawn go-ipfs daemons.
+- `disposable`- Disposable nodes are useful for tests or other temporary use cases, by default they create a temporary repo and automatically initialise and start the node, plus they cleanup everything when stopped.
+- `non-disposable` - Non disposable nodes will by default attach to any nodes running on the default or the supplied repo. Requires the user to initialize and start the node, as well as stop and cleanup afterwards.
 
 ## API
 
-### `IPFSFactory` - `const f = IPFSFactory.create([options])`
+### `createFactory([options], [overrides])`
+Creates a factory that can spawn multiple controllers and pre-define options for them.
 
-`IPFSFactory.create([options])` returns an object that will expose the `df.spawn` method
+- `options` **[ControllerOptions](#ControllerOptions)** Controllers options.
+- `overrides` **[ControllerOptionsOverrides](#ControllerOptionsOverrides)** Pre-defined options overrides per controller type.
 
-- `options` - optional object with:
-  - `remote` bool - use remote endpoint to spawn the nodes.
-  - `port` number - remote endpoint port. Defaults to 43134.
-  - `exec` - IPFS executable path. `ipfsd-ctl` will attempt to locate it by default. If you desire to spawn js-ipfs instances in the same process, pass the ref to the module instead (e.g `exec: require('ipfs')`)
-  - `type` - the daemon type, see below the options
-    - `go` - spawn go-ipfs daemon
-    - `js` - spawn js-ipfs daemon
-    - `proc` - spawn in-process js-ipfs instance. Needs to be called also with exec. Example: `DaemonFactory.create({type: 'proc', exec: require('ipfs') })`.
-  - `IpfsClient` - A custom IPFS API constructor to use instead of the packaged one
+Returns a **[Factory](#factory)**
 
-**example:** See [Usage](#usage)
+### `createController([options])`
+Creates a controller.
 
-#### Spawn a daemon with `f.spawn([options]) : Promise`
+- `options` **[ControllerOptions](#ControllerOptions)** Factory options.
 
-Spawn the daemon
+Returns a **[Controller](#Controller)**
 
-- `options` is an optional object the following properties:
-  - `init` bool (default true) or Object - should the node be initialized
-  - `initOptions` object - should be of the form `{bits: <size>}`, which sets the desired key size
-  - `start` bool (default true) - should the node be started
-  - `repoPath` string - the repository path to use for this node, ignored if node is disposable
-  - `disposable` bool (default true) - a new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits
-  - `defaultAddrs` bool (default false) - use the daemon default `Swarm` addrs
-  - `args` - array of cmd line arguments to be passed to ipfs daemon
-  - `config` - ipfs configuration options
+### `createServer([options])`
+Create an Endpoint Server. This server is used by a client node to control a remote node. Example: Spawning a go-ipfs node from a browser.
 
-Returns a promise that resolves to:
+- `options` **[Object]** Factory options. Defaults to: `{ port: 43134 }`
+  - `port` **number** Port to start the server on.
 
-- `ipfsd` - is the daemon controller instance:
-  - `api` - a property of `ipfsd`, an instance of  [ipfs-http-client](https://github.com/ipfs/js-ipfs-http-client) attached to the newly created ipfs node
+Returns a **Server**
 
-**example:** See [Usage](#usage)
+### Factory
 
-#### Get daemon version with `f.version() : Promise`
+#### `controllers`
+**Controller[]** List of all the controllers spawned.
 
-Get the version without spawning a daemon
+#### `tmpDir()`
+Create a temporary repo to create controllers manually.
 
-- `callback` - is a function with the signature `function(err, version)`, where version might be one of the following:
-    - if `type` is 'go' a version string like `ipfs version <version number>`
-    - if `type` is 'js' a version string like `js-ipfs version: <version number>`
-     - if `type` is 'proc' an object with the following properties:
-        - version - the ipfs version
-        - repo - the repo version
-        - commit - the commit hash for this version
+Returns **Promise&lt;String>** - Path to the repo.
 
-### Remote endpoint - `const server = IPFSFactory.createServer([options])`
+#### `spawn([options])`
+Creates a controller for a IPFS node.
+- `options` **[Object]** IPFS options https://github.com/ipfs/js-ipfs#ipfs-constructor
 
-`IPFSFactory.createServer` starts a IPFSFactory endpoint.
+Returns **Promise&lt;[Controller](#controller)>**
 
-- `options` is an optional object the following properties:
-  - `port` - the port to start the server on
+#### `clean()`
+Cleans all controllers spawned.
 
-**example:**
-```js
-const IPFSFactory = require('ipfsd-ctl')
+Returns **Promise&lt;[Factory](#factory)>**
 
-const server = IPFSFactory.createServer({ port: 12345 })
+### Controller
+Class controller for a IPFS node.
 
-await server.start()
+#### `new Controller(options)`
 
-console.log('endpoint is running')
+- `options` **[ControllerOptions](#ControllerOptions)**
 
-await server.stop()
+#### `path`
+**String** Repo path.
 
-console.log('endpoint has stopped')
-```
+#### `exec`
+**String** Executable path.
 
-### IPFS Daemon Controller - `ipfsd`
+#### `env`
+**Object** ENV object.
 
-The IPFS daemon controller (`ipfsd`) allows you to interact with the spawned IPFS daemon.
+#### `initalized`
+**Boolean** Flag with the current init state.
 
-#### `ipfsd.apiAddr` (getter)
+#### `started`
+**Boolean** Flag with the current start state.
 
-Get the address (multiaddr) of connected IPFS API. Returns a multiaddr
+#### `clean`
+**Boolean** Flag with the current clean state.
 
-#### `ipfsd.gatewayAddr` (getter)
+#### `apiAddr`
+**Multiaddr** API address
 
-Get the address (multiaddr) of connected IPFS HTTP Gateway. Returns a multiaddr.
+#### `gatewayAddr`
+**Multiaddr** Gateway address
 
-#### `ipfsd.repoPath` (getter)
+#### `api`
+**Object** IPFS core interface
 
-Get the current repo path. Returns string.
+#### `init([initOptions])`
+Initialises controlled node
 
-#### `ipfsd.started` (getter)
+- `initOptions` **[Object]** IPFS init options https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
 
-Is the node started. Returns a boolean.
+Returns **Promise&lt;[Controller](#controller)>**
 
-#### `init([initOpts]) : Promise`
+#### `start()`
+Starts controlled node.
 
-Initialize a repo.
+Returns **Promise&lt;IPFS>**
 
-`initOpts` (optional) is an object with the following properties:
-  - `keysize` (default 2048) - The bit size of the identity key.
-  - `directory` (default IPFS_PATH if defined, or ~/.ipfs for go-ipfs and ~/.jsipfs for js-ipfs) - The location of the repo.
-  - `pass` (optional) - The passphrase of the key chain.
+#### `stop()`
+Stops controlled node.
 
-Returns a promise that resolves to a daemon controller instance.
+Returns **Promise&lt;[Controller](#controller)>**
 
-#### `ipfsd.cleanup() : Promise`
+#### `cleanup()`
+Cleans controlled node, a disposable controller calls this automatically.
 
-Delete the repo that was being used. If the node was marked as `disposable` this will be called automatically when the process is exited.
+Returns **Promise&lt;[Controller](#controller)>**
 
-Returns a promise that resolves when the cleanup is complete.
 
-#### `ipfsd.start(flags) : Promise`
+#### `pid()`
+Get the pid of the controlled node process if aplicable.
 
-Start the daemon.
+Returns **Promise&lt;number>**
 
-`flags` - Flags array to be passed to the `ipfs daemon` command.
 
-Returns a promiset hat resolves to an instance of `ipfs-http-client`.
+#### `version()`
+Get the version of the controlled node.
 
-#### `ipfsd.stop([timeout]) : Promise`
+Returns **Promise&lt;string>**
 
-Stop the daemon.
 
-Use `timeout` to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of `10500` ms will be used for disposable nodes and `10500 * 3` ms for non disposable nodes.
+### ControllerOptionsOverrides
 
-Returns a promise that resolves when the daemon has stopped.
+Type: [Object]
 
-#### `ipfsd.killProcess([timeout]) : Promise`
+#### Properties
+-   `js` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `go` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `proc` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.
 
-Kill the `ipfs daemon` process. Use timeout to specify the grace period in ms before hard stopping the daemon. Otherwise, a grace period of `10500` ms will be used for disposable nodes and `10500 * 3` ms for non disposable nodes.
 
-Note: timeout is ignored for `proc` nodes
+### ControllerOptions
 
-First a `SIGTERM` is sent, after 10.5 seconds `SIGKILL` is sent if the process hasn't exited yet.
+Type: [Object]
 
-Returns a promise that resolves once the process is killed
+#### Properties
+-   `test` **[boolean]** Flag to activate custom config for tests.
+-   `remote` **[boolean]** Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
+-   `disposable` **[boolean]** A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
+-   `type` **[string]** The daemon type, see below the options:
+    -   go - spawn go-ipfs daemon
+    -   js - spawn js-ipfs daemon
+    -   proc - spawn in-process js-ipfs node
+-   `env` **[Object]** Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
+-   `args` **[Array]** Custom cli args.
+-   `ipfsHttpModule` **[Object]** Define the `ipfs-http-client` package to be used by ctl. Both `ref` and `path` should be specified to make sure all node types (daemon, remote daemon, browser in process node, etc) use the correct version.
+    -   `ipfsHttpModule.ref` **[Object]** Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
+    -   `ipfsHttpModule.path` **[string]** Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
+-   `ipfsModule` **[Object]** Define the `ipfs` package to be used by ctl. Both `ref` and `path` should be specified to make sure all node types (daemon, remote daemon, browser in process node, etc) use the correct version.
+    -   `ipfsModule.ref` **[Object]** Reference to a IPFS API object. (defaults to the local require(`ipfs`))
+    -   `ipfsModule.path` **[string]** Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
+-   `ipfsBin` **[string]** Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
+-   `ipfsOptions` **[IpfsOptions]** Options for the IPFS instance same as https://github.com/ipfs/js-ipfs#ipfs-constructor. `proc` nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.
 
-#### `ipfsd.pid() : Promise`
-
-Get the pid of the `ipfs daemon` process. Returns the pid number
-
-Returns a promiset that resolves to the `pid` of the running daemon.
-
-#### `ipfsd.getConfig([key]) : Promise`
-
-Returns the output of an `ipfs config` command. If no `key` is passed, the whole config is returned as an object.
-
-`key` (optional) - A specific config to retrieve.
-
-Returns a promise that resolves to  `Object|string` on success.
-
-#### `ipfsd.setConfig(key, value) : Promise`
-
-Set a config value.
-
-`key` - the key of the config entry to change/set
-
-`value` - the config value to change/set
-
-Returns a promise that resolves on success.
-
-#### `ipfsd.version() : Promise`
-
-Get the version of ipfs
-
-Returns a promise that resolves to the `version`
-
-### IPFS HTTP Client  - `ipfsd.api`
-
-An instance of [ipfs-http-client](https://github.com/ipfs/js-ipfs-http-client#api) that is used to interact with the daemon.
-
-This instance is returned for each successfully started IPFS daemon, when either `df.spawn({start: true})` (the default) is called, or `ipfsd.start()` is invoked in the case of nodes that were spawned with `df.spawn({start: false})`.
 
 ## ipfsd-ctl environment variables
 
@@ -276,53 +245,6 @@ Meaning that, environment variables override defaults in the configuration file 
 
 An alternative way of specifying the executable path for the `js-ipfs` or `go-ipfs` executable, respectively.
 
-## Packaging
-
-`ipfsd-ctl` can be packaged in Electron applications, but the ipfs binary has to be excluded from asar (Electron Archives).
-[read more about unpack files from asar](https://electron.atom.io/docs/tutorial/application-packaging/#adding-unpacked-files-in-asar-archive).
-
-`ipfsd-ctl` will try to detect if used from within an `app.asar` archive and tries to resolve ipfs from `app.asar.unpacked`. The ipfs binary is part of the `go-ipfs-dep` module.
-
-```bash
-electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep
-```
-
-See [electron asar example](https://github.com/ipfs/js-ipfsd-ctl/tree/master/examples/electron-asar/)
-
-## Development
-
-Project structure:
-
-```
-src
-├── defaults
-│   ├── config.json
-│   └── options.json
-├── endpoint                    # endpoint to support remote spawning
-│   ├── routes.js
-│   └── server.js
-├── factory-client.js           # IPFS Factories: client (remote), daemon (go or js) and in-proc (js)
-├── factory-daemon.js
-├── factory-in-proc.js
-├── index.js
-├── ipfsd-client.js             # ipfsd (Daemon Controller): client (remote), daemon (go or js), in-proc (js)
-├── ipfsd-daemon.js
-├── ipfsd-in-proc.js
-└── utils                       # Utils used by the Factories and Daemon Controllers
-    ├── configure-node.js
-    ├── exec.js
-    ├── find-ipfs-executable.js
-    ├── flatten.js
-    ├── parse-config.js
-    ├── repo
-    │   ├── create-browser.js
-    │   └── create-nodejs.js
-    ├── run.js
-    ├── set-config-value.js
-    └── tmp-dir.js
-
-4 directories, 21 files
-```
 
 ## Contribute
 

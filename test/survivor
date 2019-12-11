@@ -1,3 +1,0 @@
-#!/bin/sh
-trap "echo 'you cannot kill me!'" HUP INT TERM QUIT PIPE
-while true; do sleep 1; done

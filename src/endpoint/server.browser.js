@@ -1,7 +1,5 @@
+/* eslint-disable no-console */
 'use strict'
-
-const Hapi = require('@hapi/hapi')
-const routes = require('./routes')
 
 /**
  * Creates an instance of Server.
@@ -12,14 +10,15 @@ class Server {
    * @constructor
    * @param {Object} options
    * @param {number} [options.port=43134] - Server port.
-   * @param {function} createFactory
+   * @param {function} createNode
    */
-  constructor (options, createFactory) {
+  constructor (options, createNode) {
     options = options || { port: 43134 }
 
     this.server = null
     this.port = options.port
-    this.createFactory = createFactory
+    this.createNode = createNode
+    console.warn('Server not implemented in the browser')
   }
 
   /**
@@ -27,19 +26,9 @@ class Server {
    *
    * @returns {Promise<Hapi.Server>}
    */
-  async start () {
-    this.server = new Hapi.Server({
-      port: this.port,
-      host: 'localhost',
-      routes: {
-        cors: true
-      }
-    })
-
-    routes(this.server, this.createFactory)
-
-    await this.server.start()
-    return this.server
+  start () {
+    console.warn('Server not implemented in the browser')
+    return Promise.resolve(this)
   }
 
   /**
@@ -49,7 +38,8 @@ class Server {
    * @returns {Promise}
    */
   stop (options) {
-    return this.server.stop(options)
+    console.warn('Server not implemented in the browser')
+    return Promise.resolve(this)
   }
 }
 
