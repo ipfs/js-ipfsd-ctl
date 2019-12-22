@@ -211,6 +211,7 @@ Type: [Object]
 #### Properties
 -   `test` **[boolean]** Flag to activate custom config for tests.
 -   `remote` **[boolean]** Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
+-   `endpoint` **[string]** Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134').
 -   `disposable` **[boolean]** A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
 -   `type` **[string]** The daemon type, see below the options:
     -   go - spawn go-ipfs daemon
