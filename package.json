@@ -50,7 +50,7 @@
     "daemon"
   ],
   "dependencies": {
-    "@hapi/boom": "^8.0.1",
+    "@hapi/boom": "^9.0.0",
     "@hapi/hapi": "^18.3.2",
     "@hapi/joi": "^16.1.8",
     "debug": "^4.1.1",
