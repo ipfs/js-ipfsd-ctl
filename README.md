@@ -34,12 +34,12 @@ npm install --save ipfsd-ctl
 
 ## Usage
 
-### Spawning a single IPFS daemon: `createController`
+### Spawning a single IPFS controller: `createController`
 
 This is a shorthand for simpler use cases where factory is not needed.
 
 ```js
-// No need to create a factory when only a single node is needed.
+// No need to create a factory when only a single controller is needed.
 // Use createController to spawn it instead.
 const Ctl = require('ipfsd-ctl')
 const ipfsd = await Ctl.createController()
@@ -50,26 +50,25 @@ console.log(id)
 await ipfsd.stop()
 ```
 
-### Spawning multiple IPFS daemons: `createFactory`
+### Manage multiple IPFS controllers: `createFactory`
 
-Use a factory to spawn multiple nodes based on some common template.
+Use a factory to spawn multiple controllers based on some common template.
 
 **Spawn an IPFS daemon from Node.js**
 
 ```js
-// Start two disposable js-ipfs nodes, and get access to apis
-// print node ids, and stop temporary daemons
+// Create a factory to spawn two test disposable controllers, get access to an IPFS api
+// print node ids and clean all the controllers from the factory.
 const Ctl = require('ipfsd-ctl')
-const factory = Ctl.createFactory({ type: 'js', disposable: true })
 
-const ipfsd1 = await factory.spawn()
-const ipfsd2 = await factory.spawn()
+const factory = Ctl.createFactory({ type: 'js', test: true, disposable: true })
+const ipfsd1 = await factory.spawn() // Spawns using options from `createFactory`
+const ipfsd2 = await factory.spawn({ type: 'go' }) // Spawns using options from `createFactory` but overrides `type` to spawn a `go` controller
 
 console.log(await ipfsd1.api.id())
 console.log(await ipfsd2.api.id())
 
-await ipfsd1.stop()
-await ipfsd2.stop()
+await factory.clean() // Clean all the controllers created by the factory calling `stop` on all of them.
 ```
 
 **Spawn an IPFS daemon from the Browser using the provided remote endpoint**
