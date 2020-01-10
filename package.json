@@ -59,7 +59,7 @@
     "go-ipfs-dep": "~0.4.22",
     "ipfs": "0.40.0",
     "ipfs-http-client": "^40.1.0",
-    "ipfs-utils": "^0.5.0",
+    "ipfs-utils": "^0.6.0",
     "ky": "^0.16.1",
     "ky-universal": "^0.3.0",
     "merge-options": "^2.0.0",
