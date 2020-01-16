@@ -51,7 +51,7 @@
   ],
   "dependencies": {
     "@hapi/boom": "^8.0.1",
-    "@hapi/hapi": "^18.3.2",
+    "@hapi/hapi": "^19.0.5",
     "@hapi/joi": "^16.1.8",
     "debug": "^4.1.1",
     "execa": "^4.0.0",
