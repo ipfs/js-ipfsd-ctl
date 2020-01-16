@@ -14,7 +14,7 @@
     "test": "aegir test -t node -t browser --timeout 10000",
     "test:node": "aegir test -t node",
     "test:browser": "aegir test -t browser",
-    "release": "aegir release",
+    "release": "aegir release --timeout 10000",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
     "coverage": "aegir coverage --timeout 50000"
