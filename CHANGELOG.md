@@ -1,3 +1,13 @@
+<a name="1.0.4"></a>
+## [1.0.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v1.0.3...v1.0.4) (2020-01-16)
+
+
+### Bug Fixes
+
+* remove swarm addrs in browser ([#435](https://github.com/ipfs/js-ipfsd-ctl/issues/435)) ([39b324e](https://github.com/ipfs/js-ipfsd-ctl/commit/39b324e)), closes [/github.com/libp2p/js-libp2p/blob/83409deaa6773a550d38b77bd486faf8b8b97d29/src/transport-manager.js#L172-L176](https://github.com//github.com/libp2p/js-libp2p/blob/83409deaa6773a550d38b77bd486faf8b8b97d29/src/transport-manager.js/issues/L172-L176)
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v1.0.2...v1.0.3) (2020-01-16)
 
