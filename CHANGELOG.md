@@ -1,3 +1,14 @@
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v1.0.2...v1.0.3) (2020-01-16)
+
+
+### Bug Fixes
+
+* add endpoint option to the docs ([3e61a00](https://github.com/ipfs/js-ipfsd-ctl/commit/3e61a00))
+* set profiles option if profiles array not empty ([#433](https://github.com/ipfs/js-ipfsd-ctl/issues/433)) ([12a2b6c](https://github.com/ipfs/js-ipfsd-ctl/commit/12a2b6c))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v1.0.0...v1.0.2) (2019-12-11)
 
