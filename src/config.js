@@ -8,6 +8,9 @@ module.exports = ({ type }) => {
   // from the browser tell remote nodes to listen over WS
   if (type !== 'proc' && (isBrowser || isWebWorker)) {
     swarm = ['/ip4/127.0.0.1/tcp/0/ws']
+  // from the browser, in process nodes cannot listen on _any_ addrs
+  } else if (type === 'proc' && (isBrowser || isWebWorker)) {
+    swarm = []
   } else {
     swarm = ['/ip4/127.0.0.1/tcp/0']
   }
