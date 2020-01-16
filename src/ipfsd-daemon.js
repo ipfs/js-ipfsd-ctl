@@ -116,7 +116,7 @@ class Daemon {
     if (opts.emptyRepo) {
       args.push('--empty-repo')
     }
-    if (opts.profiles && Array.isArray(opts.profiles)) {
+    if (Array.isArray(opts.profiles) && opts.profiles.length) {
       args.push('--profile', opts.profiles.join(','))
     }
 
