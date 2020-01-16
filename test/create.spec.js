@@ -80,6 +80,8 @@ describe('`createController({test: true})` should return daemon with correct con
 
       if ((isBrowser || isWebWorker) && opts.type !== 'proc') {
         expect(swarm).to.be.deep.eq(['/ip4/127.0.0.1/tcp/0/ws'])
+      } else if ((isBrowser || isWebWorker) && opts.type === 'proc') {
+        expect(swarm).to.be.deep.eq([])
       } else {
         expect(swarm).to.be.deep.eq(['/ip4/127.0.0.1/tcp/0'])
       }
