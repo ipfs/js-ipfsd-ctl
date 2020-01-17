@@ -1,3 +1,13 @@
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/ipfs/js-ipfsd-ctl/compare/v1.0.5...v1.0.6) (2020-01-17)
+
+
+### Bug Fixes
+
+* find bin top to bottom instead of the inverse ([bc847fb](https://github.com/ipfs/js-ipfsd-ctl/commit/bc847fb))
+
+
+
 <a name="1.0.5"></a>
 ## [1.0.5](https://github.com/ipfs/js-ipfsd-ctl/compare/v1.0.4...v1.0.5) (2020-01-16)
 
