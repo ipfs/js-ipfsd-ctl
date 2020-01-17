@@ -5,6 +5,7 @@ const path = require('path')
 const fs = require('fs-extra')
 const debug = require('debug')
 const nanoid = require('nanoid')
+const resolveCwd = require('resolve-cwd')
 const isWindows = os.platform() === 'win32'
 
 const log = debug('ipfsd-ctl:utils')
@@ -42,10 +43,10 @@ const checkForRunningApi = (repoPath) => {
 
 const findBin = (type) => {
   if (type === 'js') {
-    return process.env.IPFS_JS_EXEC || require.resolve('ipfs/src/cli/bin.js')
+    return process.env.IPFS_JS_EXEC || resolveCwd('ipfs/src/cli/bin.js')
   }
 
-  return process.env.IPFS_GO_EXEC || require.resolve(`go-ipfs-dep/go-ipfs/${isWindows ? 'ipfs.exe' : 'ipfs'}`)
+  return process.env.IPFS_GO_EXEC || resolveCwd(`go-ipfs-dep/go-ipfs/${isWindows ? 'ipfs.exe' : 'ipfs'}`)
 }
 
 const tmpDir = (type = '') => {

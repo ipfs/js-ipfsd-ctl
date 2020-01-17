@@ -65,6 +65,7 @@
     "merge-options": "^2.0.0",
     "multiaddr": "^6.1.1",
     "nanoid": "^2.1.9",
+    "resolve-cwd": "^3.0.0",
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
