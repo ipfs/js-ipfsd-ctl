@@ -137,7 +137,7 @@ Returns **Promise&lt;String>** - Path to the repo.
 
 #### `spawn([options])`
 Creates a controller for a IPFS node.
-- `options` **[Object]** IPFS options https://github.com/ipfs/js-ipfs#ipfs-constructor
+- `options` **[ControllerOptions](#ControllerOptions)** Factory options.
 
 Returns **Promise&lt;[Controller](#controller)>**
 
