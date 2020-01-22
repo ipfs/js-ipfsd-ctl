@@ -243,6 +243,7 @@ class Daemon {
     let killed = false
     if (this.opts.forceKill !== false) {
       killTimeout = setTimeout(() => {
+        // eslint-disable-next-line no-console
         console.error(new Error(`Timeout stopping ${this.opts.type} node. Process ${this.subprocess.pid} will be force killed now.`))
         killed = true
         this.subprocess.kill('SIGKILL')
