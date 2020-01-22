@@ -239,7 +239,16 @@ class Daemon {
       return this
     }
 
+    let killTimeout
+    if (this.opts.forceKill !== false) {
+      killTimeout = setTimeout(() => {
+        console.error(new Error(`Timeout stopping ${this.opts.type} node. Process ${this.subprocess.pid} will be force killed now.`))
+        this.subprocess.kill('SIGKILL')
+      }, this.opts.forceKillTimeout || 10000)
+    }
+
     await this.api.stop()
+    clearTimeout(killTimeout)
     this.subprocess.stderr.removeAllListeners()
     this.subprocess.stdout.removeAllListeners()
     this.started = false
