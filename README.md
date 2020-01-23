@@ -105,15 +105,15 @@ await server.stop()
 ### `createFactory([options], [overrides])`
 Creates a factory that can spawn multiple controllers and pre-define options for them.
 
-- `options` **[ControllerOptions](#ControllerOptions)** Controllers options.
-- `overrides` **[ControllerOptionsOverrides](#ControllerOptionsOverrides)** Pre-defined options overrides per controller type.
+- `options` **[ControllerOptions](#controlleroptions)** Controllers options.
+- `overrides` **[ControllerOptionsOverrides](#controlleroptionsoverrides)** Pre-defined options overrides per controller type.
 
 Returns a **[Factory](#factory)**
 
 ### `createController([options])`
 Creates a controller.
 
-- `options` **[ControllerOptions](#ControllerOptions)** Factory options.
+- `options` **[ControllerOptions](#controlleroptions)** Factory options.
 
 Returns **Promise&lt;[Controller](#controller)>**
 
@@ -137,7 +137,7 @@ Returns **Promise&lt;String>** - Path to the repo.
 
 #### `spawn([options])`
 Creates a controller for a IPFS node.
-- `options` **[ControllerOptions](#ControllerOptions)** Factory options.
+- `options` **[ControllerOptions](#controlleroptions)** Factory options.
 
 Returns **Promise&lt;[Controller](#controller)>**
 
@@ -151,7 +151,7 @@ Class controller for a IPFS node.
 
 #### `new Controller(options)`
 
-- `options` **[ControllerOptions](#ControllerOptions)**
+- `options` **[ControllerOptions](#controlleroptions)**
 
 #### `path`
 **String** Repo path.
@@ -220,9 +220,9 @@ Returns **Promise&lt;string>**
 Type: [Object]
 
 #### Properties
--   `js` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
--   `go` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
--   `proc` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `js` **[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `go` **[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `proc` **[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.
 
 
 ### ControllerOptions
