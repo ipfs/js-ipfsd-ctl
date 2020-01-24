@@ -32,6 +32,18 @@ Version 1.0.0 changed a bit the api and the options methods take so please read 
 npm install --save ipfsd-ctl
 ```
 
+Please ensure your project also has dependencies on `ipfs`, `ipfs-http-client` and `go-ipfs-dep`.
+
+```sh
+npm install --save ipfs
+npm install --save ipfs-http-client
+npm install --save go-ipfs-dep
+```
+
+If you are only going to use the `go` implementation of IPFS, you can skip installing the `js` implementation and vice versa, though both will require the `ipfs-http-client` module.
+
+If you are only using the `proc` type in-process IPFS node, you can skip installing `go-ipfs-dep` and `ipfs-http-client`.
+
 ## Usage
 
 ### Spawning a single IPFS controller: `createController`
