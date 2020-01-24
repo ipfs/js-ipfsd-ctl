@@ -25,6 +25,9 @@ jobs:
   include:
     - stage: check
       script:
+        - npm install ipfs
+        - npm install ipfs-http-client
+        - npm install go-ipfs-dep
         - npx aegir build --bundlesize
         - npx aegir commitlint --travis
         - npx aegir dep-check
