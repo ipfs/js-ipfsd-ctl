@@ -41,8 +41,8 @@ class Factory {
     /** @type ControllerOptions */
     this.opts = merge(defaults, options)
 
-    // conditionally include ipfs based on which type of daemon we will spawn
-    if (this.opts.type === 'js' || this.opts.type === 'proc') {
+    // conditionally include ipfs based on which type of daemon we will spawn when none has been specifed
+    if ((this.opts.type === 'js' || this.opts.type === 'proc') && !this.opts.ipfsModule) {
       this.opts.ipfsModule = {
         path: require.resolve('ipfs'),
         ref: require('ipfs')
