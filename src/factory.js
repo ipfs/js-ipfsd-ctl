@@ -25,7 +25,9 @@ const defaults = {
     path: require.resolve('ipfs-http-client'),
     ref: require('ipfs-http-client')
   },
-  ipfsOptions: {}
+  ipfsOptions: {},
+  forceKill: true,
+  forceKillTimeout: 5000
 }
 
 /**
