@@ -41,12 +41,14 @@ const checkForRunningApi = (repoPath) => {
   return api ? api.toString() : null
 }
 
-const findBin = (type) => {
+const findBin = (type, required) => {
+  const resolve = required ? resolveCwd : resolveCwd.silent
+
   if (type === 'js') {
-    return process.env.IPFS_JS_EXEC || resolveCwd('ipfs/src/cli/bin.js')
+    return process.env.IPFS_JS_EXEC || resolve('ipfs/src/cli/bin.js')
   }
 
-  return process.env.IPFS_GO_EXEC || resolveCwd(`go-ipfs-dep/go-ipfs/${isWindows ? 'ipfs.exe' : 'ipfs'}`)
+  return process.env.IPFS_GO_EXEC || resolve(`go-ipfs-dep/go-ipfs/${isWindows ? 'ipfs.exe' : 'ipfs'}`)
 }
 
 const tmpDir = (type = '') => {
