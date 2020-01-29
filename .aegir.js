@@ -17,11 +17,11 @@ module.exports = {
       pre: () => server.start(),
       post: () => server.stop()
   },
-  webpack: {
+  webpack: process.env.NODE_ENV === 'test' ? undefined : {
     externals: {
       ipfs: 'ipfs',
       'ipfs-http-client': 'ipfs-http-client',
-      'go-ipfs-dep': 'go-ifps-dep'
+      'go-ipfs-dep': 'go-ipfs-dep'
     }
   }
 }

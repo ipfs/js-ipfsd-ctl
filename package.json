@@ -71,7 +71,10 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
+    "go-ipfs-dep": "^0.4.22",
     "husky": "^4.0.10",
+    "ipfs": "github:ipfs/js-ipfs#master",
+    "ipfs-http-client": "^42.0.0-pre.0",
     "lint-staged": "^10.0.2"
   },
   "peerDependencies": {
