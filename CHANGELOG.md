@@ -1,3 +1,25 @@
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v1.0.7...v2.0.0) (2020-01-29)
+
+
+### Bug Fixes
+
+* do not send code refs over http ([#442](https://github.com/ipfs/js-ipfsd-ctl/issues/442)) ([9cbf329](https://github.com/ipfs/js-ipfsd-ctl/commit/9cbf329))
+
+
+### Features
+
+* force kill daemons after timeout ([#441](https://github.com/ipfs/js-ipfsd-ctl/issues/441)) ([182e532](https://github.com/ipfs/js-ipfsd-ctl/commit/182e532)), closes [#438](https://github.com/ipfs/js-ipfsd-ctl/issues/438)
+* move ipfs to peer deps ([#446](https://github.com/ipfs/js-ipfsd-ctl/issues/446)) ([236c935](https://github.com/ipfs/js-ipfsd-ctl/commit/236c935))
+
+
+### BREAKING CHANGES
+
+* This package now requires the user to bring their own version, but they can also skip installing go-IPFS if, for example, they are only going
+to use js-IPFS.
+
+
+
 <a name="1.0.7"></a>
 ## [1.0.7](https://github.com/ipfs/js-ipfsd-ctl/compare/v1.0.6...v1.0.7) (2020-01-24)
 
