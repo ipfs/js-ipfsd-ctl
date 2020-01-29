@@ -25,11 +25,6 @@ const defaults = {
     path: require.resolve('ipfs-http-client'),
     ref: require('ipfs-http-client')
   },
-  ipfsModule: {
-    path: require.resolve('ipfs'),
-    ref: require('ipfs')
-  },
-  ipfsBin: findBin('go'),
   ipfsOptions: {},
   forceKill: true,
   forceKillTimeout: 5000
@@ -50,9 +45,9 @@ class Factory {
 
     /** @type ControllerOptionsOverrides */
     this.overrides = merge({
-      js: merge(this.opts, { type: 'js', ipfsBin: findBin('js') }),
-      go: this.opts,
-      proc: merge(this.opts, { type: 'proc', ipfsBin: findBin('js') })
+      js: merge(this.opts, { type: 'js', ipfsBin: findBin('js', this.opts.type === 'js') }),
+      go: merge(this.opts, { type: 'go', ipfsBin: findBin('go', this.opts.type === 'go') }),
+      proc: merge(this.opts, { type: 'proc', ipfsBin: findBin('js', this.opts.type === 'proc') })
     }, overrides)
 
     /** @type ControllerDaemon[] */
@@ -106,6 +101,14 @@ class Factory {
       this.overrides[options.type || this.opts.type],
       options
     )
+
+    // conditionally include ipfs based on which type of daemon we will spawn when none has been specifed
+    if ((opts.type === 'js' || opts.type === 'proc') && !opts.ipfsModule) {
+      opts.ipfsModule = {
+        path: require.resolve('ipfs'),
+        ref: require('ipfs')
+      }
+    }
 
     // IPFS options defaults
     const ipfsOptions = merge(

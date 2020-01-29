@@ -32,6 +32,18 @@ Version 1.0.0 changed a bit the api and the options methods take so please read 
 npm install --save ipfsd-ctl
 ```
 
+Please ensure your project also has dependencies on `ipfs`, `ipfs-http-client` and `go-ipfs-dep`.
+
+```sh
+npm install --save ipfs
+npm install --save ipfs-http-client
+npm install --save go-ipfs-dep
+```
+
+If you are only going to use the `go` implementation of IPFS, you can skip installing the `js` implementation and vice versa, though both will require the `ipfs-http-client` module.
+
+If you are only using the `proc` type in-process IPFS node, you can skip installing `go-ipfs-dep` and `ipfs-http-client`.
+
 ## Usage
 
 ### Spawning a single IPFS controller: `createController`
@@ -105,15 +117,15 @@ await server.stop()
 ### `createFactory([options], [overrides])`
 Creates a factory that can spawn multiple controllers and pre-define options for them.
 
-- `options` **[ControllerOptions](#ControllerOptions)** Controllers options.
-- `overrides` **[ControllerOptionsOverrides](#ControllerOptionsOverrides)** Pre-defined options overrides per controller type.
+- `options` **[ControllerOptions](#controlleroptions)** Controllers options.
+- `overrides` **[ControllerOptionsOverrides](#controlleroptionsoverrides)** Pre-defined options overrides per controller type.
 
 Returns a **[Factory](#factory)**
 
 ### `createController([options])`
 Creates a controller.
 
-- `options` **[ControllerOptions](#ControllerOptions)** Factory options.
+- `options` **[ControllerOptions](#controlleroptions)** Factory options.
 
 Returns **Promise&lt;[Controller](#controller)>**
 
@@ -137,7 +149,7 @@ Returns **Promise&lt;String>** - Path to the repo.
 
 #### `spawn([options])`
 Creates a controller for a IPFS node.
-- `options` **[ControllerOptions](#ControllerOptions)** Factory options.
+- `options` **[ControllerOptions](#controlleroptions)** Factory options.
 
 Returns **Promise&lt;[Controller](#controller)>**
 
@@ -151,7 +163,7 @@ Class controller for a IPFS node.
 
 #### `new Controller(options)`
 
-- `options` **[ControllerOptions](#ControllerOptions)**
+- `options` **[ControllerOptions](#controlleroptions)**
 
 #### `path`
 **String** Repo path.
@@ -220,9 +232,9 @@ Returns **Promise&lt;string>**
 Type: [Object]
 
 #### Properties
--   `js` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
--   `go` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
--   `proc` **[[ControllerOptions](#ControllerOptions)]** Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `js` **[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `go` **[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+-   `proc` **[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.
 
 
 ### ControllerOptions
