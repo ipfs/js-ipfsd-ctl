@@ -247,11 +247,6 @@ class Daemon {
         console.error(new Error(`Timeout stopping ${this.opts.type} node. Process ${this.subprocess.pid} will be force killed now.`))
         killed = true
 
-        if (this.opts.type === 'go') {
-          // will make go-IPFS print a stack trace to stderr
-          this.subprocess.kill('SIGQUIT')
-        }
-
         this.subprocess.kill('SIGKILL')
       }, this.opts.forceKillTimeout)
     }
@@ -261,7 +256,7 @@ class Daemon {
     } catch (err) {
       if (!killed) throw err // if was killed then ignore error
 
-      daemonLog.info('Daemon was killed')
+      daemonLog.info('Daemon was force killed')
     }
 
     clearTimeout(killTimeout)
