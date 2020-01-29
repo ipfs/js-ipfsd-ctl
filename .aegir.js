@@ -16,5 +16,12 @@ module.exports = {
   hooks: {
       pre: () => server.start(),
       post: () => server.stop()
+  },
+  webpack: {
+    externals: {
+      ipfs: 'ipfs',
+      'ipfs-http-client': 'ipfs-http-client',
+      'go-ipfs-dep': 'go-ifps-dep'
+    }
   }
 }

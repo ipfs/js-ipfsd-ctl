@@ -45,6 +45,7 @@ jobs:
         - npm install ipfs
         - npm install ipfs-http-client
         - npm install go-ipfs-dep
+        - npm run build
         - npx aegir test -t browser -t webworker --bail --timeout 60000
 
     - stage: test
@@ -55,6 +56,7 @@ jobs:
         - npm install ipfs
         - npm install ipfs-http-client
         - npm install go-ipfs-dep
+        - npm run build
         - npx aegir test -t browser -t webworker --bail --timeout 60000 -- --browsers FirefoxHeadless
 
     - stage: test
