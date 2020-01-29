@@ -21,11 +21,6 @@ const defaults = {
   type: 'go',
   env: {},
   args: [],
-  ipfsHttpModule: {
-    path: require.resolve('ipfs-http-client'),
-    ref: require('ipfs-http-client')
-  },
-  ipfsModule: {},
   ipfsOptions: {},
   forceKill: true,
   forceKillTimeout: 5000
@@ -125,6 +120,16 @@ class Factory {
       } : {},
       options
     )
+
+    // only include the http api client if it has not been specified as an option
+    // for example if we are testing the http api client itself we should not try
+    // to require 'ipfs-http-client'
+    if (!opts.ipfsHttpModule) {
+      opts.ipfsHttpModule = {
+        path: require.resolve('ipfs-http-client'),
+        ref: require('ipfs-http-client')
+      }
+    }
 
     // IPFS options defaults
     const ipfsOptions = merge(
