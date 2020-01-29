@@ -46,10 +46,18 @@ class Factory {
 
     /** @type ControllerOptionsOverrides */
     this.overrides = merge({
-      js: merge(this.opts, { type: 'js', ipfsBin: findBin('js', this.opts.type === 'js') }),
-      go: merge(this.opts, { type: 'go', ipfsBin: findBin('go', this.opts.type === 'go') }),
-      proc: merge(this.opts, { type: 'proc', ipfsBin: findBin('js', this.opts.type === 'proc') })
+      js: merge(this.opts, { type: 'js' }),
+      go: merge(this.opts, { type: 'go' }),
+      proc: merge(this.opts, { type: 'proc' })
     }, overrides)
+
+    if (!this.overrides.js.ipfsBin) {
+      this.overrides.js.ipfsBin = findBin('js', this.opts.type === 'js')
+    }
+
+    if (!this.overrides.go.ipfsBin) {
+      this.overrides.go.ipfsBin = findBin('go', this.opts.type === 'go')
+    }
 
     /** @type ControllerDaemon[] */
     this.controllers = []
