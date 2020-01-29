@@ -25,6 +25,7 @@ const defaults = {
     path: require.resolve('ipfs-http-client'),
     ref: require('ipfs-http-client')
   },
+  ipfsModule: {},
   ipfsOptions: {},
   forceKill: true,
   forceKillTimeout: 5000
@@ -104,18 +105,18 @@ class Factory {
    * @returns {Promise<ControllerDaemon>}
    */
   async spawn (options = { }) {
+    const type = options.type || this.opts.type
     const opts = merge(
-      this.overrides[options.type || this.opts.type],
+      this.overrides[type],
+      // conditionally include ipfs based on which type of daemon we will spawn when none has been specifed
+      (type === 'js' || type === 'proc') ? {
+        ipfsModule: {
+          path: require.resolve('ipfs'),
+          ref: require('ipfs')
+        }
+      } : {},
       options
     )
-
-    // conditionally include ipfs based on which type of daemon we will spawn when none has been specifed
-    if ((opts.type === 'js' || opts.type === 'proc') && !opts.ipfsModule) {
-      opts.ipfsModule = {
-        path: require.resolve('ipfs'),
-        ref: require('ipfs')
-      }
-    }
 
     // IPFS options defaults
     const ipfsOptions = merge(
