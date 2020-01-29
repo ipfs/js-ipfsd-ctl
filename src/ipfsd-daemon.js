@@ -239,7 +239,27 @@ class Daemon {
       return this
     }
 
-    await this.api.stop()
+    let killTimeout
+    let killed = false
+    if (this.opts.forceKill !== false) {
+      killTimeout = setTimeout(() => {
+        // eslint-disable-next-line no-console
+        console.error(new Error(`Timeout stopping ${this.opts.type} node. Process ${this.subprocess.pid} will be force killed now.`))
+        killed = true
+
+        this.subprocess.kill('SIGKILL')
+      }, this.opts.forceKillTimeout)
+    }
+
+    try {
+      await this.api.stop()
+    } catch (err) {
+      if (!killed) throw err // if was killed then ignore error
+
+      daemonLog.info('Daemon was force killed')
+    }
+
+    clearTimeout(killTimeout)
     this.subprocess.stderr.removeAllListeners()
     this.subprocess.stdout.removeAllListeners()
     this.started = false
