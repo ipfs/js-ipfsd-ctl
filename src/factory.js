@@ -79,7 +79,14 @@ class Factory {
     const res = await ky.post(
       `${options.endpoint}/spawn`,
       {
-        json: { ...options, remote: false } // avoid recursive spawning
+        json: {
+          ...options,
+          // avoid recursive spawning
+          remote: false,
+          // do not send code refs over http
+          ipfsModule: { ...options.ipfsModule, ref: undefined },
+          ipfsHttpModule: { ...options.ipfsHttpModule, ref: undefined }
+        }
       }
     ).json()
     return new ControllerRemote(
