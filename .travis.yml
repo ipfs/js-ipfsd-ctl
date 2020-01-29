@@ -19,9 +19,6 @@ os:
   - windows
 
 script:
-  - npm install ipfs
-  - npm install ipfs-http-client
-  - npm install go-ipfs-dep
   - npx nyc -s npm run test:node -- --timeout 60000
 after_success: npx nyc report --reporter=text-lcov > coverage.lcov && npx codecov
 
@@ -29,9 +26,6 @@ jobs:
   include:
     - stage: check
       script:
-        - npm install ipfs
-        - npm install ipfs-http-client
-        - npm install go-ipfs-dep
         - npx aegir build --bundlesize
         - npx aegir commitlint --travis
         - npx aegir dep-check
@@ -42,10 +36,6 @@ jobs:
       addons:
         chrome: stable
       script:
-        - npm install ipfs
-        - npm install ipfs-http-client
-        - npm install go-ipfs-dep
-        - npm run build
         - npx aegir test -t browser -t webworker --bail --timeout 60000
 
     - stage: test
@@ -53,28 +43,18 @@ jobs:
       addons:
         firefox: latest
       script:
-        - npm install ipfs
-        - npm install ipfs-http-client
-        - npm install go-ipfs-dep
-        - npm run build
         - npx aegir test -t browser -t webworker --bail --timeout 60000 -- --browsers FirefoxHeadless
 
     - stage: test
       name: electron-main
       os: osx
       script:
-        - npm install ipfs
-        - npm install ipfs-http-client
-        - npm install go-ipfs-dep
         - npx aegir test -t electron-main --bail --timeout 60000
 
     - stage: test
       name: electron-renderer
       os: osx
       script:
-        - npm install ipfs
-        - npm install ipfs-http-client
-        - npm install go-ipfs-dep
         - npx aegir test -t electron-renderer --bail --timeout 60000
 notifications:
   email: false
