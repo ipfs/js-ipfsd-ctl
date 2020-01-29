@@ -248,6 +248,8 @@ Type: [Object]
     -   `ipfsModule.path` **[string]** Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
 -   `ipfsBin` **[string]** Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
 -   `ipfsOptions` **[IpfsOptions]** Options for the IPFS instance same as https://github.com/ipfs/js-ipfs#ipfs-constructor. `proc` nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.
+- `forceKill` **[boolean]** - Whether to use SIGKILL to quit a daemon that does not stop after `.stop()` is called. (default `true`)
+- `forceKillTimeout` **[Number]** - How long to wait before force killing a daemon in ms. (default `5000`)
 
 
 ## ipfsd-ctl environment variables

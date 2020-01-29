@@ -30,7 +30,9 @@ const defaults = {
     ref: require('ipfs')
   },
   ipfsBin: findBin('go'),
-  ipfsOptions: {}
+  ipfsOptions: {},
+  forceKill: true,
+  forceKillTimeout: 5000
 }
 
 /**

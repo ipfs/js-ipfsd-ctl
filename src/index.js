@@ -85,6 +85,8 @@ module.exports = {
  * @property {string} [ipfsModule.path] - Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
  * @property {String} [ipfsBin] - Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
  * @property {IpfsOptions} [ipfsOptions] - Options for the IPFS node.
+ * @property {boolean} [forceKill] - Whether to use SIGKILL to quit a daemon that does not stop after `.stop()` is called. (default true)
+ * @property {Number} [forceKillTimeout] - How long to wait before force killing a daemon in ms. (default 5000)
  */
 
 /**
