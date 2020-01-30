@@ -115,7 +115,7 @@ class Factory {
       options
     )
 
-    // conditionally include ipfs based on which type of daemon we will spawn when none has been specifed
+    // conditionally include ipfs based on which type of daemon we will spawn when none has been specified
     if ((opts.type === 'js' || opts.type === 'proc') && !opts.ipfsModule) {
       opts.ipfsModule = {}
     }
