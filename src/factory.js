@@ -74,18 +74,39 @@ class Factory {
   }
 
   async _spawnRemote (options) {
-    const res = await ky.post(
-      `${options.endpoint}/spawn`,
-      {
-        json: {
-          ...options,
-          // avoid recursive spawning
-          remote: false,
-          // do not send code refs over http
-          ipfsModule: { ...options.ipfsModule, ref: undefined },
-          ipfsHttpModule: { ...options.ipfsHttpModule, ref: undefined }
+    const opts = {
+      json: {
+        ...options,
+        // avoid recursive spawning
+        remote: false
+      }
+    }
+
+    if (options.ipfsModule) {
+      delete opts.ipfsModule
+
+      if (options.ipfsModule.path) {
+        opts.ipfsModule = {
+          path: options.ipfsModule.path
+          // n.b. no ref property - do not send code refs over http
         }
       }
+    }
+
+    if (options.ipfsHttpModule) {
+      delete opts.ipfsHttpModule
+
+      if (options.ipfsHttpModule.path) {
+        opts.ipfsHttpModule = {
+          path: options.ipfsHttpModule.path
+          // n.b. no ref property - do not send code refs over http
+        }
+      }
+    }
+
+    const res = await ky.post(
+      `${options.endpoint}/spawn`,
+      opts
     ).json()
     return new ControllerRemote(
       options.endpoint,
