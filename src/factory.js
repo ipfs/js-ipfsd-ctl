@@ -133,13 +133,8 @@ class Factory {
     }
 
     // find ipfs binary if not specified
-    if (!opts.ipfsBin && opts.type === 'js') {
-      opts.ipfsBin = findBin('js', true)
-    }
-
-    // find ipfs binary if not specified
-    if (!opts.ipfsBin && opts.type === 'go') {
-      opts.ipfsBin = findBin('go', true)
+    if (opts.type !== 'proc' && !opts.ipfsBin) {
+      opts.ipfsBin = findBin(opts.type, true)
     }
 
     // IPFS options defaults
