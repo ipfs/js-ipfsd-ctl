@@ -21,7 +21,6 @@ const defaults = {
   type: 'go',
   env: {},
   args: [],
-  ipfsModule: {},
   ipfsOptions: {},
   forceKill: true,
   forceKillTimeout: 5000
