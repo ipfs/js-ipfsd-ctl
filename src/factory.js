@@ -112,15 +112,23 @@ class Factory {
     const type = options.type || this.opts.type
     const opts = merge(
       this.overrides[type],
-      // conditionally include ipfs based on which type of daemon we will spawn when none has been specifed
-      (type === 'js' || type === 'proc') ? {
-        ipfsModule: {
-          path: require.resolve('ipfs'),
-          ref: require('ipfs')
-        }
-      } : {},
       options
     )
+
+    // conditionally include ipfs based on which type of daemon we will spawn when none has been specifed
+    if ((opts.type === 'js' || opts.type === 'proc') && !opts.ipfsModule) {
+      opts.ipfsModule = {}
+    }
+
+    if (opts.ipfsModule) {
+      if (!opts.ipfsModule.path) {
+        opts.ipfsModule.path = require.resolve('ipfs')
+      }
+
+      if (!opts.ipfsModule.ref) {
+        opts.ipfsModule.ref = require(opts.ipfsModule.path)
+      }
+    }
 
     // only include the http api client if it has not been specified as an option
     // for example if we are testing the http api client itself we should not try
