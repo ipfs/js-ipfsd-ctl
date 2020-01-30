@@ -103,7 +103,6 @@ class Factory {
   async spawn (options = { }) {
     const type = options.type || this.opts.type
     const opts = merge(
-      this.opts,
       this.overrides[type],
       options
     )
