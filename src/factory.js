@@ -47,14 +47,6 @@ class Factory {
       proc: merge(this.opts, { type: 'proc' })
     }, overrides)
 
-    if (!this.overrides.js.ipfsBin) {
-      this.overrides.js.ipfsBin = findBin('js', this.opts.type === 'js')
-    }
-
-    if (!this.overrides.go.ipfsBin) {
-      this.overrides.go.ipfsBin = findBin('go', this.opts.type === 'go')
-    }
-
     /** @type ControllerDaemon[] */
     this.controllers = []
   }
@@ -138,6 +130,16 @@ class Factory {
         path: require.resolve('ipfs-http-client'),
         ref: require('ipfs-http-client')
       }
+    }
+
+    // find ipfs binary if not specified
+    if (!opts.ipfsBin && opts.type === 'js') {
+      opts.ipfsBin = findBin('js', true)
+    }
+
+    // find ipfs binary if not specified
+    if (!opts.ipfsBin && opts.type === 'go') {
+      opts.ipfsBin = findBin('go', true)
     }
 
     // IPFS options defaults
