@@ -126,7 +126,7 @@ class Factory {
       }
 
       if (!opts.ipfsModule.ref) {
-        opts.ipfsModule.ref = require(opts.ipfsModule.path)
+        opts.ipfsModule.ref = require('ipfs')
       }
     }
 
