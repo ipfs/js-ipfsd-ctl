@@ -22,7 +22,7 @@ const defaultOpts = {
     path: require.resolve('ipfs-http-client'),
     ref: require('ipfs-http-client')
   },
-  ipfsBin: require.resolve('ipfs/src/cli/bin.js'),
+  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
 }
 
 const types = [{

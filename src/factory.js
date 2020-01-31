@@ -1,7 +1,7 @@
 'use strict'
 const merge = require('merge-options').bind({ ignoreUndefined: true })
 const kyOriginal = require('ky-universal').default
-const { tmpDir, findBin } = require('./utils')
+const { tmpDir } = require('./utils')
 const { isNode } = require('ipfs-utils/src/env')
 const ControllerDaemon = require('./ipfsd-daemon')
 const ControllerRemote = require('./ipfsd-client')

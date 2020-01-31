@@ -25,7 +25,7 @@ const types = [{
   ...defaultOps,
   type: 'js',
   test: true
-},{
+}, {
   ...defaultOps,
   ipfsBin: require.resolve('go-ipfs-dep/go-ipfs/ipfs'),
   type: 'go',

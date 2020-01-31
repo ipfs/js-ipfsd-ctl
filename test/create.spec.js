@@ -26,7 +26,7 @@ describe('`createController` should return the correct class', () => {
         ref: require('ipfs-http-client')
       },
       ipfsBin: require.resolve('ipfs/src/cli/bin.js')
-     })
+    })
 
     if (!isNode) {
       expect(f).to.be.instanceOf(Client)
