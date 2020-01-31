@@ -77,24 +77,8 @@ class Factory {
     const opts = {
       json: {
         ...options,
-        ipfsModule: undefined,
-        ipfsHttpModule: undefined,
         // avoid recursive spawning
         remote: false
-      }
-    }
-
-    if (options.ipfsModule && options.ipfsModule.path) {
-      opts.json.ipfsModule = {
-        path: options.ipfsModule.path
-        // n.b. no ref property - do not send code refs over http
-      }
-    }
-
-    if (options.ipfsHttpModule && options.ipfsHttpModule.path) {
-      opts.json.ipfsHttpModule = {
-        path: options.ipfsHttpModule.path
-        // n.b. no ref property - do not send code refs over http
       }
     }
 
@@ -120,36 +104,6 @@ class Factory {
       this.overrides[type],
       options
     )
-
-    // conditionally include ipfs based on which type of daemon we will spawn when none has been specified
-    if ((opts.type === 'js' || opts.type === 'proc') && !opts.ipfsModule) {
-      opts.ipfsModule = {}
-    }
-
-    if (opts.ipfsModule) {
-      if (!opts.ipfsModule.path) {
-        opts.ipfsModule.path = require.resolve('ipfs')
-      }
-
-      if (!opts.ipfsModule.ref) {
-        opts.ipfsModule.ref = require('ipfs')
-      }
-    }
-
-    // only include the http api client if it has not been specified as an option
-    // for example if we are testing the http api client itself we should not try
-    // to require 'ipfs-http-client'
-    if (!opts.ipfsHttpModule) {
-      opts.ipfsHttpModule = {
-        path: require.resolve('ipfs-http-client'),
-        ref: require('ipfs-http-client')
-      }
-    }
-
-    // find ipfs binary if not specified
-    if (opts.type !== 'proc' && !opts.ipfsBin) {
-      opts.ipfsBin = findBin(opts.type, true)
-    }
 
     // IPFS options defaults
     const ipfsOptions = merge(

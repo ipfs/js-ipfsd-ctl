@@ -44,7 +44,18 @@ describe('utils node version', function () {
       expect(checkForRunningApi()).to.be.null()
     })
     it('should return path to api with running node', async () => {
-      const node = await createController({ test: true })
+      const node = await createController({
+        test: true,
+        ipfsModule: {
+          path: require.resolve('ipfs'),
+          ref: require('ipfs')
+        },
+        ipfsHttpModule: {
+          path: require.resolve('ipfs-http-client'),
+          ref: require('ipfs-http-client')
+        },
+        ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+      })
       expect(checkForRunningApi(node.path)).to.be.contain('/ip4/127.0.0.1/tcp/')
       await node.stop()
     })
@@ -57,7 +68,18 @@ describe('utils node version', function () {
   })
 
   it('removeRepo should work', async () => {
-    const f = createFactory({ test: true })
+    const f = createFactory({
+      test: true,
+      ipfsModule: {
+        path: require.resolve('ipfs'),
+        ref: require('ipfs')
+      },
+      ipfsHttpModule: {
+        path: require.resolve('ipfs-http-client'),
+        ref: require('ipfs-http-client')
+      },
+      ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+    })
     const dir = await f.tmpDir()
     const node = await f.spawn({
       type: 'proc',
@@ -73,7 +95,19 @@ describe('utils node version', function () {
 
   describe('repoExists', () => {
     it('should resolve true when repo exists', async () => {
-      const node = await createController({ type: 'proc', test: true })
+      const node = await createController({
+        type: 'proc',
+        test: true,
+        ipfsModule: {
+          path: require.resolve('ipfs'),
+          ref: require('ipfs')
+        },
+        ipfsHttpModule: {
+          path: require.resolve('ipfs-http-client'),
+          ref: require('ipfs-http-client')
+        },
+        ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+      })
       expect(await repoExists(node.path)).to.be.true()
       await node.stop()
     })

@@ -16,7 +16,19 @@ describe('routes', () => {
 
   before(() => {
     server = new Hapi.Server({ port: 43134 })
-    routes(server, createFactory)
+    routes(server, () => {
+      return createFactory({
+        ipfsModule: {
+          path: require.resolve('ipfs'),
+          ref: require('ipfs')
+        },
+        ipfsHttpModule: {
+          path: require.resolve('ipfs-http-client'),
+          ref: require('ipfs-http-client')
+        },
+        ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+      })
+    })
   })
 
   after(async () => {

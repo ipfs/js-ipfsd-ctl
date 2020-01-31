@@ -13,16 +13,77 @@ const expect = chai.expect
 chai.use(dirtyChai)
 chai.use(chaiPromise)
 
-const types = [
-  { type: 'js', test: true, ipfsOptions: { init: false, start: false } },
-  { type: 'go', test: true, ipfsOptions: { init: false, start: false } },
-  { type: 'proc', test: true, ipfsOptions: { init: false, start: false } },
-  { type: 'js', remote: true, test: true, ipfsOptions: { init: false, start: false } },
-  { type: 'go', remote: true, test: true, ipfsOptions: { init: false, start: false } }
-]
+const defaultOpts = {
+  ipfsModule: {
+    path: require.resolve('ipfs'),
+    ref: require('ipfs')
+  },
+  ipfsHttpModule: {
+    path: require.resolve('ipfs-http-client'),
+    ref: require('ipfs-http-client')
+  },
+  ipfsBin: require.resolve('ipfs/src/cli/bin.js'),
+}
+
+const types = [{
+  ...defaultOpts,
+  type: 'js',
+  test: true,
+  ipfsOptions: {
+    init: false,
+    start: false
+  }
+}, {
+  ...defaultOpts,
+  ipfsBin: require.resolve('go-ipfs-dep/go-ipfs/ipfs'),
+  type: 'go',
+  test: true,
+  ipfsOptions: {
+    init: false,
+    start: false
+  }
+}, {
+  ...defaultOpts,
+  type: 'proc',
+  test: true,
+  ipfsOptions: {
+    init: false,
+    start: false
+  }
+}, {
+  ...defaultOpts,
+  type: 'js',
+  remote: true,
+  test: true,
+  ipfsOptions: {
+    init: false,
+    start: false
+  }
+}, {
+  ...defaultOpts,
+  ipfsBin: require.resolve('go-ipfs-dep/go-ipfs/ipfs'),
+  type: 'go',
+  remote: true,
+  test: true,
+  ipfsOptions: {
+    init: false,
+    start: false
+  }
+}]
 
 describe('Controller API', () => {
-  const factory = createFactory({ test: true })
+  const factory = createFactory({
+    test: true,
+    ipfsModule: {
+      path: require.resolve('ipfs'),
+      ref: require('ipfs')
+    },
+    ipfsHttpModule: {
+      path: require.resolve('ipfs-http-client'),
+      ref: require('ipfs-http-client')
+    },
+    ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+  })
 
   before(() => factory.spawn({ type: 'js' }))
 
@@ -48,7 +109,11 @@ describe('Controller API', () => {
     describe('should work with a initialized repo', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await createController(merge(opts, { ipfsOptions: { repo: factory.controllers[0].path } }))
+          const ctl = await createController(merge(opts, {
+            ipfsOptions: {
+              repo: factory.controllers[0].path
+            }
+          }))
 
           await ctl.init()
           expect(ctl.initialized).to.be.true()
@@ -130,8 +195,11 @@ describe('Controller API', () => {
             return this.skip() // browser in proc can't attach to running node
           }
           const ctl = await createController(merge(
-            opts,
-            { ipfsOptions: { repo: factory.controllers[0].path } }
+            opts, {
+              ipfsOptions: {
+                repo: factory.controllers[0].path
+              }
+            }
           ))
 
           await ctl.init()
@@ -184,10 +252,7 @@ describe('Controller API', () => {
           const f = createFactory()
           const ctl = await f.spawn(merge(opts, {
             disposable: false,
-            test: true,
-            ipfsOptions: {
-              repo: await f.tmpDir()
-            }
+            test: true
           }))
 
           await ctl.init()

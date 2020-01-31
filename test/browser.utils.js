@@ -36,7 +36,11 @@ describe('utils browser version', function () {
         test: true,
         type: 'proc',
         disposable: false,
-        ipfsOptions: { repo: 'ipfs_test_remove' }
+        ipfsOptions: { repo: 'ipfs_test_remove' },
+        ipfsModule: {
+          path: require.resolve('ipfs'),
+          ref: require('ipfs')
+        }
       })
       await ctl.init()
       await ctl.start()
@@ -51,7 +55,16 @@ describe('utils browser version', function () {
     describe('repoExists', () => {
       it('should resolve true when repo exists', async () => {
         const f = createFactory({ test: true })
-        const node = await f.spawn({ type: 'proc', ipfsOptions: { repo: 'ipfs_test' } })
+        const node = await f.spawn({
+          type: 'proc',
+          ipfsOptions: {
+            repo: 'ipfs_test'
+          },
+          ipfsModule: {
+            path: require.resolve('ipfs'),
+            ref: require('ipfs')
+          }
+        })
         expect(await repoExists('ipfs_test')).to.be.true()
         await node.stop()
       })
