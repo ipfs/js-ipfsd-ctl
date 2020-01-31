@@ -77,30 +77,24 @@ class Factory {
     const opts = {
       json: {
         ...options,
+        ipfsModule: undefined,
+        ipfsHttpModule: undefined,
         // avoid recursive spawning
         remote: false
       }
     }
 
-    if (options.ipfsModule) {
-      delete opts.ipfsModule
-
-      if (options.ipfsModule.path) {
-        opts.ipfsModule = {
-          path: options.ipfsModule.path
-          // n.b. no ref property - do not send code refs over http
-        }
+    if (options.ipfsModule && options.ipfsModule.path) {
+      opts.json.ipfsModule = {
+        path: options.ipfsModule.path
+        // n.b. no ref property - do not send code refs over http
       }
     }
 
-    if (options.ipfsHttpModule) {
-      delete opts.ipfsHttpModule
-
-      if (options.ipfsHttpModule.path) {
-        opts.ipfsHttpModule = {
-          path: options.ipfsHttpModule.path
-          // n.b. no ref property - do not send code refs over http
-        }
+    if (options.ipfsHttpModule && options.ipfsHttpModule.path) {
+      opts.json.ipfsHttpModule = {
+        path: options.ipfsHttpModule.path
+        // n.b. no ref property - do not send code refs over http
       }
     }
 
