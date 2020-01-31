@@ -1,3 +1,16 @@
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v2.0.0...v2.1.0) (2020-01-31)
+
+
+### Bug Fixes
+
+* downgrade ky ([#452](https://github.com/ipfs/js-ipfsd-ctl/issues/452)) ([a4c34e6](https://github.com/ipfs/js-ipfsd-ctl/commit/a4c34e6))
+* only find bin if not overridden ([#448](https://github.com/ipfs/js-ipfsd-ctl/issues/448)) ([025c06f](https://github.com/ipfs/js-ipfsd-ctl/commit/025c06f))
+* only require http api client if it has not been specified ([#450](https://github.com/ipfs/js-ipfsd-ctl/issues/450)) ([6b21d5b](https://github.com/ipfs/js-ipfsd-ctl/commit/6b21d5b))
+* protect possible empty ipfsModule option ([#449](https://github.com/ipfs/js-ipfsd-ctl/issues/449)) ([09b1917](https://github.com/ipfs/js-ipfsd-ctl/commit/09b1917))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v1.0.7...v2.0.0) (2020-01-29)
 
