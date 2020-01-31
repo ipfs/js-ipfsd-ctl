@@ -4,7 +4,7 @@ const createServer = require('./src').createServer
 
 const server = createServer() // using defaults
 module.exports = {
-  bundlesize: { maxSize: '930kB' },
+  bundlesize: { maxSize: '35kB' },
   karma: {
     files: [{
       pattern: 'test/fixtures/**/*',
@@ -16,5 +16,12 @@ module.exports = {
   hooks: {
       pre: () => server.start(),
       post: () => server.stop()
+  },
+  webpack: process.env.NODE_ENV === 'test' ? undefined : {
+    externals: {
+      ipfs: 'ipfs',
+      'ipfs-http-client': 'ipfs-http-client',
+      'go-ipfs-dep': 'go-ipfs-dep'
+    }
   }
 }
