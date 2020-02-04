@@ -5,6 +5,7 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const { isNode } = require('ipfs-utils/src/env')
 const { createFactory } = require('../src')
+const { findBin } = require('../src/utils')
 
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -18,7 +19,7 @@ const defaultOps = {
     path: require.resolve('ipfs-http-client'),
     ref: require('ipfs-http-client')
   },
-  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+  ipfsBin: findBin('js', true)
 }
 
 const types = [{
@@ -27,7 +28,7 @@ const types = [{
   test: true
 }, {
   ...defaultOps,
-  ipfsBin: require.resolve('go-ipfs-dep/go-ipfs/ipfs'),
+  ipfsBin: findBin('go', true),
   type: 'go',
   test: true
 }, {
@@ -41,7 +42,7 @@ const types = [{
   test: true
 }, {
   ...defaultOps,
-  ipfsBin: require.resolve('go-ipfs-dep/go-ipfs/ipfs'),
+  ipfsBin: findBin('go', true),
   type: 'go',
   remote: true,
   test: true
@@ -99,7 +100,7 @@ describe('`Factory spawn()` ', () => {
             path: require.resolve('ipfs-http-client'),
             ref: require('ipfs-http-client')
           },
-          ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+          ipfsBin: findBin('js', true)
         })
         expect(ctl).to.exist()
         expect(ctl.opts.test).to.be.true()

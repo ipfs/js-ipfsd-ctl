@@ -6,9 +6,8 @@ const merge = require('merge-options')
 const dirtyChai = require('dirty-chai')
 const chaiPromise = require('chai-as-promised')
 const { createFactory, createController } = require('../src')
-const { repoExists } = require('../src/utils')
+const { repoExists, findBin } = require('../src/utils')
 const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
-const os = require('os')
 
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -23,7 +22,7 @@ const defaultOpts = {
     path: require.resolve('ipfs-http-client'),
     ref: require('ipfs-http-client')
   },
-  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+  ipfsBin: findBin('js', true)
 }
 
 const types = [{
@@ -36,7 +35,7 @@ const types = [{
   }
 }, {
   ...defaultOpts,
-  ipfsBin: require.resolve(`go-ipfs-dep/go-ipfs/ipfs${os.platform() === 'win32' ? '.exe' : ''}`),
+  ipfsBin: findBin('go', true),
   type: 'go',
   test: true,
   ipfsOptions: {
@@ -62,7 +61,7 @@ const types = [{
   }
 }, {
   ...defaultOpts,
-  ipfsBin: require.resolve(`go-ipfs-dep/go-ipfs/ipfs${os.platform() === 'win32' ? '.exe' : ''}`),
+  ipfsBin: findBin('go', true),
   type: 'go',
   remote: true,
   test: true,
@@ -72,7 +71,7 @@ const types = [{
   }
 }]
 
-describe('Controller API', () => {
+describe.only('Controller API', () => {
   const factory = createFactory({
     test: true,
     ipfsModule: {
@@ -83,7 +82,7 @@ describe('Controller API', () => {
       path: require.resolve('ipfs-http-client'),
       ref: require('ipfs-http-client')
     },
-    ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+    ipfsBin: findBin('js', true)
   })
 
   before(() => factory.spawn({ type: 'js' }))

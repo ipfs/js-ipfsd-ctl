@@ -1,8 +1,25 @@
 'use strict'
 
 const createServer = require('./src').createServer
+const { findBin } = require('./src/utils')
 
-const server = createServer() // using defaults
+const server = createServer(null, {
+  ipfsModule: {
+    path: require.resolve('ipfs'),
+    ref: require('ipfs')
+  },
+  ipfsHttpModule: {
+    path: require.resolve('ipfs-http-client'),
+    ref: require('ipfs-http-client')
+  }
+}, {
+  go: {
+    ipfsBin: findBin('go', true)
+  },
+  js: {
+    ipfsBin: findBin('js', true)
+  }
+}) // using defaults
 module.exports = {
   bundlesize: { maxSize: '35kB' },
   karma: {
