@@ -8,6 +8,7 @@ const chaiPromise = require('chai-as-promised')
 const { createFactory, createController } = require('../src')
 const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
+const os = require('os')
 
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -35,7 +36,7 @@ const types = [{
   }
 }, {
   ...defaultOpts,
-  ipfsBin: require.resolve('go-ipfs-dep/go-ipfs/ipfs'),
+  ipfsBin: require.resolve(`go-ipfs-dep/go-ipfs/ipfs${os.platform() === 'win32' ? '.exe' : ''}`),
   type: 'go',
   test: true,
   ipfsOptions: {
@@ -61,7 +62,7 @@ const types = [{
   }
 }, {
   ...defaultOpts,
-  ipfsBin: require.resolve('go-ipfs-dep/go-ipfs/ipfs'),
+  ipfsBin: require.resolve(`go-ipfs-dep/go-ipfs/ipfs${os.platform() === 'win32' ? '.exe' : ''}`),
   type: 'go',
   remote: true,
   test: true,
