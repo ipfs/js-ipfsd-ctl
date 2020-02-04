@@ -71,7 +71,7 @@ const types = [{
   }
 }]
 
-describe.only('Controller API', () => {
+describe('Controller API', () => {
   const factory = createFactory({
     test: true,
     ipfsModule: {
