@@ -7,32 +7,13 @@ const dirtyChai = require('dirty-chai')
 const os = require('os')
 const path = require('path')
 
-const isWindows = os.platform() === 'win32'
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const { findBin, tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
+const { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
 const { createFactory, createController } = require('../src')
 
 describe('utils node version', function () {
-  describe('findBin', () => {
-    it('should return from process.env', () => {
-      process.env.IPFS_JS_EXEC = 'js-ipfs'
-      process.env.IPFS_GO_EXEC = 'go-ipfs'
-      expect(findBin('js')).to.be.eq('js-ipfs')
-      expect(findBin('go')).to.be.eq('go-ipfs')
-      delete process.env.IPFS_JS_EXEC
-      delete process.env.IPFS_GO_EXEC
-    })
-    it('should return from node modules', () => {
-      expect(findBin('js')).to.be.contain(path.join('node_modules', 'ipfs', 'src', 'cli', 'bin.js'))
-      expect(findBin('go')).to.be.contain(path.join('node_modules', 'go-ipfs-dep', 'go-ipfs', 'ipfs'))
-      if (isWindows) {
-        expect(findBin('go')).to.be.contain(path.join('node_modules', 'go-ipfs-dep', 'go-ipfs', 'ipfs.exe'))
-      }
-    })
-  })
-
   it('tmpDir should return correct path', () => {
     expect(tmpDir('js')).to.be.contain(path.join(os.tmpdir(), 'js_ipfs_'))
     expect(tmpDir('go')).to.be.contain(path.join(os.tmpdir(), 'go_ipfs_'))
@@ -46,14 +27,8 @@ describe('utils node version', function () {
     it('should return path to api with running node', async () => {
       const node = await createController({
         test: true,
-        ipfsModule: {
-          path: require.resolve('ipfs'),
-          ref: require('ipfs')
-        },
-        ipfsHttpModule: {
-          path: require.resolve('ipfs-http-client'),
-          ref: require('ipfs-http-client')
-        },
+        ipfsModule: require('ipfs'),
+        ipfsHttpModule: require('ipfs-http-client'),
         ipfsBin: require.resolve('ipfs/src/cli/bin.js')
       })
       expect(checkForRunningApi(node.path)).to.be.contain('/ip4/127.0.0.1/tcp/')
@@ -70,14 +45,8 @@ describe('utils node version', function () {
   it('removeRepo should work', async () => {
     const f = createFactory({
       test: true,
-      ipfsModule: {
-        path: require.resolve('ipfs'),
-        ref: require('ipfs')
-      },
-      ipfsHttpModule: {
-        path: require.resolve('ipfs-http-client'),
-        ref: require('ipfs-http-client')
-      },
+      ipfsModule: require('ipfs'),
+      ipfsHttpModule: require('ipfs-http-client'),
       ipfsBin: require.resolve('ipfs/src/cli/bin.js')
     })
     const dir = await f.tmpDir()
@@ -98,14 +67,8 @@ describe('utils node version', function () {
       const node = await createController({
         type: 'proc',
         test: true,
-        ipfsModule: {
-          path: require.resolve('ipfs'),
-          ref: require('ipfs')
-        },
-        ipfsHttpModule: {
-          path: require.resolve('ipfs-http-client'),
-          ref: require('ipfs-http-client')
-        },
+        ipfsModule: require('ipfs'),
+        ipfsHttpModule: require('ipfs-http-client'),
         ipfsBin: require.resolve('ipfs/src/cli/bin.js')
       })
       expect(await repoExists(node.path)).to.be.true()

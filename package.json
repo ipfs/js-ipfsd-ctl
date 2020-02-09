@@ -62,7 +62,6 @@
     "merge-options": "^2.0.0",
     "multiaddr": "^7.2.1",
     "nanoid": "^2.1.9",
-    "resolve-cwd": "^3.0.0",
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
@@ -71,10 +70,10 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "dirty-chai": "^2.0.1",
-    "go-ipfs-dep": "^0.4.22",
+    "go-ipfs-dep": "github:ipfs/npm-go-ipfs-dep#add-path-function-to-detect-binary",
     "husky": "^4.0.10",
-    "ipfs": "^0.40.0",
-    "ipfs-http-client": "^42.0.0-pre.0",
+    "ipfs": "^0.41.0-rc.0",
+    "ipfs-http-client": "^42.0.0",
     "lint-staged": "^10.0.2"
   },
   "peerDependencies": {

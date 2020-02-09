@@ -46,7 +46,7 @@ class Client {
   _setApi (addr) {
     if (addr) {
       this.apiAddr = multiaddr(addr)
-      this.api = (this.opts.ipfsHttpModule.ref)(addr)
+      this.api = this.opts.ipfsHttpModule(addr)
       this.api.apiHost = this.apiAddr.nodeAddress().address
       this.api.apiPort = this.apiAddr.nodeAddress().port
     }
