@@ -36,7 +36,8 @@ class InProc {
       return
     }
 
-    const IPFS = this.opts.ipfsModule.ref
+    const IPFS = this.opts.ipfsModule
+
     this.api = await IPFS.create(merge({
       silent: true,
       repo: this.path
@@ -49,7 +50,7 @@ class InProc {
    */
   _setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = (this.opts.ipfsHttpModule.ref)(addr)
+    this.api = this.opts.ipfsHttpModule(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
@@ -90,6 +91,7 @@ class InProc {
 
     await this.setExec()
     await this.api.init(opts)
+
     this.clean = false
     this.initialized = true
     return this

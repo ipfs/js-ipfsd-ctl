@@ -5,44 +5,40 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const { isNode } = require('ipfs-utils/src/env')
 const { createFactory } = require('../src')
-const { findBin } = require('../src/utils')
 
 const expect = chai.expect
 chai.use(dirtyChai)
 
 const defaultOps = {
-  ipfsModule: {
-    path: require.resolve('ipfs'),
-    ref: require('ipfs')
-  },
-  ipfsHttpModule: {
-    path: require.resolve('ipfs-http-client'),
-    ref: require('ipfs-http-client')
-  },
-  ipfsBin: findBin('js', true)
+  ipfsHttpModule: require('ipfs-http-client')
 }
 
 const types = [{
   ...defaultOps,
   type: 'js',
-  test: true
+  test: true,
+  ipfsModule: require('ipfs'),
+  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: findBin('go', true),
+  ipfsBin: require('go-ipfs-dep').path(),
   type: 'go',
   test: true
 }, {
   ...defaultOps,
   type: 'proc',
-  test: true
+  test: true,
+  ipfsModule: require('ipfs')
 }, {
   ...defaultOps,
   type: 'js',
   remote: true,
-  test: true
+  test: true,
+  ipfsModule: require('ipfs'),
+  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: findBin('go', true),
+  ipfsBin: require('go-ipfs-dep').path(),
   type: 'go',
   remote: true,
   test: true
@@ -71,7 +67,9 @@ describe('`Factory tmpDir()` should return correct temporary dir', () => {
   }
 })
 
-describe('`Factory spawn()` ', () => {
+describe('`Factory spawn()` ', function () {
+  this.timeout(10000)
+
   describe('should return a node with api', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
@@ -92,15 +90,9 @@ describe('`Factory spawn()` ', () => {
         const ctl = await factory.spawn({
           type: opts.type,
           remote: opts.remote,
-          ipfsModule: {
-            path: require.resolve('ipfs'),
-            ref: require('ipfs')
-          },
-          ipfsHttpModule: {
-            path: require.resolve('ipfs-http-client'),
-            ref: require('ipfs-http-client')
-          },
-          ipfsBin: findBin('js', true)
+          ipfsModule: require('ipfs'),
+          ipfsHttpModule: require('ipfs-http-client'),
+          ipfsBin: require.resolve('ipfs/src/cli/bin.js')
         })
         expect(ctl).to.exist()
         expect(ctl.opts.test).to.be.true()
@@ -150,7 +142,7 @@ describe('`Factory spawn()` ', () => {
     }
   })
 
-  describe('`Factory.clean()` should not error when controller already stop', () => {
+  describe('`Factory.clean()` should not error when controller already stopped', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
         const factory = createFactory(opts)

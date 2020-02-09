@@ -4,12 +4,16 @@
 // Start a remote disposable node, and get access to the api
 // print the node id, and stop the temporary daemon
 
-const { createNode, createServer } = require('../../src')
+const { createController, createServer } = require('../../src')
 const server = createServer()
 
 async function run () {
   await server.start()
-  const node = await createNode({ remote: true })
+  const node = await createController({
+    remote: true,
+    type: 'go',
+    ipfsBin: require('go-ipfs-dep').path()
+  })
 
   console.log(await node.api.id())
   await node.stop()

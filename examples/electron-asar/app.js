@@ -6,7 +6,7 @@ const app = electron.app
 const ipcMain = electron.ipcMain
 const BrowserWindow = electron.BrowserWindow
 
-const { createNode, createServer } = require('ipfsd-ctl')
+const { createController, createServer } = require('ipfsd-ctl')
 
 app.on('ready', () => {
   const win = new BrowserWindow({
@@ -24,7 +24,10 @@ ipcMain.on('start', async ({ sender }) => {
   try {
     const s = createServer()
     await s.start()
-    const node = await createNode({ type: 'go' })
+    const node = await createController({
+      type: 'go',
+      ipfsBin: require('go-ipfs-dep').path()
+    })
     console.log('get id')
     sender.send('message', 'get id')
 

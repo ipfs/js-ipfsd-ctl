@@ -6,65 +6,41 @@ const merge = require('merge-options')
 const dirtyChai = require('dirty-chai')
 const chaiPromise = require('chai-as-promised')
 const { createFactory, createController } = require('../src')
-const { repoExists, findBin } = require('../src/utils')
+const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
 
 const expect = chai.expect
 chai.use(dirtyChai)
 chai.use(chaiPromise)
 
-const defaultOpts = {
-  ipfsModule: {
-    path: require.resolve('ipfs'),
-    ref: require('ipfs')
-  },
-  ipfsHttpModule: {
-    path: require.resolve('ipfs-http-client'),
-    ref: require('ipfs-http-client')
-  },
-  ipfsBin: findBin('js', true)
-}
-
 const types = [{
-  ...defaultOpts,
   type: 'js',
-  test: true,
   ipfsOptions: {
     init: false,
     start: false
   }
 }, {
-  ...defaultOpts,
-  ipfsBin: findBin('go', true),
   type: 'go',
-  test: true,
   ipfsOptions: {
     init: false,
     start: false
   }
 }, {
-  ...defaultOpts,
   type: 'proc',
-  test: true,
   ipfsOptions: {
     init: false,
     start: false
   }
 }, {
-  ...defaultOpts,
   type: 'js',
   remote: true,
-  test: true,
   ipfsOptions: {
     init: false,
     start: false
   }
 }, {
-  ...defaultOpts,
-  ipfsBin: findBin('go', true),
   type: 'go',
   remote: true,
-  test: true,
   ipfsOptions: {
     init: false,
     start: false
@@ -74,15 +50,18 @@ const types = [{
 describe('Controller API', () => {
   const factory = createFactory({
     test: true,
-    ipfsModule: {
-      path: require.resolve('ipfs'),
-      ref: require('ipfs')
+    ipfsHttpModule: require('ipfs-http-client')
+  }, {
+    js: {
+      ipfsBin: require.resolve('ipfs/src/cli/bin.js'),
+      ipfsModule: require('ipfs')
     },
-    ipfsHttpModule: {
-      path: require.resolve('ipfs-http-client'),
-      ref: require('ipfs-http-client')
+    proc: {
+      ipfsModule: require('ipfs')
     },
-    ipfsBin: findBin('js', true)
+    go: {
+      ipfsBin: require('go-ipfs-dep').path()
+    }
   })
 
   before(() => factory.spawn({ type: 'js' }))
@@ -109,9 +88,10 @@ describe('Controller API', () => {
     describe('should work with a initialized repo', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await createController(merge(opts, {
+          const ctl = await factory.spawn(merge(opts, {
             ipfsOptions: {
-              repo: factory.controllers[0].path
+              repo: factory.controllers[0].path,
+              init: false
             }
           }))
 
@@ -194,8 +174,13 @@ describe('Controller API', () => {
           if ((isBrowser || isWebWorker) && opts.type === 'proc') {
             return this.skip() // browser in proc can't attach to running node
           }
+
+          // have to use createController so we don't try to shut down
+          // the node twice during test cleanup
           const ctl = await createController(merge(
             opts, {
+              ipfsHttpModule: require('ipfs-http-client'),
+              ipfsModule: require('ipfs'),
               ipfsOptions: {
                 repo: factory.controllers[0].path
               }
@@ -249,8 +234,7 @@ describe('Controller API', () => {
     describe('should not clean with disposable false', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const f = createFactory()
-          const ctl = await f.spawn(merge(opts, {
+          const ctl = await factory.spawn(merge(opts, {
             disposable: false,
             test: true
           }))

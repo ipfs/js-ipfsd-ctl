@@ -8,15 +8,11 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const { isEnvWithDom } = require('ipfs-utils/src/env')
-const { findBin, tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
+const { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
 const { createFactory, createController } = require('../src')
 
 describe('utils browser version', function () {
   if (isEnvWithDom) {
-    it('findBin should return undefined', () => {
-      expect(findBin()).to.be.undefined()
-    })
-
     it('tmpDir should return correct path', () => {
       expect(tmpDir('js')).to.be.contain('js_ipfs_')
       expect(tmpDir('go')).to.be.contain('go_ipfs_')
@@ -37,10 +33,7 @@ describe('utils browser version', function () {
         type: 'proc',
         disposable: false,
         ipfsOptions: { repo: 'ipfs_test_remove' },
-        ipfsModule: {
-          path: require.resolve('ipfs'),
-          ref: require('ipfs')
-        }
+        ipfsModule: require('ipfs')
       })
       await ctl.init()
       await ctl.start()
@@ -60,10 +53,7 @@ describe('utils browser version', function () {
           ipfsOptions: {
             repo: 'ipfs_test'
           },
-          ipfsModule: {
-            path: require.resolve('ipfs'),
-            ref: require('ipfs')
-          }
+          ipfsModule: require('ipfs')
         })
         expect(await repoExists('ipfs_test')).to.be.true()
         await node.stop()

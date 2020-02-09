@@ -38,10 +38,6 @@ class Daemon {
   constructor (opts) {
     /** @type ControllerOptions */
     this.opts = opts
-    // make sure we have real paths
-    this.opts.ipfsHttpModule.path = fs.realpathSync(this.opts.ipfsHttpModule.path)
-    this.opts.ipfsBin = fs.realpathSync(this.opts.ipfsBin)
-
     this.path = this.opts.ipfsOptions.repo || (opts.disposable ? tmpDir(opts.type) : defaultRepo(opts.type))
     this.exec = this.opts.ipfsBin
     this.env = merge({ IPFS_PATH: this.path }, this.opts.env)
@@ -61,7 +57,7 @@ class Daemon {
    */
   _setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = require(this.opts.ipfsHttpModule.path)(addr)
+    this.api = this.opts.ipfsHttpModule(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
@@ -254,7 +250,9 @@ class Daemon {
     try {
       await this.api.stop()
     } catch (err) {
-      if (!killed) throw err // if was killed then ignore error
+      if (!killed) {
+        throw err // if was killed then ignore error
+      }
 
       daemonLog.info('Daemon was force killed')
     }
