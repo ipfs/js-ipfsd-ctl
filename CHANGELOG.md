@@ -1,3 +1,31 @@
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v2.1.0...v3.0.0) (2020-02-10)
+
+
+### Code Refactoring
+
+* remove option normalisation ([#454](https://github.com/ipfs/js-ipfsd-ctl/issues/454)) ([f1e5c82](https://github.com/ipfs/js-ipfsd-ctl/commit/f1e5c82))
+* remove path and ref from module args also findBin ([#458](https://github.com/ipfs/js-ipfsd-ctl/issues/458)) ([7049cc9](https://github.com/ipfs/js-ipfsd-ctl/commit/7049cc9))
+
+
+### BREAKING CHANGES
+
+* - `.path` and `.ref` args removed from `ipfsModule` and `ipfsHttpModule`
+- `findBin` function removed
+
+* chore: update dep versions
+
+* chore: increase test timeouts
+
+* fix: only get go-ipfs-dep path in node
+
+* fix: linting
+
+Co-authored-by: Alex Potsides <alex@achingbrain.net>
+* ipfsd-ctl no longer defaults to a local ipfs, ipfs-http-client or ipfs bin, now the user needs to set those packages when creating controllers and remote controller server.
+
+
+
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v2.0.0...v2.1.0) (2020-01-31)
 
