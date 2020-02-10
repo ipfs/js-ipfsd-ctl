@@ -32,13 +32,18 @@ const createController = (options) => {
  *
  * @param {(Object|number)} options - Configuration options or just the port.
  * @param {number} options.port - Port to start the server on.
+ * @param {ControllerOptions} factoryOptions
+ * @param {ControllerOptionsOverrides} factoryOverrides
  * @returns {Server}
  */
-const createServer = (options) => {
+const createServer = (options, factoryOptions = {}, factoryOverrides = {}) => {
   if (typeof options === 'number') {
     options = { port: options }
   }
-  return new Server(options, createFactory)
+
+  return new Server(options, () => {
+    return createFactory(factoryOptions, factoryOverrides)
+  })
 }
 
 module.exports = {

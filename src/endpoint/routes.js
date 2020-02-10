@@ -20,7 +20,7 @@ const badRequest = err => {
   } else {
     msg = err.message
   }
-  debug(msg)
+  debug(err)
   throw boom.badRequest(msg)
 }
 

@@ -8,13 +8,26 @@ const { createFactory, createController, createServer } = require('../src')
 const Client = require('../src/ipfsd-client')
 const Daemon = require('../src/ipfsd-daemon')
 const Proc = require('../src/ipfsd-in-proc')
+const { findBin } = require('../src/utils')
 
 const expect = chai.expect
 chai.use(dirtyChai)
 
 describe('`createController` should return the correct class', () => {
   it('for type `js` ', async () => {
-    const f = await createController({ type: 'js', disposable: false })
+    const f = await createController({
+      type: 'js',
+      disposable: false,
+      ipfsModule: {
+        path: require.resolve('ipfs'),
+        ref: require('ipfs')
+      },
+      ipfsHttpModule: {
+        path: require.resolve('ipfs-http-client'),
+        ref: require('ipfs-http-client')
+      },
+      ipfsBin: findBin('js', true)
+    })
 
     if (!isNode) {
       expect(f).to.be.instanceOf(Client)
@@ -23,7 +36,15 @@ describe('`createController` should return the correct class', () => {
     }
   })
   it('for type `go` ', async () => {
-    const f = await createController({ type: 'go', disposable: false })
+    const f = await createController({
+      type: 'go',
+      disposable: false,
+      ipfsHttpModule: {
+        path: require.resolve('ipfs-http-client'),
+        ref: require('ipfs-http-client')
+      },
+      ipfsBin: findBin('go', true)
+    })
 
     if (!isNode) {
       expect(f).to.be.instanceOf(Client)
@@ -38,19 +59,61 @@ describe('`createController` should return the correct class', () => {
   })
 
   it('for remote', async () => {
-    const f = await createController({ remote: true, disposable: false })
+    const f = await createController({
+      remote: true,
+      disposable: false,
+      ipfsModule: {
+        path: require.resolve('ipfs'),
+        ref: require('ipfs')
+      },
+      ipfsHttpModule: {
+        path: require.resolve('ipfs-http-client'),
+        ref: require('ipfs-http-client')
+      },
+      ipfsBin: findBin('js', true)
+    })
 
     expect(f).to.be.instanceOf(Client)
   })
 })
 
-const types = [
-  { type: 'js', test: true },
-  { type: 'go', test: true },
-  { type: 'proc', test: true },
-  { type: 'js', test: true, remote: true },
-  { type: 'go', test: true, remote: true }
-]
+const defaultOps = {
+  ipfsModule: {
+    path: require.resolve('ipfs'),
+    ref: require('ipfs')
+  },
+  ipfsHttpModule: {
+    path: require.resolve('ipfs-http-client'),
+    ref: require('ipfs-http-client')
+  },
+  ipfsBin: findBin('js', true)
+}
+
+const types = [{
+  ...defaultOps,
+  type: 'js',
+  test: true
+}, {
+  ...defaultOps,
+  ipfsBin: findBin('go', true),
+  type: 'go',
+  test: true
+}, {
+  ...defaultOps,
+  type: 'proc',
+  test: true
+}, {
+  ...defaultOps,
+  type: 'js',
+  test: true,
+  remote: true
+}, {
+  ...defaultOps,
+  ipfsBin: findBin('go', true),
+  type: 'go',
+  test: true,
+  remote: true
+}]
 
 describe('`createController` should return daemon with peerId when started', () => {
   for (const opts of types) {
@@ -105,7 +168,9 @@ describe('`createController({test: true})` should return daemon with correct con
 describe('`createFactory({test: true})` should return daemon with test profile', () => {
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const factory = createFactory({ test: true })
+      const factory = createFactory({
+        test: true
+      })
       const node = await factory.spawn(opts)
       expect(await node.api.config.get('Bootstrap')).to.be.empty()
       await factory.clean()

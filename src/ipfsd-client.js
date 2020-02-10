@@ -34,8 +34,9 @@ class Client {
     this.disposable = remoteState.disposable
     this.clean = remoteState.clean
     this.api = null
-    this.apiAddr = this._setApi(remoteState.apiAddr)
-    this.gatewayAddr = this._setGateway(remoteState.gatewayAddr)
+
+    this._setApi(remoteState.apiAddr)
+    this._setGateway(remoteState.gatewayAddr)
   }
 
   /**

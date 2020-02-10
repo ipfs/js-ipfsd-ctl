@@ -5,17 +5,48 @@ const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const { isNode } = require('ipfs-utils/src/env')
 const { createFactory } = require('../src')
+const { findBin } = require('../src/utils')
 
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const types = [
-  { type: 'js', test: true },
-  { type: 'go', test: true },
-  { type: 'proc', test: true },
-  { type: 'js', remote: true, test: true },
-  { type: 'go', remote: true, test: true }
-]
+const defaultOps = {
+  ipfsModule: {
+    path: require.resolve('ipfs'),
+    ref: require('ipfs')
+  },
+  ipfsHttpModule: {
+    path: require.resolve('ipfs-http-client'),
+    ref: require('ipfs-http-client')
+  },
+  ipfsBin: findBin('js', true)
+}
+
+const types = [{
+  ...defaultOps,
+  type: 'js',
+  test: true
+}, {
+  ...defaultOps,
+  ipfsBin: findBin('go', true),
+  type: 'go',
+  test: true
+}, {
+  ...defaultOps,
+  type: 'proc',
+  test: true
+}, {
+  ...defaultOps,
+  type: 'js',
+  remote: true,
+  test: true
+}, {
+  ...defaultOps,
+  ipfsBin: findBin('go', true),
+  type: 'go',
+  remote: true,
+  test: true
+}]
 
 describe('`Factory tmpDir()` should return correct temporary dir', () => {
   for (const opts of types) {
@@ -58,7 +89,19 @@ describe('`Factory spawn()` ', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
         const factory = await createFactory({ test: true })
-        const ctl = await factory.spawn({ type: opts.type, remote: opts.remote })
+        const ctl = await factory.spawn({
+          type: opts.type,
+          remote: opts.remote,
+          ipfsModule: {
+            path: require.resolve('ipfs'),
+            ref: require('ipfs')
+          },
+          ipfsHttpModule: {
+            path: require.resolve('ipfs-http-client'),
+            ref: require('ipfs-http-client')
+          },
+          ipfsBin: findBin('js', true)
+        })
         expect(ctl).to.exist()
         expect(ctl.opts.test).to.be.true()
         await ctl.stop()
