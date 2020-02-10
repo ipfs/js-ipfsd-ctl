@@ -33,7 +33,7 @@ describe('`createController` should return the correct class', () => {
       type: 'go',
       disposable: false,
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
+      ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined
     })
 
     if (!isNode) {
