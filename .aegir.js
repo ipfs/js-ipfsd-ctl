@@ -1,23 +1,16 @@
 'use strict'
 
 const createServer = require('./src').createServer
-const { findBin } = require('./src/utils')
 
 const server = createServer(null, {
-  ipfsModule: {
-    path: require.resolve('ipfs'),
-    ref: require('ipfs')
-  },
-  ipfsHttpModule: {
-    path: require.resolve('ipfs-http-client'),
-    ref: require('ipfs-http-client')
-  }
+  ipfsModule: require('ipfs'),
+  ipfsHttpModule: require('ipfs-http-client')
 }, {
   go: {
-    ipfsBin: findBin('go', true)
+    ipfsBin: require('go-ipfs-dep').path()
   },
   js: {
-    ipfsBin: findBin('js', true)
+    ipfsBin: require.resolve('ipfs/src/cli/bin.js')
   }
 }) // using defaults
 module.exports = {

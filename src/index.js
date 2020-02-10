@@ -82,13 +82,9 @@ module.exports = {
  * - proc - spawn in-process js-ipfs node
  * @property {Object} [env] - Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
  * @property {Array} [args] - Custom cli args.
- * @property {Object} [ipfsHttpModule] - Setup IPFS HTTP client to be used by ctl.
- * @property {Object} [ipfsHttpModule.ref] - Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
- * @property {string} [ipfsHttpModule.path] - Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
- * @property {Object} [ipfsModule] - Setup IPFS API to be used by ctl.
- * @property {Object} [ipfsModule.ref] - Reference to a IPFS API object. (defaults to the local require(`ipfs`))
- * @property {string} [ipfsModule.path] - Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
- * @property {String} [ipfsBin] - Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
+ * @property {Object} [ipfsHttpModule] - Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
+ * @property {Object} [ipfsModule] - Reference to a IPFS API object. (defaults to the local require(`ipfs`))
+ * @property {String} [ipfsBin] - Path to a IPFS exectutable
  * @property {IpfsOptions} [ipfsOptions] - Options for the IPFS node.
  * @property {boolean} [forceKill] - Whether to use SIGKILL to quit a daemon that does not stop after `.stop()` is called. (default true)
  * @property {Number} [forceKillTimeout] - How long to wait before force killing a daemon in ms. (default 5000)

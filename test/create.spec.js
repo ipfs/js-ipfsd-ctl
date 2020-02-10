@@ -8,7 +8,6 @@ const { createFactory, createController, createServer } = require('../src')
 const Client = require('../src/ipfsd-client')
 const Daemon = require('../src/ipfsd-daemon')
 const Proc = require('../src/ipfsd-in-proc')
-const { findBin } = require('../src/utils')
 
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -18,15 +17,9 @@ describe('`createController` should return the correct class', () => {
     const f = await createController({
       type: 'js',
       disposable: false,
-      ipfsModule: {
-        path: require.resolve('ipfs'),
-        ref: require('ipfs')
-      },
-      ipfsHttpModule: {
-        path: require.resolve('ipfs-http-client'),
-        ref: require('ipfs-http-client')
-      },
-      ipfsBin: findBin('js', true)
+      ipfsModule: require('ipfs'),
+      ipfsHttpModule: require('ipfs-http-client'),
+      ipfsBin: require.resolve('ipfs/src/cli/bin.js')
     })
 
     if (!isNode) {
@@ -39,11 +32,8 @@ describe('`createController` should return the correct class', () => {
     const f = await createController({
       type: 'go',
       disposable: false,
-      ipfsHttpModule: {
-        path: require.resolve('ipfs-http-client'),
-        ref: require('ipfs-http-client')
-      },
-      ipfsBin: findBin('go', true)
+      ipfsHttpModule: require('ipfs-http-client'),
+      ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined
     })
 
     if (!isNode) {
@@ -62,15 +52,9 @@ describe('`createController` should return the correct class', () => {
     const f = await createController({
       remote: true,
       disposable: false,
-      ipfsModule: {
-        path: require.resolve('ipfs'),
-        ref: require('ipfs')
-      },
-      ipfsHttpModule: {
-        path: require.resolve('ipfs-http-client'),
-        ref: require('ipfs-http-client')
-      },
-      ipfsBin: findBin('js', true)
+      ipfsModule: require('ipfs'),
+      ipfsHttpModule: require('ipfs-http-client'),
+      ipfsBin: require.resolve('ipfs/src/cli/bin.js')
     })
 
     expect(f).to.be.instanceOf(Client)
@@ -78,38 +62,35 @@ describe('`createController` should return the correct class', () => {
 })
 
 const defaultOps = {
-  ipfsModule: {
-    path: require.resolve('ipfs'),
-    ref: require('ipfs')
-  },
-  ipfsHttpModule: {
-    path: require.resolve('ipfs-http-client'),
-    ref: require('ipfs-http-client')
-  },
-  ipfsBin: findBin('js', true)
+  ipfsHttpModule: require('ipfs-http-client')
 }
 
 const types = [{
   ...defaultOps,
   type: 'js',
-  test: true
+  test: true,
+  ipfsModule: require('ipfs'),
+  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: findBin('go', true),
+  ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
   type: 'go',
   test: true
 }, {
   ...defaultOps,
   type: 'proc',
-  test: true
+  test: true,
+  ipfsModule: require('ipfs')
 }, {
   ...defaultOps,
   type: 'js',
   test: true,
-  remote: true
+  remote: true,
+  ipfsModule: require('ipfs'),
+  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: findBin('go', true),
+  ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
   type: 'go',
   test: true,
   remote: true

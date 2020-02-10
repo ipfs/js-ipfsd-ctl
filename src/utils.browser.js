@@ -45,9 +45,6 @@ const checkForRunningApi = (path) => {
   return null
 }
 
-const findBin = (type) => {
-}
-
 const tmpDir = (type = '') => {
   return `${type}_ipfs_${nanoid()}`
 }
@@ -57,6 +54,5 @@ module.exports = {
   repoExists,
   defaultRepo,
   checkForRunningApi,
-  findBin,
   tmpDir
 }
