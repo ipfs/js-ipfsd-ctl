@@ -68,7 +68,7 @@ describe('`Factory tmpDir()` should return correct temporary dir', () => {
 })
 
 describe('`Factory spawn()` ', function () {
-  this.timeout(10000)
+  this.timeout(60000)
 
   describe('should return a node with api', () => {
     for (const opts of types) {
