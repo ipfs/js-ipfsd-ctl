@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>ipfsd-ctl 2.1.0 | Documentation</title>
+  <title>ipfsd-ctl 3.0.0 | Documentation</title>
   <meta name='description' content='Spawn IPFS Daemons, JS or Go'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,7 +15,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>ipfsd-ctl</h3>
-          <div class='mb1'><code>2.1.0</code></div>
+          <div class='mb1'><code>3.0.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -614,7 +614,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/index.js#L15-L17'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L15-L17'>
       <span>src/index.js</span>
       </a>
     
@@ -686,7 +686,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/index.js#L15-L17'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L15-L17'>
       <span>src/index.js</span>
       </a>
     
@@ -767,7 +767,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/index.js#L25-L28'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L25-L28'>
       <span>src/index.js</span>
       </a>
     
@@ -840,7 +840,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/index.js#L37-L42'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L39-L47'>
       <span>src/index.js</span>
       </a>
     
@@ -898,6 +898,24 @@
           
         </div>
       
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>factoryOptions</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>
+            = <code>{}</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>factoryOverrides</span> <code class='quiet'>(<a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a>
+            = <code>{}</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
     </div>
   
 
@@ -939,7 +957,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/index.js#L50-L66'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L55-L71'>
       <span>src/index.js</span>
       </a>
     
@@ -1106,7 +1124,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/index.js#L68-L90'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L73-L91'>
       <span>src/index.js</span>
       </a>
     
@@ -1196,49 +1214,25 @@
       
         <div class='space-bottom0'>
           <span class='code bold'>ipfsHttpModule</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-          : Setup IPFS HTTP client to be used by ctl.
+          : Reference to a IPFS HTTP Client object. (defaults to the local require(
+<code>ipfs-http-client</code>
+))
 
-          
-            <ul>
-              
-                <li><code>ipfsHttpModule.ref</code> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?
-                  
-                  <p>Reference to a IPFS HTTP Client object. (defaults to the local require(<code>ipfs-http-client</code>))</p>
-</li>
-              
-                <li><code>ipfsHttpModule.path</code> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?
-                  
-                  <p>Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))</p>
-</li>
-              
-            </ul>
           
         </div>
       
         <div class='space-bottom0'>
           <span class='code bold'>ipfsModule</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-          : Setup IPFS API to be used by ctl.
+          : Reference to a IPFS API object. (defaults to the local require(
+<code>ipfs</code>
+))
 
-          
-            <ul>
-              
-                <li><code>ipfsModule.ref</code> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?
-                  
-                  <p>Reference to a IPFS API object. (defaults to the local require(<code>ipfs</code>))</p>
-</li>
-              
-                <li><code>ipfsModule.path</code> <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>?
-                  
-                  <p>Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))</p>
-</li>
-              
-            </ul>
           
         </div>
       
         <div class='space-bottom0'>
           <span class='code bold'>ipfsBin</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>?)</code>
-          : Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
+          : Path to a IPFS exectutable
 
           
         </div>
@@ -1297,7 +1291,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/index.js#L92-L97'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L93-L98'>
       <span>src/index.js</span>
       </a>
     
@@ -1391,7 +1385,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/endpoint/server.js#L10-L54'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/endpoint/server.js#L10-L54'>
       <span>src/endpoint/server.js</span>
       </a>
     
@@ -1462,7 +1456,7 @@
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/endpoint/server.js#L30-L43'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/endpoint/server.js#L30-L43'>
       <span>src/endpoint/server.js</span>
       </a>
     
@@ -1526,7 +1520,7 @@
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/endpoint/server.js#L51-L53'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/endpoint/server.js#L51-L53'>
       <span>src/endpoint/server.js</span>
       </a>
     
@@ -1612,7 +1606,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L15-L15'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L15-L15'>
       <span>src/factory.js</span>
       </a>
     
@@ -1663,7 +1657,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L15-L15'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L15-L15'>
       <span>src/factory.js</span>
       </a>
     
@@ -1714,7 +1708,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L15-L15'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L15-L15'>
       <span>src/factory.js</span>
       </a>
     
@@ -1765,7 +1759,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L16-L27'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L16-L27'>
       <span>src/factory.js</span>
       </a>
     
@@ -1817,7 +1811,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L38-L51'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L38-L51'>
       <span>src/factory.js</span>
       </a>
     
@@ -1892,7 +1886,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L40-L40'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L40-L40'>
       <span>src/factory.js</span>
       </a>
     
@@ -1943,7 +1937,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L43-L47'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L43-L47'>
       <span>src/factory.js</span>
       </a>
     
@@ -1994,7 +1988,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L50-L50'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L50-L50'>
       <span>src/factory.js</span>
       </a>
     
@@ -2045,7 +2039,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L62-L74'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L62-L74'>
       <span>src/factory.js</span>
       </a>
     
@@ -2121,7 +2115,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L117-L191'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L101-L145'>
       <span>src/factory.js</span>
       </a>
     
@@ -2195,7 +2189,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/factory.js#L197-L201'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L151-L155'>
       <span>src/factory.js</span>
       </a>
     
@@ -2255,7 +2249,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L33-L349'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L33-L347'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2317,7 +2311,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L40-L40'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L40-L40'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2372,7 +2366,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L85-L143'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L81-L139'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2452,7 +2446,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L150-L156'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L146-L152'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2516,7 +2510,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L163-L230'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L159-L226'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2580,7 +2574,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L237-L271'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L233-L269'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2644,7 +2638,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L278-L283'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L276-L281'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2708,7 +2702,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L339-L348'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L337-L346'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2780,7 +2774,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L33-L349'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L33-L347'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2843,7 +2837,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L40-L40'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L40-L40'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2898,7 +2892,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L85-L143'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L81-L139'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2978,7 +2972,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L150-L156'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L146-L152'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3042,7 +3036,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L163-L230'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L159-L226'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3106,7 +3100,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L237-L271'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L233-L269'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3170,7 +3164,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L278-L283'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L276-L281'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3234,7 +3228,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-daemon.js#L339-L348'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L337-L346'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3306,7 +3300,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-client.js#L9-L12'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L9-L12'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3357,7 +3351,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-client.js#L9-L12'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L9-L12'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3409,7 +3403,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-client.js#L27-L39'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L27-L40'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3489,7 +3483,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-client.js#L72-L95'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L73-L96'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3564,7 +3558,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-client.js#L104-L115'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L105-L116'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3626,7 +3620,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-client.js#L122-L140'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L123-L141'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3686,7 +3680,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-client.js#L147-L163'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L148-L164'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3746,7 +3740,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-client.js#L170-L177'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L171-L178'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3806,7 +3800,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-client.js#L184-L190'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L185-L191'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3866,7 +3860,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L8-L11'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L8-L11'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -3917,7 +3911,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L8-L11'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L8-L11'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -3969,7 +3963,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L21-L32'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L21-L32'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4033,7 +4027,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L23-L23'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L23-L23'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4084,7 +4078,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L73-L96'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L74-L98'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4160,7 +4154,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L105-L111'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L107-L113'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4222,7 +4216,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L118-L134'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L120-L136'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4282,7 +4276,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L141-L153'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L143-L155'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4342,7 +4336,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L160-L162'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L162-L164'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4402,7 +4396,7 @@ automatically when the process is exited.</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/9fdd124d90fed661ff114a87514ba9c0ad70f8ff/src/ipfsd-in-proc.js#L169-L172'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L171-L174'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
