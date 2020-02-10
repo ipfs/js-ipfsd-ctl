@@ -33,7 +33,7 @@ describe('`createController` should return the correct class', () => {
       type: 'go',
       disposable: false,
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: require('go-ipfs-dep').path()
+      ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
     })
 
     if (!isNode) {
@@ -73,7 +73,7 @@ const types = [{
   ipfsBin: require.resolve('ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: require('go-ipfs-dep').path(),
+  ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
   type: 'go',
   test: true
 }, {
@@ -90,7 +90,7 @@ const types = [{
   ipfsBin: require.resolve('ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: require('go-ipfs-dep').path(),
+  ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
   type: 'go',
   test: true,
   remote: true

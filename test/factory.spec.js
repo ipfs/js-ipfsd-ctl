@@ -21,7 +21,7 @@ const types = [{
   ipfsBin: require.resolve('ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: require('go-ipfs-dep').path(),
+  ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
   type: 'go',
   test: true
 }, {
@@ -38,7 +38,7 @@ const types = [{
   ipfsBin: require.resolve('ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: require('go-ipfs-dep').path(),
+  ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
   type: 'go',
   remote: true,
   test: true

@@ -7,7 +7,7 @@ const dirtyChai = require('dirty-chai')
 const chaiPromise = require('chai-as-promised')
 const { createFactory, createController } = require('../src')
 const { repoExists } = require('../src/utils')
-const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
+const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
 
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -47,7 +47,9 @@ const types = [{
   }
 }]
 
-describe('Controller API', () => {
+describe('Controller API', function () {
+  this.timeout(60000)
+
   const factory = createFactory({
     test: true,
     ipfsHttpModule: require('ipfs-http-client')
@@ -60,7 +62,7 @@ describe('Controller API', () => {
       ipfsModule: require('ipfs')
     },
     go: {
-      ipfsBin: require('go-ipfs-dep').path()
+      ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined
     }
   })
 
