@@ -72,7 +72,7 @@
     "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "github:ipfs/npm-go-ipfs-dep#master",
     "husky": "^4.0.10",
-    "ipfs": "^0.40.0",
+    "ipfs": "^0.41.0",
     "ipfs-http-client": "^42.0.0",
     "lint-staged": "^10.0.2"
   },
