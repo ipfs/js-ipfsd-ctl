@@ -7,6 +7,7 @@ const ControllerDaemon = require('./ipfsd-daemon')
 const ControllerRemote = require('./ipfsd-client')
 const ControllerProc = require('./ipfsd-in-proc')
 const testsConfig = require('./config')
+const handleFactoryOptions = require('./options')
 
 /** @typedef {import("./index").ControllerOptions} ControllerOptions */
 /** @typedef {import("./index").ControllerOptionsOverrides} ControllerOptionsOverrides */
@@ -99,11 +100,7 @@ class Factory {
    * @returns {Promise<ControllerDaemon>}
    */
   async spawn (options = { }) {
-    const type = options.type || this.opts.type
-    const opts = merge(
-      this.overrides[type],
-      options
-    )
+    const { type, opts } = await handleFactoryOptions(this, options)
 
     // IPFS options defaults
     const ipfsOptions = merge(
