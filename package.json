@@ -74,7 +74,8 @@
     "husky": "^4.0.10",
     "ipfs": "^0.40.0",
     "ipfs-http-client": "^42.0.0",
-    "lint-staged": "^10.0.2"
+    "lint-staged": "^10.0.2",
+    "rust-ipfs-dep": "file:../npm-rust-ipfs-dep"
   },
   "peerDependencies": {
     "go-ipfs-dep": "*",
