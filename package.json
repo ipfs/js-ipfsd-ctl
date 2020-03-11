@@ -1,7 +1,7 @@
 {
   "name": "ipfsd-ctl",
   "version": "3.0.0",
-  "description": "Spawn IPFS Daemons, JS or Go",
+  "description": "Spawn IPFS Daemons - JS, Go, or Rust",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
   "main": "src/index.js",
@@ -75,7 +75,7 @@
     "ipfs": "^0.40.0",
     "ipfs-http-client": "^42.0.0",
     "lint-staged": "^10.0.2",
-    "rust-ipfs-dep": "file:../npm-rust-ipfs-dep"
+    "rust-ipfs-dep": "github:ipfs-rust/npm-rust-ipfs-dep#rust-dep"
   },
   "peerDependencies": {
     "go-ipfs-dep": "*",

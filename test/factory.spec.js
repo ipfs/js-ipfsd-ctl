@@ -44,15 +44,15 @@ const types = [{
   test: true
 }, {
   ...defaultOps,
-  ipfsBin: isNode ? process.env.IPFS_RUST_EXEC : undefined,
+  ipfsBin: isNode ? require('rust-ipfs-dep').path() : undefined,
   type: 'rust',
-  test: true,
+  test: true
 }, {
   ...defaultOps,
-  ipfsBin: isNode ? process.env.IPFS_RUST_EXEC : undefined,
+  ipfsBin: isNode ? require('rust-ipfs-dep').path() : undefined,
   type: 'rust',
   remote: true,
-  test: true,
+  test: true
 }]
 
 describe('`Factory tmpDir()` should return correct temporary dir', () => {

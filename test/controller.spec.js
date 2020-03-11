@@ -32,6 +32,12 @@ const types = [{
     start: false
   }
 }, {
+  type: 'rust',
+  ipfsOptions: {
+    init: false,
+    start: false
+  }
+}, {
   type: 'js',
   remote: true,
   ipfsOptions: {
@@ -40,6 +46,13 @@ const types = [{
   }
 }, {
   type: 'go',
+  remote: true,
+  ipfsOptions: {
+    init: false,
+    start: false
+  }
+}, {
+  type: 'rust',
   remote: true,
   ipfsOptions: {
     init: false,
@@ -63,6 +76,9 @@ describe('Controller API', function () {
     },
     go: {
       ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined
+    },
+    rust: {
+      ipfsBin: isNode ? require('rust-ipfs-dep').path() : undefined
     }
   })
 
