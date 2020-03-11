@@ -147,7 +147,7 @@ describe('Controller API', function () {
       }
     })
 
-    describe('should apply config', () => {
+    describe.skip('should apply config', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const ctl = await factory.spawn(merge(
@@ -249,7 +249,7 @@ describe('Controller API', function () {
       }
     })
 
-    describe('should not clean with disposable false', () => {
+    describe.skip('should not clean with disposable false', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const ctl = await factory.spawn(merge(opts, {

@@ -276,9 +276,9 @@ _Environment variables precedence order is as follows. Top to bottom, top entry 
 
 Meaning that, environment variables override defaults in the configuration file but are superseded by options to `df.spawn({...})`
 
-#### IPFS_JS_EXEC and IPFS_GO_EXEC
+#### IPFS_JS_EXEC, IPFS_GO_EXEC, and IPFS_RUST_EXEC
 
-An alternative way of specifying the executable path for the `js-ipfs` or `go-ipfs` executable, respectively.
+An alternative way of specifying the executable path for the `js-ipfs`, `go-ipfs`, or `rust-ipfs` executable, respectively.
 
 
 ## Contribute
