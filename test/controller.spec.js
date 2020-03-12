@@ -147,8 +147,14 @@ describe('Controller API', function () {
       }
     })
 
-    describe.skip('should apply config', () => {
+    describe('should apply config', () => {
       for (const opts of types) {
+        // Temporary until pre-alpha rust-ipfs supports config
+        if (opts.type === 'rust') {
+          it.skip('skipping rust check')
+          continue
+        }
+
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const ctl = await factory.spawn(merge(
             opts,
