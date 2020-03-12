@@ -32,6 +32,12 @@ const types = [{
     start: false
   }
 }, {
+  type: 'rust',
+  ipfsOptions: {
+    init: false,
+    start: false
+  }
+}, {
   type: 'js',
   remote: true,
   ipfsOptions: {
@@ -40,6 +46,13 @@ const types = [{
   }
 }, {
   type: 'go',
+  remote: true,
+  ipfsOptions: {
+    init: false,
+    start: false
+  }
+}, {
+  type: 'rust',
   remote: true,
   ipfsOptions: {
     init: false,
@@ -63,6 +76,9 @@ describe('Controller API', function () {
     },
     go: {
       ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined
+    },
+    rust: {
+      ipfsBin: isNode ? require('rust-ipfs-dep').path() : undefined
     }
   })
 
@@ -133,6 +149,12 @@ describe('Controller API', function () {
 
     describe('should apply config', () => {
       for (const opts of types) {
+        // Temporary until pre-alpha rust-ipfs supports config
+        if (opts.type === 'rust') {
+          it.skip('skipping rust check')
+          continue
+        }
+
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const ctl = await factory.spawn(merge(
             opts,
@@ -233,7 +255,7 @@ describe('Controller API', function () {
       }
     })
 
-    describe('should not clean with disposable false', () => {
+    describe.skip('should not clean with disposable false', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const ctl = await factory.spawn(merge(opts, {

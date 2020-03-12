@@ -42,6 +42,17 @@ const types = [{
   type: 'go',
   remote: true,
   test: true
+}, {
+  ...defaultOps,
+  ipfsBin: isNode ? require('rust-ipfs-dep').path() : undefined,
+  type: 'rust',
+  test: true
+}, {
+  ...defaultOps,
+  ipfsBin: isNode ? require('rust-ipfs-dep').path() : undefined,
+  type: 'rust',
+  remote: true,
+  test: true
 }]
 
 describe('`Factory tmpDir()` should return correct temporary dir', () => {

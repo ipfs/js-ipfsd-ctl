@@ -43,7 +43,8 @@ class Factory {
     this.overrides = merge({
       js: merge(this.opts, { type: 'js' }),
       go: merge(this.opts, { type: 'go' }),
-      proc: merge(this.opts, { type: 'proc' })
+      proc: merge(this.opts, { type: 'proc' }),
+      rust: merge(this.opts, { type: 'rust' })
     }, overrides)
 
     /** @type ControllerDaemon[] */
