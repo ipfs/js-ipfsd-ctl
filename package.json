@@ -55,7 +55,7 @@
     "@hapi/joi": "^16.1.8",
     "debug": "^4.1.1",
     "execa": "^4.0.0",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.0",
     "ipfs-utils": "^0.7.1",
     "ky": "^0.15.0",
     "ky-universal": "^0.3.0",
