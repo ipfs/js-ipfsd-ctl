@@ -65,7 +65,7 @@
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
-    "aegir": "^20.5.0",
+    "aegir": "^21.4.5",
     "benchmark": "^2.1.4",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
