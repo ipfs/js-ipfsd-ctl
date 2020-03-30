@@ -61,7 +61,7 @@
     "ky-universal": "^0.3.0",
     "merge-options": "^2.0.0",
     "multiaddr": "^7.2.1",
-    "nanoid": "^2.1.9",
+    "nanoid": "^3.0.2",
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
