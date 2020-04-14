@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset='utf-8'>
-  <title>ipfsd-ctl 3.0.0 | Documentation</title>
+  <title>ipfsd-ctl 3.1.0 | Documentation</title>
   <meta name='description' content='Spawn IPFS Daemons, JS or Go'>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' rel='stylesheet'>
@@ -15,11 +15,14 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>ipfsd-ctl</h3>
-          <div class='mb1'><code>3.0.0</code></div>
+          <div class='mb1'><code>3.1.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
             class='col12 block input'
+            spellcheck='false'
+            autocapitalize='off'
+            autocorrect='off'
             type='text' />
           <div id='toc'>
             <ul class='list-reset h5 py1-ul'>
@@ -140,9 +143,9 @@
               
                 
                 <li><a
-                  href='#ky'
+                  href='#defaults'
                   class="">
-                  ky
+                  defaults
                   
                 </a>
                 
@@ -150,9 +153,9 @@
               
                 
                 <li><a
-                  href='#ky'
+                  href='#defaults'
                   class="">
-                  ky
+                  defaults
                   
                 </a>
                 
@@ -160,9 +163,9 @@
               
                 
                 <li><a
-                  href='#ky'
+                  href='#defaults'
                   class="">
-                  ky
+                  defaults
                   
                 </a>
                 
@@ -170,89 +173,9 @@
               
                 
                 <li><a
-                  href='#'
-                  class="">
-                  
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#constructor'
-                  class="">
-                  constructor
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#opts'
-                  class="">
-                  opts
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#overrides'
-                  class="">
-                  overrides
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#controllers'
-                  class="">
-                  controllers
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#tmpdir'
-                  class="">
-                  tmpDir
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#spawn'
-                  class="">
-                  spawn
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#clean'
-                  class="">
-                  clean
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#daemon'
+                  href='#factory'
                   class=" toggle-sibling">
-                  Daemon
+                  Factory
                   <span class='icon'>▸</span>
                 </a>
                 
@@ -263,45 +186,39 @@
                       <li class='h5'><span>Instance members</span></li>
                       
                       <li><a
-                        href='#daemonopts'
+                        href='#factoryopts'
                         class='regular pre-open'>
                         #opts
                       </a></li>
                       
                       <li><a
-                        href='#daemoninit'
+                        href='#factoryoverrides'
                         class='regular pre-open'>
-                        #init
+                        #overrides
                       </a></li>
                       
                       <li><a
-                        href='#daemoncleanup'
+                        href='#factorycontrollers'
                         class='regular pre-open'>
-                        #cleanup
+                        #controllers
                       </a></li>
                       
                       <li><a
-                        href='#daemonstart'
+                        href='#factorytmpdir'
                         class='regular pre-open'>
-                        #start
+                        #tmpDir
                       </a></li>
                       
                       <li><a
-                        href='#daemonstop'
+                        href='#factoryspawn'
                         class='regular pre-open'>
-                        #stop
+                        #spawn
                       </a></li>
                       
                       <li><a
-                        href='#daemonpid'
+                        href='#factoryclean'
                         class='regular pre-open'>
-                        #pid
-                      </a></li>
-                      
-                      <li><a
-                        href='#daemonversion'
-                        class='regular pre-open'>
-                        #version
+                        #clean
                       </a></li>
                       
                     </ul>
@@ -378,191 +295,309 @@
               
                 
                 <li><a
-                  href='#'
-                  class="">
-                  
-                  
+                  href='#daemon'
+                  class=" toggle-sibling">
+                  Daemon
+                  <span class='icon'>▸</span>
                 </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#daemonopts'
+                        class='regular pre-open'>
+                        #opts
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemoninit'
+                        class='regular pre-open'>
+                        #init
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemoncleanup'
+                        class='regular pre-open'>
+                        #cleanup
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonstart'
+                        class='regular pre-open'>
+                        #start
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonstop'
+                        class='regular pre-open'>
+                        #stop
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonpid'
+                        class='regular pre-open'>
+                        #pid
+                      </a></li>
+                      
+                      <li><a
+                        href='#daemonversion'
+                        class='regular pre-open'>
+                        #version
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
                 
                 </li>
               
                 
                 <li><a
-                  href='#'
-                  class="">
-                  
-                  
+                  href='#client'
+                  class=" toggle-sibling">
+                  Client
+                  <span class='icon'>▸</span>
                 </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#clientinit'
+                        class='regular pre-open'>
+                        #init
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientcleanup'
+                        class='regular pre-open'>
+                        #cleanup
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientstart'
+                        class='regular pre-open'>
+                        #start
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientstop'
+                        class='regular pre-open'>
+                        #stop
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientpid'
+                        class='regular pre-open'>
+                        #pid
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientversion'
+                        class='regular pre-open'>
+                        #version
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
                 
                 </li>
               
                 
                 <li><a
-                  href='#constructor'
-                  class="">
-                  constructor
-                  
+                  href='#client'
+                  class=" toggle-sibling">
+                  Client
+                  <span class='icon'>▸</span>
                 </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#clientinit'
+                        class='regular pre-open'>
+                        #init
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientcleanup'
+                        class='regular pre-open'>
+                        #cleanup
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientstart'
+                        class='regular pre-open'>
+                        #start
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientstop'
+                        class='regular pre-open'>
+                        #stop
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientpid'
+                        class='regular pre-open'>
+                        #pid
+                      </a></li>
+                      
+                      <li><a
+                        href='#clientversion'
+                        class='regular pre-open'>
+                        #version
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
                 
                 </li>
               
                 
                 <li><a
-                  href='#init'
-                  class="">
-                  init
-                  
+                  href='#inproc'
+                  class=" toggle-sibling">
+                  InProc
+                  <span class='icon'>▸</span>
                 </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#inprocopts'
+                        class='regular pre-open'>
+                        #opts
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocinit'
+                        class='regular pre-open'>
+                        #init
+                      </a></li>
+                      
+                      <li><a
+                        href='#inproccleanup'
+                        class='regular pre-open'>
+                        #cleanup
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocstart'
+                        class='regular pre-open'>
+                        #start
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocstop'
+                        class='regular pre-open'>
+                        #stop
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocpid'
+                        class='regular pre-open'>
+                        #pid
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocversion'
+                        class='regular pre-open'>
+                        #version
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
                 
                 </li>
               
                 
                 <li><a
-                  href='#cleanup'
-                  class="">
-                  cleanup
-                  
+                  href='#inproc'
+                  class=" toggle-sibling">
+                  InProc
+                  <span class='icon'>▸</span>
                 </a>
                 
-                </li>
-              
-                
-                <li><a
-                  href='#start'
-                  class="">
-                  start
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#stop'
-                  class="">
-                  stop
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#pid'
-                  class="">
-                  pid
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#version'
-                  class="">
-                  version
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#'
-                  class="">
+                <div class='toggle-target display-none'>
                   
                   
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#'
-                  class="">
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#inprocopts'
+                        class='regular pre-open'>
+                        #opts
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocinit'
+                        class='regular pre-open'>
+                        #init
+                      </a></li>
+                      
+                      <li><a
+                        href='#inproccleanup'
+                        class='regular pre-open'>
+                        #cleanup
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocstart'
+                        class='regular pre-open'>
+                        #start
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocstop'
+                        class='regular pre-open'>
+                        #stop
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocpid'
+                        class='regular pre-open'>
+                        #pid
+                      </a></li>
+                      
+                      <li><a
+                        href='#inprocversion'
+                        class='regular pre-open'>
+                        #version
+                      </a></li>
+                      
+                    </ul>
                   
                   
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#constructor'
-                  class="">
-                  constructor
                   
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#opts'
-                  class="">
-                  opts
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#init'
-                  class="">
-                  init
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#cleanup'
-                  class="">
-                  cleanup
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#start'
-                  class="">
-                  start
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#stop'
-                  class="">
-                  stop
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#pid'
-                  class="">
-                  pid
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#version'
-                  class="">
-                  version
-                  
-                </a>
+                </div>
                 
                 </li>
               
@@ -590,10 +625,10 @@
 <p>You can then <code>require()</code> ipfsd-ctl as normal:</p>
 <pre class='hljs'><span class="hljs-keyword">const</span> ipfsdCtl = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ipfsd-ctl'</span>)</pre>
 <h2>In the Browser</h2>
-<p>Ipfsd-ctl should work in any ES2015 environment out of the box.</p>
+<p><code>ipfsd-ctl</code> should work in any ECMAScript 2018 environment out of the box.</p>
 <p>Usage:</p>
 <pre class='hljs'><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/javascript"</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"index.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></pre>
-<p>The portable versions of ipfsd-ctl, including <code>index.js</code> and <code>index.min.js</code>, are included in the <code>/dist</code> folder. Ipfsd-ctl can also be found on <a href="https://unpkg.com">unpkg.com</a> under</p>
+<p>The portable versions of <code>ipfsd-ctl</code>, including <code>index.js</code> and <code>index.min.js</code>, are included in the <code>/dist</code> folder. <code>ipfsd-ctl</code> can also be found on <a href="https://unpkg.com">unpkg.com</a> under</p>
 <ul>
 <li><a href="https://unpkg.com/ipfsd-ctl/dist/index.min.js">https://unpkg.com/ipfsd-ctl/dist/index.min.js</a></li>
 <li><a href="https://unpkg.com/ipfsd-ctl/dist/index.js">https://unpkg.com/ipfsd-ctl/dist/index.js</a></li>
@@ -614,7 +649,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L15-L17'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/index.js#L15-L17'>
       <span>src/index.js</span>
       </a>
     
@@ -671,6 +706,8 @@
   
 
   
+
+  
 </section>
 
           
@@ -686,7 +723,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L15-L17'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/index.js#L15-L17'>
       <span>src/index.js</span>
       </a>
     
@@ -734,11 +771,13 @@
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code>Factory</code>:
+      <code><a href="#factory">Factory</a></code>:
         
 
       
     
+  
+
   
 
   
@@ -767,7 +806,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L25-L28'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/index.js#L25-L28'>
       <span>src/index.js</span>
       </a>
     
@@ -825,6 +864,8 @@
   
 
   
+
+  
 </section>
 
           
@@ -840,7 +881,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L39-L47'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/index.js#L39-L47'>
       <span>src/index.js</span>
       </a>
     
@@ -942,6 +983,8 @@
   
 
   
+
+  
 </section>
 
           
@@ -957,7 +1000,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L55-L71'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/index.js#L55-L71'>
       <span>src/index.js</span>
       </a>
     
@@ -1109,6 +1152,8 @@
   
 
   
+
+  
 </section>
 
           
@@ -1124,7 +1169,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L73-L91'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/index.js#L73-L91'>
       <span>src/index.js</span>
       </a>
     
@@ -1214,25 +1259,21 @@
       
         <div class='space-bottom0'>
           <span class='code bold'>ipfsHttpModule</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-          : Reference to a IPFS HTTP Client object. (defaults to the local require(
-<code>ipfs-http-client</code>
-))
+          : Reference to a IPFS HTTP Client object.
 
           
         </div>
       
         <div class='space-bottom0'>
           <span class='code bold'>ipfsModule</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
-          : Reference to a IPFS API object. (defaults to the local require(
-<code>ipfs</code>
-))
+          : Reference to a IPFS API object.
 
           
         </div>
       
         <div class='space-bottom0'>
           <span class='code bold'>ipfsBin</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>?)</code>
-          : Path to a IPFS exectutable
+          : Path to a IPFS exectutable.
 
           
         </div>
@@ -1276,6 +1317,8 @@
   
 
   
+
+  
 </section>
 
           
@@ -1291,7 +1334,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/index.js#L93-L98'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/index.js#L93-L98'>
       <span>src/index.js</span>
       </a>
     
@@ -1370,6 +1413,8 @@
   
 
   
+
+  
 </section>
 
           
@@ -1385,7 +1430,7 @@
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/endpoint/server.js#L10-L54'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/endpoint/server.js#L10-L54'>
       <span>src/endpoint/server.js</span>
       </a>
     
@@ -1439,6 +1484,8 @@
   
 
   
+
+  
     <div class='py1 quiet mt1 prose-big'>Instance Members</div>
     <div class="clearfix">
   
@@ -1456,7 +1503,7 @@
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/endpoint/server.js#L30-L43'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/endpoint/server.js#L30-L43'>
       <span>src/endpoint/server.js</span>
       </a>
     
@@ -1501,6 +1548,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -1520,7 +1569,7 @@
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/endpoint/server.js#L51-L53'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/endpoint/server.js#L51-L53'>
       <span>src/endpoint/server.js</span>
       </a>
     
@@ -1579,6 +1628,8 @@
   
 
   
+
+  
 </section>
 
       </div>
@@ -1601,12 +1652,12 @@
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='ky'>
-      ky
+    <h3 class='fl m0' id='defaults'>
+      defaults
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L15-L15'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L15-L26'>
       <span>src/factory.js</span>
       </a>
     
@@ -1614,7 +1665,7 @@
   
 
   
-    <div class='pre p1 fill-light mt0'>ky</div>
+    <div class='pre p1 fill-light mt0'>defaults</div>
   
   
 
@@ -1623,6 +1674,8 @@
   
   
   
+  
+
   
 
   
@@ -1652,12 +1705,12 @@
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='ky'>
-      ky
+    <h3 class='fl m0' id='defaults'>
+      defaults
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L15-L15'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L15-L26'>
       <span>src/factory.js</span>
       </a>
     
@@ -1665,7 +1718,7 @@
   
 
   
-    <div class='pre p1 fill-light mt0'>ky</div>
+    <div class='pre p1 fill-light mt0'>defaults</div>
   
   
 
@@ -1674,6 +1727,8 @@
   
   
   
+  
+
   
 
   
@@ -1703,12 +1758,12 @@
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='ky'>
-      ky
+    <h3 class='fl m0' id='defaults'>
+      defaults
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L15-L15'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L15-L26'>
       <span>src/factory.js</span>
       </a>
     
@@ -1716,7 +1771,7 @@
   
 
   
-    <div class='pre p1 fill-light mt0'>ky</div>
+    <div class='pre p1 fill-light mt0'>defaults</div>
   
   
 
@@ -1725,6 +1780,8 @@
   
   
   
+  
+
   
 
   
@@ -1754,12 +1811,12 @@
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id=''>
-      
+    <h3 class='fl m0' id='factory'>
+      Factory
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L16-L27'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L31-L159'>
       <span>src/factory.js</span>
       </a>
     
@@ -1768,58 +1825,7 @@
 
   <p>Factory class to spawn ipfsd controllers</p>
 
-    <div class='pre p1 fill-light mt0'></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='constructor'>
-      constructor
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L38-L51'>
-      <span>src/factory.js</span>
-      </a>
-    
-  </div>
-  
-
-  
-    <div class='pre p1 fill-light mt0'>constructor(options: <a href="#controlleroptions">ControllerOptions</a>, overrides: <a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a>)</div>
+    <div class='pre p1 fill-light mt0'>new Factory(options: <a href="#controlleroptions">ControllerOptions</a>, overrides: <a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a>)</div>
   
   
 
@@ -1869,24 +1875,24 @@
   
 
   
-
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
   
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+    <div class='border-bottom' id='factoryopts'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>opts</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='opts'>
-      opts
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L40-L40'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L39-L39'>
       <span>src/factory.js</span>
       </a>
     
@@ -1922,22 +1928,28 @@
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='factoryoverrides'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>overrides</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='overrides'>
-      overrides
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L43-L47'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L42-L46'>
       <span>src/factory.js</span>
       </a>
     
@@ -1973,22 +1985,28 @@
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='factorycontrollers'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>controllers</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='controllers'>
-      controllers
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L50-L50'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L49-L49'>
       <span>src/factory.js</span>
       </a>
     
@@ -2024,22 +2042,28 @@
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='factorytmpdir'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>tmpDir(options)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='tmpdir'>
-      tmpDir
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L62-L74'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L61-L74'>
       <span>src/factory.js</span>
       </a>
     
@@ -2100,22 +2124,28 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='factoryspawn'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>spawn(options)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='spawn'>
-      spawn
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L101-L145'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L104-L148'>
       <span>src/factory.js</span>
       </a>
     
@@ -2174,22 +2204,28 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='factoryclean'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>clean()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='clean'>
-      clean
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/factory.js#L151-L155'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/factory.js#L154-L158'>
       <span>src/factory.js</span>
       </a>
     
@@ -2234,6 +2270,20 @@ repos manually</p>
   
 
   
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
 </section>
 
           
@@ -2249,7 +2299,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L33-L347'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L33-L347'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2294,6 +2344,8 @@ repos manually</p>
   
 
   
+
+  
     <div class='py1 quiet mt1 prose-big'>Instance Members</div>
     <div class="clearfix">
   
@@ -2311,7 +2363,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L40-L40'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L40-L40'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2328,6 +2380,8 @@ repos manually</p>
   
   
   
+  
+
   
 
   
@@ -2366,7 +2420,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L81-L139'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L81-L139'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2427,6 +2481,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -2446,7 +2502,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L146-L152'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L146-L152'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2491,6 +2547,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -2510,7 +2568,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L159-L226'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L159-L226'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2555,6 +2613,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -2574,7 +2634,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L233-L269'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L233-L269'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2619,6 +2679,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -2638,7 +2700,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L276-L281'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L276-L281'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2683,6 +2745,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -2702,7 +2766,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L337-L346'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L337-L346'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2747,6 +2811,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -2774,7 +2840,7 @@ repos manually</p>
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L33-L347'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L33-L347'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2820,6 +2886,8 @@ repos manually</p>
   
 
   
+
+  
     <div class='py1 quiet mt1 prose-big'>Instance Members</div>
     <div class="clearfix">
   
@@ -2837,7 +2905,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L40-L40'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L40-L40'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2854,6 +2922,8 @@ repos manually</p>
   
   
   
+  
+
   
 
   
@@ -2892,7 +2962,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L81-L139'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L81-L139'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -2953,6 +3023,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -2972,7 +3044,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L146-L152'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L146-L152'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3017,6 +3089,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -3036,7 +3110,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L159-L226'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L159-L226'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3081,6 +3155,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -3100,7 +3176,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L233-L269'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L233-L269'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3145,6 +3221,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -3164,7 +3242,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L276-L281'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L276-L281'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3209,6 +3287,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -3228,7 +3308,7 @@ repos manually</p>
   <div class='clearfix'>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-daemon.js#L337-L346'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-daemon.js#L337-L346'>
       <span>src/ipfsd-daemon.js</span>
       </a>
     
@@ -3273,6 +3353,8 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
       </div>
@@ -3295,12 +3377,12 @@ repos manually</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id=''>
-      
+    <h3 class='fl m0' id='client'>
+      Client
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L9-L12'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L19-L198'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3308,7 +3390,7 @@ repos manually</p>
   
 
   
-    <div class='pre p1 fill-light mt0'></div>
+    <div class='pre p1 fill-light mt0'>new Client(baseUrl: any, remoteState: any, options: any)</div>
   
   
 
@@ -3320,7 +3402,113 @@ repos manually</p>
   
 
   
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>baseUrl</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>remoteState</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>options</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='clientinit'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>init(initOptions?)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L72-L99'>
+      <span>src/ipfsd-client.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Initialize a repo.</p>
+
+    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>initOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
+	    @see 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit</a>
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
+        
+
+      
+    
   
 
   
@@ -3338,6 +3526,350 @@ repos manually</p>
   
 </section>
 
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientcleanup'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>cleanup()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L108-L119'>
+      <span>src/ipfsd-client.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Delete the repo that was being used.
+If the node was marked as <code>disposable</code> this will be called
+automatically when the process is exited.</p>
+
+    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientstart'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>start()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L126-L145'>
+      <span>src/ipfsd-client.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Start the daemon.</p>
+
+    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientstop'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>stop()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L152-L168'>
+      <span>src/ipfsd-client.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Stop the daemon.</p>
+
+    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientpid'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>pid()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L175-L183'>
+      <span>src/ipfsd-client.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Get the pid of the <code>ipfs daemon</code> process.</p>
+
+    <div class='pre p1 fill-light mt0'>pid(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientversion'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>version()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L190-L197'>
+      <span>src/ipfsd-client.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Get the version of ipfs</p>
+
+    <div class='pre p1 fill-light mt0'>version(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
           
         
           
@@ -3346,12 +3878,12 @@ repos manually</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id=''>
-      
+    <h3 class='fl m0' id='client'>
+      Client
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L9-L12'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L19-L198'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3360,58 +3892,7 @@ repos manually</p>
 
   <p>Controller for remote nodes</p>
 
-    <div class='pre p1 fill-light mt0'>new undefined()</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='constructor'>
-      constructor
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L27-L40'>
-      <span>src/ipfsd-client.js</span>
-      </a>
-    
-  </div>
-  
-
-  
-    <div class='pre p1 fill-light mt0'>new constructor(baseUrl: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, remoteState: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, options: <a href="#controlleroptions">ControllerOptions</a>)</div>
+    <div class='pre p1 fill-light mt0'>new Client(baseUrl: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, remoteState: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, options: <a href="#controlleroptions">ControllerOptions</a>)</div>
   
   
 
@@ -3466,24 +3947,24 @@ repos manually</p>
   
 
   
-
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
   
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+    <div class='border-bottom' id='clientinit'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>init(initOptions?)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='init'>
-      init
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L73-L96'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L72-L99'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3492,7 +3973,7 @@ repos manually</p>
 
   <p>Initialize a repo.</p>
 
-    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></div>
+    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
   
   
 
@@ -3525,7 +4006,7 @@ repos manually</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
         
 
       
@@ -3543,22 +4024,28 @@ repos manually</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientcleanup'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>cleanup()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='cleanup'>
-      cleanup
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L105-L116'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L108-L119'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3569,7 +4056,7 @@ repos manually</p>
 If the node was marked as <code>disposable</code> this will be called
 automatically when the process is exited.</p>
 
-    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></div>
+    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
   
   
 
@@ -3587,7 +4074,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
         
 
       
@@ -3605,22 +4092,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientstart'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>start()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='start'>
-      start
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L123-L141'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L126-L145'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3629,7 +4122,7 @@ automatically when the process is exited.</p>
 
   <p>Start the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></div>
+    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
   
   
 
@@ -3647,7 +4140,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
         
 
       
@@ -3665,22 +4158,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientstop'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>stop()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='stop'>
-      stop
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L148-L164'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L152-L168'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3689,7 +4188,7 @@ automatically when the process is exited.</p>
 
   <p>Stop the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></div>
+    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></div>
   
   
 
@@ -3707,7 +4206,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;Client></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#client">Client</a>></code>:
         
 
       
@@ -3725,22 +4224,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientpid'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>pid()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='pid'>
-      pid
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L171-L178'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L175-L183'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3785,22 +4290,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='clientversion'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>version()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='version'>
-      version
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-client.js#L185-L191'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-client.js#L190-L197'>
       <span>src/ipfsd-client.js</span>
       </a>
     
@@ -3845,51 +4356,14 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
+      </div>
+    </div>
   
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id=''>
-      
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L8-L11'>
-      <span>src/ipfsd-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  
-    <div class='pre p1 fill-light mt0'></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
+</div>
 
   
 
@@ -3906,64 +4380,12 @@ automatically when the process is exited.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id=''>
-      
+    <h3 class='fl m0' id='inproc'>
+      InProc
     </h3>
     
     
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L8-L11'>
-      <span>src/ipfsd-in-proc.js</span>
-      </a>
-    
-  </div>
-  
-
-  <p>Controller for in process nodes</p>
-
-    <div class='pre p1 fill-light mt0'></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='constructor'>
-      constructor
-    </h3>
-    
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L21-L32'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L17-L175'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -3971,7 +4393,7 @@ automatically when the process is exited.</p>
   
 
   
-    <div class='pre p1 fill-light mt0'>constructor(opts: <a href="#controlleroptions">ControllerOptions</a>)</div>
+    <div class='pre p1 fill-light mt0'>new InProc(opts: any)</div>
   
   
 
@@ -3988,7 +4410,7 @@ automatically when the process is exited.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>opts</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>)</code>
+            <span class='code bold'>opts</span> <code class='quiet'>(any)</code>
 	    
           </div>
           
@@ -4010,24 +4432,24 @@ automatically when the process is exited.</p>
   
 
   
-
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
   
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+    <div class='border-bottom' id='inprocopts'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>opts</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='opts'>
-      opts
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L23-L23'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L23-L23'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4063,22 +4485,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocinit'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>init(initOptions)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='init'>
-      init
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L74-L98'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L74-L98'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4087,7 +4515,7 @@ automatically when the process is exited.</p>
 
   <p>Initialize a repo.</p>
 
-    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></div>
+    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></div>
   
   
 
@@ -4121,7 +4549,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></code>:
         
 
       
@@ -4139,22 +4567,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inproccleanup'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>cleanup()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='cleanup'>
-      cleanup
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L107-L113'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L107-L113'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4165,7 +4599,7 @@ automatically when the process is exited.</p>
 If the node was marked as <code>disposable</code> this will be called
 automatically when the process is exited.</p>
 
-    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></div>
+    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></div>
   
   
 
@@ -4183,7 +4617,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></code>:
         
 
       
@@ -4201,22 +4635,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocstart'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>start()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='start'>
-      start
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L120-L136'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L120-L136'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4225,7 +4665,7 @@ automatically when the process is exited.</p>
 
   <p>Start the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></div>
+    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></div>
   
   
 
@@ -4243,7 +4683,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></code>:
         
 
       
@@ -4261,22 +4701,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocstop'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>stop()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='stop'>
-      stop
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L143-L155'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L143-L155'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4285,7 +4731,7 @@ automatically when the process is exited.</p>
 
   <p>Stop the daemon.</p>
 
-    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></div>
+    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></div>
   
   
 
@@ -4303,7 +4749,7 @@ automatically when the process is exited.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;InProc></code>:
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></code>:
         
 
       
@@ -4321,22 +4767,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocpid'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>pid()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='pid'>
-      pid
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L162-L164'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L162-L164'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4381,22 +4833,28 @@ automatically when the process is exited.</p>
   
 
   
+
+  
 </section>
 
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocversion'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>version()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
 
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='version'>
-      version
-    </h3>
     
-    
-      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/7c1b469d9f959cd646f6c0b100d64905baadb58c/src/ipfsd-in-proc.js#L171-L174'>
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L171-L174'>
       <span>src/ipfsd-in-proc.js</span>
       </a>
     
@@ -4435,6 +4893,564 @@ automatically when the process is exited.</p>
   
 
   
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='inproc'>
+      InProc
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L17-L175'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Controller for in process nodes</p>
+
+    <div class='pre p1 fill-light mt0'>new InProc(opts: <a href="#controlleroptions">ControllerOptions</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="#controlleroptions">ControllerOptions</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='inprocopts'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>opts</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L23-L23'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>opts</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocinit'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>init(initOptions)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L74-L98'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Initialize a repo.</p>
+
+    <div class='pre p1 fill-light mt0'>init(initOptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>initOptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
+            = <code>{}</code>)</code>
+	    @see 
+<a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit</a>
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inproccleanup'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>cleanup()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L107-L113'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Delete the repo that was being used.
+If the node was marked as <code>disposable</code> this will be called
+automatically when the process is exited.</p>
+
+    <div class='pre p1 fill-light mt0'>cleanup(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocstart'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>start()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L120-L136'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Start the daemon.</p>
+
+    <div class='pre p1 fill-light mt0'>start(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocstop'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>stop()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L143-L155'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Stop the daemon.</p>
+
+    <div class='pre p1 fill-light mt0'>stop(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="#inproc">InProc</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocpid'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>pid()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L162-L164'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Get the pid of the <code>ipfs daemon</code> process.</p>
+
+    <div class='pre p1 fill-light mt0'>pid(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='inprocversion'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>version()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/ipfs/js-ipfsd-ctl/blob/b786efb28b8c9755258394d29e8a8c452db196a8/src/ipfsd-in-proc.js#L171-L174'>
+      <span>src/ipfsd-in-proc.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Get the version of ipfs</p>
+
+    <div class='pre p1 fill-light mt0'>version(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
 
   
 
