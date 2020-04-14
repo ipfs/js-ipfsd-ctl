@@ -1,3 +1,14 @@
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v3.0.0...v3.1.0) (2020-04-14)
+
+
+### Bug Fixes
+
+* remove node globals ([5fcc4fc](https://github.com/ipfs/js-ipfsd-ctl/commit/5fcc4fc))
+* swap ky for ipfs-utils http ([0539ac3](https://github.com/ipfs/js-ipfsd-ctl/commit/0539ac3))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v2.1.0...v3.0.0) (2020-02-10)
 
