@@ -82,9 +82,9 @@ module.exports = {
  * - proc - spawn in-process js-ipfs node
  * @property {Object} [env] - Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
  * @property {Array} [args] - Custom cli args.
- * @property {Object} [ipfsHttpModule] - Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
- * @property {Object} [ipfsModule] - Reference to a IPFS API object. (defaults to the local require(`ipfs`))
- * @property {String} [ipfsBin] - Path to a IPFS exectutable
+ * @property {Object} [ipfsHttpModule] - Reference to a IPFS HTTP Client object.
+ * @property {Object} [ipfsModule] - Reference to a IPFS API object.
+ * @property {String} [ipfsBin] - Path to a IPFS exectutable.
  * @property {IpfsOptions} [ipfsOptions] - Options for the IPFS node.
  * @property {boolean} [forceKill] - Whether to use SIGKILL to quit a daemon that does not stop after `.stop()` is called. (default true)
  * @property {Number} [forceKillTimeout] - How long to wait before force killing a daemon in ms. (default 5000)

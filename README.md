@@ -44,6 +44,8 @@ If you are only going to use the `go` implementation of IPFS, you can skip insta
 
 If you are only using the `proc` type in-process IPFS node, you can skip installing `go-ipfs-dep` and `ipfs-http-client`.
 
+> You also need to explicitly defined the options `ipfsBin`, `ipfsModule` and `ipfsHttpModule` according to your needs.  Check [ControllerOptions](#controlleroptions) and [ControllerOptionsOverrides](#controlleroptionsoverrides) for more information.
+
 ## Usage
 
 ### Spawning a single IPFS controller: `createController`
@@ -54,7 +56,10 @@ This is a shorthand for simpler use cases where factory is not needed.
 // No need to create a factory when only a single controller is needed.
 // Use createController to spawn it instead.
 const Ctl = require('ipfsd-ctl')
-const ipfsd = await Ctl.createController()
+const ipfsd = await Ctl.createController({
+    ipfsHttpModule: require('ipfs-http-client'),
+    ipfsBin: require('go-ipfs-dep').path()
+})
 const id = await ipfsd.api.id()
 
 console.log(id)
@@ -73,7 +78,23 @@ Use a factory to spawn multiple controllers based on some common template.
 // print node ids and clean all the controllers from the factory.
 const Ctl = require('ipfsd-ctl')
 
-const factory = Ctl.createFactory({ type: 'js', test: true, disposable: true })
+const factory = Ctl.createFactory(
+    { 
+        type: 'js', 
+        test: true, 
+        disposable: true,
+        ipfsHttpModule: require('ipfs-http-client'),
+        ipfsModule: require('ipfs') // only if you gonna spawn 'proc' controllers
+    },
+    { // overrides per type
+        js: {
+            ipfsBin: 'path/js/ipfs/bin'
+        },
+        go: {
+            ipfsBin: 'path/go/ipfs/bin'
+        }
+    }
+)
 const ipfsd1 = await factory.spawn() // Spawns using options from `createFactory`
 const ipfsd2 = await factory.spawn({ type: 'go' }) // Spawns using options from `createFactory` but overrides `type` to spawn a `go` controller
 
@@ -92,8 +113,23 @@ await factory.clean() // Clean all the controllers created by the factory callin
 const Ctl = require('ipfsd-ctl')
 
 const port = 9090
-const server = Ctl.createServer(port)
-const factory = Ctl.createFactory({ remote: true, endpoint: `http://localhost:${port}` })
+const server = Ctl.createServer(port, {
+    ipfsModule: require('ipfs'),
+    ipfsHttpModule: require('ipfs-http-client')
+},
+{
+    js: {
+        ipfsBin: 'path/js/ipfs/bin'
+    },
+    go: {
+        ipfsBin: 'path/go/ipfs/bin'
+    },
+})
+const factory = Ctl.createFactory({
+    ipfsHttpModule: require('ipfs-http-client'),
+    remote: true, 
+    endpoint: `http://localhost:${port}` 
+})
 
 await server.start()
 const ipfsd = await factory.spawn()
@@ -252,13 +288,9 @@ Type: [Object]
     -   proc - spawn in-process js-ipfs node
 -   `env` **[Object]** Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
 -   `args` **[Array]** Custom cli args.
--   `ipfsHttpModule` **[Object]** Define the `ipfs-http-client` package to be used by ctl. Both `ref` and `path` should be specified to make sure all node types (daemon, remote daemon, browser in process node, etc) use the correct version.
-    -   `ipfsHttpModule.ref` **[Object]** Reference to a IPFS HTTP Client object. (defaults to the local require(`ipfs-http-client`))
-    -   `ipfsHttpModule.path` **[string]** Path to a IPFS HTTP Client to be required. (defaults to the local require.resolve('ipfs-http-client'))
--   `ipfsModule` **[Object]** Define the `ipfs` package to be used by ctl. Both `ref` and `path` should be specified to make sure all node types (daemon, remote daemon, browser in process node, etc) use the correct version.
-    -   `ipfsModule.ref` **[Object]** Reference to a IPFS API object. (defaults to the local require(`ipfs`))
-    -   `ipfsModule.path` **[string]** Path to a IPFS API implementation to be required. (defaults to the local require.resolve('ipfs'))
--   `ipfsBin` **[string]** Path to a IPFS exectutable . (defaults to the local 'js-ipfs/src/bin/cli.js')
+-   `ipfsHttpModule` **[Object]** Reference to a IPFS HTTP Client object.
+-   `ipfsModule` **[Object]** Reference to a IPFS API object.
+-   `ipfsBin` **[string]** Path to a IPFS exectutable.
 -   `ipfsOptions` **[IpfsOptions]** Options for the IPFS instance same as https://github.com/ipfs/js-ipfs#ipfs-constructor. `proc` nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.
 - `forceKill` **[boolean]** - Whether to use SIGKILL to quit a daemon that does not stop after `.stop()` is called. (default `true`)
 - `forceKillTimeout` **[Number]** - How long to wait before force killing a daemon in ms. (default `5000`)
