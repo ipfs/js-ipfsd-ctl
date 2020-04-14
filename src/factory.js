@@ -1,8 +1,8 @@
 'use strict'
 const merge = require('merge-options').bind({ ignoreUndefined: true })
-const kyOriginal = require('ky-universal').default
 const { tmpDir } = require('./utils')
 const { isNode } = require('ipfs-utils/src/env')
+const http = require('ipfs-utils/src/http')
 const ControllerDaemon = require('./ipfsd-daemon')
 const ControllerRemote = require('./ipfsd-client')
 const ControllerProc = require('./ipfsd-in-proc')
@@ -12,7 +12,6 @@ const testsConfig = require('./config')
 /** @typedef {import("./index").ControllerOptionsOverrides} ControllerOptionsOverrides */
 /** @typedef {import("./index").IpfsOptions} IpfsOptions */
 
-const ky = kyOriginal.extend({ timeout: false })
 const defaults = {
   remote: !isNode,
   endpoint: 'http://localhost:43134',
@@ -62,12 +61,13 @@ class Factory {
   async tmpDir (options) {
     options = merge(this.opts, options)
     if (options.remote) {
-      const res = await ky.get(
+      const res = await http.get(
         `${options.endpoint}/util/tmp-dir`,
         { searchParams: { type: options.type } }
-      ).json()
+      )
+      const out = await res.json()
 
-      return res.tmpDir
+      return out.tmpDir
     }
 
     return Promise.resolve(tmpDir(options.type))
@@ -78,17 +78,20 @@ class Factory {
       json: {
         ...options,
         // avoid recursive spawning
-        remote: false
+        remote: false,
+        ipfsBin: undefined,
+        ipfsModule: undefined,
+        ipfsHttpModule: undefined
       }
     }
 
-    const res = await ky.post(
+    const res = await http.post(
       `${options.endpoint}/spawn`,
       opts
-    ).json()
+    )
     return new ControllerRemote(
       options.endpoint,
-      res,
+      await res.json(),
       options
     )
   }

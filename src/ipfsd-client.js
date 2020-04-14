@@ -1,11 +1,10 @@
 'use strict'
 
 const multiaddr = require('multiaddr')
+const http = require('ipfs-utils/src/http')
 const merge = require('merge-options').bind({ ignoreUndefined: true })
 const debug = require('debug')
-const kyOriginal = require('ky-universal').default
 
-const ky = kyOriginal.extend({ timeout: false })
 const daemonLog = {
   info: debug('ipfsd-ctl:client:stdout'),
   err: debug('ipfsd-ctl:client:stderr')
@@ -86,11 +85,15 @@ class Client {
       typeof initOptions === 'boolean' ? {} : initOptions
     )
 
-    const res = await ky.post(
+    const req = await http.post(
         `${this.baseUrl}/init`,
-        { searchParams: { id: this.id }, json: opts }
-    ).json()
-    this.initialized = res.initialized
+        {
+          searchParams: { id: this.id },
+          json: opts
+        }
+    )
+    const rsp = await req.json()
+    this.initialized = rsp.initialized
     this.clean = false
     return this
   }
@@ -107,7 +110,7 @@ class Client {
       return this
     }
 
-    await ky.post(
+    await http.post(
         `${this.baseUrl}/cleanup`,
         { searchParams: { id: this.id } }
     )
@@ -122,10 +125,11 @@ class Client {
    */
   async start () {
     if (!this.started) {
-      const res = await ky.post(
+      const req = await http.post(
               `${this.baseUrl}/start`,
               { searchParams: { id: this.id } }
-      ).json()
+      )
+      const res = await req.json()
 
       this._setApi(res.apiAddr)
       this._setGateway(res.gatewayAddr)
@@ -150,7 +154,7 @@ class Client {
       return this
     }
 
-    await ky.post(
+    await http.post(
       `${this.baseUrl}/stop`,
       { searchParams: { id: this.id } }
     )
@@ -169,10 +173,11 @@ class Client {
    * @returns {Promise<number>}
    */
   async pid () {
-    const res = await ky.get(
+    const req = await http.get(
         `${this.baseUrl}/pid`,
         { searchParams: { id: this.id } }
-    ).json()
+    )
+    const res = await req.json()
 
     return res.pid
   }
@@ -183,10 +188,11 @@ class Client {
    * @returns {Promise<String>}
    */
   async version () {
-    const res = await ky.get(
+    const req = await http.get(
         `${this.baseUrl}/version`,
         { searchParams: { id: this.id } }
-    ).json()
+    )
+    const res = await req.json()
     return res.version
   }
 }
