@@ -1,6 +1,6 @@
 'use strict'
 
-const nanoid = require('nanoid')
+const { nanoid } = require('nanoid')
 const Joi = require('@hapi/joi')
 const boom = require('@hapi/boom')
 const debug = require('debug')('ipfsd-ctl:routes')

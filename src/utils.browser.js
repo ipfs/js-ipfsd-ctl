@@ -1,5 +1,5 @@
 'use strict'
-const nanoid = require('nanoid')
+const { nanoid } = require('nanoid')
 
 const deleteDb = (path) => {
   return new Promise((resolve, reject) => {

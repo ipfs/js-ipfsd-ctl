@@ -37,7 +37,7 @@ class Server {
    * @param {object} [options] - {@link https://hapi.dev/api/?v=18.4.0#-await-serverstopoptions Hapi docs}
    * @returns {Promise}
    */
-  stop (options) {
+  stop () {
     console.warn('Server not implemented in the browser')
     return Promise.resolve(this)
   }

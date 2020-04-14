@@ -4,7 +4,7 @@ const os = require('os')
 const path = require('path')
 const fs = require('fs-extra')
 const debug = require('debug')
-const nanoid = require('nanoid')
+const { nanoid } = require('nanoid')
 
 const log = debug('ipfsd-ctl:utils')
 
