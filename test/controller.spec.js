@@ -8,6 +8,9 @@ const chaiPromise = require('chai-as-promised')
 const { createFactory, createController } = require('../src')
 const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
+const pathJoin = require('ipfs-utils/src/path-join')
+
+/** @typedef {import("../src/index").ControllerOptions} ControllerOptions */
 
 const expect = chai.expect
 chai.use(dirtyChai)
@@ -52,14 +55,11 @@ describe('Controller API', function () {
 
   const factory = createFactory({
     test: true,
-    ipfsHttpModule: require('ipfs-http-client')
+    ipfsHttpModule: require('ipfs-http-client'),
+    ipfsModule: require('ipfs')
   }, {
     js: {
-      ipfsBin: require.resolve('ipfs/src/cli/bin.js'),
-      ipfsModule: require('ipfs')
-    },
-    proc: {
-      ipfsModule: require('ipfs')
+      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
     },
     go: {
       ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined
@@ -238,7 +238,10 @@ describe('Controller API', function () {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const ctl = await factory.spawn(merge(opts, {
             disposable: false,
-            test: true
+            test: true,
+            ipfsOptions: {
+              repo: await factory.tmpDir()
+            }
           }))
 
           await ctl.init()

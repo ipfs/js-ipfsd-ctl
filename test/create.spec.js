@@ -4,6 +4,7 @@
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const { isNode, isBrowser, isWebWorker } = require('ipfs-utils/src/env')
+const pathJoin = require('ipfs-utils/src/path-join')
 const { createFactory, createController, createServer } = require('../src')
 const Client = require('../src/ipfsd-client')
 const Daemon = require('../src/ipfsd-daemon')
@@ -19,7 +20,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
     })
 
     if (!isNode) {
@@ -54,7 +55,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
     })
 
     expect(f).to.be.instanceOf(Client)
@@ -70,7 +71,7 @@ const types = [{
   type: 'js',
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
   ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
@@ -87,7 +88,7 @@ const types = [{
   test: true,
   remote: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
   ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,

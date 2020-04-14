@@ -4,6 +4,7 @@
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')
 const { isNode } = require('ipfs-utils/src/env')
+const pathJoin = require('ipfs-utils/src/path-join')
 const { createFactory } = require('../src')
 
 const expect = chai.expect
@@ -18,7 +19,7 @@ const types = [{
   type: 'js',
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
   ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
@@ -35,7 +36,7 @@ const types = [{
   remote: true,
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
   ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
@@ -92,7 +93,7 @@ describe('`Factory spawn()` ', function () {
           remote: opts.remote,
           ipfsModule: require('ipfs'),
           ipfsHttpModule: require('ipfs-http-client'),
-          ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+          ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
         })
         expect(ctl).to.exist()
         expect(ctl.opts.test).to.be.true()

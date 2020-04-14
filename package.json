@@ -22,7 +22,8 @@
   "browser": {
     "./src/endpoint/server.js": "./src/endpoint/server.browser.js",
     "./src/utils.js": "./src/utils.browser.js",
-    "./src/ipfsd-daemon.js": "./src/ipfsd-client.js"
+    "./src/ipfsd-daemon.js": "./src/ipfsd-client.js",
+    "go-ipfs-dep": false
   },
   "husky": {
     "hooks": {
