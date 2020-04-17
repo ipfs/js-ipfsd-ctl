@@ -210,7 +210,7 @@ Class controller for a IPFS node.
 #### `env`
 **Object** ENV object.
 
-#### `initalized`
+#### `initialized`
 **Boolean** Flag with the current init state.
 
 #### `started`
