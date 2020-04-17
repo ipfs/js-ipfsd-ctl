@@ -71,7 +71,7 @@
     "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "^0.4.23-3",
     "husky": "^4.2.5",
-    "ipfs": "^0.42.1",
+    "ipfs": "^0.43.0",
     "ipfs-http-client": "^43.0.1",
     "lint-staged": "^10.1.3"
   },
