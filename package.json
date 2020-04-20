@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
@@ -100,19 +100,20 @@
     "Stephen Whitmore <stephen.whitmore@gmail.com>",
     "tcme <hi@this-connect.me>",
     "Gar <gar+gh@danger.computer>",
-    "Volker Mische <volker.mische@gmail.com>",
-    "Marcin Rataj <lidel@lidel.org>",
-    "edsilv <e.silverton@gmail.com>",
     "FrauBienenstich <susanne.dewein@gmail.com>",
     "Lars-Magnus Skog <ralphtheninja@riseup.net>",
-    "Jacob Heun <jacobheun@gmail.com>",
-    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
-    "André Cruz <andremiguelcruz@msn.com>",
-    "Jonathan <jkrone@vt.edu>",
-    "Maciej Krüger <mkg20001@gmail.com>",
-    "Richard Littauer <richard.littauer@gmail.com>",
+    "Marcin Rataj <lidel@lidel.org>",
+    "Volker Mische <volker.mische@gmail.com>",
+    "edsilv <e.silverton@gmail.com>",
+    "Jacob Heun <jake@andyet.net>",
     "Scott Hardy <scott.the.hardy@gmail.com>",
+    "Maciej Krüger <mkg20001@gmail.com>",
+    "Jonathan <jkrone@vt.edu>",
+    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
+    "Henrique Dias <hacdias@gmail.com>",
     "haadcode <haadcode@headbanggames.com>",
-    "Agent of User <git@agentofuser.com>"
+    "Agent of User <git@agentofuser.com>",
+    "André Cruz <andremiguelcruz@msn.com>",
+    "Richard Littauer <richard.littauer@gmail.com>"
   ]
 }
