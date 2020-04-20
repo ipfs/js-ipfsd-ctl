@@ -1,3 +1,13 @@
+<a name="4.0.1"></a>
+## [4.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v4.0.0...v4.0.1) (2020-04-20)
+
+
+### Bug Fixes
+
+* remove aegir from production code ([61b5ea5](https://github.com/ipfs/js-ipfsd-ctl/commit/61b5ea5)), closes [#501](https://github.com/ipfs/js-ipfsd-ctl/issues/501)
+
+
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v3.1.0...v4.0.0) (2020-04-20)
 
