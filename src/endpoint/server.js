@@ -1,6 +1,7 @@
 'use strict'
 
 const Hapi = require('@hapi/hapi')
+const getPort = require('aegir/utils/get-port')
 const routes = require('./routes')
 
 /**
@@ -15,10 +16,9 @@ class Server {
    * @param {function} createFactory
    */
   constructor (options, createFactory) {
-    options = options || { port: 43134 }
-
+    this.options = options || { port: 43134 }
     this.server = null
-    this.port = options.port
+    this.port = this.options.port
     this.createFactory = createFactory
   }
 
@@ -28,6 +28,7 @@ class Server {
    * @returns {Promise<Hapi.Server>}
    */
   async start () {
+    this.port = await getPort(this.options.port, 'localhost')
     this.server = new Hapi.Server({
       port: this.port,
       host: 'localhost',

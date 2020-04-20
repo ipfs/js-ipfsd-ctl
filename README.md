@@ -128,7 +128,7 @@ const server = Ctl.createServer(port, {
 const factory = Ctl.createFactory({
     ipfsHttpModule: require('ipfs-http-client'),
     remote: true, 
-    endpoint: `http://localhost:${port}` 
+    endpoint: `http://localhost:${port}` // or you can set process.env.IPFSD_CTL_SERVER to http://localhost:9090
 })
 
 await server.start()

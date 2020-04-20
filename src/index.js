@@ -1,7 +1,7 @@
 'use strict'
 
-const Server = require('./endpoint/server')
 const Factory = require('./factory')
+const Server = require('./endpoint/server')
 
 /** @typedef {import("./ipfsd-daemon")} Controller */
 

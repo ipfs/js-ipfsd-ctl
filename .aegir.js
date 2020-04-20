@@ -2,19 +2,23 @@
 
 const createServer = require('./src').createServer
 
-const server = createServer(null, {
-  ipfsModule: require('ipfs'),
-  ipfsHttpModule: require('ipfs-http-client')
-}, {
-  go: {
-    ipfsBin: require('go-ipfs-dep').path()
-  },
-  js: {
-    ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+const server = createServer(null, 
+  {
+    ipfsModule: require('ipfs'),
+    ipfsHttpModule: require('ipfs-http-client')
+  }, 
+  {
+    go: {
+      ipfsBin: require('go-ipfs-dep').path()
+    },
+    js: {
+      ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+    }
   }
-}) // using defaults
+)
+
 module.exports = {
-  bundlesize: { maxSize: '35kB' },
+  bundlesize: { maxSize: '33kB' },
   karma: {
     files: [{
       pattern: 'test/fixtures/**/*',
@@ -24,14 +28,14 @@ module.exports = {
     }]
   },
   hooks: {
-      pre: () => server.start(),
+      pre: async () => {
+        await server.start()
+        return {
+          env: {
+            IPFSD_CTL_SERVER: `http://localhost:${server.port}`
+          }
+        }
+      },
       post: () => server.stop()
-  },
-  webpack: process.env.NODE_ENV === 'test' ? undefined : {
-    externals: {
-      ipfs: 'ipfs',
-      'ipfs-http-client': 'ipfs-http-client',
-      'go-ipfs-dep': 'go-ipfs-dep'
-    }
   }
 }

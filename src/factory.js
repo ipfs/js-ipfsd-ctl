@@ -14,7 +14,7 @@ const testsConfig = require('./config')
 
 const defaults = {
   remote: !isNode,
-  endpoint: 'http://localhost:43134',
+  endpoint: process.env.IPFSD_CTL_SERVER || 'http://localhost:43134',
   disposable: true,
   test: false,
   type: 'go',
