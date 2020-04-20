@@ -22,6 +22,9 @@ const repoExists = async (repoPath) => {
 }
 
 const defaultRepo = (type) => {
+  if (process.env.IPFS_PATH !== undefined) {
+    return process.env.IPFS_PATH
+  }
   return path.join(
     os.homedir(),
     type === 'js' || type === 'proc' ? '.jsipfs' : '.ipfs'
