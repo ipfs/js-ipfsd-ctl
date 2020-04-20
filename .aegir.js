@@ -1,8 +1,9 @@
 'use strict'
 
+const getPort = require('aegir/utils/get-port')
 const createServer = require('./src').createServer
 
-const server = createServer(null, 
+const server = createServer(undefined, 
   {
     ipfsModule: require('ipfs'),
     ipfsHttpModule: require('ipfs-http-client')
@@ -18,7 +19,7 @@ const server = createServer(null,
 )
 
 module.exports = {
-  bundlesize: { maxSize: '33kB' },
+  bundlesize: { maxSize: '35kB' },
   karma: {
     files: [{
       pattern: 'test/fixtures/**/*',
@@ -29,10 +30,10 @@ module.exports = {
   },
   hooks: {
       pre: async () => {
-        await server.start()
+        await server.start(await getPort(server.port, server.host))
         return {
           env: {
-            IPFSD_CTL_SERVER: `http://localhost:${server.port}`
+            IPFSD_CTL_SERVER: `http://${server.host}:${server.port}`
           }
         }
       },
