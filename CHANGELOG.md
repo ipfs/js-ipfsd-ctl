@@ -1,3 +1,26 @@
+<a name="4.0.0"></a>
+# [4.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v3.1.0...v4.0.0) (2020-04-20)
+
+
+### Bug Fixes
+
+* move IPFS_PATH test to a node specific file ([9d9cedd](https://github.com/ipfs/js-ipfsd-ctl/commit/9d9cedd))
+* revert boom and hapi ([a92177f](https://github.com/ipfs/js-ipfsd-ctl/commit/a92177f))
+* use IPFS_PATH env var ([708c7cc](https://github.com/ipfs/js-ipfsd-ctl/commit/708c7cc)), closes [#497](https://github.com/ipfs/js-ipfsd-ctl/issues/497)
+
+
+### Features
+
+* ipfsd-ctl server can find free ports ([db64997](https://github.com/ipfs/js-ipfsd-ctl/commit/db64997))
+* update deps and remove support for node 8 ([2565199](https://github.com/ipfs/js-ipfsd-ctl/commit/2565199))
+
+
+### BREAKING CHANGES
+
+* node 8 support removed
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v3.0.0...v3.1.0) (2020-04-14)
 
