@@ -2,14 +2,9 @@
 /* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
+const { expect } = require('aegir/utils/chai')
 const os = require('os')
 const path = require('path')
-
-const expect = chai.expect
-chai.use(dirtyChai)
-
 const { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
 const { createFactory, createController } = require('../src')
 

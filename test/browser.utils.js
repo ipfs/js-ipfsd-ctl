@@ -1,12 +1,7 @@
 /* eslint-env mocha */
-/* eslint max-nested-callbacks: ["error", 8] */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
-
+const { expect } = require('aegir/utils/chai')
 const { isEnvWithDom } = require('ipfs-utils/src/env')
 const { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
 const { createFactory, createController } = require('../src')

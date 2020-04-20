@@ -1,11 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
-const expect = chai.expect
-chai.use(dirtyChai)
-
+const { expect } = require('aegir/utils/chai')
 const Hapi = require('@hapi/hapi')
 const routes = require('../src/endpoint/routes')
 const { createFactory } = require('../src')

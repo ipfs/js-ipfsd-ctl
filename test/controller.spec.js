@@ -1,20 +1,14 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
+const { expect } = require('aegir/utils/chai')
 const merge = require('merge-options')
-const dirtyChai = require('dirty-chai')
-const chaiPromise = require('chai-as-promised')
 const { createFactory, createController } = require('../src')
 const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
 const pathJoin = require('ipfs-utils/src/path-join')
 
 /** @typedef {import("../src/index").ControllerOptions} ControllerOptions */
-
-const expect = chai.expect
-chai.use(dirtyChai)
-chai.use(chaiPromise)
 
 const types = [{
   type: 'js',

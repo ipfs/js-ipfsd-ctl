@@ -64,11 +64,8 @@
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
-    "aegir": "^21.8.1",
+    "aegir": "^21.9.0",
     "benchmark": "^2.1.4",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "dirty-chai": "^2.0.1",
     "go-ipfs-dep": "^0.4.23-3",
     "husky": "^4.2.5",
     "ipfs": "^0.42.1",

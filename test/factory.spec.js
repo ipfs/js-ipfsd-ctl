@@ -1,14 +1,10 @@
 /* eslint-env mocha */
 'use strict'
 
-const chai = require('chai')
-const dirtyChai = require('dirty-chai')
+const { expect } = require('aegir/utils/chai')
 const { isNode } = require('ipfs-utils/src/env')
 const pathJoin = require('ipfs-utils/src/path-join')
 const { createFactory } = require('../src')
-
-const expect = chai.expect
-chai.use(dirtyChai)
 
 const defaultOps = {
   ipfsHttpModule: require('ipfs-http-client')
