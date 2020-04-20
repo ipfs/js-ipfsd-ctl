@@ -65,21 +65,6 @@ describe('Controller API', function () {
   after(() => factory.clean())
 
   describe('init', () => {
-    it('should use process.IPFS_PATH', async () => {
-      const repoPath = await factory.tmpDir()
-      process.env.IPFS_PATH = repoPath
-      const ctl = await factory.spawn({
-        type: 'go',
-        disposable: false,
-        ipfsOptions: {
-          init: false,
-          start: false
-        }
-      })
-
-      expect(ctl.path).to.equal(repoPath)
-      process.env.IPFS_PATH = undefined
-    })
     describe('should work with defaults', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
