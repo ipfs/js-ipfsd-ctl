@@ -1,3 +1,13 @@
+<a name="4.1.0"></a>
+# [4.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v4.0.2...v4.1.0) (2020-04-29)
+
+
+### Features
+
+* remove default key size and upgrade go-ipfs-dep ([#504](https://github.com/ipfs/js-ipfsd-ctl/issues/504)) ([ecbf4be](https://github.com/ipfs/js-ipfsd-ctl/commit/ecbf4be))
+
+
+
 <a name="4.0.2"></a>
 ## [4.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v4.0.1...v4.0.2) (2020-04-29)
 
