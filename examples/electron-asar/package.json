@@ -3,8 +3,8 @@
   "private": true,
   "main": "./app.js",
   "dependencies": {
-    "go-ipfs-dep": "github:ipfs/npm-go-ipfs-dep#add-path-function-to-detect-binary",
-    "ipfs": "^0.39.0-rc.2",
+    "go-ipfs-dep": "^0.5.0",
+    "ipfs": "^0.43.0",
     "ipfsd-ctl": "file:../.."
   },
   "devDependencies": {
