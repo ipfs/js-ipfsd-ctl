@@ -82,7 +82,6 @@ class InProc {
     const opts = merge(
       {
         emptyRepo: false,
-        bits: this.opts.test ? 1024 : 2048,
         profiles: this.opts.test ? ['test'] : []
       },
       typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
