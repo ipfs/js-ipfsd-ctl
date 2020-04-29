@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
@@ -96,8 +96,8 @@
     "Alan Shaw <alan.shaw@protocol.ai>",
     "Richard Schneider <makaretu@gmail.com>",
     "haad <haad@headbanggames.com>",
-    "Bret Comnes <bcomnes@gmail.com>",
     "Stephen Whitmore <stephen.whitmore@gmail.com>",
+    "Bret Comnes <bcomnes@gmail.com>",
     "tcme <hi@this-connect.me>",
     "Gar <gar+gh@danger.computer>",
     "FrauBienenstich <susanne.dewein@gmail.com>",
@@ -106,14 +106,15 @@
     "Volker Mische <volker.mische@gmail.com>",
     "edsilv <e.silverton@gmail.com>",
     "Jacob Heun <jake@andyet.net>",
-    "Scott Hardy <scott.the.hardy@gmail.com>",
     "Maciej Krüger <mkg20001@gmail.com>",
     "Jonathan <jkrone@vt.edu>",
-    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
     "Henrique Dias <hacdias@gmail.com>",
+    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
+    "Hector Sanjuan <code@hector.link>",
     "haadcode <haadcode@headbanggames.com>",
     "Agent of User <git@agentofuser.com>",
     "André Cruz <andremiguelcruz@msn.com>",
-    "Richard Littauer <richard.littauer@gmail.com>"
+    "Richard Littauer <richard.littauer@gmail.com>",
+    "Scott Hardy <scott.the.hardy@gmail.com>"
   ]
 }

@@ -1,3 +1,13 @@
+<a name="4.0.2"></a>
+## [4.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v4.0.1...v4.0.2) (2020-04-29)
+
+
+### Bug Fixes
+
+* pin go-ipfs to 0.4.23-3 ([11976f1](https://github.com/ipfs/js-ipfsd-ctl/commit/11976f1))
+
+
+
 <a name="4.0.1"></a>
 ## [4.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v4.0.0...v4.0.1) (2020-04-20)
 
