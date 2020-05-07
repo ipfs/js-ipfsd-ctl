@@ -49,6 +49,9 @@ class Daemon {
     this.apiAddr = null
     this.gatewayAddr = null
     this.api = null
+
+    this.logs = []
+    this.printLogsOnError = false
   }
 
   /**
@@ -177,6 +180,12 @@ class Daemon {
       args.push('--enable-namesys-pubsub')
     }
 
+    if (!this.env.DEBUG) {
+      this.printLogsOnError = true
+
+      this.env.DEBUG = 'ipfs*'
+    }
+
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
     if (api) {
@@ -187,8 +196,20 @@ class Daemon {
         this.subprocess = execa(this.exec, args, {
           env: this.env
         })
-        this.subprocess.stderr.on('data', data => daemonLog.err(data.toString()))
-        this.subprocess.stdout.on('data', data => daemonLog.info(data.toString()))
+        this.subprocess.stderr.on('data', data => {
+          daemonLog.err(data.toString())
+
+          if (this.printLogsOnError) {
+            this.logs.push(`[stdout] ${data}`)
+          }
+        })
+        this.subprocess.stdout.on('data', data => {
+          daemonLog.info(data.toString())
+
+          if (this.printLogsOnError) {
+            this.logs.push(`[stderr] ${data}`)
+          }
+        })
 
         const readyHandler = data => {
           output += data.toString()
@@ -249,6 +270,12 @@ class Daemon {
     try {
       await this.api.stop()
     } catch (err) {
+      if (this.printLogsOnError) {
+        for (const line of this.logs) {
+          console.error(line)
+        }
+      }
+
       if (!killed) {
         throw err // if was killed then ignore error
       }
