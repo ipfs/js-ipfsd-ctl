@@ -40,6 +40,28 @@ describe('utils browser version', function () {
       expect(await repoExists('ipfs_test_remove/datastore')).to.be.false()
     })
 
+    it('removeRepo should wait for db to be closed', async () => {
+      const ctl = await createController({
+        test: true,
+        type: 'proc',
+        disposable: false,
+        ipfsOptions: { repo: 'ipfs_test_remove' },
+        ipfsModule: require('ipfs')
+      })
+      await ctl.init()
+      await ctl.start()
+
+      await Promise.all([
+        removeRepo('ipfs_test_remove'),
+        ctl.stop()
+      ])
+
+      expect(await repoExists('ipfs_test_remove')).to.be.false()
+      expect(await repoExists('ipfs_test_remove/keys')).to.be.false()
+      expect(await repoExists('ipfs_test_remove/blocks')).to.be.false()
+      expect(await repoExists('ipfs_test_remove/datastore')).to.be.false()
+    })
+
     describe('repoExists', () => {
       it('should resolve true when repo exists', async () => {
         const f = createFactory({ test: true })
