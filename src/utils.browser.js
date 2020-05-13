@@ -1,20 +1,9 @@
 'use strict'
 const { nanoid } = require('nanoid')
 
-const deleteDb = (path, retries = 1) => {
+const deleteDb = (path) => {
   return new Promise((resolve, reject) => {
     const keys = self.indexedDB.deleteDatabase(path)
-    keys.onblocked = () => {
-      if (retries === 6) {
-        reject(new Error('Database is still open.'))
-        return
-      }
-
-      setTimeout(() => {
-        deleteDb(path, retries++)
-          .then(resolve, reject)
-      }, retries * 1000)
-    }
     keys.onerror = (err) => reject(err)
     keys.onsuccess = () => resolve()
   })
