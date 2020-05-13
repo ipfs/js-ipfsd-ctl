@@ -4,7 +4,6 @@ const { nanoid } = require('nanoid')
 const deleteDb = (path) => {
   return new Promise((resolve, reject) => {
     const keys = self.indexedDB.deleteDatabase(path)
-    keys.onblocked = () => reject(new Error('Database is still open.'))
     keys.onerror = (err) => reject(err)
     keys.onsuccess = () => resolve()
   })
