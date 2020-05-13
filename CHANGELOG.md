@@ -1,3 +1,13 @@
+<a name="4.1.1"></a>
+## [4.1.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v4.1.0...v4.1.1) (2020-05-13)
+
+
+### Bug Fixes
+
+* remove onBlocked hook from delete database ([#509](https://github.com/ipfs/js-ipfsd-ctl/issues/509)) ([e4d6f80](https://github.com/ipfs/js-ipfsd-ctl/commit/e4d6f80))
+
+
+
 <a name="4.1.0"></a>
 # [4.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v4.0.2...v4.1.0) (2020-04-29)
 
