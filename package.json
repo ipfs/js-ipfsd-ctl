@@ -63,7 +63,7 @@
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
-    "aegir": "^22.0.0",
+    "aegir": "^23.0.0",
     "benchmark": "^2.1.4",
     "go-ipfs-dep": "^0.5.0",
     "husky": "^4.2.5",
