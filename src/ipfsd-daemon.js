@@ -176,6 +176,9 @@ class Daemon {
     if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.ipnsPubsub) {
       args.push('--enable-namesys-pubsub')
     }
+    if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.dht) {
+      args.push('--enable-dht')
+    }
 
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
