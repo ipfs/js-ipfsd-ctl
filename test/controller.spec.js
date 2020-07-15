@@ -56,7 +56,7 @@ describe('Controller API', function () {
       ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
     },
     go: {
-      ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined
+      ipfsBin: isNode ? require('go-ipfs').path() : undefined
     }
   })
 

@@ -12,7 +12,7 @@ async function run () {
   const node = await createController({
     remote: true,
     type: 'go',
-    ipfsBin: require('go-ipfs-dep').path()
+    ipfsBin: require('go-ipfs').path()
   })
 
   console.log(await node.api.id())

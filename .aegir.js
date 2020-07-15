@@ -3,14 +3,14 @@
 const getPort = require('aegir/utils/get-port')
 const createServer = require('./src').createServer
 
-const server = createServer(undefined, 
+const server = createServer(undefined,
   {
     ipfsModule: require('ipfs'),
     ipfsHttpModule: require('ipfs-http-client')
-  }, 
+  },
   {
     go: {
-      ipfsBin: require('go-ipfs-dep').path()
+      ipfsBin: require('go-ipfs').path()
     },
     js: {
       ipfsBin: require.resolve('ipfs/src/cli/bin.js')

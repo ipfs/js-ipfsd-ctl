@@ -12,7 +12,7 @@ describe('Node specific tests', function () {
     test: true,
     ipfsHttpModule: require('ipfs-http-client'),
     ipfsModule: require('ipfs'),
-    ipfsBin: require('go-ipfs-dep').path()
+    ipfsBin: require('go-ipfs').path()
   })
 
   it('should use process.IPFS_PATH', async () => {

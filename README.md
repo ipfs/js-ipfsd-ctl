@@ -32,17 +32,17 @@ Version 1.0.0 changed a bit the api and the options methods take so please read 
 npm install --save ipfsd-ctl
 ```
 
-Please ensure your project also has dependencies on `ipfs`, `ipfs-http-client` and `go-ipfs-dep`.
+Please ensure your project also has dependencies on `ipfs`, `ipfs-http-client` and `go-ipfs`.
 
 ```sh
 npm install --save ipfs
 npm install --save ipfs-http-client
-npm install --save go-ipfs-dep
+npm install --save go-ipfs
 ```
 
 If you are only going to use the `go` implementation of IPFS, you can skip installing the `js` implementation and vice versa, though both will require the `ipfs-http-client` module.
 
-If you are only using the `proc` type in-process IPFS node, you can skip installing `go-ipfs-dep` and `ipfs-http-client`.
+If you are only using the `proc` type in-process IPFS node, you can skip installing `go-ipfs` and `ipfs-http-client`.
 
 > You also need to explicitly defined the options `ipfsBin`, `ipfsModule` and `ipfsHttpModule` according to your needs.  Check [ControllerOptions](#controlleroptions) and [ControllerOptionsOverrides](#controlleroptionsoverrides) for more information.
 
@@ -58,7 +58,7 @@ This is a shorthand for simpler use cases where factory is not needed.
 const Ctl = require('ipfsd-ctl')
 const ipfsd = await Ctl.createController({
     ipfsHttpModule: require('ipfs-http-client'),
-    ipfsBin: require('go-ipfs-dep').path()
+    ipfsBin: require('go-ipfs').path()
 })
 const id = await ipfsd.api.id()
 
@@ -79,9 +79,9 @@ Use a factory to spawn multiple controllers based on some common template.
 const Ctl = require('ipfsd-ctl')
 
 const factory = Ctl.createFactory(
-    { 
-        type: 'js', 
-        test: true, 
+    {
+        type: 'js',
+        test: true,
         disposable: true,
         ipfsHttpModule: require('ipfs-http-client'),
         ipfsModule: require('ipfs') // only if you gonna spawn 'proc' controllers
@@ -127,7 +127,7 @@ const server = Ctl.createServer(port, {
 })
 const factory = Ctl.createFactory({
     ipfsHttpModule: require('ipfs-http-client'),
-    remote: true, 
+    remote: true,
     endpoint: `http://localhost:${port}` // or you can set process.env.IPFSD_CTL_SERVER to http://localhost:9090
 })
 

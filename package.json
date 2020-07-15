@@ -23,7 +23,7 @@
     "./src/endpoint/server.js": "./src/endpoint/server.browser.js",
     "./src/utils.js": "./src/utils.browser.js",
     "./src/ipfsd-daemon.js": "./src/ipfsd-client.js",
-    "go-ipfs-dep": false
+    "go-ipfs": false
   },
   "husky": {
     "hooks": {
@@ -65,14 +65,14 @@
   "devDependencies": {
     "aegir": "^23.0.0",
     "benchmark": "^2.1.4",
-    "go-ipfs-dep": "^0.5.0",
+    "go-ipfs": "^0.6.0",
     "husky": "^4.2.5",
     "ipfs": "^0.43.0",
     "ipfs-http-client": "^44.0.0",
     "lint-staged": "^10.1.6"
   },
   "peerDependencies": {
-    "go-ipfs-dep": "*",
+    "go-ipfs": "*",
     "ipfs": "*",
     "ipfs-http-client": "*"
   },
