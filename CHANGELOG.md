@@ -1,3 +1,18 @@
+<a name="5.0.0"></a>
+# [5.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v4.1.1...v5.0.0) (2020-07-16)
+
+
+### Features
+
+* swap go-ipfs-dep for go-ipfs ([#522](https://github.com/ipfs/js-ipfsd-ctl/issues/522)) ([c8c64b0](https://github.com/ipfs/js-ipfsd-ctl/commit/c8c64b0))
+
+
+### BREAKING CHANGES
+
+* Previously dependent projects should also depend on go-ipfs-dep, now they should depend on go-ipfs instead
+
+
+
 <a name="4.1.1"></a>
 ## [4.1.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v4.1.0...v4.1.1) (2020-05-13)
 
