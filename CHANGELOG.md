@@ -14,7 +14,7 @@
 
 ### Features
 
-* remove default key size and upgrade go-ipfs-dep ([#504](https://github.com/ipfs/js-ipfsd-ctl/issues/504)) ([ecbf4be](https://github.com/ipfs/js-ipfsd-ctl/commit/ecbf4be))
+* remove default key size and upgrade go-ipfs ([#504](https://github.com/ipfs/js-ipfsd-ctl/issues/504)) ([ecbf4be](https://github.com/ipfs/js-ipfsd-ctl/commit/ecbf4be))
 
 
 
@@ -91,7 +91,7 @@
 
 * chore: increase test timeouts
 
-* fix: only get go-ipfs-dep path in node
+* fix: only get go-ipfs path in node
 
 * fix: linting
 
@@ -192,7 +192,7 @@ to use js-IPFS.
 
 ### BREAKING CHANGES
 
-* Problems: 
+* Problems:
 - Browsers tests skipped cause ctl didn't support proper connectivity to remote nodes
 - We weren't able to tell ctl to use a specific commit of http-client, js-ipfs or cli
 - Options/config between the 3 types of daemons weren't consistent
@@ -206,8 +206,8 @@ Related issues:
 - https://github.com/ipfs/js-ipfsd-ctl/issues/315
 - https://github.com/ipfs/js-ipfsd-ctl/issues/207
 - https://github.com/ipfs/js-ipfsd-ctl/issues/217
-- and more 
- 
+- and more
+
 Improvements:
 - better errors
 - DEBUG='ipfsd-ctl:*' everywhere
@@ -228,14 +228,14 @@ Improvements:
 - support electron
 - test in electron
 
-New: 
+New:
 - new method `createController` returns a spawned controller
 - createFactory as a second parameter to override options per type
 
 
-Changes: 
+Changes:
 - `create` change to `createFactory`
-- `createFactory` options changed   
+- `createFactory` options changed
 
 Old
 ```md
@@ -272,7 +272,7 @@ Old
 ```
 
 - Previous default ipfs config is only applied when `test` options equals `true`
-- `defaultAddrs` option was removed 
+- `defaultAddrs` option was removed
 - Spawn options are the same as `createFactory`
 
 Old

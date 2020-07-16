@@ -18,7 +18,7 @@ const types = [{
   ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
+  ipfsBin: isNode ? require('go-ipfs').path() : undefined,
   type: 'go',
   test: true
 }, {
@@ -35,7 +35,7 @@ const types = [{
   ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
 }, {
   ...defaultOps,
-  ipfsBin: isNode ? require('go-ipfs-dep').path() : undefined,
+  ipfsBin: isNode ? require('go-ipfs').path() : undefined,
   type: 'go',
   remote: true,
   test: true

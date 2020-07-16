@@ -26,7 +26,7 @@ ipcMain.on('start', async ({ sender }) => {
     await s.start()
     const node = await createController({
       type: 'go',
-      ipfsBin: require('go-ipfs-dep').path()
+      ipfsBin: require('go-ipfs').path()
     })
     console.log('get id')
     sender.send('message', 'get id')
