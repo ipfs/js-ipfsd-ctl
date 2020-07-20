@@ -246,11 +246,21 @@ class Daemon {
       }, this.opts.forceKillTimeout)
     }
 
+    let stoppingErr
+
     try {
       await this.api.stop()
     } catch (err) {
+      // store for possible later use
+      stoppingErr = err
+    }
+
+    try {
+      // awaiting subprocesses should allow reaping any handles node vm has open for them
+      await this.subprocess
+    } catch (err) {
       if (!killed) {
-        throw err // if was killed then ignore error
+        throw stoppingErr || err // if was killed then ignore error
       }
 
       daemonLog.info('Daemon was force killed')
