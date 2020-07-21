@@ -247,6 +247,7 @@ class Daemon {
     }
 
     let stoppingErr
+    let subprocessAwaitingErr
 
     try {
       await this.api.stop()
@@ -259,21 +260,30 @@ class Daemon {
       // awaiting subprocesses should allow reaping any handles node vm has open for them
       await this.subprocess
     } catch (err) {
-      if (!killed) {
-        throw stoppingErr || err // if was killed then ignore error
-      }
-
-      daemonLog.info('Daemon was force killed')
+      subprocessAwaitingErr = err
     }
 
-    clearTimeout(killTimeout)
+    // detach everything as we have done all of the teardown possible.
     this.subprocess.stderr.removeAllListeners()
     this.subprocess.stdout.removeAllListeners()
     this.started = false
 
+    clearTimeout(killTimeout)
+
+    if (killed) {
+      daemonLog.info('Daemon was force killed')
+    }
+
+    if (stoppingErr || subprocessAwaitingErr) {
+      if (!killed) {
+        throw stoppingErr || subprocessAwaitingErr // if was killed then ignore error
+      }
+    }
+
     if (this.disposable) {
       await this.cleanup()
     }
+
     return this
   }
 
