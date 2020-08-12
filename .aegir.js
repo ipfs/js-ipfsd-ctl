@@ -38,5 +38,14 @@ module.exports = {
         }
       },
       post: () => server.stop()
+  },
+  webpack: {
+    node: {
+      // needed by ipfs-repo-migrations
+      path: true,
+
+      // needed by abstract-leveldown
+      Buffer: true
+    }
   }
 }
