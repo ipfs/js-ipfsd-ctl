@@ -1,7 +1,7 @@
 'use strict'
 
 const { nanoid } = require('nanoid')
-const Joi = require('@hapi/joi')
+const Joi = require('joi')
 const boom = require('@hapi/boom')
 const debug = require('debug')('ipfsd-ctl:routes')
 const { tmpDir } = require('../utils')
