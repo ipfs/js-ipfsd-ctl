@@ -1,3 +1,18 @@
+<a name="7.0.0"></a>
+# [7.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v6.0.0...v7.0.0) (2020-08-25)
+
+
+### Chores
+
+* update deps ([#541](https://github.com/ipfs/js-ipfsd-ctl/issues/541)) ([dcd160a](https://github.com/ipfs/js-ipfsd-ctl/commit/dcd160a))
+
+
+### BREAKING CHANGES
+
+* - Hapi has dropped support for node < 12
+
+
+
 <a name="6.0.0"></a>
 # [6.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v5.0.0...v6.0.0) (2020-08-12)
 
