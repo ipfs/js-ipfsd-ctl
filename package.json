@@ -68,7 +68,7 @@
     "go-ipfs": "^0.6.0",
     "husky": "^4.2.5",
     "ipfs": "^0.48.2",
-    "ipfs-http-client": "^45.0.0",
+    "ipfs-http-client": "^46.0.1",
     "lint-staged": "^10.1.6"
   },
   "peerDependencies": {
