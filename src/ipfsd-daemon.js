@@ -9,6 +9,7 @@ const { nanoid } = require('nanoid')
 const path = require('path')
 const os = require('os')
 const tempWrite = require('temp-write')
+const { buildStartArgs } = require('./utils/buildArgs');
 const { checkForRunningApi, repoExists, tmpDir, defaultRepo } = require('./utils')
 
 const daemonLog = {
@@ -156,29 +157,7 @@ class Daemon {
    * @return {Promise<Daemon>}
    */
   async start () {
-    const args = ['daemon']
-    const opts = this.opts.ipfsOptions
-    // add custom args
-    args.push(...this.opts.args)
-
-    if (opts.pass && this.opts.type === 'js') {
-      args.push('--pass', '"' + opts.pass + '"')
-    }
-    if (opts.offline) {
-      args.push('--offline')
-    }
-    if (opts.preload && this.opts.type === 'js') {
-      args.push('--enable-preload', Boolean(opts.preload.enabled))
-    }
-    if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.sharding) {
-      args.push('--enable-sharding-experiment')
-    }
-    if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.ipnsPubsub) {
-      args.push('--enable-namesys-pubsub')
-    }
-    if (opts.repoAutoMigrate) {
-      args.push('--migrate')
-    }
+    const args = buildStartArgs(this)
 
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
