@@ -170,7 +170,7 @@ class Daemon {
     if (opts.preload && this.opts.type === 'js') {
       args.push('--enable-preload', Boolean(opts.preload.enabled))
     }
-    if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.sharding) {
+    if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.sharding && this.opts.type === 'js') {
       args.push('--enable-sharding-experiment')
     }
     if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.ipnsPubsub) {
