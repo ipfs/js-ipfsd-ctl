@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
@@ -88,9 +88,9 @@
   "contributors": [
     "David Dias <daviddias.p@gmail.com>",
     "Hugo Dias <hugomrdias@gmail.com>",
+    "Alex Potsides <alex@achingbrain.net>",
     "Vasco Santos <vasco.santos@moxy.studio>",
     "Juan Batiz-Benet <juan@benet.ai>",
-    "Alex Potsides <alex@achingbrain.net>",
     "dignifiedquire <dignifiedquire@gmail.com>",
     "Kristoffer Ström <kristoffer@rymdkoloni.se>",
     "Dmitriy Ryajov <dryajov@gmail.com>",
