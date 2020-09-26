@@ -45,7 +45,10 @@ module.exports = {
       path: true,
 
       // needed by abstract-leveldown
-      Buffer: true
+      Buffer: true,
+
+      // needed by nofilter
+      stream: true
     }
   }
 }

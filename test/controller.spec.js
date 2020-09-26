@@ -110,14 +110,12 @@ describe('Controller API', function () {
           if (opts.type === 'js') {
             await expect(ctl.init({
               emptyRepo: true,
-              bits: 2048,
               profile: ['test'],
               pass: 'QmfPjo1bKmpcdWxpQnGAKjeae9F9aCxTDiS61t9a3hmvRi'
             })).to.be.fulfilled()
           } else {
             await expect(ctl.init({
               emptyRepo: true,
-              bits: 2048,
               profile: ['test']
             })).to.be.fulfilled()
           }
