@@ -11,12 +11,7 @@ suite
     defer: true,
     fn: async (deferred) => {
       const node = await createNodeTests({
-        type: 'go',
-        ipfsOptions: {
-          init: {
-            bits: 2048
-          }
-        }
+        type: 'go'
       })
 
       await node.stop()
