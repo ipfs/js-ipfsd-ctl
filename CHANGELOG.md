@@ -1,3 +1,18 @@
+<a name="7.0.2"></a>
+## [7.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.0.1...v7.0.2) (2020-10-10)
+
+
+### Bug Fixes
+
+* use native fetch if available ([#551](https://github.com/ipfs/js-ipfsd-ctl/issues/551)) ([c471ac8](https://github.com/ipfs/js-ipfsd-ctl/commit/c471ac8))
+
+
+### Features
+
+* go-ipfs 0.7.0 compatibility ([#549](https://github.com/ipfs/js-ipfsd-ctl/issues/549)) ([e05a31e](https://github.com/ipfs/js-ipfsd-ctl/commit/e05a31e))
+
+
+
 <a name="7.0.1"></a>
 ## [7.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.0.0...v7.0.1) (2020-09-17)
 
