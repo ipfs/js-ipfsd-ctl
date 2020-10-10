@@ -4,6 +4,8 @@ branches:
   only:
   - master
   - /^release\/.*$/
+services:
+  - xvfb
 stages:
   - check
   - test
