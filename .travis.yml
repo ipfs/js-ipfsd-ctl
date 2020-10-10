@@ -4,6 +4,8 @@ branches:
   only:
   - master
   - /^release\/.*$/
+services:
+  - xvfb
 stages:
   - check
   - test
@@ -47,13 +49,11 @@ jobs:
 
     - stage: test
       name: electron-main
-      os: osx
       script:
         - npx aegir test -t electron-main --bail --timeout 60000
 
     - stage: test
       name: electron-renderer
-      os: osx
       script:
         - npx aegir test -t electron-renderer --bail --timeout 60000
 notifications:
