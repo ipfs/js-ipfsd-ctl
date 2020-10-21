@@ -5,14 +5,15 @@ const routes = require('./routes')
 
 /**
  * Creates an instance of Server.
+ *
  * @class
  */
 class Server {
   /**
-   * @constructor
+   * @class
    * @param {Object} options
    * @param {number} [options.port=43134] - Server port.
-   * @param {function} createFactory
+   * @param {Function} createFactory
    */
   constructor (options = { port: 43134, host: 'localhost' }, createFactory) {
     this.options = options

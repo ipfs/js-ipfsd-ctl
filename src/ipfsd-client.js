@@ -14,11 +14,12 @@ const daemonLog = {
 
 /**
  * Controller for remote nodes
+ *
  * @class
  */
 class Client {
   /**
-   * @constructor
+   * @class
    * @param {string} baseUrl
    * @param {Object} remoteState
    * @param {ControllerOptions} options
@@ -184,7 +185,7 @@ class Client {
   /**
    * Get the version of ipfs
    *
-   * @returns {Promise<String>}
+   * @returns {Promise<string>}
    */
   async version () {
     const req = await http.get(
