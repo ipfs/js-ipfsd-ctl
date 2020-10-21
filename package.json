@@ -11,10 +11,10 @@
     "lint": "aegir lint",
     "docs": "aegir docs",
     "build": "aegir build",
-    "test": "aegir test -t node -t browser --timeout 10000",
+    "test": "aegir test -t node -t browser --timeout 60000",
     "test:node": "aegir test -t node",
     "test:browser": "aegir test -t browser",
-    "release": "aegir release --timeout 10000",
+    "release": "aegir release --timeout 60000",
     "release-minor": "aegir release --type minor",
     "release-major": "aegir release --type major",
     "coverage": "aegir coverage --timeout 50000"
@@ -60,6 +60,7 @@
     "merge-options": "^3.0.1",
     "multiaddr": "^8.0.0",
     "nanoid": "^3.1.3",
+    "p-wait-for": "^3.1.0",
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
