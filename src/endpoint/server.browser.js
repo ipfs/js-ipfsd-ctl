@@ -3,14 +3,15 @@
 
 /**
  * Creates an instance of Server.
+ *
  * @class
  */
 class Server {
   /**
-   * @constructor
+   * @class
    * @param {Object} options
    * @param {number} [options.port=43134] - Server port.
-   * @param {function} createNode
+   * @param {Function} createNode
    */
   constructor (options, createNode) {
     options = options || { port: 43134 }
@@ -34,7 +35,6 @@ class Server {
   /**
    * Stop the server
    *
-   * @param {object} [options] - {@link https://hapi.dev/api/?v=18.4.0#-await-serverstopoptions Hapi docs}
    * @returns {Promise}
    */
   stop () {

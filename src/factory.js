@@ -56,7 +56,7 @@ class Factory {
    *
    * @param {ControllerOptions} options - Controller type
    *
-   * @returns {Promise<String>}
+   * @returns {Promise<string>}
    */
   async tmpDir (options) {
     options = merge(this.opts, options)
@@ -98,6 +98,7 @@ class Factory {
 
   /**
    * Spawn an IPFSd Controller
+   *
    * @param {ControllerOptions} options
    * @returns {Promise<ControllerDaemon>}
    */
@@ -149,6 +150,7 @@ class Factory {
 
   /**
    * Stop all controllers
+   *
    * @returns {Promise<ControllerDaemon[]>}
    */
   async clean () {

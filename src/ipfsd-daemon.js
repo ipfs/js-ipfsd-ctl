@@ -27,12 +27,13 @@ function translateError (err) {
 
 /**
  * Controller for daemon nodes
+ *
  * @class
  *
  */
 class Daemon {
   /**
-   * @constructor
+   * @class
    * @param {ControllerOptions} [opts]
    */
   constructor (opts) {
@@ -153,7 +154,7 @@ class Daemon {
   /**
    * Start the daemon.
    *
-   * @return {Promise<Daemon>}
+   * @returns {Promise<Daemon>}
    */
   async start () {
     const args = ['daemon']
@@ -227,7 +228,7 @@ class Daemon {
   /**
    * Stop the daemon.
    *
-   * @return {Promise<Daemon>}
+   * @returns {Promise<Daemon>}
    */
   async stop () {
     if (!this.started) {
@@ -270,7 +271,7 @@ class Daemon {
   /**
    * Get the pid of the `ipfs daemon` process.
    *
-   * @returns {Promise<Number>}
+   * @returns {Promise<number>}
    */
   pid () {
     if (this.subprocess) {
@@ -286,7 +287,7 @@ class Daemon {
    *
    * @private
    * @param {string} [key] - A specific config to retrieve.
-   * @returns {Promise<Object|String>}
+   * @returns {Promise<Object | string>}
    */
   async _getConfig (key = 'show') {
     const {
@@ -331,7 +332,7 @@ class Daemon {
   /**
    * Get the version of ipfs
    *
-   * @returns {Promise<String>}
+   * @returns {Promise<string>}
    */
   async version () {
     const {

@@ -11,6 +11,7 @@ const deleteDb = (path) => {
 
 /**
  * close repoPath , repoPath/keys, repoPath/blocks and repoPath/datastore
+ *
  * @param {string} repoPath
  */
 const removeRepo = async (repoPath) => {

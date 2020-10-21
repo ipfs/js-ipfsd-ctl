@@ -54,6 +54,7 @@ module.exports = {
 
 /**
  * Same as https://github.com/ipfs/js-ipfs/blob/master/README.md#ipfs-constructor
+ *
  * @typedef {Object} IpfsOptions
  * @property {string|Object} [repo] - The file path at which to store the IPFS node’s data. Alternatively, you can set up a customized storage system by providing an ipfs.Repo instance.
  * @property {boolean|Object} [init=true] - Initialize the repo when creating the IPFS node. Instead of a boolean, you may provide an object with custom initialization options. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
@@ -65,7 +66,7 @@ module.exports = {
  * @property {object} [EXPERIMENTAL] - Enable and configure experimental features. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsexperimental Default: `{ ipnsPubsub: false, sharding: false }`
  * @property  {object} [config] - Modify the default IPFS node config. This object will be merged with the default config; it will not replace it. The default config is documented in the js-ipfs config file docs. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconfig
  * @property {object} [ipld] - Modify the default IPLD config. This object will be merged with the default config; it will not replace it. Check IPLD docs for more information on the available options. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsipld
- * @property {object|function} [libp2p] - The libp2p option allows you to build your libp2p node by configuration, or via a bundle function. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionslibp2p
+ * @property {object | Function} [libp2p] - The libp2p option allows you to build your libp2p node by configuration, or via a bundle function. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionslibp2p
  * @property {object} [connectionManager] - Configure the libp2p connection manager. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconnectionmanager
  * @property {boolean} [offline=false] - Run the node offline.
  */
@@ -75,7 +76,7 @@ module.exports = {
  * @property {boolean} [test=false] - Flag to activate custom config for tests.
  * @property {boolean} [remote] - Use remote endpoint to spawn the controllers. Defaults to `true` when not in node.
  * @property {string} [endpoint] - Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134').
- * @property {Boolean} [disposable=true] - A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
+ * @property {boolean} [disposable=true] - A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
  * @property {string} [type] - The daemon type, see below the options:
  * - go - spawn go-ipfs daemon node
  * - js - spawn js-ipfs daemon node
@@ -84,10 +85,10 @@ module.exports = {
  * @property {Array} [args] - Custom cli args.
  * @property {Object} [ipfsHttpModule] - Reference to a IPFS HTTP Client object.
  * @property {Object} [ipfsModule] - Reference to a IPFS API object.
- * @property {String} [ipfsBin] - Path to a IPFS exectutable.
+ * @property {string} [ipfsBin] - Path to a IPFS exectutable.
  * @property {IpfsOptions} [ipfsOptions] - Options for the IPFS node.
  * @property {boolean} [forceKill] - Whether to use SIGKILL to quit a daemon that does not stop after `.stop()` is called. (default true)
- * @property {Number} [forceKillTimeout] - How long to wait before force killing a daemon in ms. (default 5000)
+ * @property {number} [forceKillTimeout] - How long to wait before force killing a daemon in ms. (default 5000)
  */
 
 /**
