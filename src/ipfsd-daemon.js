@@ -266,19 +266,22 @@ class Daemon {
     }
 
     let killTimeout
-    let killed = false
     if (this.subprocess) {
-      if (this.opts.forceKill !== false) {
-        killTimeout = setTimeout(() => {
-          // eslint-disable-next-line no-console
-          console.error(new Error(`Timeout stopping ${this.opts.type} node. Process ${this.subprocess.pid} will be force killed now.`))
-          killed = true
+      if (this.disposable) {
+        // we're done with this node and will remove it's repo when we are done
+        // so don't wait for graceful exit, just terminate the process
+        this.subprocess.kill('SIGKILL')
+      } else {
+        if (this.opts.forceKill !== false) {
+          killTimeout = setTimeout(() => {
+            // eslint-disable-next-line no-console
+            console.error(new Error(`Timeout stopping ${this.opts.type} node after ${this.opts.forceKillTimeout}ms. Process ${this.subprocess.pid} will be force killed now.`))
+            this.subprocess.kill('SIGKILL')
+          }, this.opts.forceKillTimeout)
+        }
 
-          this.subprocess.kill('SIGKILL')
-        }, this.opts.forceKillTimeout)
+        this.subprocess.cancel()
       }
-
-      this.subprocess.cancel()
 
       try {
         await this.subprocess
@@ -287,19 +290,11 @@ class Daemon {
           throw err
         }
       }
+
+      clearTimeout(killTimeout)
     } else {
-      try {
-        await this.api.stop()
-      } catch (err) {
-        if (!killed) {
-          throw err // if was killed then ignore error
-        }
-
-        daemonLog.info('Daemon was force killed')
-      }
+      await this.api.stop()
     }
-
-    clearTimeout(killTimeout)
 
     if (!this.subprocess) {
       // if we have a subprocess, this.started will be set when it exits

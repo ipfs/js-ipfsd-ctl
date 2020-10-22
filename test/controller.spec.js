@@ -7,7 +7,7 @@ const { createFactory, createController } = require('../src')
 const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
 const pathJoin = require('ipfs-utils/src/path-join')
-const retry = require('trytryagain')
+const waitFor = require('p-wait-for')
 
 /** @typedef {import("../src/index").ControllerOptions} ControllerOptions */
 
@@ -229,7 +229,7 @@ describe('Controller API', function () {
           expect(ctl2.started).to.be.false()
 
           // wait for the other subprocess to exit
-          await retry(() => ctl1.started ? Promise.reject(new Error('Still running')) : Promise.resolve(), { // eslint-disable-line max-nested-callbacks
+          await waitFor(() => !ctl1.started, { // eslint-disable-line max-nested-callbacks
             timeout: 10000,
             interval: 100
           })
