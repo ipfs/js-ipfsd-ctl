@@ -258,8 +258,9 @@ class Daemon {
       return this
     }
 
-    let killTimeout
     if (this.subprocess) {
+      let killTimeout
+
       if (this.disposable) {
         // we're done with this node and will remove it's repo when we are done
         // so don't wait for graceful exit, just terminate the process
