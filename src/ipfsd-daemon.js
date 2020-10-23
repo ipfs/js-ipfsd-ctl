@@ -221,21 +221,14 @@ class Daemon {
           }
         }
         this.subprocess.stdout.on('data', readyHandler)
-        this.subprocess.catch(err => {
-          if (this.started) {
-            this.started = false
-            reject(translateError(err))
-          }
-        })
+        this.subprocess.catch(err => reject(translateError(err)))
         this.subprocess.on('exit', () => {
-          if (this.started) {
-            this.started = false
-            this.subprocess.stderr.removeAllListeners()
-            this.subprocess.stdout.removeAllListeners()
+          this.started = false
+          this.subprocess.stderr.removeAllListeners()
+          this.subprocess.stdout.removeAllListeners()
 
-            if (this.disposable) {
-              this.cleanup().catch(() => {})
-            }
+          if (this.disposable) {
+            this.cleanup().catch(() => {})
           }
         })
       })
