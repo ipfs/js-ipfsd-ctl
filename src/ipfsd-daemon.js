@@ -276,20 +276,12 @@ class Daemon {
         this.subprocess.cancel()
       }
 
-      try {
-        await this.subprocess
-      } catch (err) {
-        if (!this.subprocess.killed) {
-          throw err
-        }
-      } finally {
-        clearTimeout(killTimeout)
-      }
-
       // wait for the subprocess to exit and declare ourselves stopped
       await waitFor(() => !this.started, {
         timeout
       })
+
+      clearTimeout(killTimeout)
 
       if (this.disposable) {
         // wait for the cleanup routine to run after the subprocess has exited
