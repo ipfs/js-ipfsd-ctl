@@ -195,28 +195,32 @@ describe('Controller API', function () {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async function () {
           if (isBrowser || isWebWorker) {
-            return this.skip() // can't detect remote node shutdown in the browser
+            return this.skip() // browser can't attach to running node
           }
 
           // have to use createController so we don't try to shut down
           // the node twice during test cleanup
-          const ctl1 = await createController({
-            type: 'go',
-            ipfsHttpModule: require('ipfs-http-client'),
-            ipfsBin: isNode ? require('go-ipfs').path() : undefined,
-            test: true,
-            disposable: true,
-            ipfsOptions: {
-              init: true,
-              start: true
-            }
-          })
+          const ctl1 = await createController(merge(
+            {
+              type: 'go',
+              ipfsHttpModule: require('ipfs-http-client'),
+              ipfsBin: require('go-ipfs').path(),
+              test: true,
+              disposable: true,
+              remote: false,
+              ipfsOptions: {
+                init: true,
+                start: true
+              }
+            }))
           expect(ctl1.started).to.be.true()
 
           const ctl2 = await createController(merge(
             opts, {
               ipfsHttpModule: require('ipfs-http-client'),
               ipfsModule: require('ipfs'),
+              test: true,
+              disposable: true,
               ipfsOptions: {
                 repo: ctl1.path,
                 start: true

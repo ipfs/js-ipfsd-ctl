@@ -11,7 +11,7 @@
     "lint": "aegir lint",
     "docs": "aegir docs",
     "build": "aegir build",
-    "test": "aegir test -t node -t browser --timeout 10000",
+    "test": "aegir test",
     "test:node": "aegir test -t node",
     "test:browser": "aegir test -t browser",
     "release": "aegir release --timeout 10000",

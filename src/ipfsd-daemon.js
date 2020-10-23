@@ -289,17 +289,10 @@ class Daemon {
         if (!this.subprocess.killed) {
           throw err
         }
+      } finally {
+        clearTimeout(killTimeout)
       }
 
-      clearTimeout(killTimeout)
-    } else {
-      await this.api.stop()
-    }
-
-    if (!this.subprocess) {
-      // if we have a subprocess, this.started will be set when it exits
-      this.started = false
-    } else {
       // wait for the subprocess to exit and declare ourselves stopped
       await waitFor(() => !this.started, {
         timeout
@@ -311,6 +304,10 @@ class Daemon {
           timeout
         })
       }
+    } else {
+      await this.api.stop()
+
+      this.started = false
     }
 
     return this
