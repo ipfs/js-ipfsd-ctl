@@ -1,3 +1,12 @@
+## [7.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.0.2...v7.0.3) (2020-10-23)
+
+
+### Bug Fixes
+
+* kill disposable nodes on stop and simplify started status ([#554](https://github.com/ipfs/js-ipfsd-ctl/issues/554)) ([cd123cc](https://github.com/ipfs/js-ipfsd-ctl/commit/cd123ccd4cebfa7acb68416f5933ef38cd9e1ff9))
+
+
+
 <a name="7.0.2"></a>
 ## [7.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.0.1...v7.0.2) (2020-10-10)
 
