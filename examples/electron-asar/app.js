@@ -22,11 +22,18 @@ ipcMain.on('start', async ({ sender }) => {
   console.log('starting disposable IPFS')
   sender.send('message', 'starting disposable IPFS')
   try {
-    const s = createServer()
+    const s = createServer({
+      host: '127.0.0.1',
+      port: 43134
+    }, {
+      type: 'go',
+      ipfsBin: require('go-ipfs').path(),
+      ipfsHttpModule: require('ipfs-http-client')
+    })
     await s.start()
     const node = await createController({
       type: 'go',
-      ipfsBin: require('go-ipfs').path()
+      ipfsHttpModule: require('ipfs-http-client')
     })
     console.log('get id')
     sender.send('message', 'get id')
@@ -37,7 +44,7 @@ ipcMain.on('start', async ({ sender }) => {
     await node.stop()
     await s.stop()
   } catch (error) {
-    sender.send('id', JSON.stringify(error.message))
+    sender.send('error', JSON.stringify(error.message))
     console.log(error)
   }
 })
