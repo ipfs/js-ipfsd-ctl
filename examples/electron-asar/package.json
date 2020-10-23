@@ -3,13 +3,13 @@
   "private": true,
   "main": "./app.js",
   "dependencies": {
-    "go-ipfs": "^0.6.0",
-    "ipfs": "^0.43.0",
+    "go-ipfs": "^0.7.0",
+    "ipfs-http-client": "^47.0.1",
     "ipfsd-ctl": "file:../.."
   },
   "devDependencies": {
-    "electron": "^6.0.12",
-    "electron-packager": "^14.0.6"
+    "electron": "^10.1.4",
+    "electron-packager": "^15.1.0"
   },
   "scripts": {
     "start": "electron .",
