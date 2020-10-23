@@ -247,8 +247,8 @@ class Daemon {
   /**
    * Stop the daemon.
    *
-   * @param {object} options
-   * @param {number} options.timeout - How long to wait for the daemon to stop
+   * @param {object} [options]
+   * @param {number} [options.timeout=60000] - How long to wait for the daemon to stop
    * @returns {Promise<Daemon>}
    */
   async stop (options = {}) {
