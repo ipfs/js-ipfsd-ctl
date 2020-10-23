@@ -7,6 +7,7 @@ const { createFactory, createController } = require('../src')
 const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
 const pathJoin = require('ipfs-utils/src/path-join')
+const waitFor = require('p-wait-for')
 
 /** @typedef {import("../src/index").ControllerOptions} ControllerOptions */
 
@@ -186,6 +187,58 @@ describe('Controller API', function () {
           expect(ctl.started).to.be.true()
           const id = await ctl.api.id()
           expect(factory.controllers[0].api.peerId.id).to.be.eq(id.id)
+        })
+      }
+    })
+
+    describe('should stop a running node that we have joined', () => {
+      for (const opts of types) {
+        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async function () {
+          if (isBrowser || isWebWorker) {
+            return this.skip() // browser can't attach to running node
+          }
+
+          // have to use createController so we don't try to shut down
+          // the node twice during test cleanup
+          const ctl1 = await createController(merge(
+            {
+              type: 'go',
+              ipfsHttpModule: require('ipfs-http-client'),
+              ipfsBin: require('go-ipfs').path(),
+              test: true,
+              disposable: true,
+              remote: false,
+              ipfsOptions: {
+                init: true,
+                start: true
+              }
+            }))
+          expect(ctl1.started).to.be.true()
+
+          const ctl2 = await createController(merge(
+            opts, {
+              ipfsHttpModule: require('ipfs-http-client'),
+              ipfsModule: require('ipfs'),
+              test: true,
+              disposable: true,
+              ipfsOptions: {
+                repo: ctl1.path,
+                start: true
+              }
+            }
+          ))
+          expect(ctl2.started).to.be.true()
+
+          await ctl2.stop()
+          expect(ctl2.started).to.be.false()
+
+          // wait for the other subprocess to exit
+          await waitFor(() => !ctl1.started, { // eslint-disable-line max-nested-callbacks
+            timeout: 10000,
+            interval: 100
+          })
+
+          expect(ctl1.started).to.be.false()
         })
       }
     })

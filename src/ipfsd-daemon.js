@@ -10,6 +10,7 @@ const path = require('path')
 const os = require('os')
 const tempWrite = require('temp-write')
 const { checkForRunningApi, repoExists, tmpDir, defaultRepo } = require('./utils')
+const waitFor = require('p-wait-for')
 
 const daemonLog = {
   info: debug('ipfsd-ctl:daemon:stdout'),
@@ -157,33 +158,41 @@ class Daemon {
    * @returns {Promise<Daemon>}
    */
   async start () {
-    const args = ['daemon']
-    const opts = this.opts.ipfsOptions
-    // add custom args
-    args.push(...this.opts.args)
-
-    if (opts.pass && this.opts.type === 'js') {
-      args.push('--pass', '"' + opts.pass + '"')
-    }
-    if (opts.offline) {
-      args.push('--offline')
-    }
-    if (opts.preload && this.opts.type === 'js') {
-      args.push('--enable-preload', Boolean(opts.preload.enabled))
-    }
-    if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.sharding && this.opts.type === 'js') {
-      args.push('--enable-sharding-experiment')
-    }
-    if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.ipnsPubsub) {
-      args.push('--enable-namesys-pubsub')
-    }
-
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
+
     if (api) {
       this._setApi(api)
+    } else if (!this.exec) {
+      throw new Error('No executable specified')
     } else {
+      const args = ['daemon']
+      const opts = this.opts.ipfsOptions
+      // add custom args
+      args.push(...this.opts.args)
+
+      if (opts.pass && this.opts.type === 'js') {
+        args.push('--pass', '"' + opts.pass + '"')
+      }
+
+      if (opts.offline) {
+        args.push('--offline')
+      }
+
+      if (opts.preload && this.opts.type === 'js') {
+        args.push('--enable-preload', Boolean(opts.preload.enabled))
+      }
+
+      if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.sharding && this.opts.type === 'js') {
+        args.push('--enable-sharding-experiment')
+      }
+
+      if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.ipnsPubsub) {
+        args.push('--enable-namesys-pubsub')
+      }
+
       let output = ''
+
       const ready = new Promise((resolve, reject) => {
         this.subprocess = execa(this.exec, args, {
           env: this.env
@@ -213,7 +222,17 @@ class Daemon {
         }
         this.subprocess.stdout.on('data', readyHandler)
         this.subprocess.catch(err => reject(translateError(err)))
+        this.subprocess.on('exit', () => {
+          this.started = false
+          this.subprocess.stderr.removeAllListeners()
+          this.subprocess.stdout.removeAllListeners()
+
+          if (this.disposable) {
+            this.cleanup().catch(() => {})
+          }
+        })
       })
+
       await ready
     }
 
@@ -228,43 +247,55 @@ class Daemon {
   /**
    * Stop the daemon.
    *
+   * @param {object} [options]
+   * @param {number} [options.timeout=60000] - How long to wait for the daemon to stop
    * @returns {Promise<Daemon>}
    */
-  async stop () {
+  async stop (options = {}) {
+    const timeout = options.timeout || 60000
+
     if (!this.started) {
       return this
     }
 
-    let killTimeout
-    let killed = false
-    if (this.opts.forceKill !== false) {
-      killTimeout = setTimeout(() => {
-        // eslint-disable-next-line no-console
-        console.error(new Error(`Timeout stopping ${this.opts.type} node. Process ${this.subprocess.pid} will be force killed now.`))
-        killed = true
+    if (this.subprocess) {
+      let killTimeout
 
+      if (this.disposable) {
+        // we're done with this node and will remove it's repo when we are done
+        // so don't wait for graceful exit, just terminate the process
         this.subprocess.kill('SIGKILL')
-      }, this.opts.forceKillTimeout)
-    }
+      } else {
+        if (this.opts.forceKill !== false) {
+          killTimeout = setTimeout(() => {
+            // eslint-disable-next-line no-console
+            console.error(new Error(`Timeout stopping ${this.opts.type} node after ${this.opts.forceKillTimeout}ms. Process ${this.subprocess.pid} will be force killed now.`))
+            this.subprocess.kill('SIGKILL')
+          }, this.opts.forceKillTimeout)
+        }
 
-    try {
-      await this.api.stop()
-    } catch (err) {
-      if (!killed) {
-        throw err // if was killed then ignore error
+        this.subprocess.cancel()
       }
 
-      daemonLog.info('Daemon was force killed')
+      // wait for the subprocess to exit and declare ourselves stopped
+      await waitFor(() => !this.started, {
+        timeout
+      })
+
+      clearTimeout(killTimeout)
+
+      if (this.disposable) {
+        // wait for the cleanup routine to run after the subprocess has exited
+        await waitFor(() => this.clean, {
+          timeout
+        })
+      }
+    } else {
+      await this.api.stop()
+
+      this.started = false
     }
 
-    clearTimeout(killTimeout)
-    this.subprocess.stderr.removeAllListeners()
-    this.subprocess.stdout.removeAllListeners()
-    this.started = false
-
-    if (this.disposable) {
-      await this.cleanup()
-    }
     return this
   }
 
