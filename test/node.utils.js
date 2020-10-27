@@ -5,7 +5,7 @@
 const { expect } = require('aegir/utils/chai')
 const os = require('os')
 const path = require('path')
-const { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
+const { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo, buildInitArgs, buildStartArgs } = require('../src/utils')
 const { createFactory, createController } = require('../src')
 
 describe('utils node version', function () {
@@ -71,6 +71,131 @@ describe('utils node version', function () {
     })
     it('should resolve false for random path', async () => {
       expect(await repoExists('random')).to.be.false()
+    })
+  })
+
+  describe('buildStartArgs', function () {
+    it('custom args', () => {
+      expect(buildStartArgs({
+        args: ['--foo=bar']
+      }).join(' ')).to.include('--foo=bar')
+    })
+
+    it('pass', () => {
+      expect(buildStartArgs({
+        type: 'js',
+        ipfsOptions: {
+          pass: 'baz'
+        }
+      }).join(' ')).to.include('--pass "baz"')
+    })
+
+    it('preload', () => {
+      expect(buildStartArgs({
+        type: 'js',
+        ipfsOptions: {
+          preload: true
+        }
+      }).join(' ')).to.include('--enable-preload')
+    })
+
+    it('preload disabled', () => {
+      expect(buildStartArgs({
+        type: 'js',
+        ipfsOptions: {
+          preload: false
+        }
+      }).join(' ')).to.include('--enable-preload false')
+    })
+
+    it('sharding', () => {
+      expect(buildStartArgs({
+        type: 'js',
+        ipfsOptions: {
+          EXPERIMENTAL: {
+            sharding: true
+          }
+        }
+      }).join(' ')).to.include('--enable-sharding-experiment')
+    })
+
+    it('offline', () => {
+      expect(buildStartArgs({
+        type: 'js',
+        ipfsOptions: {
+          offline: true
+        }
+      }).join(' ')).to.include('--offline')
+    })
+
+    it('ipns pubsub', () => {
+      expect(buildStartArgs({
+        type: 'js',
+        ipfsOptions: {
+          EXPERIMENTAL: {
+            ipnsPubsub: true
+          }
+        }
+      }).join(' ')).to.include('--enable-namesys-pubsub')
+    })
+
+    it('migrate', () => {
+      expect(buildStartArgs({
+        ipfsOptions: {
+          repoAutoMigrate: true
+        }
+      }).join(' ')).to.include('--migrate')
+    })
+  })
+
+  describe('buildInitArgs', function () {
+    it('pass', () => {
+      expect(buildStartArgs({
+        type: 'js',
+        ipfsOptions: {
+          pass: 'baz'
+        }
+      }).join(' ')).to.include('--pass "baz"')
+    })
+
+    it('bits', () => {
+      expect(buildInitArgs({
+        ipfsOptions: {
+          init: {
+            bits: 512
+          }
+        }
+      }).join(' ')).to.include('--bits 512')
+    })
+
+    it('algorithm', () => {
+      expect(buildInitArgs({
+        ipfsOptions: {
+          init: {
+            algorithm: 'rsa'
+          }
+        }
+      }).join(' ')).to.include('--algorithm rsa')
+    })
+
+    it('empty repo', () => {
+      expect(buildInitArgs({
+        ipfsOptions: {
+          init: {
+            emptyRepo: true
+          }
+        }
+      }).join(' ')).to.include('--empty-repo')
+    })
+
+    it('profiles', () => {
+      expect(buildInitArgs({
+        ipfsOptions: {
+          init: {
+            profiles: ['foo', 'bar']
+          }
+        }
+      }).join(' ')).to.include('--profile foo,bar')
     })
   })
 })
