@@ -8,8 +8,7 @@ const execa = require('execa')
 const { nanoid } = require('nanoid')
 const path = require('path')
 const os = require('os')
-const tempWrite = require('temp-write')
-const { checkForRunningApi, repoExists, tmpDir, defaultRepo } = require('./utils')
+const { checkForRunningApi, repoExists, tmpDir, defaultRepo, buildInitArgs, buildStartArgs } = require('./utils')
 const waitFor = require('p-wait-for')
 
 const daemonLog = {
@@ -87,35 +86,23 @@ class Daemon {
       return this
     }
 
-    const opts = merge(
-      {
-        emptyRepo: false,
-        profiles: this.opts.test ? ['test'] : []
-      },
-      typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
-      typeof initOptions === 'boolean' ? {} : initOptions
+    initOptions = merge({
+      emptyRepo: false,
+      profiles: this.opts.test ? ['test'] : []
+    },
+    typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
+    typeof initOptions === 'boolean' ? {} : initOptions
     )
 
-    const args = ['init']
+    const opts = merge(
+      this.opts, {
+        ipfsOptions: {
+          init: initOptions
+        }
+      }
+    )
 
-    // default-config only for JS
-    if (this.opts.ipfsOptions.config && this.opts.type === 'js') {
-      args.push(tempWrite.sync(JSON.stringify(this.opts.ipfsOptions.config)))
-    }
-
-    // Translate ipfs options to cli args
-    if (opts.bits) {
-      args.push('--bits', opts.bits)
-    }
-    if (opts.pass && this.opts.type === 'js') {
-      args.push('--pass', '"' + opts.pass + '"')
-    }
-    if (opts.emptyRepo) {
-      args.push('--empty-repo')
-    }
-    if (Array.isArray(opts.profiles) && opts.profiles.length) {
-      args.push('--profile', opts.profiles.join(','))
-    }
+    const args = buildInitArgs(opts)
 
     const { stdout, stderr } = await execa(this.exec, args, {
       env: this.env
@@ -166,30 +153,7 @@ class Daemon {
     } else if (!this.exec) {
       throw new Error('No executable specified')
     } else {
-      const args = ['daemon']
-      const opts = this.opts.ipfsOptions
-      // add custom args
-      args.push(...this.opts.args)
-
-      if (opts.pass && this.opts.type === 'js') {
-        args.push('--pass', '"' + opts.pass + '"')
-      }
-
-      if (opts.offline) {
-        args.push('--offline')
-      }
-
-      if (opts.preload && this.opts.type === 'js') {
-        args.push('--enable-preload', Boolean(opts.preload.enabled))
-      }
-
-      if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.sharding && this.opts.type === 'js') {
-        args.push('--enable-sharding-experiment')
-      }
-
-      if (opts.EXPERIMENTAL && opts.EXPERIMENTAL.ipnsPubsub) {
-        args.push('--enable-namesys-pubsub')
-      }
+      const args = buildStartArgs(this.opts)
 
       let output = ''
 
