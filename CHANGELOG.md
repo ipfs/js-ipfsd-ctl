@@ -1,3 +1,12 @@
+# [7.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.0.3...v7.1.0) (2020-10-28)
+
+
+### Features
+
+* support more cli args ([#557](https://github.com/ipfs/js-ipfsd-ctl/issues/557)) ([2ee20b3](https://github.com/ipfs/js-ipfsd-ctl/commit/2ee20b3ff469f631296585086d55a1da6a22331b))
+
+
+
 ## [7.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.0.2...v7.0.3) (2020-10-23)
 
 
