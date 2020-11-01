@@ -22,6 +22,7 @@ class InProc {
     /** @type ControllerOptions */
     this.opts = opts
     this.path = this.opts.ipfsOptions.repo || (opts.disposable ? tmpDir(opts.type) : defaultRepo(opts.type))
+    this.initOptions = toInitOptions(opts.ipfsOptions.init)
     this.disposable = opts.disposable
     this.initialized = false
     this.started = false
@@ -38,10 +39,12 @@ class InProc {
 
     const IPFS = this.opts.ipfsModule
 
-    this.api = await IPFS.create(merge({
+    this.api = await IPFS.create({
+      ...this.opts.ipfsOptions,
       silent: true,
-      repo: this.path
-    }, this.opts.ipfsOptions))
+      repo: this.path,
+      init: this.initOptions
+    })
   }
 
   /**
@@ -79,18 +82,16 @@ class InProc {
     }
 
     // Repo not initialized
-    const opts = merge(
+    this.initOptions = merge(
       {
         emptyRepo: false,
         profiles: this.opts.test ? ['test'] : []
       },
-      typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
-      typeof initOptions === 'boolean' ? {} : initOptions
+      this.initOptions,
+      toInitOptions(initOptions)
     )
 
     await this.setExec()
-    await this.api.init(opts)
-
     this.clean = false
     this.initialized = true
     return this
@@ -172,5 +173,8 @@ class InProc {
     return this.api.version()
   }
 }
+
+const toInitOptions = (init) =>
+  typeof init === 'boolean' ? {} : init
 
 module.exports = InProc
