@@ -48,6 +48,7 @@ class Daemon {
     this.started = false
     this.clean = true
     this.apiAddr = null
+    this.grpcAddr = null
     this.gatewayAddr = null
     this.api = null
   }
@@ -61,6 +62,14 @@ class Daemon {
     this.api = this.opts.ipfsHttpModule(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
+  }
+
+  /**
+   * @private
+   * @param {string} addr
+   */
+  _setGRPC (addr) {
+    this.grpcAddr = multiaddr(addr)
   }
 
   /**
@@ -168,6 +177,7 @@ class Daemon {
           output += data.toString()
           const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
           const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
+          const grpcMatch = output.trim().match(/gRPC .*listening on:? (.*)/)
 
           if (apiMatch && apiMatch.length > 0) {
             this._setApi(apiMatch[1])
@@ -175,6 +185,10 @@ class Daemon {
 
           if (gwMatch && gwMatch.length > 0) {
             this._setGateway(gwMatch[1])
+          }
+
+          if (grpcMatch && grpcMatch.length > 0) {
+            this._setGRPC(grpcMatch[1])
           }
 
           if (output.match(/(?:daemon is running|Daemon is ready)/)) {
