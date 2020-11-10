@@ -84,7 +84,7 @@ class Daemon {
         http: this.apiAddr
       })
     } else {
-      this.api = this.opts.ipfsHttpModule(addr)
+      this.api = this.opts.ipfsHttpModule(this.apiAddr)
     }
 
     if (this.apiAddr) {
