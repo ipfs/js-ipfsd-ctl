@@ -59,16 +59,13 @@ class Daemon {
    */
   _setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = this.opts.ipfsHttpModule(addr)
-    this.api.apiHost = this.apiAddr.nodeAddress().address
-    this.api.apiPort = this.apiAddr.nodeAddress().port
   }
 
   /**
    * @private
    * @param {string} addr
    */
-  _setGRPC (addr) {
+  _setGrpc (addr) {
     this.grpcAddr = multiaddr(addr)
   }
 
@@ -78,8 +75,32 @@ class Daemon {
    */
   _setGateway (addr) {
     this.gatewayAddr = multiaddr(addr)
-    this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-    this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+  }
+
+  _createApi () {
+    if (this.opts.ipfsClientModule && this.grpcAddr) {
+      this.api = this.opts.ipfsClientModule({
+        grpc: this.grpcAddr,
+        http: this.apiAddr
+      })
+    } else {
+      this.api = this.opts.ipfsHttpModule(addr)
+    }
+
+    if (this.apiAddr) {
+      this.api.apiHost = this.apiAddr.nodeAddress().address
+      this.api.apiPort = this.apiAddr.nodeAddress().port
+    }
+
+    if (this.gatewayAddr) {
+      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+    }
+
+    if (this.grpcAddr) {
+      this.api.grpcHost = this.grpcAddr.nodeAddress().address
+      this.api.grpcPort = this.grpcAddr.nodeAddress().port
+    }
   }
 
   /**
@@ -188,11 +209,12 @@ class Daemon {
           }
 
           if (grpcMatch && grpcMatch.length > 0) {
-            this._setGRPC(grpcMatch[1])
+            this._setGrpc(grpcMatch[1])
           }
 
           if (output.match(/(?:daemon is running|Daemon is ready)/)) {
             // we're good
+            this._createApi()
             this.started = true
             this.subprocess.stdout.off('data', readyHandler)
             resolve(this.api)
