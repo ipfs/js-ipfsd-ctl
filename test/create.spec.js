@@ -61,7 +61,7 @@ describe('`createController` should return the correct class', () => {
     let clientCreated = false
     let httpCreated = false
 
-    const f = await createController({
+    await createController({
       type: 'js',
       disposable: false,
       ipfsModule: require('ipfs'),
@@ -104,6 +104,8 @@ describe('`createController` should return the correct class', () => {
     })
 
     expect(f).to.be.instanceOf(Client)
+    expect(clientCreated).to.be.true()
+    expect(httpCreated).to.be.false()
   })
 })
 

@@ -75,28 +75,30 @@ class Client {
    * @private
    */
   _createApi () {
-    if (this.opts.ipfsClientModule && this.grpcAddr) {
+    if (this.opts.ipfsClientModule && this.grpcAddr && this.apiAddr) {
       this.api = this.opts.ipfsClientModule({
         grpc: this.grpcAddr,
         http: this.apiAddr
       })
-    } else {
+    } else if (this.apiAddr) {
       this.api = this.opts.ipfsHttpModule(this.apiAddr)
     }
 
-    if (this.apiAddr) {
-      this.api.apiHost = this.apiAddr.nodeAddress().address
-      this.api.apiPort = this.apiAddr.nodeAddress().port
-    }
+    if (this.api) {
+      if (this.apiAddr) {
+        this.api.apiHost = this.apiAddr.nodeAddress().address
+        this.api.apiPort = this.apiAddr.nodeAddress().port
+      }
 
-    if (this.gatewayAddr) {
-      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
-    }
+      if (this.gatewayAddr) {
+        this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+        this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+      }
 
-    if (this.grpcAddr) {
-      this.api.grpcHost = this.grpcAddr.nodeAddress().address
-      this.api.grpcPort = this.grpcAddr.nodeAddress().port
+      if (this.grpcAddr) {
+        this.api.grpcHost = this.grpcAddr.nodeAddress().address
+        this.api.grpcPort = this.grpcAddr.nodeAddress().port
+      }
     }
   }
 
@@ -169,6 +171,8 @@ class Client {
 
       this._setApi(res.apiAddr)
       this._setGateway(res.gatewayAddr)
+      this._setGrpc(res.grpcAddr)
+      this._createApi()
 
       this.started = true
     }
