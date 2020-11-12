@@ -76,6 +76,7 @@
   "peerDependencies": {
     "go-ipfs": "*",
     "ipfs": "*",
+    "ipfs-client": "*",
     "ipfs-http-client": "*"
   },
   "repository": {
