@@ -68,7 +68,7 @@
     "benchmark": "^2.1.4",
     "go-ipfs": "^0.7.0",
     "husky": "^4.2.5",
-    "ipfs": "^0.50.2",
+    "ipfs": "^0.52.1",
     "ipfs-http-client": "^47.0.1",
     "ipfs-unixfs": "^2.0.3",
     "lint-staged": "^10.1.6"
