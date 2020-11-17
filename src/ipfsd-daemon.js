@@ -83,8 +83,12 @@ class Daemon {
         grpc: this.grpcAddr,
         http: this.apiAddr
       })
-    } else {
+    } else if (this.apiAddr) {
       this.api = this.opts.ipfsHttpModule(this.apiAddr)
+    }
+
+    if (!this.api) {
+      throw new Error(`Could not create API from http '${this.apiAddr}' and/or gRPC '${this.grpcAddr}'`)
     }
 
     if (this.apiAddr) {
@@ -180,6 +184,7 @@ class Daemon {
 
     if (api) {
       this._setApi(api)
+      this._createApi()
     } else if (!this.exec) {
       throw new Error('No executable specified')
     } else {
