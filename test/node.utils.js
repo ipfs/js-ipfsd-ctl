@@ -24,7 +24,7 @@ describe('utils node version', function () {
         test: true,
         ipfsModule: require('ipfs'),
         ipfsHttpModule: require('ipfs-http-client'),
-        ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+        ipfsBin: require.resolve('ipfs/src/cli.js')
       })
       expect(checkForRunningApi(node.path)).to.be.contain('/ip4/127.0.0.1/tcp/')
       await node.stop()
@@ -42,7 +42,7 @@ describe('utils node version', function () {
       test: true,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+      ipfsBin: require.resolve('ipfs/src/cli.js')
     })
     const dir = await f.tmpDir()
     const node = await f.spawn({
@@ -64,7 +64,7 @@ describe('utils node version', function () {
         test: true,
         ipfsModule: require('ipfs'),
         ipfsHttpModule: require('ipfs-http-client'),
-        ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+        ipfsBin: require.resolve('ipfs/src/cli.js')
       })
       expect(await repoExists(node.path)).to.be.true()
       await node.stop()

@@ -55,7 +55,7 @@
     "debug": "^4.1.1",
     "execa": "^4.0.0",
     "fs-extra": "^9.0.0",
-    "ipfs-utils": "^4.0.0",
+    "ipfs-utils": "^5.0.1",
     "joi": "^17.2.1",
     "merge-options": "^3.0.1",
     "multiaddr": "^8.0.0",
@@ -64,12 +64,12 @@
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
-    "aegir": "^28.0.2",
+    "aegir": "^29.1.0",
     "benchmark": "^2.1.4",
     "go-ipfs": "^0.7.0",
     "husky": "^4.2.5",
-    "ipfs": "^0.50.2",
-    "ipfs-http-client": "^47.0.1",
+    "ipfs": "0.52.2",
+    "ipfs-http-client": "48.1.2",
     "ipfs-unixfs": "^2.0.3",
     "lint-staged": "^10.1.6"
   },
