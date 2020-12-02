@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: yarn
-      - run: npx nyc --reporter=lcov npm run test:node -- --bail --timeout 60000
+      - run: npx nyc --reporter=lcov aegir -t node --bail --timeout 60000
       - uses: codecov/codecov-action@v1
   test-chrome:
     needs: check
@@ -42,25 +42,25 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: yarn
-      - run: yarn aegir test -t browser -t webworker --timeout 10000
+      - run: npx aegir test -t browser -t webworker --timeout 10000
   test-firefox:
     needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: yarn
-      - run: yarn aegir test -t browser -t webworker --timeout 10000 -- --browsers FirefoxHeadless
+      - run: npx aegir test -t browser -t webworker --timeout 10000 -- --browsers FirefoxHeadless
   test-electron-main:
     needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: yarn
-      - run: npx xvfb-maybe yarn aegir test -t electron-main --bail --timeout 10000
+      - run: npx xvfb-maybe aegir test -t electron-main --bail --timeout 10000
   test-electron-renderer:
     needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: yarn
-      - run: npx xvfb-maybe yarn aegir test -t electron-renderer --bail --timeout 10000
+      - run: npx xvfb-maybe aegir test -t electron-renderer --bail --timeout 10000
