@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: yarn
-      - run: npx nyc --reporter=lcov npm run test:node -- --bail --timeout 10000
+      - run: npx nyc --reporter=lcov npm run test:node -- --bail --timeout 60000
       - uses: codecov/codecov-action@v1
   test-chrome:
     needs: check
