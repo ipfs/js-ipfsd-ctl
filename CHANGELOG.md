@@ -1,3 +1,7 @@
+## [7.1.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.1.0...v7.1.1) (2020-12-03)
+
+
+
 # [7.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.0.3...v7.1.0) (2020-10-28)
 
 
