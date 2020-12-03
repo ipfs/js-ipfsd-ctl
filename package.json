@@ -53,7 +53,7 @@
     "@hapi/boom": "^9.1.0",
     "@hapi/hapi": "^20.0.0",
     "debug": "^4.1.1",
-    "execa": "^4.0.0",
+    "execa": "^5.0.0",
     "fs-extra": "^9.0.0",
     "ipfs-utils": "^5.0.1",
     "joi": "^17.2.1",
@@ -64,7 +64,7 @@
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
-    "aegir": "^29.2.1",
+    "aegir": "^29.2.2",
     "benchmark": "^2.1.4",
     "go-ipfs": "^0.7.0",
     "husky": "^4.2.5",
