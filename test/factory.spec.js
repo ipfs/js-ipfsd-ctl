@@ -16,7 +16,7 @@ const types = [{
   type: 'js',
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
 }, {
   ...defaultOps,
   ipfsBin: isNode ? require('go-ipfs').path() : undefined,
@@ -33,7 +33,7 @@ const types = [{
   remote: true,
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
 }, {
   ...defaultOps,
   ipfsBin: isNode ? require('go-ipfs').path() : undefined,
@@ -90,7 +90,7 @@ describe('`Factory spawn()` ', function () {
           remote: opts.remote,
           ipfsModule: require('ipfs'),
           ipfsHttpModule: require('ipfs-http-client'),
-          ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+          ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
         })
         expect(ctl).to.exist()
         expect(ctl.opts.test).to.be.true()

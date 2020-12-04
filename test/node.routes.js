@@ -16,7 +16,7 @@ describe('routes', () => {
       return createFactory({
         ipfsModule: require('ipfs'),
         ipfsHttpModule: require('ipfs-http-client'),
-        ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+        ipfsBin: require.resolve('ipfs/src/cli.js')
       })
     })
   })

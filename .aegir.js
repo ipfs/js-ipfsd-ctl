@@ -13,7 +13,7 @@ const server = createServer(undefined,
       ipfsBin: require('go-ipfs').path()
     },
     js: {
-      ipfsBin: require.resolve('ipfs/src/cli/bin.js')
+      ipfsBin: require.resolve('ipfs/src/cli.js')
     }
   }
 )
