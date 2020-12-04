@@ -16,7 +16,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
     })
 
     if (!isNode) {
@@ -51,7 +51,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
     })
 
     expect(f).to.be.instanceOf(Client)
@@ -118,7 +118,7 @@ const types = [{
   type: 'js',
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
 }, {
   ...defaultOps,
   ipfsBin: isNode ? require('go-ipfs').path() : undefined,
@@ -135,7 +135,7 @@ const types = [{
   test: true,
   remote: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
 }, {
   ...defaultOps,
   ipfsBin: isNode ? require('go-ipfs').path() : undefined,

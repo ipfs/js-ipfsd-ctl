@@ -15,7 +15,7 @@ async function run () {
 
   const nodeJs = await createController({
     type: 'js',
-    ipfsBin: require.resolve('ipfs/src/cli/bin.js'),
+    ipfsBin: require.resolve('ipfs/src/cli.js'),
     ipfsHttpModule: require('ipfs-http-client')
   })
   console.log('alice')
