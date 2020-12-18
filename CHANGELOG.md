@@ -1,3 +1,12 @@
+# [7.2.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.1.1...v7.2.0) (2020-12-18)
+
+
+### Features
+
+* expose gRPC addr on daemon ([#561](https://github.com/ipfs/js-ipfsd-ctl/issues/561)) ([1bed9f0](https://github.com/ipfs/js-ipfsd-ctl/commit/1bed9f011b9541de5e84e93e7983acd9aa72c451))
+
+
+
 ## [7.1.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.1.0...v7.1.1) (2020-12-03)
 
 
