@@ -29,7 +29,8 @@ module.exports = ({ type }) => {
     Addresses: {
       Swarm: swarm,
       API: '/ip4/127.0.0.1/tcp/0',
-      Gateway: '/ip4/127.0.0.1/tcp/0'
+      Gateway: '/ip4/127.0.0.1/tcp/0',
+      RPC: '/ip4/127.0.0.1/tcp/0'
     }
   }
 }

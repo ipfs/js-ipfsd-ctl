@@ -48,6 +48,7 @@ class Daemon {
     this.started = false
     this.clean = true
     this.apiAddr = null
+    this.grpcAddr = null
     this.gatewayAddr = null
     this.api = null
   }
@@ -58,9 +59,14 @@ class Daemon {
    */
   _setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = this.opts.ipfsHttpModule(addr)
-    this.api.apiHost = this.apiAddr.nodeAddress().address
-    this.api.apiPort = this.apiAddr.nodeAddress().port
+  }
+
+  /**
+   * @private
+   * @param {string} addr
+   */
+  _setGrpc (addr) {
+    this.grpcAddr = multiaddr(addr)
   }
 
   /**
@@ -69,8 +75,36 @@ class Daemon {
    */
   _setGateway (addr) {
     this.gatewayAddr = multiaddr(addr)
-    this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-    this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+  }
+
+  _createApi () {
+    if (this.opts.ipfsClientModule && this.grpcAddr) {
+      this.api = this.opts.ipfsClientModule({
+        grpc: this.grpcAddr,
+        http: this.apiAddr
+      })
+    } else if (this.apiAddr) {
+      this.api = this.opts.ipfsHttpModule(this.apiAddr)
+    }
+
+    if (!this.api) {
+      throw new Error(`Could not create API from http '${this.apiAddr}' and/or gRPC '${this.grpcAddr}'`)
+    }
+
+    if (this.apiAddr) {
+      this.api.apiHost = this.apiAddr.nodeAddress().address
+      this.api.apiPort = this.apiAddr.nodeAddress().port
+    }
+
+    if (this.gatewayAddr) {
+      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+    }
+
+    if (this.grpcAddr) {
+      this.api.grpcHost = this.grpcAddr.nodeAddress().address
+      this.api.grpcPort = this.grpcAddr.nodeAddress().port
+    }
   }
 
   /**
@@ -150,6 +184,7 @@ class Daemon {
 
     if (api) {
       this._setApi(api)
+      this._createApi()
     } else if (!this.exec) {
       throw new Error('No executable specified')
     } else {
@@ -168,6 +203,7 @@ class Daemon {
           output += data.toString()
           const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
           const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
+          const grpcMatch = output.trim().match(/gRPC .*listening on:? (.*)/)
 
           if (apiMatch && apiMatch.length > 0) {
             this._setApi(apiMatch[1])
@@ -177,8 +213,13 @@ class Daemon {
             this._setGateway(gwMatch[1])
           }
 
+          if (grpcMatch && grpcMatch.length > 0) {
+            this._setGrpc(grpcMatch[1])
+          }
+
           if (output.match(/(?:daemon is running|Daemon is ready)/)) {
             // we're good
+            this._createApi()
             this.started = true
             this.subprocess.stdout.off('data', readyHandler)
             resolve(this.api)

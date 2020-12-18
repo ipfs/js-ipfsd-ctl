@@ -37,6 +37,8 @@ class Client {
 
     this._setApi(remoteState.apiAddr)
     this._setGateway(remoteState.gatewayAddr)
+    this._setGrpc(remoteState.grpcAddr)
+    this._createApi()
   }
 
   /**
@@ -46,9 +48,6 @@ class Client {
   _setApi (addr) {
     if (addr) {
       this.apiAddr = multiaddr(addr)
-      this.api = this.opts.ipfsHttpModule(addr)
-      this.api.apiHost = this.apiAddr.nodeAddress().address
-      this.api.apiPort = this.apiAddr.nodeAddress().port
     }
   }
 
@@ -59,8 +58,47 @@ class Client {
   _setGateway (addr) {
     if (addr) {
       this.gatewayAddr = multiaddr(addr)
-      this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-      this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+    }
+  }
+
+  /**
+   * @private
+   * @param {string} addr
+   */
+  _setGrpc (addr) {
+    if (addr) {
+      this.grpcAddr = multiaddr(addr)
+    }
+  }
+
+  /**
+   * @private
+   */
+  _createApi () {
+    if (this.opts.ipfsClientModule && this.grpcAddr && this.apiAddr) {
+      this.api = this.opts.ipfsClientModule({
+        grpc: this.grpcAddr,
+        http: this.apiAddr
+      })
+    } else if (this.apiAddr) {
+      this.api = this.opts.ipfsHttpModule(this.apiAddr)
+    }
+
+    if (this.api) {
+      if (this.apiAddr) {
+        this.api.apiHost = this.apiAddr.nodeAddress().address
+        this.api.apiPort = this.apiAddr.nodeAddress().port
+      }
+
+      if (this.gatewayAddr) {
+        this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
+        this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
+      }
+
+      if (this.grpcAddr) {
+        this.api.grpcHost = this.grpcAddr.nodeAddress().address
+        this.api.grpcPort = this.grpcAddr.nodeAddress().port
+      }
     }
   }
 
@@ -133,6 +171,8 @@ class Client {
 
       this._setApi(res.apiAddr)
       this._setGateway(res.gatewayAddr)
+      this._setGrpc(res.grpcAddr)
+      this._createApi()
 
       this.started = true
     }

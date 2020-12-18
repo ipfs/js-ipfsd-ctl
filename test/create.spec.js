@@ -56,6 +56,57 @@ describe('`createController` should return the correct class', () => {
 
     expect(f).to.be.instanceOf(Client)
   })
+
+  it.skip('should use ipfs-client if passed', async () => {
+    let clientCreated = false
+    let httpCreated = false
+
+    await createController({
+      type: 'js',
+      disposable: false,
+      ipfsModule: require('ipfs'),
+      ipfsClientModule: (opts) => {
+        clientCreated = true
+
+        return require('ipfs-client')(opts)
+      },
+      ipfsHttpModule: (opts) => {
+        httpCreated = true
+
+        return require('ipfs-http-client')(opts)
+      },
+      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+    })
+
+    expect(clientCreated).to.be.true()
+    expect(httpCreated).to.be.false()
+  })
+
+  it.skip('should use ipfs-client for remote if passed', async () => {
+    let clientCreated = false
+    let httpCreated = false
+
+    const f = await createController({
+      remote: true,
+      disposable: false,
+      ipfsModule: require('ipfs'),
+      ipfsClientModule: (opts) => {
+        clientCreated = true
+
+        return require('ipfs-client')(opts)
+      },
+      ipfsHttpModule: (opts) => {
+        httpCreated = true
+
+        return require('ipfs-http-client')(opts)
+      },
+      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+    })
+
+    expect(f).to.be.instanceOf(Client)
+    expect(clientCreated).to.be.true()
+    expect(httpCreated).to.be.false()
+  })
 })
 
 const defaultOps = {

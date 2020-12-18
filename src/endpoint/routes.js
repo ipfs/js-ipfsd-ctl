@@ -75,6 +75,7 @@ module.exports = (server, createFactory) => {
           id: id,
           apiAddr: nodes[id].apiAddr ? nodes[id].apiAddr.toString() : '',
           gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : '',
+          grpcAddr: nodes[id].grpcAddr ? nodes[id].grpcAddr.toString() : '',
           initialized: nodes[id].initialized,
           started: nodes[id].started,
           disposable: nodes[id].disposable,
@@ -125,7 +126,8 @@ module.exports = (server, createFactory) => {
 
         return {
           apiAddr: nodes[id].apiAddr ? nodes[id].apiAddr.toString() : '',
-          gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : ''
+          gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : '',
+          grpcAddr: nodes[id].grpcAddr ? nodes[id].grpcAddr.toString() : ''
         }
       } catch (err) {
         badRequest(err)
