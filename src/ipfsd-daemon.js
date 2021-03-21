@@ -79,12 +79,12 @@ class Daemon {
 
   _createApi () {
     if (this.opts.ipfsClientModule && this.grpcAddr) {
-      this.api = this.opts.ipfsClientModule({
+      this.api = this.opts.ipfsClientModule.create({
         grpc: this.grpcAddr,
         http: this.apiAddr
       })
     } else if (this.apiAddr) {
-      this.api = this.opts.ipfsHttpModule(this.apiAddr)
+      this.api = this.opts.ipfsHttpModule.create(this.apiAddr)
     }
 
     if (!this.api) {

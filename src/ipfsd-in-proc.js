@@ -53,7 +53,7 @@ class InProc {
    */
   _setApi (addr) {
     this.apiAddr = multiaddr(addr)
-    this.api = this.opts.ipfsHttpModule(addr)
+    this.api = this.opts.ipfsHttpModule.create(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }

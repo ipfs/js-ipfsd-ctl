@@ -65,15 +65,19 @@ describe('`createController` should return the correct class', () => {
       type: 'js',
       disposable: false,
       ipfsModule: require('ipfs'),
-      ipfsClientModule: (opts) => {
-        clientCreated = true
+      ipfsClientModule: {
+        create: (opts) => {
+          clientCreated = true
 
-        return require('ipfs-client')(opts)
+          return require('ipfs-client')(opts)
+        }
       },
-      ipfsHttpModule: (opts) => {
-        httpCreated = true
+      ipfsHttpModule: {
+        create: (opts) => {
+          httpCreated = true
 
-        return require('ipfs-http-client')(opts)
+          return require('ipfs-http-client')(opts)
+        }
       },
       ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
     })
@@ -90,15 +94,19 @@ describe('`createController` should return the correct class', () => {
       remote: true,
       disposable: false,
       ipfsModule: require('ipfs'),
-      ipfsClientModule: (opts) => {
-        clientCreated = true
+      ipfsClientModule: {
+        create: (opts) => {
+          clientCreated = true
 
-        return require('ipfs-client')(opts)
+          return require('ipfs-client')(opts)
+        }
       },
-      ipfsHttpModule: (opts) => {
-        httpCreated = true
+      ipfsHttpModule: {
+        create: (opts) => {
+          httpCreated = true
 
-        return require('ipfs-http-client')(opts)
+          return require('ipfs-http-client')(opts)
+        }
       },
       ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
     })
