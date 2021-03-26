@@ -1,3 +1,17 @@
+# [8.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.2.0...v8.0.0) (2021-03-26)
+
+
+### chore
+
+* use .create function for http client and ipfs client ([#616](https://github.com/ipfs/js-ipfsd-ctl/issues/616)) ([d2f623a](https://github.com/ipfs/js-ipfsd-ctl/commit/d2f623a82f33d63959f95a4238cc8e2d6f0415a0)), closes [ipfs/js-ipfs#3550](https://github.com/ipfs/js-ipfs/issues/3550)
+
+
+### BREAKING CHANGES
+
+* expects `ipfs-http-client` and `ipfs-client` to export a `.create` function
+
+
+
 # [7.2.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.1.1...v7.2.0) (2020-12-18)
 
 
