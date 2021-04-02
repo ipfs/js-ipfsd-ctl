@@ -55,7 +55,7 @@
     "debug": "^4.1.1",
     "execa": "^5.0.0",
     "fs-extra": "^9.0.0",
-    "ipfs-utils": "^5.0.1",
+    "ipfs-utils": "^6.0.5",
     "joi": "^17.2.1",
     "merge-options": "^3.0.1",
     "multiaddr": "^8.0.0",
