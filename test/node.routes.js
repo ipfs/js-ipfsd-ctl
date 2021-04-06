@@ -6,7 +6,9 @@ const Hapi = require('@hapi/hapi')
 const routes = require('../src/endpoint/routes')
 const { createFactory } = require('../src')
 
-describe('routes', () => {
+describe('routes', function () {
+  this.timeout(60000)
+
   let id
   let server
 
