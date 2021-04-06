@@ -25,14 +25,8 @@
     "./src/ipfsd-daemon.js": "./src/ipfsd-client.js",
     "go-ipfs": false
   },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix -c node_modules/aegir/src/config/eslintrc.js",
-      "git add"
-    ]
-  },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=12.0.0"
   },
   "files": [
     "src",
@@ -58,13 +52,12 @@
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
-    "aegir": "^29.2.2",
+    "aegir": "^33.0.0",
     "benchmark": "^2.1.4",
-    "go-ipfs": "^0.7.0",
-    "ipfs": "^0.52.2",
-    "ipfs-http-client": "^48.1.2",
-    "ipfs-unixfs": "^2.0.3",
-    "lint-staged": "^10.1.6"
+    "go-ipfs": "^0.8.0",
+    "ipfs": "next",
+    "ipfs-http-client": "next",
+    "ipfs-unixfs": "^4.0.1"
   },
   "repository": {
     "type": "git",
