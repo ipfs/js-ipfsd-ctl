@@ -23,8 +23,8 @@ const removeRepo = async (repoPath) => {
 
 const repoExists = (repoPath) => {
   return new Promise((resolve, reject) => {
-    var req = self.indexedDB.open(repoPath)
-    var existed = true
+    const req = self.indexedDB.open(repoPath)
+    let existed = true
     req.onerror = () => reject(req.error)
     req.onsuccess = function () {
       req.result.close()
