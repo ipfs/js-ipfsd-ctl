@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - run: npm install -g @mapbox/node-pre-gyp
     - run: npm install
     - run: npm run lint
     - run: npm run build
@@ -34,7 +33,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
-      - run: npm install -g @mapbox/node-pre-gyp
       - run: npm install
       - run: npx nyc --reporter=lcov aegir test -t node --bail --timeout 60000
       - uses: codecov/codecov-action@v1
