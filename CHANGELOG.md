@@ -1,3 +1,7 @@
+## [8.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v8.0.0...v8.0.1) (2021-04-09)
+
+
+
 # [8.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v7.2.0...v8.0.0) (2021-03-26)
 
 
