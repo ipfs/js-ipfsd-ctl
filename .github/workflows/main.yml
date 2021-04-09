@@ -13,8 +13,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
-        with:
-          node-version: 15
+      with:
+        node-version: 15
     - run: npm install -g @mapbox/node-pre-gyp && npm install
     - run: npm run lint
     - run: npm run build
