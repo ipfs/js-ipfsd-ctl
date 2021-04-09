@@ -9,6 +9,8 @@ const { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo, buildIn
 const { createFactory, createController } = require('../src')
 
 describe('utils node version', function () {
+  this.timeout(60000)
+
   it('tmpDir should return correct path', () => {
     expect(tmpDir('js')).to.be.contain(path.join(os.tmpdir(), 'js_ipfs_'))
     expect(tmpDir('go')).to.be.contain(path.join(os.tmpdir(), 'go_ipfs_'))

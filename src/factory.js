@@ -115,10 +115,12 @@ class Factory {
         start: false,
         init: false
       },
-      opts.test ? {
-        config: testsConfig(opts),
-        preload: { enabled: false }
-      } : {},
+      opts.test
+        ? {
+            config: testsConfig(opts),
+            preload: { enabled: false }
+          }
+        : {},
       opts.ipfsOptions
     )
 

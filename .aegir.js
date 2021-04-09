@@ -1,54 +1,48 @@
 'use strict'
 
+const path = require('path')
 const getPort = require('aegir/utils/get-port')
 const createServer = require('./src').createServer
 
-const server = createServer(undefined,
-  {
-    ipfsModule: require('ipfs'),
-    ipfsHttpModule: require('ipfs-http-client')
-  },
-  {
-    go: {
-      ipfsBin: require('go-ipfs').path()
-    },
-    js: {
-      ipfsBin: require.resolve('ipfs/src/cli.js')
-    }
-  }
-)
+/** @type {import('aegir').Options["build"]["config"]} */
+const esbuild = {
+  inject: [path.join(__dirname, 'scripts/node-globals.js')],
+}
 
 module.exports = {
-  bundlesize: { maxSize: '35kB' },
-  karma: {
-    files: [{
-      pattern: 'test/fixtures/**/*',
-      watched: false,
-      served: true,
-      included: false
-    }]
+  bundlesize: {
+    maxSize: '35kB'
   },
-  hooks: {
-      pre: async () => {
-        await server.start(await getPort(server.port, server.host))
-        return {
-          env: {
-            IPFSD_CTL_SERVER: `http://${server.host}:${server.port}`
+  test: {
+    browser: {
+      config: {
+        buildConfig: esbuild
+      }
+    },
+    before: async () => {
+      const server = createServer(undefined, {
+          ipfsModule: require('ipfs'),
+          ipfsHttpModule: require('ipfs-http-client')
+        }, {
+          go: {
+            ipfsBin: require('go-ipfs').path()
+          },
+          js: {
+            ipfsBin: require.resolve('ipfs/src/cli.js')
           }
         }
-      },
-      post: () => server.stop()
-  },
-  webpack: {
-    node: {
-      // needed by ipfs-repo-migrations
-      path: true,
+      )
 
-      // needed by abstract-leveldown
-      Buffer: true,
-
-      // needed by nofilter
-      stream: true
+      await server.start(await getPort(server.port, server.host))
+      return {
+        env: {
+          IPFSD_CTL_SERVER: `http://${server.host}:${server.port}`
+        },
+        server
+      }
+    },
+    after: async (options, beforeResult) => {
+      await beforeResult.server.stop()
     }
   }
 }
