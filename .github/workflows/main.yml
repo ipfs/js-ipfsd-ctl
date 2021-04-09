@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - run: npm install -g @mapbox/node-pre-gyp
     - run: npm install
     - run: npm run lint
     - run: npm run build
@@ -33,6 +34,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
+      - run: npm install -g @mapbox/node-pre-gyp
       - run: npm install
       - run: npx nyc --reporter=lcov aegir test -t node --bail --timeout 60000
       - uses: codecov/codecov-action@v1
@@ -41,6 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: npm install -g @mapbox/node-pre-gyp
       - run: npm install
       - run: npx aegir test -t browser -t webworker --timeout 10000
   test-firefox:
@@ -48,13 +51,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: npm install -g @mapbox/node-pre-gyp
       - run: npm install
-      - run: npx aegir test -t browser -t webworker --timeout 10000 -- --browsers FirefoxHeadless
+      - run: npx aegir test -t browser -t webworker --timeout 10000 -- --browser firefox
   test-electron-main:
     needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: npm install -g @mapbox/node-pre-gyp
       - run: npm install
       - run: npx xvfb-maybe aegir test -t electron-main --bail --timeout 10000
   test-electron-renderer:
@@ -62,5 +67,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: npm install -g @mapbox/node-pre-gyp
       - run: npm install
       - run: npx xvfb-maybe aegir test -t electron-renderer --bail --timeout 10000
