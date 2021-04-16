@@ -1,6 +1,6 @@
 'use strict'
 
-const multiaddr = require('multiaddr')
+const { Multiaddr } = require('multiaddr')
 const fs = require('fs-extra')
 const merge = require('merge-options').bind({ ignoreUndefined: true })
 const debug = require('debug')
@@ -58,7 +58,7 @@ class Daemon {
    * @param {string} addr
    */
   _setApi (addr) {
-    this.apiAddr = multiaddr(addr)
+    this.apiAddr = new Multiaddr(addr)
   }
 
   /**
@@ -66,7 +66,7 @@ class Daemon {
    * @param {string} addr
    */
   _setGrpc (addr) {
-    this.grpcAddr = multiaddr(addr)
+    this.grpcAddr = new Multiaddr(addr)
   }
 
   /**
@@ -74,7 +74,7 @@ class Daemon {
    * @param {string} addr
    */
   _setGateway (addr) {
-    this.gatewayAddr = multiaddr(addr)
+    this.gatewayAddr = new Multiaddr(addr)
   }
 
   _createApi () {

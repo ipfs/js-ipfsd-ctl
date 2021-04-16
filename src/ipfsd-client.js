@@ -1,6 +1,6 @@
 'use strict'
 
-const multiaddr = require('multiaddr')
+const { Multiaddr } = require('multiaddr')
 const http = require('ipfs-utils/src/http')
 const merge = require('merge-options').bind({ ignoreUndefined: true })
 const debug = require('debug')
@@ -47,7 +47,7 @@ class Client {
    */
   _setApi (addr) {
     if (addr) {
-      this.apiAddr = multiaddr(addr)
+      this.apiAddr = new Multiaddr(addr)
     }
   }
 
@@ -57,7 +57,7 @@ class Client {
    */
   _setGateway (addr) {
     if (addr) {
-      this.gatewayAddr = multiaddr(addr)
+      this.gatewayAddr = new Multiaddr(addr)
     }
   }
 
@@ -67,7 +67,7 @@ class Client {
    */
   _setGrpc (addr) {
     if (addr) {
-      this.grpcAddr = multiaddr(addr)
+      this.grpcAddr = new Multiaddr(addr)
     }
   }
 
