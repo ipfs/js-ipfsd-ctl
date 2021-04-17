@@ -1,6 +1,6 @@
 'use strict'
 
-const multiaddr = require('multiaddr')
+const { Multiaddr } = require('multiaddr')
 const merge = require('merge-options').bind({ ignoreUndefined: true })
 const { repoExists, removeRepo, checkForRunningApi, tmpDir, defaultRepo } = require('./utils')
 const debug = require('debug')
@@ -52,7 +52,7 @@ class InProc {
    * @param {string} addr
    */
   _setApi (addr) {
-    this.apiAddr = multiaddr(addr)
+    this.apiAddr = new Multiaddr(addr)
     this.api = this.opts.ipfsHttpModule.create(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
@@ -63,7 +63,7 @@ class InProc {
    * @param {string} addr
    */
   _setGateway (addr) {
-    this.gatewayAddr = multiaddr(addr)
+    this.gatewayAddr = new Multiaddr(addr)
     this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
     this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
   }
