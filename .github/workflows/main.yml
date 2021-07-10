@@ -14,8 +14,8 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: 15
-    - run: npm install -g @mapbox/node-pre-gyp && npm install
+        node-version: 16
+    - run: npm install
     - run: npm run lint
     - run: npm run build
     - run: npx aegir dep-check
@@ -29,14 +29,14 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
-        node: [14, 15]
+        node: [14, 16]
       fail-fast: true
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
-      - run: npm install -g @mapbox/node-pre-gyp && npm install
+      - run: npm install
       - run: npx nyc --reporter=lcov aegir test -t node --bail --timeout 60000
       - uses: codecov/codecov-action@v1
   test-chrome:
@@ -46,8 +46,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 15
-      - run: npm install -g @mapbox/node-pre-gyp && npm install
+          node-version: 16
+      - run: npm install
       - run: npx aegir test -t browser -t webworker --timeout 10000
   test-firefox:
     needs: check
@@ -56,8 +56,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 15
-      - run: npm install -g @mapbox/node-pre-gyp && npm install
+          node-version: 16
+      - run: npm install
       - run: npx aegir test -t browser -t webworker --timeout 10000 -- --browser firefox
   test-electron-main:
     needs: check
@@ -66,8 +66,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 15
-      - run: npm install -g @mapbox/node-pre-gyp && npm install
+          node-version: 16
+      - run: npm install
       - run: npx xvfb-maybe aegir test -t electron-main --bail --timeout 10000
   test-electron-renderer:
     needs: check
@@ -76,6 +76,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 15
-      - run: npm install -g @mapbox/node-pre-gyp && npm install
+          node-version: 16
+      - run: npm install
       - run: npx xvfb-maybe aegir test -t electron-renderer --bail --timeout 10000
