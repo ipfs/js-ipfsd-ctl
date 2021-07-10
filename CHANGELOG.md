@@ -1,3 +1,17 @@
+# [9.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v8.0.2...v9.0.0) (2021-07-10)
+
+
+### chore
+
+* update deps ([#643](https://github.com/ipfs/js-ipfsd-ctl/issues/643)) ([ced786a](https://github.com/ipfs/js-ipfsd-ctl/commit/ced786a7764ea1084b4fec35772fc34bfa5bb337))
+
+
+### BREAKING CHANGES
+
+* Use new multiaddr class
+
+
+
 ## [8.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v8.0.1...v8.0.2) (2021-04-17)
 
 
