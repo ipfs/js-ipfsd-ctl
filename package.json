@@ -59,7 +59,7 @@
     "ipfs": "next",
     "ipfs-client": "next",
     "ipfs-http-client": "next",
-    "ipfs-unixfs": "^4.0.1"
+    "ipfs-unixfs": "^5.0.0"
   },
   "repository": {
     "type": "git",
