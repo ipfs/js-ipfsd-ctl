@@ -8,7 +8,7 @@
   "jsdelivr": "dist/index.min.js",
   "unpkg": "dist/index.min.js",
   "scripts": {
-    "lint": "aegir lint",
+    "lint": "aegir ts -p check && aegir lint",
     "docs": "aegir docs",
     "build": "aegir build",
     "test": "aegir test",
@@ -52,9 +52,9 @@
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
+    "@types/hapi__hapi": "^20.0.9",
     "aegir": "^33.0.0",
     "assert": "^2.0.0",
-    "benchmark": "^2.1.4",
     "go-ipfs": "^0.8.0",
     "ipfs": "next",
     "ipfs-client": "next",

@@ -25,21 +25,21 @@ class Server {
   /**
    * Start the server
    *
-   * @returns {Promise<Hapi.Server>}
+   * @returns {Promise<Server>}
    */
-  start () {
+  async start () {
     console.warn('Server not implemented in the browser')
-    return Promise.resolve(this)
+
+    return this
   }
 
   /**
    * Stop the server
    *
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
-  stop () {
+  async stop () {
     console.warn('Server not implemented in the browser')
-    return Promise.resolve(this)
   }
 }
 

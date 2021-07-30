@@ -9,6 +9,10 @@ const Client = require('../src/ipfsd-client')
 const Daemon = require('../src/ipfsd-daemon')
 const Proc = require('../src/ipfsd-in-proc')
 
+/**
+ * @typedef {import('../src/types').ControllerOptions} ControllerOptions
+ */
+
 describe('`createController` should return the correct class', () => {
   it('for type `js` ', async () => {
     const f = await createController({
@@ -30,6 +34,7 @@ describe('`createController` should return the correct class', () => {
       type: 'go',
       disposable: false,
       ipfsHttpModule: require('ipfs-http-client'),
+      // @ts-expect-error no types
       ipfsBin: isNode ? require('go-ipfs').path() : undefined
     })
 
@@ -66,17 +71,23 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsClientModule: {
+        /**
+         * @param {any} opts
+         */
         create: (opts) => {
           clientCreated = true
 
-          return require('ipfs-client')(opts)
+          return require('ipfs-client').create(opts)
         }
       },
       ipfsHttpModule: {
+        /**
+         * @param {any} opts
+         */
         create: (opts) => {
           httpCreated = true
 
-          return require('ipfs-http-client')(opts)
+          return require('ipfs-http-client').create(opts)
         }
       },
       ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
@@ -95,17 +106,23 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsClientModule: {
+        /**
+         * @param {any} opts
+         */
         create: (opts) => {
           clientCreated = true
 
-          return require('ipfs-client')(opts)
+          return require('ipfs-client').create(opts)
         }
       },
       ipfsHttpModule: {
+        /**
+         * @param {any} opts
+         */
         create: (opts) => {
           httpCreated = true
 
-          return require('ipfs-http-client')(opts)
+          return require('ipfs-http-client').create(opts)
         }
       },
       ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
@@ -121,6 +138,7 @@ const defaultOps = {
   ipfsHttpModule: require('ipfs-http-client')
 }
 
+/** @type {ControllerOptions[]} */
 const types = [{
   ...defaultOps,
   type: 'js',
@@ -129,6 +147,7 @@ const types = [{
   ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
 }, {
   ...defaultOps,
+  // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
   ipfsBin: isNode ? require('go-ipfs').path() : undefined,
   type: 'go',
   test: true
@@ -146,6 +165,7 @@ const types = [{
   ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
 }, {
   ...defaultOps,
+  // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
   ipfsBin: isNode ? require('go-ipfs').path() : undefined,
   type: 'go',
   test: true,

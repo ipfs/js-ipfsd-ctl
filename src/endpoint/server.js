@@ -12,14 +12,15 @@ class Server {
   /**
    * @class
    * @param {Object} options
-   * @param {number} [options.port=43134] - Server port.
+   * @param {number} [options.port=43134]
+   * @param {string} [options.host='localhost']
    * @param {Function} createFactory
    */
   constructor (options = { port: 43134, host: 'localhost' }, createFactory) {
     this.options = options
     this.server = null
-    this.port = this.options.port
-    this.host = this.options.host
+    this.port = this.options.port == null ? 43134 : this.options.port
+    this.host = this.options.host == null ? 'localhost' : this.options.host
     this.createFactory = createFactory
   }
 
@@ -27,7 +28,7 @@ class Server {
    * Start the server
    *
    * @param {number} port
-   * @returns {Promise<Hapi.Server>}
+   * @returns {Promise<Server>}
    */
   async start (port = this.port) {
     this.port = port
@@ -42,17 +43,21 @@ class Server {
     routes(this.server, this.createFactory)
 
     await this.server.start()
-    return this.server
+
+    return this
   }
 
   /**
    * Stop the server
    *
-   * @param {object} [options] - {@link https://hapi.dev/api/?v=18.4.0#-await-serverstopoptions Hapi docs}
-   * @returns {Promise}
+   * @param {object} [options]
+   * @param {number} options.timeout
+   * @returns {Promise<void>}
    */
-  stop (options) {
-    return this.server.stop(options)
+  async stop (options) {
+    if (this.server) {
+      await this.server.stop(options)
+    }
   }
 }
 
