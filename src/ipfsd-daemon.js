@@ -188,10 +188,21 @@ class Daemon {
   async start () {
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
+    this.api = null
 
     if (api) {
       this._setApi(api)
       this._createApi()
+
+      let p = this.api.id({ timeout: 3000 })
+      if (this.exec) {
+        p = p.catch(() => (this.api = null))
+      }
+      await p
+    }
+
+    if (this.api) {
+      //
     } else if (!this.exec) {
       throw new Error('No executable specified')
     } else {
