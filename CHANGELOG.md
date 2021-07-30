@@ -1,3 +1,12 @@
+## [10.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.0...v10.0.1) (2021-07-30)
+
+
+### Bug Fixes
+
+* types again ([#652](https://github.com/ipfs/js-ipfsd-ctl/issues/652)) ([afe87c2](https://github.com/ipfs/js-ipfsd-ctl/commit/afe87c2c30737041d49a838514052e062fca0267))
+
+
+
 # [10.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v9.0.0...v10.0.0) (2021-07-30)
 
 
