@@ -7,6 +7,7 @@
   "main": "src/index.js",
   "jsdelivr": "dist/index.min.js",
   "unpkg": "dist/index.min.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "lint": "aegir ts -p check && aegir lint",
     "docs": "aegir docs",
@@ -42,6 +43,7 @@
     "@hapi/hapi": "^20.0.0",
     "debug": "^4.1.1",
     "execa": "^5.0.0",
+    "ipfs-core-types": "^0.6.1",
     "ipfs-utils": "^8.1.4",
     "joi": "^17.2.1",
     "merge-options": "^3.0.1",
@@ -58,6 +60,7 @@
     "ipfs-client": "^0.5.1",
     "ipfs-http-client": "^51.0.1",
     "ipfs-unixfs": "^5.0.0",
+    "it-last": "^1.0.5",
     "util": "^0.12.4"
   },
   "repository": {

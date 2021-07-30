@@ -106,7 +106,7 @@ class Factory {
    * Spawn an IPFSd Controller
    *
    * @param {ControllerOptions} options
-   * @returns {Promise<ControllerDaemon | ControllerProc | ControllerRemote>}
+   * @returns {Promise<Controller>}
    */
   async spawn (options = { }) {
     const type = options.type || this.opts.type || 'go'

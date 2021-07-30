@@ -6,6 +6,7 @@ const { isNode } = require('ipfs-utils/src/env')
 const pathJoin = require('ipfs-utils/src/path-join')
 const { createFactory } = require('../src')
 const { UnixFS } = require('ipfs-unixfs')
+const last = require('it-last')
 
 const defaultOps = {
   ipfsHttpModule: require('ipfs-http-client')
@@ -190,10 +191,16 @@ describe('`Factory spawn()` ', function () {
         expect(node.api).to.exist()
         expect(node.api.id).to.exist()
 
-        const { cid } = await node.api.add({ path: 'derp.txt', content: 'hello' }, {
+        const res = await last(node.api.addAll([{ path: 'derp.txt', content: 'hello' }], {
           shardSplitThreshold: 0,
           wrapWithDirectory: true
-        })
+        }))
+
+        if (!res) {
+          throw new Error('No result from ipfs.addAll')
+        }
+
+        const { cid } = res
 
         const { value: dagNode } = await node.api.dag.get(cid)
         const entry = UnixFS.unmarshal(dagNode.Data)
