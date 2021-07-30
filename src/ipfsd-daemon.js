@@ -112,10 +112,10 @@ class Daemon {
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOptions={}] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
+   * @param {import('./types').InitOptions} [initOptions={}]
    * @returns {Promise<Daemon>}
    */
-  async init (initOptions) {
+  async init (initOptions = {}) {
     this.initialized = await repoExists(this.path)
     if (this.initialized) {
       this.clean = false

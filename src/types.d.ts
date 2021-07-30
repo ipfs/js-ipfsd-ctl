@@ -36,6 +36,8 @@ export interface InitOptions {
   algorithm?: string
   emptyRepo?: boolean
   profiles?: string[]
+  allowNew?: boolean
+  privateKey?: string
 }
 
 export interface PreloadOptions {

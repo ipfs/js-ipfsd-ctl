@@ -107,10 +107,10 @@ class Client {
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOptions] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
+   * @param {import('./types').InitOptions} [initOptions]
    * @returns {Promise<Client>}
    */
-  async init (initOptions) {
+  async init (initOptions = {}) {
     if (this.initialized) {
       return this
     }
