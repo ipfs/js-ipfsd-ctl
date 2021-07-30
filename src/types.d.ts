@@ -159,7 +159,7 @@ export interface ControllerOptions {
   /**
    * Reference to an ipfs-core module
    */
-   ipfsClientModule?: any
+  ipfsClientModule?: any
   /**
    * Path to a IPFS executable
    */
