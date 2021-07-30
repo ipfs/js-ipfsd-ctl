@@ -9,7 +9,13 @@ const { createFactory } = require('../src')
 describe('routes', function () {
   this.timeout(60000)
 
+  /**
+   * @type {string}
+   */
   let id
+  /**
+   * @type {Hapi.Server}
+   */
   let server
 
   before(() => {
@@ -40,11 +46,12 @@ describe('routes', function () {
           }
         }
       })
-      expect(res.statusCode).to.equal(200)
-      expect(res.result.id).to.exist()
-      expect(res.result.apiAddr).to.exist()
-      expect(res.result.gatewayAddr).to.exist()
+      expect(res).to.have.property('statusCode', 200)
+      expect(res).to.have.nested.property('result.id')
+      expect(res).to.have.nested.property('result.apiAddr')
+      expect(res).to.have.nested.property('result.gatewayAddr')
 
+      // @ts-ignore res.result is an object
       id = res.result.id
     })
   })

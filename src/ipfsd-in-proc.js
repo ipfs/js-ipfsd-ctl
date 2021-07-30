@@ -9,17 +9,19 @@ const daemonLog = {
   info: debug('ipfsd-ctl:proc:stdout'),
   err: debug('ipfsd-ctl:proc:stderr')
 }
-/** @typedef {import("./index").ControllerOptions} ControllerOptions */
+/**
+ * @typedef {import("./types").ControllerOptions} ControllerOptions
+ * @typedef {import("./types").InitOptions} InitOptions
+ */
 
 /**
  * Controller for in process nodes
  */
 class InProc {
   /**
-   * @param {ControllerOptions} opts
+   * @param {Required<ControllerOptions>} opts
    */
   constructor (opts) {
-    /** @type ControllerOptions */
     this.opts = opts
     this.path = this.opts.ipfsOptions.repo || (opts.disposable ? tmpDir(opts.type) : defaultRepo(opts.type))
     this.initOptions = toInitOptions(opts.ipfsOptions.init)
@@ -28,8 +30,9 @@ class InProc {
     this.started = false
     this.clean = true
     this.apiAddr = null
-    this.gatewayAddr = null
     this.api = null
+    /** @type {import('./types').Subprocess | null} */
+    this.subprocess = null
   }
 
   async setExec () {
@@ -59,22 +62,12 @@ class InProc {
   }
 
   /**
-   * @private
-   * @param {string} addr
-   */
-  _setGateway (addr) {
-    this.gatewayAddr = new Multiaddr(addr)
-    this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
-    this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
-  }
-
-  /**
    * Initialize a repo.
    *
-   * @param {Object} [initOptions={}] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
+   * @param {import('./types').InitOptions} [initOptions={}]
    * @returns {Promise<InProc>}
    */
-  async init (initOptions) {
+  async init (initOptions = {}) {
     this.initialized = await repoExists(this.path)
     if (this.initialized) {
       this.clean = false
@@ -174,7 +167,10 @@ class InProc {
   }
 }
 
-const toInitOptions = (init) =>
+/**
+ * @param {boolean | InitOptions} [init]
+ */
+const toInitOptions = (init = {}) =>
   typeof init === 'boolean' ? {} : init
 
 module.exports = InProc

@@ -2,26 +2,36 @@
 
 const os = require('os')
 const path = require('path')
-const fs = require('fs-extra')
+const fs = require('fs')
 const debug = require('debug')
 const { nanoid } = require('nanoid')
 const tempWrite = require('temp-write')
 
 const log = debug('ipfsd-ctl:utils')
 
+/**
+ * @param {string} repoPath
+ */
 const removeRepo = async (repoPath) => {
   try {
-    await fs.remove(repoPath)
+    await fs.promises.rmdir(repoPath, {
+      recursive: true
+    })
   } catch (err) {
     // ignore
   }
 }
 
-const repoExists = async (repoPath) => {
-  const exists = await fs.pathExists(path.join(repoPath, 'config'))
-  return exists
+/**
+ * @param {string} repoPath
+ */
+const repoExists = (repoPath) => {
+  return Promise.resolve(fs.existsSync(path.join(repoPath, 'config')))
 }
 
+/**
+ * @param {import('./types').NodeType} [type]
+ */
 const defaultRepo = (type) => {
   if (process.env.IPFS_PATH !== undefined) {
     return process.env.IPFS_PATH
@@ -32,7 +42,11 @@ const defaultRepo = (type) => {
   )
 }
 
-const checkForRunningApi = (repoPath) => {
+/**
+ * @param {string} [repoPath]
+ * @returns
+ */
+const checkForRunningApi = (repoPath = '') => {
   let api
   try {
     api = fs.readFileSync(path.join(repoPath, 'api'))
@@ -47,15 +61,18 @@ const tmpDir = (type = '') => {
   return path.join(os.tmpdir(), `${type}_ipfs_${nanoid()}`)
 }
 
+/**
+ * @param {import('./types').ControllerOptions} opts
+ */
 function buildInitArgs (opts = {}) {
   const args = ['init']
   const ipfsOptions = opts.ipfsOptions || {}
-  const initOptions = ipfsOptions.init || {}
+  const initOptions = ipfsOptions.init && typeof ipfsOptions.init !== 'boolean' ? ipfsOptions.init : {}
 
   // default-config only for JS
   if (opts.type === 'js') {
     if (ipfsOptions.config) {
-      args.push(tempWrite.sync(JSON.stringify(opts.ipfsOptions.config)))
+      args.push(tempWrite.sync(JSON.stringify(ipfsOptions.config)))
     }
 
     if (initOptions.pass) {
@@ -65,7 +82,7 @@ function buildInitArgs (opts = {}) {
 
   // Translate IPFS options to cli args
   if (initOptions.bits) {
-    args.push('--bits', initOptions.bits)
+    args.push('--bits', `${initOptions.bits}`)
   }
 
   if (initOptions.algorithm) {
@@ -83,6 +100,9 @@ function buildInitArgs (opts = {}) {
   return args
 }
 
+/**
+ * @param {import('./types').ControllerOptions} opts
+ */
 function buildStartArgs (opts = {}) {
   const ipfsOptions = opts.ipfsOptions || {}
   const customArgs = opts.args || []
@@ -95,7 +115,7 @@ function buildStartArgs (opts = {}) {
     }
 
     if (ipfsOptions.preload != null) {
-      args.push('--enable-preload', Boolean(ipfsOptions.preload.enabled))
+      args.push('--enable-preload', Boolean(typeof ipfsOptions.preload === 'boolean' ? ipfsOptions.preload : ipfsOptions.preload.enabled).toString())
     }
 
     if (ipfsOptions.EXPERIMENTAL && ipfsOptions.EXPERIMENTAL.sharding) {

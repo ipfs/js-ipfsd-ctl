@@ -19,6 +19,7 @@ jobs:
     - run: npm run lint
     - run: npm run build
     - run: npx aegir dep-check
+    - uses: gozala/typescript-error-reporter-action@v1.0.8
     #- uses: ipfs/aegir/actions/bundle-size@master
     #  name: size
     #  with:

@@ -11,6 +11,13 @@ const defaultOps = {
   ipfsHttpModule: require('ipfs-http-client')
 }
 
+/**
+ * @typedef {import('../src/types').ControllerOptions} ControllerOptions
+ */
+
+/**
+ * @type {ControllerOptions[]}
+ */
 const types = [{
   ...defaultOps,
   type: 'js',
@@ -19,6 +26,7 @@ const types = [{
   ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
 }, {
   ...defaultOps,
+  // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
   ipfsBin: isNode ? require('go-ipfs').path() : undefined,
   type: 'go',
   test: true
@@ -36,6 +44,7 @@ const types = [{
   ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
 }, {
   ...defaultOps,
+  // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
   ipfsBin: isNode ? require('go-ipfs').path() : undefined,
   type: 'go',
   remote: true,

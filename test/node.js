@@ -12,6 +12,7 @@ describe('Node specific tests', function () {
     test: true,
     ipfsHttpModule: require('ipfs-http-client'),
     ipfsModule: require('ipfs'),
+    // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
     ipfsBin: require('go-ipfs').path()
   })
 

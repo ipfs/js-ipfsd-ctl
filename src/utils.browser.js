@@ -1,6 +1,10 @@
 'use strict'
 const { nanoid } = require('nanoid')
 
+/**
+ * @param {string} path
+ * @returns {Promise<void>}
+ */
 const deleteDb = (path) => {
   return new Promise((resolve, reject) => {
     const keys = self.indexedDB.deleteDatabase(path)
@@ -21,6 +25,9 @@ const removeRepo = async (repoPath) => {
   await deleteDb(repoPath + '/datastore')
 }
 
+/**
+ * @param {string} repoPath
+ */
 const repoExists = (repoPath) => {
   return new Promise((resolve, reject) => {
     const req = self.indexedDB.open(repoPath)
@@ -37,11 +44,11 @@ const repoExists = (repoPath) => {
   })
 }
 
-const defaultRepo = (type) => {
+const defaultRepo = () => {
   return 'ipfs'
 }
 
-const checkForRunningApi = (path) => {
+const checkForRunningApi = () => {
   return null
 }
 

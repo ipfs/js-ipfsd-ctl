@@ -13,6 +13,10 @@ const routeOptions = {
     })
   }
 }
+
+/**
+ * @param {Error & { stdout?: string }} err
+ */
 const badRequest = err => {
   let msg
   if (err.stdout) {
@@ -24,12 +28,15 @@ const badRequest = err => {
   throw boom.badRequest(msg)
 }
 
+/**
+ * @type {Record<string, any>}
+ */
 const nodes = {}
 
 /**
  * @namespace EndpointServerRoutes
  * @ignore
- * @param {Hapi.Server} server
+ * @param {import('@hapi/hapi').Server} server
  * @param {Function} createFactory
  * @returns {void}
  */

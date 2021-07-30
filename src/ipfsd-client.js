@@ -21,7 +21,7 @@ class Client {
   /**
    * @class
    * @param {string} baseUrl
-   * @param {Object} remoteState
+   * @param {import('./types').RemoteState} remoteState
    * @param {ControllerOptions} options
    */
   constructor (baseUrl, remoteState, options) {
@@ -34,6 +34,8 @@ class Client {
     this.disposable = remoteState.disposable
     this.clean = remoteState.clean
     this.api = null
+    /** @type {import('./types').Subprocess | null} */
+    this.subprocess = null
 
     this._setApi(remoteState.apiAddr)
     this._setGateway(remoteState.gatewayAddr)
@@ -105,10 +107,10 @@ class Client {
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOptions] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
+   * @param {import('./types').InitOptions} [initOptions]
    * @returns {Promise<Client>}
    */
-  async init (initOptions) {
+  async init (initOptions = {}) {
     if (this.initialized) {
       return this
     }
@@ -117,16 +119,15 @@ class Client {
       {
         emptyRepo: false,
         profiles: this.opts.test ? ['test'] : []
-
       },
-      typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
+      this.opts.ipfsOptions ? (typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init) : {},
       typeof initOptions === 'boolean' ? {} : initOptions
     )
 
     const req = await http.post(
         `${this.baseUrl}/init`,
         {
-          searchParams: { id: this.id },
+          searchParams: new URLSearchParams({ id: this.id }),
           json: opts
         }
     )
@@ -150,7 +151,7 @@ class Client {
 
     await http.post(
         `${this.baseUrl}/cleanup`,
-        { searchParams: { id: this.id } }
+        { searchParams: new URLSearchParams({ id: this.id }) }
     )
     this.clean = true
     return this
@@ -165,7 +166,7 @@ class Client {
     if (!this.started) {
       const req = await http.post(
               `${this.baseUrl}/start`,
-              { searchParams: { id: this.id } }
+              { searchParams: new URLSearchParams({ id: this.id }) }
       )
       const res = await req.json()
 
@@ -185,9 +186,7 @@ class Client {
   }
 
   /**
-   * Stop the daemon.
-   *
-   * @returns {Promise<Client>}
+   * Stop the daemon
    */
   async stop () {
     if (!this.started) {
@@ -196,7 +195,7 @@ class Client {
 
     await http.post(
       `${this.baseUrl}/stop`,
-      { searchParams: { id: this.id } }
+      { searchParams: new URLSearchParams({ id: this.id }) }
     )
     this.started = false
 
@@ -215,7 +214,7 @@ class Client {
   async pid () {
     const req = await http.get(
         `${this.baseUrl}/pid`,
-        { searchParams: { id: this.id } }
+        { searchParams: new URLSearchParams({ id: this.id }) }
     )
     const res = await req.json()
 
@@ -230,7 +229,7 @@ class Client {
   async version () {
     const req = await http.get(
         `${this.baseUrl}/version`,
-        { searchParams: { id: this.id } }
+        { searchParams: new URLSearchParams({ id: this.id }) }
     )
     const res = await req.json()
     return res.version

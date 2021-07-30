@@ -9,8 +9,13 @@ const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
 const pathJoin = require('ipfs-utils/src/path-join')
 const waitFor = require('p-wait-for')
 
-/** @typedef {import("../src/index").ControllerOptions} ControllerOptions */
+/**
+ * @typedef {import("../src/types").ControllerOptions} ControllerOptions
+ */
 
+/**
+ * @type {ControllerOptions[]}
+ */
 const types = [{
   type: 'js',
   ipfsOptions: {
@@ -57,6 +62,7 @@ describe('Controller API', function () {
       ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
     },
     go: {
+      // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
       ipfsBin: isNode ? require('go-ipfs').path() : undefined
     }
   })
@@ -111,13 +117,13 @@ describe('Controller API', function () {
           if (opts.type === 'js') {
             await expect(ctl.init({
               emptyRepo: true,
-              profile: ['test'],
+              profiles: ['test'],
               pass: 'QmfPjo1bKmpcdWxpQnGAKjeae9F9aCxTDiS61t9a3hmvRi'
             })).to.be.fulfilled()
           } else {
             await expect(ctl.init({
               emptyRepo: true,
-              profile: ['test']
+              profiles: ['test']
             })).to.be.fulfilled()
           }
         })
@@ -204,6 +210,7 @@ describe('Controller API', function () {
             {
               type: 'go',
               ipfsHttpModule: require('ipfs-http-client'),
+              // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
               ipfsBin: require('go-ipfs').path(),
               test: true,
               disposable: true,

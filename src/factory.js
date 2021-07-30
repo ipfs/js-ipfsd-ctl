@@ -8,9 +8,12 @@ const ControllerRemote = require('./ipfsd-client')
 const ControllerProc = require('./ipfsd-in-proc')
 const testsConfig = require('./config')
 
-/** @typedef {import("./index").ControllerOptions} ControllerOptions */
-/** @typedef {import("./index").ControllerOptionsOverrides} ControllerOptionsOverrides */
-/** @typedef {import("./index").IpfsOptions} IpfsOptions */
+/**
+ * @typedef {import("./types").ControllerOptions} ControllerOptions
+ * @typedef {import("./types").ControllerOptionsOverrides} ControllerOptionsOverrides
+ * @typedef {import("./types").IPFSOptions} IPFSOptions
+ * @typedef {import('./types').Controller} Controller
+ */
 
 const defaults = {
   remote: !isNode,
@@ -45,7 +48,7 @@ class Factory {
       proc: merge(this.opts, { type: 'proc' })
     }, overrides)
 
-    /** @type ControllerDaemon[] */
+    /** @type {Controller[]} */
     this.controllers = []
   }
 
@@ -54,25 +57,28 @@ class Factory {
    * useful in browsers to be able to generate temp
    * repos manually
    *
-   * @param {ControllerOptions} options - Controller type
-   *
+   * @param {ControllerOptions} [options]
    * @returns {Promise<string>}
    */
-  async tmpDir (options) {
-    options = merge(this.opts, options)
-    if (options.remote) {
+  async tmpDir (options = {}) {
+    const opts = merge(this.opts, options)
+
+    if (opts.remote) {
       const res = await http.get(
-        `${options.endpoint}/util/tmp-dir`,
-        { searchParams: { type: options.type } }
+        `${opts.endpoint}/util/tmp-dir`,
+        { searchParams: new URLSearchParams({ type: `${opts.type}` }) }
       )
       const out = await res.json()
 
       return out.tmpDir
     }
 
-    return Promise.resolve(tmpDir(options.type))
+    return Promise.resolve(tmpDir(opts.type))
   }
 
+  /**
+   * @param {IPFSOptions & { endpoint: string }} options
+   */
   async _spawnRemote (options) {
     const opts = {
       json: {
@@ -100,10 +106,10 @@ class Factory {
    * Spawn an IPFSd Controller
    *
    * @param {ControllerOptions} options
-   * @returns {Promise<ControllerDaemon>}
+   * @returns {Promise<ControllerDaemon | ControllerProc | ControllerRemote>}
    */
   async spawn (options = { }) {
-    const type = options.type || this.opts.type
+    const type = options.type || this.opts.type || 'go'
     const opts = merge(
       this.overrides[type],
       options
@@ -152,13 +158,10 @@ class Factory {
 
   /**
    * Stop all controllers
-   *
-   * @returns {Promise<ControllerDaemon[]>}
    */
   async clean () {
     await Promise.all(this.controllers.map(n => n.stop()))
     this.controllers = []
-    return this
   }
 }
 

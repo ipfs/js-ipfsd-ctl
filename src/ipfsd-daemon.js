@@ -1,7 +1,7 @@
 'use strict'
 
 const { Multiaddr } = require('multiaddr')
-const fs = require('fs-extra')
+const fs = require('fs').promises
 const merge = require('merge-options').bind({ ignoreUndefined: true })
 const debug = require('debug')
 const execa = require('execa')
@@ -16,6 +16,9 @@ const daemonLog = {
   err: debug('ipfsd-ctl:daemon:stderr')
 }
 
+/**
+ * @param {Error & { stdout: string, stderr: string }} err
+ */
 function translateError (err) {
   // get the actual error message to be the err.message
   err.message = `${err.stdout} \n\n ${err.stderr} \n\n ${err.message} \n\n`
@@ -23,7 +26,7 @@ function translateError (err) {
   return err
 }
 
-/** @typedef {import("./index").ControllerOptions} ControllerOptions */
+/** @typedef {import("./types").ControllerOptions} ControllerOptions */
 
 /**
  * Controller for daemon nodes
@@ -34,10 +37,9 @@ function translateError (err) {
 class Daemon {
   /**
    * @class
-   * @param {ControllerOptions} [opts]
+   * @param {Required<ControllerOptions>} opts
    */
   constructor (opts) {
-    /** @type ControllerOptions */
     this.opts = opts
     this.path = this.opts.ipfsOptions.repo || (opts.disposable ? tmpDir(opts.type) : defaultRepo(opts.type))
     this.exec = this.opts.ipfsBin
@@ -110,10 +112,10 @@ class Daemon {
   /**
    * Initialize a repo.
    *
-   * @param {Object} [initOptions={}] - @see https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
+   * @param {import('./types').InitOptions} [initOptions={}]
    * @returns {Promise<Daemon>}
    */
-  async init (initOptions) {
+  async init (initOptions = {}) {
     this.initialized = await repoExists(this.path)
     if (this.initialized) {
       this.clean = false
@@ -167,7 +169,9 @@ class Daemon {
    */
   async cleanup () {
     if (!this.clean) {
-      await fs.remove(this.path)
+      await fs.rmdir(this.path, {
+        recursive: true
+      })
       this.clean = true
     }
     return this
@@ -196,9 +200,23 @@ class Daemon {
         this.subprocess = execa(this.exec, args, {
           env: this.env
         })
-        this.subprocess.stderr.on('data', data => daemonLog.err(data.toString()))
-        this.subprocess.stdout.on('data', data => daemonLog.info(data.toString()))
 
+        const { stdout, stderr } = this.subprocess
+
+        if (!stderr) {
+          throw new Error('stderr was not defined on subprocess')
+        }
+
+        if (!stdout) {
+          throw new Error('stderr was not defined on subprocess')
+        }
+
+        stderr.on('data', data => daemonLog.err(data.toString()))
+        stdout.on('data', data => daemonLog.info(data.toString()))
+
+        /**
+         * @param {Buffer} data
+         */
         const readyHandler = data => {
           output += data.toString()
           const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
@@ -221,16 +239,16 @@ class Daemon {
             // we're good
             this._createApi()
             this.started = true
-            this.subprocess.stdout.off('data', readyHandler)
+            stdout.off('data', readyHandler)
             resolve(this.api)
           }
         }
-        this.subprocess.stdout.on('data', readyHandler)
+        stdout.on('data', readyHandler)
         this.subprocess.catch(err => reject(translateError(err)))
         this.subprocess.on('exit', () => {
           this.started = false
-          this.subprocess.stderr.removeAllListeners()
-          this.subprocess.stdout.removeAllListeners()
+          stderr.removeAllListeners()
+          stdout.removeAllListeners()
 
           if (this.disposable) {
             this.cleanup().catch(() => {})
@@ -264,7 +282,9 @@ class Daemon {
     }
 
     if (this.subprocess) {
+      /** @type {ReturnType<setTimeout> | undefined} */
       let killTimeout
+      const subprocess = this.subprocess
 
       if (this.disposable) {
         // we're done with this node and will remove it's repo when we are done
@@ -274,8 +294,8 @@ class Daemon {
         if (this.opts.forceKill !== false) {
           killTimeout = setTimeout(() => {
             // eslint-disable-next-line no-console
-            console.error(new Error(`Timeout stopping ${this.opts.type} node after ${this.opts.forceKillTimeout}ms. Process ${this.subprocess.pid} will be force killed now.`))
-            this.subprocess.kill('SIGKILL')
+            console.error(new Error(`Timeout stopping ${this.opts.type} node after ${this.opts.forceKillTimeout}ms. Process ${subprocess.pid} will be force killed now.`))
+            this.subprocess && this.subprocess.kill('SIGKILL')
           }, this.opts.forceKillTimeout)
         }
 
@@ -287,7 +307,9 @@ class Daemon {
         timeout
       })
 
-      clearTimeout(killTimeout)
+      if (killTimeout) {
+        clearTimeout(killTimeout)
+      }
 
       if (this.disposable) {
         // wait for the cleanup routine to run after the subprocess has exited
@@ -310,7 +332,7 @@ class Daemon {
    * @returns {Promise<number>}
    */
   pid () {
-    if (this.subprocess) {
+    if (this.subprocess && this.subprocess.pid != null) {
       return Promise.resolve(this.subprocess.pid)
     }
     throw new Error('Daemon process is not running.')

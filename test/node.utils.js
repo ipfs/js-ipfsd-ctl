@@ -36,6 +36,7 @@ describe('utils node version', function () {
   it('defaultRepo should return path', () => {
     expect(defaultRepo('js')).to.be.eq(path.join(os.homedir(), '.jsipfs'))
     expect(defaultRepo('go')).to.be.eq(path.join(os.homedir(), '.ipfs'))
+    // @ts-expect-error arg is not a node type
     expect(defaultRepo('kjkjdsk')).to.be.eq(path.join(os.homedir(), '.ipfs'))
   })
 
