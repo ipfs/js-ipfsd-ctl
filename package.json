@@ -52,7 +52,7 @@
     "temp-write": "^4.0.0"
   },
   "devDependencies": {
-    "aegir": "^33.0.0",
+    "aegir": "^34.1.0",
     "assert": "^2.0.0",
     "benchmark": "^2.1.4",
     "go-ipfs": "^0.8.0",
