@@ -23,6 +23,15 @@ jobs:
     #  name: size
     #  with:
     #    github_token: ${{ secrets.GITHUB_TOKEN }}
+  types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - run: npm install
+      - uses: gozala/typescript-error-reporter-action@v1.0.8
   test-node:
     needs: check
     runs-on: ${{ matrix.os }}
