@@ -1,3 +1,17 @@
+# [10.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v9.0.0...v10.0.0) (2021-07-30)
+
+
+### Features
+
+* add types ([#651](https://github.com/ipfs/js-ipfsd-ctl/issues/651)) ([0f30547](https://github.com/ipfs/js-ipfsd-ctl/commit/0f30547fa0090073152a8276af6485cf1eb70725))
+
+
+### BREAKING CHANGES
+
+* things are now typed which may be suprising
+
+
+
 # [9.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v8.0.2...v9.0.0) (2021-07-10)
 
 
