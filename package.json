@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "MIT",
   "leadMaintainer": "Hugo Dias <mail@hugodias.me>",
@@ -80,8 +80,8 @@
     "Alan Shaw <alan.shaw@protocol.ai>",
     "Richard Schneider <makaretu@gmail.com>",
     "haad <haad@headbanggames.com>",
-    "Stephen Whitmore <stephen.whitmore@gmail.com>",
     "Bret Comnes <bcomnes@gmail.com>",
+    "Stephen Whitmore <stephen.whitmore@gmail.com>",
     "tcme <hi@this-connect.me>",
     "Gar <gar+gh@danger.computer>",
     "Volker Mische <volker.mische@gmail.com>",
@@ -93,6 +93,7 @@
     "Jacob Heun <jake@andyet.net>",
     "Richard Littauer <richard.littauer@gmail.com>",
     "Scott Hardy <scott.the.hardy@gmail.com>",
+    "Maciej Krüger <mkg20001@gmail.com>",
     "Jonathan <jkrone@vt.edu>",
     "Agent of User <git@agentofuser.com>",
     "Irakli Gozalishvili <contact@gozala.io>",
@@ -102,7 +103,6 @@
     "Harlan T Wood <harlantwood@users.noreply.github.com>",
     "haadcode <haadcode@headbanggames.com>",
     "Bryan Stenson <bryan.stenson@gmail.com>",
-    "André Cruz <andremiguelcruz@msn.com>",
-    "Maciej Krüger <mkg20001@gmail.com>"
+    "André Cruz <andremiguelcruz@msn.com>"
   ]
 }
