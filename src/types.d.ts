@@ -194,6 +194,10 @@ export interface ControllerOptions {
    * How long to wait before force killing a daemon in ms. (default 5000)
    */
   forceKillTimeout?: number
+  /**
+   * Set a global timeout
+   */
+  globalTimeout?: string
 }
 
 export interface ControllerOptionsOverrides {

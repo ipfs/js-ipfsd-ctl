@@ -135,6 +135,10 @@ function buildStartArgs (opts = {}) {
     args.push('--migrate')
   }
 
+  if (opts.globalTimeout) {
+    args.push('--timeout', opts.globalTimeout)
+  }
+
   return args
 }
 
