@@ -153,6 +153,18 @@ describe('Controller API', function () {
         })
       }
     })
+
+    describe('should return a version', () => {
+      for (const opts of types) {
+        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
+          const ctl = await factory.spawn(opts)
+
+          const version = await ctl.version()
+
+          expect(version).to.be.a('string')
+        })
+      }
+    })
   })
 
   describe('start', () => {
@@ -325,8 +337,10 @@ describe('Controller API', function () {
           await ctl.init()
           await ctl.start()
           await ctl.stop()
-          if (ctl.subprocess) {
+          if (ctl.subprocess && ctl.subprocess.stderr) {
             expect(ctl.subprocess.stderr.listeners('data')).to.be.empty()
+          }
+          if (ctl.subprocess && ctl.subprocess.stdout) {
             expect(ctl.subprocess.stdout.listeners('data')).to.be.empty()
           }
         })

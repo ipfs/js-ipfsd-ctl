@@ -1,19 +1,37 @@
 
-import { EventListener } from 'events'
+import { EventEmitter } from 'events'
+import { IPFS } from 'ipfs-core-types'
+import { IDResult } from 'ipfs-core-types/src/root'
 
 export interface Subprocess {
-  stderr: EventListener
-  stdout: EventListener
+  stderr: EventEmitter | null
+  stdout: EventEmitter | null
+}
+
+export interface API extends IPFS {
+  peerId: IDResult
+  apiHost: string
+  apiPort: string
+  gatewayHost: string
+  gatewayPort: string
+  grpcHost: string
+  grpcPort: string
 }
 
 export interface Controller {
-  init: () => Promise<Controller>
+  init: (options?: InitOptions) => Promise<Controller>
   start: () => Promise<Controller>
   stop: () => Promise<Controller>
+  cleanup: () => Promise<Controller>
+  pid: () => Promise<number>
+  version: () => Promise<string>
   path: string
   started: boolean
-  api: any
+  initialized: boolean
+  clean: boolean
+  api: API
   subprocess?: Subprocess | null
+  opts: ControllerOptions
 }
 
 export interface RemoteState {
@@ -182,4 +200,11 @@ export interface ControllerOptionsOverrides {
   js?: ControllerOptions
   go?: ControllerOptions
   proc?: ControllerOptions
+}
+
+export interface Factory {
+  tmpDir: (options?: ControllerOptions) => Promise<string>
+  spawn: (options?: ControllerOptions) => Promise<Controller>
+  clean: () => Promise<void>
+  controllers: Controller[]
 }

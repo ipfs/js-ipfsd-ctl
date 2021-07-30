@@ -26,7 +26,10 @@ function translateError (err) {
   return err
 }
 
-/** @typedef {import("./types").ControllerOptions} ControllerOptions */
+/**
+ * @typedef {import("./types").ControllerOptions} ControllerOptions
+ * @typedef {import("./types").Controller} Controller
+ */
 
 /**
  * Controller for daemon nodes
@@ -113,7 +116,7 @@ class Daemon {
    * Initialize a repo.
    *
    * @param {import('./types').InitOptions} [initOptions={}]
-   * @returns {Promise<Daemon>}
+   * @returns {Promise<Controller>}
    */
   async init (initOptions = {}) {
     this.initialized = await repoExists(this.path)

@@ -148,22 +148,25 @@ class InProc {
   }
 
   /**
-   * Get the pid of the `ipfs daemon` process.
+   * Get the pid of the `ipfs daemon` process
    *
-   * @returns {undefined}
+   * @returns {Promise<number>}
    */
   pid () {
-    throw new Error('not implemented')
+    return Promise.reject(new Error('not implemented'))
   }
 
   /**
    * Get the version of ipfs
    *
-   * @returns {Promise<Object>}
+   * @returns {Promise<string>}
    */
   async version () {
     await this.setExec()
-    return this.api.version()
+
+    const { version } = await this.api.version()
+
+    return version
   }
 }
 

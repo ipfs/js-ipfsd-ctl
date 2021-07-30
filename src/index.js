@@ -1,12 +1,13 @@
 'use strict'
 
-const Factory = require('./factory')
+const DefaultFactory = require('./factory')
 const Server = require('./endpoint/server')
 
 /**
- * @typedef {import("./types").Controller} Controller
- * @typedef {import("./types").ControllerOptions} ControllerOptions
- * @typedef {import("./types").ControllerOptionsOverrides} ControllerOptionsOverrides
+ * @typedef {import('./types').Controller} Controller
+ * @typedef {import('./types').ControllerOptions} ControllerOptions
+ * @typedef {import('./types').ControllerOptionsOverrides} ControllerOptionsOverrides
+ * @typedef {import('./types').Factory} Factory
  */
 
 /**
@@ -17,7 +18,7 @@ const Server = require('./endpoint/server')
  * @returns {Factory}
  */
 const createFactory = (options, overrides) => {
-  return new Factory(options, overrides)
+  return new DefaultFactory(options, overrides)
 }
 
 /**
@@ -27,7 +28,7 @@ const createFactory = (options, overrides) => {
  * @returns {Promise<Controller>}
  */
 const createController = (options) => {
-  const f = new Factory()
+  const f = new DefaultFactory()
   return f.spawn(options)
 }
 
