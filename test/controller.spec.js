@@ -8,6 +8,7 @@ const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
 const pathJoin = require('ipfs-utils/src/path-join')
 const waitFor = require('p-wait-for')
+const delay = require('delay')
 
 /**
  * @typedef {import("../src/types").ControllerOptions} ControllerOptions
@@ -82,6 +83,7 @@ describe('Controller API', function () {
           expect(ctl.clean).to.be.false()
           expect(ctl.started).to.be.false()
           if (!(isBrowser || isWebWorker) || opts.type === 'proc') {
+            await delay(1000)
             expect(await repoExists(ctl.path)).to.be.true()
           }
         })
