@@ -26,7 +26,7 @@ const removeRepo = async (repoPath) => {
  * @param {string} repoPath
  */
 const repoExists = (repoPath) => {
-  return fs.existsSync(path.join(repoPath, 'config'))
+  return Promise.resolve(fs.existsSync(path.join(repoPath, 'config')))
 }
 
 /**
