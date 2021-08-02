@@ -8,16 +8,6 @@ export interface Subprocess {
   stdout: EventEmitter | null
 }
 
-export interface API extends IPFS {
-  peerId: IDResult
-  apiHost: string
-  apiPort: string
-  gatewayHost: string
-  gatewayPort: string
-  grpcHost: string
-  grpcPort: string
-}
-
 export interface Controller {
   init: (options?: InitOptions) => Promise<Controller>
   start: () => Promise<Controller>
@@ -29,7 +19,7 @@ export interface Controller {
   started: boolean
   initialized: boolean
   clean: boolean
-  api: API
+  api: IPFS
   subprocess?: Subprocess | null
   opts: ControllerOptions
 }
@@ -207,4 +197,5 @@ export interface Factory {
   spawn: (options?: ControllerOptions) => Promise<Controller>
   clean: () => Promise<void>
   controllers: Controller[]
+  opts: ControllerOptions
 }
