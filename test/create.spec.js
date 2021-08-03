@@ -172,16 +172,6 @@ const types = [{
   remote: true
 }]
 
-describe('`createController` should return daemon with peerId when started', () => {
-  for (const opts of types) {
-    it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const node = await createController(opts)
-      expect(node.api.peerId).to.exist()
-      await node.stop()
-    })
-  }
-})
-
 describe('`createController({test: true})` should return daemon with test profile', () => {
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {

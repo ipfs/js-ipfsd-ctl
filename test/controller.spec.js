@@ -203,8 +203,6 @@ describe('Controller API', function () {
           await ctl.init()
           await ctl.start()
           expect(ctl.started).to.be.true()
-          const id = await ctl.api.id()
-          expect(factory.controllers[0].api.peerId.id).to.be.eq(id.id)
         })
       }
     })
