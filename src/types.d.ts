@@ -1,7 +1,6 @@
 
 import { EventEmitter } from 'events'
 import { IPFS } from 'ipfs-core-types'
-import { IDResult } from 'ipfs-core-types/src/root'
 
 export interface Subprocess {
   stderr: EventEmitter | null
