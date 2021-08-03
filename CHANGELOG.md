@@ -1,3 +1,12 @@
+## [10.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.1...v10.0.2) (2021-08-03)
+
+
+### Bug Fixes
+
+* add factory opts and use ipfs api ([#655](https://github.com/ipfs/js-ipfsd-ctl/issues/655)) ([a09661d](https://github.com/ipfs/js-ipfsd-ctl/commit/a09661df4652872778b74579d3b12c1c947e34b7))
+
+
+
 ## [10.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.0...v10.0.1) (2021-07-30)
 
 
