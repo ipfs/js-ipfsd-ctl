@@ -9,6 +9,7 @@
   "unpkg": "dist/index.min.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
+    "prepare": "npm run build",
     "lint": "aegir ts -p check && aegir lint",
     "docs": "aegir docs",
     "build": "aegir build",
