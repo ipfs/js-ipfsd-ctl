@@ -59,7 +59,7 @@
     "ipfs": "^0.56.1",
     "ipfs-core-types": "^0.6.1",
     "ipfs-client": "^0.5.1",
-    "ipfs-http-client": "^51.0.1",
+    "ipfs-http-client": "^52.0.2",
     "ipfs-unixfs": "^5.0.0",
     "it-last": "^1.0.5",
     "util": "^0.12.4"
