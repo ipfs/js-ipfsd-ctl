@@ -56,7 +56,7 @@
     "@types/hapi__hapi": "^20.0.9",
     "aegir": "^34.1.0",
     "go-ipfs": "^0.9.1",
-    "ipfs": "^0.56.1",
+    "ipfs": "^0.58.4",
     "ipfs-core-types": "^0.6.1",
     "ipfs-client": "^0.5.1",
     "ipfs-http-client": "^51.0.1",
