@@ -3,7 +3,6 @@
 
 const { expect } = require('aegir/utils/chai')
 const { isNode } = require('ipfs-utils/src/env')
-const pathJoin = require('ipfs-utils/src/path-join')
 const { createFactory } = require('../src')
 const { UnixFS } = require('ipfs-unixfs')
 const last = require('it-last')

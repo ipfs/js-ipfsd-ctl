@@ -3,7 +3,6 @@
 
 const { expect } = require('aegir/utils/chai')
 const { isNode, isBrowser, isWebWorker } = require('ipfs-utils/src/env')
-const pathJoin = require('ipfs-utils/src/path-join')
 const { createFactory, createController, createServer } = require('../src')
 const Client = require('../src/ipfsd-client')
 const Daemon = require('../src/ipfsd-daemon')
@@ -90,7 +89,7 @@ describe('`createController` should return the correct class', () => {
           return require('ipfs-http-client').create(opts)
         }
       },
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+      ipfsBin: require('ipfs').path()
     })
 
     expect(clientCreated).to.be.true()
@@ -125,7 +124,7 @@ describe('`createController` should return the correct class', () => {
           return require('ipfs-http-client').create(opts)
         }
       },
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+      ipfsBin: require('ipfs').path()
     })
 
     expect(f).to.be.instanceOf(Client)

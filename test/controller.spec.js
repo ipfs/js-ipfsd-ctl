@@ -6,7 +6,6 @@ const merge = require('merge-options')
 const { createFactory, createController } = require('../src')
 const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
-const pathJoin = require('ipfs-utils/src/path-join')
 const waitFor = require('p-wait-for')
 
 /**
