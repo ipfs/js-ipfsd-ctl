@@ -20,7 +20,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+      ipfsBin: require('ipfs').path()
     })
 
     if (!isNode) {
@@ -56,7 +56,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+      ipfsBin: require('ipfs').path()
     })
 
     expect(f).to.be.instanceOf(Client)
@@ -144,7 +144,7 @@ const types = [{
   type: 'js',
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+  ipfsBin: require('ipfs').path()
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
@@ -162,7 +162,7 @@ const types = [{
   test: true,
   remote: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+  ipfsBin: require('ipfs').path()
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released

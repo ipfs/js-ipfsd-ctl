@@ -24,7 +24,7 @@ const types = [{
   type: 'js',
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+  ipfsBin: require('ipfs').path()
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
@@ -42,7 +42,7 @@ const types = [{
   remote: true,
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+  ipfsBin: require('ipfs').path()
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
@@ -100,7 +100,7 @@ describe('`Factory spawn()` ', function () {
           remote: opts.remote,
           ipfsModule: require('ipfs'),
           ipfsHttpModule: require('ipfs-http-client'),
-          ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+          ipfsBin: require('ipfs').path()
         })
         expect(ctl).to.exist()
         expect(ctl.opts.test).to.be.true()

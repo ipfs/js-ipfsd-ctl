@@ -28,7 +28,7 @@ module.exports = {
             ipfsBin: require('go-ipfs').path()
           },
           js: {
-            ipfsBin: require.resolve('ipfs/src/cli.js')
+            ipfsBin: require('ipfs').path()
           }
         }
       )
