@@ -58,7 +58,7 @@ describe('Controller API', function () {
     ipfsModule: require('ipfs')
   }, {
     js: {
-      ipfsBin: require('ipfs').path()
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     },
     go: {
       // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released

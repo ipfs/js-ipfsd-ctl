@@ -143,7 +143,7 @@ const types = [{
   type: 'js',
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: require('ipfs').path()
+  ipfsBin: isNode ? require('ipfs').path() : undefined
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
@@ -161,7 +161,7 @@ const types = [{
   test: true,
   remote: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: require('ipfs').path()
+  ipfsBin: isNode ? require('ipfs').path() : undefined
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
