@@ -55,7 +55,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: require('ipfs').path()
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     })
 
     expect(f).to.be.instanceOf(Client)
@@ -89,7 +89,7 @@ describe('`createController` should return the correct class', () => {
           return require('ipfs-http-client').create(opts)
         }
       },
-      ipfsBin: require('ipfs').path()
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     })
 
     expect(clientCreated).to.be.true()
@@ -124,7 +124,7 @@ describe('`createController` should return the correct class', () => {
           return require('ipfs-http-client').create(opts)
         }
       },
-      ipfsBin: require('ipfs').path()
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     })
 
     expect(f).to.be.instanceOf(Client)
