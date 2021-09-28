@@ -19,7 +19,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: require('ipfs').path()
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     })
 
     if (!isNode) {

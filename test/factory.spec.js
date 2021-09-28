@@ -90,7 +90,7 @@ describe('`Factory spawn()` ', function () {
     }
   })
 
-  describe('should return ctl for tests when factory inititalized with test === true', () => {
+  describe('should return ctl for tests when factory initialized with test === true', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
         const factory = await createFactory({ test: true })
@@ -99,7 +99,7 @@ describe('`Factory spawn()` ', function () {
           remote: opts.remote,
           ipfsModule: require('ipfs'),
           ipfsHttpModule: require('ipfs-http-client'),
-          ipfsBin: require('ipfs').path()
+          ipfsBin: isNode ? require('ipfs').path() : undefined
         })
         expect(ctl).to.exist()
         expect(ctl.opts.test).to.be.true()
