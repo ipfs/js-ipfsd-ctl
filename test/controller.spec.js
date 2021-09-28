@@ -6,7 +6,6 @@ const merge = require('merge-options')
 const { createFactory, createController } = require('../src')
 const { repoExists } = require('../src/utils')
 const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
-const pathJoin = require('ipfs-utils/src/path-join')
 const waitFor = require('p-wait-for')
 
 /**
@@ -59,7 +58,7 @@ describe('Controller API', function () {
     ipfsModule: require('ipfs')
   }, {
     js: {
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     },
     go: {
       // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released

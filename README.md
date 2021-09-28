@@ -88,10 +88,10 @@ const factory = Ctl.createFactory(
     },
     { // overrides per type
         js: {
-            ipfsBin: 'path/js/ipfs/bin'
+            ipfsBin: require('ipfs').path()
         },
         go: {
-            ipfsBin: 'path/go/ipfs/bin'
+            ipfsBin: require('go-ipfs').path()
         }
     }
 )
@@ -119,10 +119,10 @@ const server = Ctl.createServer(port, {
 },
 {
     js: {
-        ipfsBin: 'path/js/ipfs/bin'
+        ipfsBin: require('ipfs').path()
     },
     go: {
-        ipfsBin: 'path/go/ipfs/bin'
+        ipfsBin: require('go-ipfs').path()
     },
 })
 const factory = Ctl.createFactory({

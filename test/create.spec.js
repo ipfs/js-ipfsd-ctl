@@ -3,7 +3,6 @@
 
 const { expect } = require('aegir/utils/chai')
 const { isNode, isBrowser, isWebWorker } = require('ipfs-utils/src/env')
-const pathJoin = require('ipfs-utils/src/path-join')
 const { createFactory, createController, createServer } = require('../src')
 const Client = require('../src/ipfsd-client')
 const Daemon = require('../src/ipfsd-daemon')
@@ -20,7 +19,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     })
 
     if (!isNode) {
@@ -56,7 +55,7 @@ describe('`createController` should return the correct class', () => {
       disposable: false,
       ipfsModule: require('ipfs'),
       ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     })
 
     expect(f).to.be.instanceOf(Client)
@@ -90,7 +89,7 @@ describe('`createController` should return the correct class', () => {
           return require('ipfs-http-client').create(opts)
         }
       },
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     })
 
     expect(clientCreated).to.be.true()
@@ -125,7 +124,7 @@ describe('`createController` should return the correct class', () => {
           return require('ipfs-http-client').create(opts)
         }
       },
-      ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli/bin.js')
+      ipfsBin: isNode ? require('ipfs').path() : undefined
     })
 
     expect(f).to.be.instanceOf(Client)
@@ -144,7 +143,7 @@ const types = [{
   type: 'js',
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+  ipfsBin: isNode ? require('ipfs').path() : undefined
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
@@ -162,7 +161,7 @@ const types = [{
   test: true,
   remote: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+  ipfsBin: isNode ? require('ipfs').path() : undefined
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released

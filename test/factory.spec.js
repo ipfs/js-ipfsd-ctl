@@ -3,7 +3,6 @@
 
 const { expect } = require('aegir/utils/chai')
 const { isNode } = require('ipfs-utils/src/env')
-const pathJoin = require('ipfs-utils/src/path-join')
 const { createFactory } = require('../src')
 const { UnixFS } = require('ipfs-unixfs')
 const last = require('it-last')
@@ -24,7 +23,7 @@ const types = [{
   type: 'js',
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+  ipfsBin: isNode ? require('ipfs').path() : undefined
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
@@ -42,7 +41,7 @@ const types = [{
   remote: true,
   test: true,
   ipfsModule: require('ipfs'),
-  ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+  ipfsBin: isNode ? require('ipfs').path() : undefined
 }, {
   ...defaultOps,
   // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
@@ -91,7 +90,7 @@ describe('`Factory spawn()` ', function () {
     }
   })
 
-  describe('should return ctl for tests when factory inititalized with test === true', () => {
+  describe('should return ctl for tests when factory initialized with test === true', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
         const factory = await createFactory({ test: true })
@@ -100,7 +99,7 @@ describe('`Factory spawn()` ', function () {
           remote: opts.remote,
           ipfsModule: require('ipfs'),
           ipfsHttpModule: require('ipfs-http-client'),
-          ipfsBin: pathJoin(__dirname, '../node_modules/ipfs/src/cli.js')
+          ipfsBin: isNode ? require('ipfs').path() : undefined
         })
         expect(ctl).to.exist()
         expect(ctl.opts.test).to.be.true()
