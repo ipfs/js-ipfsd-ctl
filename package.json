@@ -55,7 +55,7 @@
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.9",
     "aegir": "^35.1.1",
-    "go-ipfs": "^0.9.1",
+    "go-ipfs": "^0.10.0",
     "ipfs": "^0.59.0",
     "ipfs-client": "^0.7.0",
     "ipfs-core-types": "^0.8.0",
