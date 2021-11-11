@@ -14,7 +14,7 @@ const log = debug('ipfsd-ctl:utils')
  */
 const removeRepo = async (repoPath) => {
   try {
-    await fs.promises.rmdir(repoPath, {
+    await fs.promises.rm(repoPath, {
       recursive: true
     })
   } catch (err) {
