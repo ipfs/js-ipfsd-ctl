@@ -43,7 +43,7 @@
     "@hapi/boom": "^9.1.0",
     "@hapi/hapi": "^20.0.0",
     "debug": "^4.1.1",
-    "execa": "^5.0.0",
+    "execa": "^6.0.0",
     "ipfs-utils": "^9.0.1",
     "joi": "^17.2.1",
     "merge-options": "^3.0.1",
