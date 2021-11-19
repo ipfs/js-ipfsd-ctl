@@ -172,7 +172,7 @@ class Daemon {
    */
   async cleanup () {
     if (!this.clean) {
-      await fs.rmdir(this.path, {
+      await fs.rm(this.path, {
         recursive: true
       })
       this.clean = true
