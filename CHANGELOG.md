@@ -1,3 +1,12 @@
+## [10.0.5](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.4...v10.0.5) (2021-11-19)
+
+
+### Bug Fixes
+
+* silence deprecation warning for fs.rmdir ([#697](https://github.com/ipfs/js-ipfsd-ctl/issues/697)) ([45ef5ca](https://github.com/ipfs/js-ipfsd-ctl/commit/45ef5ca3744962a46c321c0446c6459b9e4df350))
+
+
+
 ## [10.0.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.3...v10.0.4) (2021-09-28)
 
 
