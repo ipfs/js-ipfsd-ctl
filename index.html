@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ipfsd-ctl - v10.0.1</title>
-	<meta name="description" content="Documentation for ipfsd-ctl - v10.0.1">
+	<title>ipfsd-ctl - v10.0.5</title>
+	<meta name="description" content="Documentation for ipfsd-ctl - v10.0.5">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 	<script async src="assets/js/search.js" id="search-script"></script>
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">ipfsd-ctl - v10.0.1</a>
+					<a href="index.html" class="title">ipfsd-ctl - v10.0.5</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -50,7 +50,7 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<h1>ipfsd-ctl - v10.0.1</h1>
+			<h1>ipfsd-ctl - v10.0.5</h1>
 		</div>
 	</div>
 </header>
@@ -145,10 +145,10 @@
 <span style="color: #000000">    },</span>
 <span style="color: #000000">    { </span><span style="color: #008000">// overrides per type</span>
 <span style="color: #000000">        </span><span style="color: #001080">js:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">            </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;path/js/ipfs/bin&#039;</span>
+<span style="color: #000000">            </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">path</span><span style="color: #000000">()</span>
 <span style="color: #000000">        },</span>
 <span style="color: #000000">        </span><span style="color: #001080">go:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">            </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;path/go/ipfs/bin&#039;</span>
+<span style="color: #000000">            </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;go-ipfs&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">path</span><span style="color: #000000">()</span>
 <span style="color: #000000">        }</span>
 <span style="color: #000000">    }</span>
 <span style="color: #000000">)</span>
@@ -173,10 +173,10 @@
 <span style="color: #000000">},</span>
 <span style="color: #000000">{</span>
 <span style="color: #000000">    </span><span style="color: #001080">js:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">        </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;path/js/ipfs/bin&#039;</span>
+<span style="color: #000000">        </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">path</span><span style="color: #000000">()</span>
 <span style="color: #000000">    },</span>
 <span style="color: #000000">    </span><span style="color: #001080">go:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">        </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;path/go/ipfs/bin&#039;</span>
+<span style="color: #000000">        </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;go-ipfs&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">path</span><span style="color: #000000">()</span>
 <span style="color: #000000">    },</span>
 <span style="color: #000000">})</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">factory</span><span style="color: #000000"> = </span><span style="color: #001080">Ctl</span><span style="color: #000000">.</span><span style="color: #795E26">createFactory</span><span style="color: #000000">({</span>
@@ -345,9 +345,9 @@
 					<h4>Properties</h4>
 				</a>
 				<ul>
-					<li>  <code>js</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>JS</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
-					<li>  <code>go</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>Go</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
-					<li>  <code>proc</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>Proc</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
+					<li><code>js</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>JS</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
+					<li><code>go</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>Go</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
+					<li><code>proc</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>Proc</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
 				</ul>
 				<a href="#controlleroptions" id="controlleroptions" style="color: inherit; text-decoration: none;">
 					<h3>ControllerOptions</h3>
@@ -357,22 +357,22 @@
 					<h4>Properties</h4>
 				</a>
 				<ul>
-					<li>  <code>test</code> <strong>[boolean]</strong> Flag to activate custom config for tests.</li>
-					<li>  <code>remote</code> <strong>[boolean]</strong> Use remote endpoint to spawn the nodes. Defaults to <code>true</code> when not in node.</li>
-					<li>  <code>endpoint</code> <strong>[string]</strong> Endpoint URL to manage remote Controllers. (Defaults: &#39;<a href="http://localhost:43134&#39;">http://localhost:43134&#39;</a>).</li>
-					<li>  <code>disposable</code> <strong>[boolean]</strong> A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.</li>
+					<li><code>test</code> <strong>[boolean]</strong> Flag to activate custom config for tests.</li>
+					<li><code>remote</code> <strong>[boolean]</strong> Use remote endpoint to spawn the nodes. Defaults to <code>true</code> when not in node.</li>
+					<li><code>endpoint</code> <strong>[string]</strong> Endpoint URL to manage remote Controllers. (Defaults: &#39;<a href="http://localhost:43134&#39;">http://localhost:43134&#39;</a>).</li>
+					<li><code>disposable</code> <strong>[boolean]</strong> A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.</li>
 					<li><code>type</code> <strong>[string]</strong> The daemon type, see below the options:<ul>
-							<li>  go - spawn go-ipfs daemon</li>
-							<li>  js - spawn js-ipfs daemon</li>
-							<li>  proc - spawn in-process js-ipfs node</li>
+							<li>go - spawn go-ipfs daemon</li>
+							<li>js - spawn js-ipfs daemon</li>
+							<li>proc - spawn in-process js-ipfs node</li>
 						</ul>
 					</li>
-					<li>  <code>env</code> <strong>[Object]</strong> Additional environment variables, passed to executing shell. Only applies for Daemon controllers.</li>
-					<li>  <code>args</code> <strong>[Array]</strong> Custom cli args.</li>
-					<li>  <code>ipfsHttpModule</code> <strong>[Object]</strong> Reference to a IPFS HTTP Client object.</li>
-					<li>  <code>ipfsModule</code> <strong>[Object]</strong> Reference to a IPFS API object.</li>
-					<li>  <code>ipfsBin</code> <strong>[string]</strong> Path to a IPFS exectutable.</li>
-					<li>  <code>ipfsOptions</code> <strong>[IpfsOptions]</strong> Options for the IPFS instance same as <a href="https://github.com/ipfs/js-ipfs#ipfs-constructor">https://github.com/ipfs/js-ipfs#ipfs-constructor</a>. <code>proc</code> nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.</li>
+					<li><code>env</code> <strong>[Object]</strong> Additional environment variables, passed to executing shell. Only applies for Daemon controllers.</li>
+					<li><code>args</code> <strong>[Array]</strong> Custom cli args.</li>
+					<li><code>ipfsHttpModule</code> <strong>[Object]</strong> Reference to a IPFS HTTP Client object.</li>
+					<li><code>ipfsModule</code> <strong>[Object]</strong> Reference to a IPFS API object.</li>
+					<li><code>ipfsBin</code> <strong>[string]</strong> Path to a IPFS exectutable.</li>
+					<li><code>ipfsOptions</code> <strong>[IpfsOptions]</strong> Options for the IPFS instance same as <a href="https://github.com/ipfs/js-ipfs#ipfs-constructor">https://github.com/ipfs/js-ipfs#ipfs-constructor</a>. <code>proc</code> nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.</li>
 					<li><code>forceKill</code> <strong>[boolean]</strong> - Whether to use SIGKILL to quit a daemon that does not stop after <code>.stop()</code> is called. (default <code>true</code>)</li>
 					<li><code>forceKillTimeout</code> <strong>[Number]</strong> - How long to wait before force killing a daemon in ms. (default <code>5000</code>)</li>
 				</ul>
