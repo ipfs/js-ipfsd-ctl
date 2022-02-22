@@ -177,12 +177,6 @@ describe('`Factory spawn()` ', function () {
             EXPERIMENTAL: {
               // enable sharding for js
               sharding: true
-            },
-            config: {
-              // enabled sharding for go
-              Experimental: {
-                ShardingEnabled: true
-              }
             }
           }
         })
