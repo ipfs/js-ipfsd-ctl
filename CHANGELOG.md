@@ -1,3 +1,12 @@
+## [10.0.6](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.5...v10.0.6) (2022-02-22)
+
+
+### Features
+
+* expose apiAddr property ([#720](https://github.com/ipfs/js-ipfsd-ctl/issues/720)) ([2501f19](https://github.com/ipfs/js-ipfsd-ctl/commit/2501f1917e2013f2719fce194cefb6b142c205a6))
+
+
+
 ## [10.0.5](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.4...v10.0.5) (2021-11-19)
 
 
