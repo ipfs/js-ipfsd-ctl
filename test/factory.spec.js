@@ -166,42 +166,4 @@ describe('`Factory spawn()` ', function () {
       })
     }
   })
-
-  describe('should return a node with sharding enabled', () => {
-    for (const opts of types) {
-      it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await createFactory()
-        const node = await factory.spawn({
-          ...opts,
-          ipfsOptions: {
-            EXPERIMENTAL: {
-              // enable sharding for js
-              sharding: true
-            }
-          }
-        })
-        expect(node).to.exist()
-        expect(node.api).to.exist()
-        expect(node.api.id).to.exist()
-
-        const res = await last(node.api.addAll([{ path: 'derp.txt', content: 'hello' }], {
-          shardSplitThreshold: 0,
-          wrapWithDirectory: true
-        }))
-
-        if (!res) {
-          throw new Error('No result from ipfs.addAll')
-        }
-
-        const { cid } = res
-
-        const { value: dagNode } = await node.api.dag.get(cid)
-        const entry = UnixFS.unmarshal(dagNode.Data)
-
-        expect(entry.type).to.equal('hamt-sharded-directory')
-
-        await node.stop()
-      })
-    }
-  })
 })
