@@ -158,7 +158,7 @@ describe('`Factory spawn()` ', function () {
         await ctl2.stop()
         try {
           await factory.clean()
-        } catch (error) {
+        } catch (/** @type {any} */ error) {
           expect(error).to.not.exist()
         }
         expect(ctl1.started).to.be.false()

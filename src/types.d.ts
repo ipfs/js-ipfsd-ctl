@@ -1,6 +1,7 @@
 
 import { EventEmitter } from 'events'
 import { IPFS } from 'ipfs-core-types'
+import type { Multiaddr } from 'multiaddr'
 
 export interface Subprocess {
   stderr: EventEmitter | null
@@ -21,6 +22,7 @@ export interface Controller {
   api: IPFS
   subprocess?: Subprocess | null
   opts: ControllerOptions
+  apiAddr: Multiaddr
 }
 
 export interface RemoteState {

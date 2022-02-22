@@ -43,7 +43,7 @@ ipcMain.on('start', async ({ sender }) => {
     sender.send('id', JSON.stringify(id))
     await node.stop()
     await s.stop()
-  } catch (error) {
+  } catch (/** @type {any} */ error) {
     sender.send('error', JSON.stringify(error.message))
     console.log(error)
   }

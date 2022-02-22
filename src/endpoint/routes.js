@@ -48,7 +48,7 @@ module.exports = (server, createFactory) => {
       const type = request.query.type || 'go'
       try {
         return { tmpDir: await tmpDir(type) }
-      } catch (err) {
+      } catch (/** @type {any} */ err) {
         badRequest(err)
       }
     }
@@ -62,7 +62,7 @@ module.exports = (server, createFactory) => {
 
       try {
         return { version: await nodes[id].version() }
-      } catch (err) {
+      } catch (/** @type {any} */ err) {
         badRequest(err)
       }
     },
@@ -90,7 +90,7 @@ module.exports = (server, createFactory) => {
           path: nodes[id].path,
           clean: nodes[id].clean
         }
-      } catch (err) {
+      } catch (/** @type {any} */ err) {
         badRequest(err)
       }
     }
@@ -112,7 +112,7 @@ module.exports = (server, createFactory) => {
         return {
           initialized: nodes[id].initialized
         }
-      } catch (err) {
+      } catch (/** @type {any} */ err) {
         badRequest(err)
       }
     },
@@ -136,7 +136,7 @@ module.exports = (server, createFactory) => {
           gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : '',
           grpcAddr: nodes[id].grpcAddr ? nodes[id].grpcAddr.toString() : ''
         }
-      } catch (err) {
+      } catch (/** @type {any} */ err) {
         badRequest(err)
       }
     },
@@ -158,7 +158,7 @@ module.exports = (server, createFactory) => {
         await nodes[id].cleanup()
 
         return h.response().code(200)
-      } catch (err) {
+      } catch (/** @type {any} */ err) {
         badRequest(err)
       }
     },
@@ -178,7 +178,7 @@ module.exports = (server, createFactory) => {
         await nodes[id].stop()
 
         return h.response().code(200)
-      } catch (err) {
+      } catch (/** @type {any} */ err) {
         badRequest(err)
       }
     },
