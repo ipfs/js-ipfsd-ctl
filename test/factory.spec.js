@@ -4,8 +4,6 @@
 const { expect } = require('aegir/utils/chai')
 const { isNode } = require('ipfs-utils/src/env')
 const { createFactory } = require('../src')
-const { UnixFS } = require('ipfs-unixfs')
-const last = require('it-last')
 
 const defaultOps = {
   ipfsHttpModule: require('ipfs-http-client')

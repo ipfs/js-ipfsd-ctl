@@ -60,8 +60,6 @@
     "ipfs-client": "^0.7.0",
     "ipfs-core-types": "^0.10.1",
     "ipfs-http-client": "^56.0.1",
-    "ipfs-unixfs": "^6.0.6",
-    "it-last": "^1.0.5",
     "util": "^0.12.4"
   },
   "repository": {
