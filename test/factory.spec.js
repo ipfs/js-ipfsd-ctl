@@ -4,8 +4,6 @@
 const { expect } = require('aegir/utils/chai')
 const { isNode } = require('ipfs-utils/src/env')
 const { createFactory } = require('../src')
-const { UnixFS } = require('ipfs-unixfs')
-const last = require('it-last')
 
 const defaultOps = {
   ipfsHttpModule: require('ipfs-http-client')
@@ -158,55 +156,11 @@ describe('`Factory spawn()` ', function () {
         await ctl2.stop()
         try {
           await factory.clean()
-        } catch (error) {
+        } catch (/** @type {any} */ error) {
           expect(error).to.not.exist()
         }
         expect(ctl1.started).to.be.false()
         expect(ctl2.started).to.be.false()
-      })
-    }
-  })
-
-  describe('should return a node with sharding enabled', () => {
-    for (const opts of types) {
-      it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await createFactory()
-        const node = await factory.spawn({
-          ...opts,
-          ipfsOptions: {
-            EXPERIMENTAL: {
-              // enable sharding for js
-              sharding: true
-            },
-            config: {
-              // enabled sharding for go
-              Experimental: {
-                ShardingEnabled: true
-              }
-            }
-          }
-        })
-        expect(node).to.exist()
-        expect(node.api).to.exist()
-        expect(node.api.id).to.exist()
-
-        const res = await last(node.api.addAll([{ path: 'derp.txt', content: 'hello' }], {
-          shardSplitThreshold: 0,
-          wrapWithDirectory: true
-        }))
-
-        if (!res) {
-          throw new Error('No result from ipfs.addAll')
-        }
-
-        const { cid } = res
-
-        const { value: dagNode } = await node.api.dag.get(cid)
-        const entry = UnixFS.unmarshal(dagNode.Data)
-
-        expect(entry.type).to.equal('hamt-sharded-directory')
-
-        await node.stop()
       })
     }
   })

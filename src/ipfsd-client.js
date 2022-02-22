@@ -36,6 +36,8 @@ class Client {
     this.api = null
     /** @type {import('./types').Subprocess | null} */
     this.subprocess = null
+    /** @type {Multiaddr} */
+    this.apiAddr // eslint-disable-line no-unused-expressions
 
     this._setApi(remoteState.apiAddr)
     this._setGateway(remoteState.gatewayAddr)

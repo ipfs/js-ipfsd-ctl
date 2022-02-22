@@ -29,7 +29,8 @@ class InProc {
     this.initialized = false
     this.started = false
     this.clean = true
-    this.apiAddr = null
+    /** @type {Multiaddr} */
+    this.apiAddr // eslint-disable-line no-unused-expressions
     this.api = null
     /** @type {import('./types').Subprocess | null} */
     this.subprocess = null

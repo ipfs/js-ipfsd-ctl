@@ -52,7 +52,8 @@ class Daemon {
     this.initialized = false
     this.started = false
     this.clean = true
-    this.apiAddr = null
+    /** @type {Multiaddr} */
+    this.apiAddr // eslint-disable-line no-unused-expressions
     this.grpcAddr = null
     this.gatewayAddr = null
     this.api = null

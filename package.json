@@ -54,14 +54,12 @@
   },
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.9",
-    "aegir": "^35.1.1",
-    "go-ipfs": "^0.9.1",
-    "ipfs": "^0.59.0",
+    "aegir": "^36.1.3",
+    "go-ipfs": "^0.12.0",
+    "ipfs": "^0.62.1",
     "ipfs-client": "^0.7.0",
-    "ipfs-core-types": "^0.8.0",
-    "ipfs-http-client": "^53.0.0",
-    "ipfs-unixfs": "^6.0.6",
-    "it-last": "^1.0.5",
+    "ipfs-core-types": "^0.10.1",
+    "ipfs-http-client": "^56.0.1",
     "util": "^0.12.4"
   },
   "repository": {
