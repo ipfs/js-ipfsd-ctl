@@ -353,7 +353,8 @@ class Daemon {
    */
   async _getConfig (key = 'show') {
     const {
-      stdout
+      stdout,
+      stderr
     } = await execa(
       this.exec,
       ['config', key],
@@ -363,7 +364,12 @@ class Daemon {
       .catch(translateError)
 
     if (key === 'show') {
-      return JSON.parse(stdout)
+      try {
+        return JSON.parse(stdout)
+      } catch (err) {
+        err.message = `${err.message}: ${stderr || stdout}`
+        throw err
+      }
     }
 
     return stdout.trim()
