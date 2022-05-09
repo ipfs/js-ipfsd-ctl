@@ -1,3 +1,14 @@
+## [11.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.6...v11.0.0) (2022-05-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* the `controller.api.peerId` property is now at `controller.peer`
+
+### Features
+
+* convert to ESM ([#731](https://github.com/ipfs/js-ipfsd-ctl/issues/731)) ([c6ad54d](https://github.com/ipfs/js-ipfsd-ctl/commit/c6ad54d62a2f6425a232152db0bfac75a7aa7a8c))
+
 ## [10.0.6](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.5...v10.0.6) (2022-02-22)
 
 
@@ -1355,6 +1366,3 @@ Same as js-ipfs constructor https://github.com/ipfs/js-ipfs#ipfs-constructor
 
 <a name="0.4.1"></a>
 ## 0.4.1 (2015-09-18)
-
-
-
