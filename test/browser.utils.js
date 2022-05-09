@@ -1,10 +1,9 @@
 /* eslint-env mocha */
-'use strict'
 
-const { expect } = require('aegir/utils/chai')
-const { isEnvWithDom } = require('ipfs-utils/src/env')
-const { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } = require('../src/utils')
-const { createFactory, createController } = require('../src')
+import { expect } from 'aegir/chai'
+import { isEnvWithDom } from 'wherearewe'
+import { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } from '../src/utils.js'
+import { createFactory, createController } from '../src/index.js'
 
 describe('utils browser version', function () {
   if (isEnvWithDom) {
@@ -28,7 +27,7 @@ describe('utils browser version', function () {
         type: 'proc',
         disposable: false,
         ipfsOptions: { repo: 'ipfs_test_remove' },
-        ipfsModule: require('ipfs')
+        ipfsModule: (await import('ipfs'))
       })
       await ctl.init()
       await ctl.start()
@@ -46,7 +45,7 @@ describe('utils browser version', function () {
         type: 'proc',
         disposable: false,
         ipfsOptions: { repo: 'ipfs_test_remove' },
-        ipfsModule: require('ipfs')
+        ipfsModule: (await import('ipfs'))
       })
       await ctl.init()
       await ctl.start()
@@ -70,7 +69,7 @@ describe('utils browser version', function () {
           ipfsOptions: {
             repo: 'ipfs_test'
           },
-          ipfsModule: require('ipfs')
+          ipfsModule: (await import('ipfs'))
         })
         expect(await repoExists('ipfs_test')).to.be.true()
         await node.stop()

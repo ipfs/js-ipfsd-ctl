@@ -3,9 +3,8 @@
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://protocol.ai)
 [![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
 [![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
-[![Travis CI](https://flat.badgen.net/travis/ipfs/js-ipfsd-ctl?branch=master)](https://travis-ci.com/ipfs/js-ipfsd-ctl)
+[![test & maybe release](https://github.com/ipfs/js-ipfsd-ctl/actions/workflows/js-test-and-release.yml/badge.svg)](https://github.com/ipfs/js-ipfsd-ctl/actions/workflows/js-test-and-release.yml)
 [![Codecov branch](https://img.shields.io/codecov/c/github/ipfs/js-ipfs-multipart/master.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-ipfs-multipart)
-[![Dependency Status](https://david-dm.org/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://david-dm.org/ipfs/js-ipfsd-ctl)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 [![Bundle Size](https://flat.badgen.net/bundlephobia/minzip/ipfsd-ctl)](https://bundlephobia.com/result?p=ipfsd-ctl)
 > Spawn IPFS daemons using JavaScript!
@@ -57,8 +56,8 @@ This is a shorthand for simpler use cases where factory is not needed.
 // Use createController to spawn it instead.
 const Ctl = require('ipfsd-ctl')
 const ipfsd = await Ctl.createController({
-    ipfsHttpModule: require('ipfs-http-client'),
-    ipfsBin: require('go-ipfs').path()
+    ipfsHttpModule,
+    ipfsBin: goIpfsModule.path()
 })
 const id = await ipfsd.api.id()
 
@@ -83,15 +82,15 @@ const factory = Ctl.createFactory(
         type: 'js',
         test: true,
         disposable: true,
-        ipfsHttpModule: require('ipfs-http-client'),
-        ipfsModule: require('ipfs') // only if you gonna spawn 'proc' controllers
+        ipfsHttpModule,
+        ipfsModule: (await import('ipfs')) // only if you gonna spawn 'proc' controllers
     },
     { // overrides per type
         js: {
-            ipfsBin: require('ipfs').path()
+            ipfsBin: ipfsModule.path()
         },
         go: {
-            ipfsBin: require('go-ipfs').path()
+            ipfsBin: goIpfsModule.path()
         }
     }
 )
@@ -114,19 +113,19 @@ const Ctl = require('ipfsd-ctl')
 
 const port = 9090
 const server = Ctl.createServer(port, {
-    ipfsModule: require('ipfs'),
-    ipfsHttpModule: require('ipfs-http-client')
+    ipfsModule,
+    ipfsHttpModule
 },
 {
     js: {
-        ipfsBin: require('ipfs').path()
+        ipfsBin: ipfsModule.path()
     },
     go: {
-        ipfsBin: require('go-ipfs').path()
+        ipfsBin: goIpfsModule.path()
     },
 })
 const factory = Ctl.createFactory({
-    ipfsHttpModule: require('ipfs-http-client'),
+    ipfsHttpModule,
     remote: true,
     endpoint: `http://localhost:${port}` // or you can set process.env.IPFSD_CTL_SERVER to http://localhost:9090
 })

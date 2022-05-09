@@ -1,19 +1,19 @@
-'use strict'
+import { Multiaddr } from '@multiformats/multiaddr'
+import fs from 'fs/promises'
+import mergeOptions from 'merge-options'
+import { logger } from '@libp2p/logger'
+import { execa } from 'execa'
+import { nanoid } from 'nanoid'
+import path from 'path'
+import os from 'os'
+import { checkForRunningApi, repoExists, tmpDir, defaultRepo, buildInitArgs, buildStartArgs } from './utils.js'
+import waitFor from 'p-wait-for'
 
-const { Multiaddr } = require('multiaddr')
-const fs = require('fs').promises
-const merge = require('merge-options').bind({ ignoreUndefined: true })
-const debug = require('debug')
-const execa = require('execa')
-const { nanoid } = require('nanoid')
-const path = require('path')
-const os = require('os')
-const { checkForRunningApi, repoExists, tmpDir, defaultRepo, buildInitArgs, buildStartArgs } = require('./utils')
-const waitFor = require('p-wait-for')
+const merge = mergeOptions.bind({ ignoreUndefined: true })
 
 const daemonLog = {
-  info: debug('ipfsd-ctl:daemon:stdout'),
-  err: debug('ipfsd-ctl:daemon:stderr')
+  info: logger('ipfsd-ctl:daemon:stdout'),
+  err: logger('ipfsd-ctl:daemon:stderr')
 }
 
 /**
@@ -57,6 +57,16 @@ class Daemon {
     this.grpcAddr = null
     this.gatewayAddr = null
     this.api = null
+    /** @type {import('./types').PeerData | null} */
+    this._peerId = null
+  }
+
+  get peer () {
+    if (this._peerId == null) {
+      throw new Error('Not started')
+    }
+
+    return this._peerId
   }
 
   /**
@@ -266,7 +276,7 @@ class Daemon {
     this.started = true
     // Add `peerId`
     const id = await this.api.id()
-    this.api.peerId = id
+    this._peerId = id
 
     return this
   }
@@ -349,7 +359,7 @@ class Daemon {
    *
    * @private
    * @param {string} [key] - A specific config to retrieve.
-   * @returns {Promise<Object | string>}
+   * @returns {Promise<object | string>}
    */
   async _getConfig (key = 'show') {
     const {
@@ -408,4 +418,4 @@ class Daemon {
   }
 }
 
-module.exports = Daemon
+export default Daemon

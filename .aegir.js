@@ -1,39 +1,40 @@
-'use strict'
-
-const path = require('path')
-const getPort = require('aegir/utils/get-port')
-const createServer = require('./src').createServer
+import { createServer } from './src/index.js'
+import * as ipfsModule from 'ipfs'
+import * as ipfsHttpModule from 'ipfs-http-client'
+import * as goIpfsModule from 'go-ipfs'
 
 /** @type {import('aegir').Options["build"]["config"]} */
+/*
 const esbuild = {
   inject: [path.join(__dirname, 'scripts/node-globals.js')],
 }
-
-module.exports = {
+*/
+export default {
   bundlesize: {
     maxSize: '35kB'
   },
   test: {
     browser: {
       config: {
-        buildConfig: esbuild
+        //buildConfig: esbuild
       }
     },
     before: async () => {
       const server = createServer(undefined, {
-          ipfsModule: require('ipfs'),
-          ipfsHttpModule: require('ipfs-http-client')
+          ipfsModule,
+          ipfsHttpModule
         }, {
           go: {
-            ipfsBin: require('go-ipfs').path()
+            ipfsBin: goIpfsModule.path()
           },
           js: {
-            ipfsBin: require('ipfs').path()
+            ipfsBin: ipfsModule.path()
           }
         }
       )
 
-      await server.start(await getPort(server.port, server.host))
+      await server.start()
+
       return {
         env: {
           IPFSD_CTL_SERVER: `http://${server.host}:${server.port}`

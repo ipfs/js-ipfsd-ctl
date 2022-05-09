@@ -1,13 +1,13 @@
-'use strict'
+import { Multiaddr } from '@multiformats/multiaddr'
+import http from 'ipfs-utils/src/http.js'
+import mergeOptions from 'merge-options'
+import { logger } from '@libp2p/logger'
 
-const { Multiaddr } = require('multiaddr')
-const http = require('ipfs-utils/src/http')
-const merge = require('merge-options').bind({ ignoreUndefined: true })
-const debug = require('debug')
+const merge = mergeOptions.bind({ ignoreUndefined: true })
 
 const daemonLog = {
-  info: debug('ipfsd-ctl:client:stdout'),
-  err: debug('ipfsd-ctl:client:stderr')
+  info: logger('ipfsd-ctl:client:stdout'),
+  err: logger('ipfsd-ctl:client:stderr')
 }
 
 /** @typedef {import("./index").ControllerOptions} ControllerOptions */
@@ -43,6 +43,16 @@ class Client {
     this._setGateway(remoteState.gatewayAddr)
     this._setGrpc(remoteState.grpcAddr)
     this._createApi()
+    /** @type {import('./types').PeerData | null} */
+    this._peerId = null
+  }
+
+  get peer () {
+    if (this._peerId == null) {
+      throw new Error('Not started')
+    }
+
+    return this._peerId
   }
 
   /**
@@ -117,12 +127,18 @@ class Client {
       return this
     }
 
+    let ipfsOptions = {}
+
+    if (this.opts.ipfsOptions != null && this.opts.ipfsOptions.init != null && !(typeof this.opts.ipfsOptions.init === 'boolean')) {
+      ipfsOptions = this.opts.ipfsOptions.init
+    }
+
     const opts = merge(
       {
         emptyRepo: false,
         profiles: this.opts.test ? ['test'] : []
       },
-      this.opts.ipfsOptions ? (typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init) : {},
+      ipfsOptions,
       typeof initOptions === 'boolean' ? {} : initOptions
     )
 
@@ -182,7 +198,7 @@ class Client {
 
     // Add `peerId`
     const id = await this.api.id()
-    this.api.peerId = id
+    this._peerId = id
     daemonLog.info(id)
     return this
   }
@@ -238,4 +254,4 @@ class Client {
   }
 }
 
-module.exports = Client
+export default Client

@@ -1,7 +1,5 @@
-'use strict'
-
-const DefaultFactory = require('./factory')
-const Server = require('./endpoint/server')
+import DefaultFactory from './factory.js'
+import Server from './endpoint/server.js'
 
 /**
  * @typedef {import('./types').Controller} Controller
@@ -17,7 +15,7 @@ const Server = require('./endpoint/server')
  * @param {ControllerOptionsOverrides} [overrides]
  * @returns {Factory}
  */
-const createFactory = (options, overrides) => {
+export const createFactory = (options, overrides) => {
   return new DefaultFactory(options, overrides)
 }
 
@@ -27,7 +25,7 @@ const createFactory = (options, overrides) => {
  * @param {ControllerOptions} [options]
  * @returns {Promise<Controller>}
  */
-const createController = (options) => {
+export const createController = (options) => {
   const f = new DefaultFactory()
   return f.spawn(options)
 }
@@ -39,7 +37,7 @@ const createController = (options) => {
  * @param {ControllerOptions} [factoryOptions]
  * @param {ControllerOptionsOverrides} [factoryOverrides]
  */
-const createServer = (options, factoryOptions = {}, factoryOverrides = {}) => {
+export const createServer = (options, factoryOptions = {}, factoryOverrides = {}) => {
   if (typeof options === 'number') {
     options = { port: options }
   }
@@ -47,10 +45,4 @@ const createServer = (options, factoryOptions = {}, factoryOverrides = {}) => {
   return new Server(options, () => {
     return createFactory(factoryOptions, factoryOverrides)
   })
-}
-
-module.exports = {
-  createFactory,
-  createController,
-  createServer
 }

@@ -1,18 +1,16 @@
-'use strict'
+import os from 'os'
+import path from 'path'
+import fs from 'fs'
+import { logger } from '@libp2p/logger'
+import { nanoid } from 'nanoid'
+import tempWrite from 'temp-write'
 
-const os = require('os')
-const path = require('path')
-const fs = require('fs')
-const debug = require('debug')
-const { nanoid } = require('nanoid')
-const tempWrite = require('temp-write')
-
-const log = debug('ipfsd-ctl:utils')
+const log = logger('ipfsd-ctl:utils')
 
 /**
  * @param {string} repoPath
  */
-const removeRepo = async (repoPath) => {
+export const removeRepo = async (repoPath) => {
   try {
     await fs.promises.rm(repoPath, {
       recursive: true
@@ -25,14 +23,14 @@ const removeRepo = async (repoPath) => {
 /**
  * @param {string} repoPath
  */
-const repoExists = (repoPath) => {
+export const repoExists = (repoPath) => {
   return Promise.resolve(fs.existsSync(path.join(repoPath, 'config')))
 }
 
 /**
  * @param {import('./types').NodeType} [type]
  */
-const defaultRepo = (type) => {
+export const defaultRepo = (type) => {
   if (process.env.IPFS_PATH !== undefined) {
     return process.env.IPFS_PATH
   }
@@ -44,9 +42,8 @@ const defaultRepo = (type) => {
 
 /**
  * @param {string} [repoPath]
- * @returns
  */
-const checkForRunningApi = (repoPath = '') => {
+export const checkForRunningApi = (repoPath = '') => {
   let api
   try {
     api = fs.readFileSync(path.join(repoPath, 'api'))
@@ -57,14 +54,14 @@ const checkForRunningApi = (repoPath = '') => {
   return api ? api.toString() : null
 }
 
-const tmpDir = (type = '') => {
+export const tmpDir = (type = '') => {
   return path.join(os.tmpdir(), `${type}_ipfs_${nanoid()}`)
 }
 
 /**
  * @param {import('./types').ControllerOptions} opts
  */
-function buildInitArgs (opts = {}) {
+export function buildInitArgs (opts = {}) {
   const args = ['init']
   const ipfsOptions = opts.ipfsOptions || {}
   const initOptions = ipfsOptions.init && typeof ipfsOptions.init !== 'boolean' ? ipfsOptions.init : {}
@@ -103,7 +100,7 @@ function buildInitArgs (opts = {}) {
 /**
  * @param {import('./types').ControllerOptions} opts
  */
-function buildStartArgs (opts = {}) {
+export function buildStartArgs (opts = {}) {
   const ipfsOptions = opts.ipfsOptions || {}
   const customArgs = opts.args || []
 
@@ -136,14 +133,4 @@ function buildStartArgs (opts = {}) {
   }
 
   return args
-}
-
-module.exports = {
-  removeRepo,
-  repoExists,
-  defaultRepo,
-  checkForRunningApi,
-  tmpDir,
-  buildInitArgs,
-  buildStartArgs
 }
