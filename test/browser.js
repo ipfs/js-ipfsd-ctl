@@ -1,3 +1,1 @@
-'use strict'
-
-require('./browser.utils')
+import './browser.utils.js'

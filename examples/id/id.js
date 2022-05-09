@@ -15,8 +15,8 @@ async function run () {
 
   const nodeJs = await createController({
     type: 'js',
-    ipfsBin: require('ipfs').path(),
-    ipfsHttpModule: require('ipfs-http-client')
+    ipfsBin: ipfsModule.path(),
+    ipfsHttpModule
   })
   console.log('alice')
   console.log(await nodeJs.api.id())

@@ -1,12 +1,15 @@
 /* eslint-env mocha */
-'use strict'
 
-const { expect } = require('aegir/utils/chai')
-const { isNode } = require('ipfs-utils/src/env')
-const { createFactory } = require('../src')
+import { expect } from 'aegir/chai'
+import { isNode } from 'wherearewe'
+import { createFactory } from '../src/index.js'
+import * as ipfsModule from 'ipfs'
+// @ts-ignore no types
+import * as goIpfsModule from 'go-ipfs'
+import * as ipfsHttpModule from 'ipfs-http-client'
 
 const defaultOps = {
-  ipfsHttpModule: require('ipfs-http-client')
+  ipfsHttpModule
 }
 
 /**
@@ -20,30 +23,28 @@ const types = [{
   ...defaultOps,
   type: 'js',
   test: true,
-  ipfsModule: require('ipfs'),
-  ipfsBin: isNode ? require('ipfs').path() : undefined
+  ipfsModule,
+  ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
   ...defaultOps,
-  // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
-  ipfsBin: isNode ? require('go-ipfs').path() : undefined,
+  ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
   test: true
 }, {
   ...defaultOps,
   type: 'proc',
   test: true,
-  ipfsModule: require('ipfs')
+  ipfsModule
 }, {
   ...defaultOps,
   type: 'js',
   remote: true,
   test: true,
-  ipfsModule: require('ipfs'),
-  ipfsBin: isNode ? require('ipfs').path() : undefined
+  ipfsModule,
+  ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
   ...defaultOps,
-  // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
-  ipfsBin: isNode ? require('go-ipfs').path() : undefined,
+  ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
   remote: true,
   test: true
@@ -95,9 +96,9 @@ describe('`Factory spawn()` ', function () {
         const ctl = await factory.spawn({
           type: opts.type,
           remote: opts.remote,
-          ipfsModule: require('ipfs'),
-          ipfsHttpModule: require('ipfs-http-client'),
-          ipfsBin: isNode ? require('ipfs').path() : undefined
+          ipfsModule,
+          ipfsHttpModule,
+          ipfsBin: isNode ? ipfsModule.path() : undefined
         })
         expect(ctl).to.exist()
         expect(ctl.opts.test).to.be.true()

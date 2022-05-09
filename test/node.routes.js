@@ -1,10 +1,11 @@
 /* eslint-env mocha */
-'use strict'
 
-const { expect } = require('aegir/utils/chai')
-const Hapi = require('@hapi/hapi')
-const routes = require('../src/endpoint/routes')
-const { createFactory } = require('../src')
+import { expect } from 'aegir/chai'
+import Hapi from '@hapi/hapi'
+import routes from '../src/endpoint/routes.js'
+import { createFactory } from '../src/index.js'
+import * as ipfsModule from 'ipfs'
+import * as ipfsHttpModule from 'ipfs-http-client'
 
 describe('routes', function () {
   this.timeout(60000)
@@ -18,13 +19,13 @@ describe('routes', function () {
    */
   let server
 
-  before(() => {
+  before(async () => {
     server = new Hapi.Server({ port: 43134 })
-    routes(server, () => {
+    routes(server, async () => {
       return createFactory({
-        ipfsModule: require('ipfs'),
-        ipfsHttpModule: require('ipfs-http-client'),
-        ipfsBin: require('ipfs').path()
+        ipfsModule,
+        ipfsHttpModule,
+        ipfsBin: ipfsModule.path()
       })
     })
   })

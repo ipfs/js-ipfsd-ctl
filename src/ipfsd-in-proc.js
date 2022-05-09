@@ -1,13 +1,13 @@
-'use strict'
+import { Multiaddr } from '@multiformats/multiaddr'
+import mergeOptions from 'merge-options'
+import { repoExists, removeRepo, checkForRunningApi, tmpDir, defaultRepo } from './utils.js'
+import { logger } from '@libp2p/logger'
 
-const { Multiaddr } = require('multiaddr')
-const merge = require('merge-options').bind({ ignoreUndefined: true })
-const { repoExists, removeRepo, checkForRunningApi, tmpDir, defaultRepo } = require('./utils')
-const debug = require('debug')
+const merge = mergeOptions.bind({ ignoreUndefined: true })
 
 const daemonLog = {
-  info: debug('ipfsd-ctl:proc:stdout'),
-  err: debug('ipfsd-ctl:proc:stderr')
+  info: logger('ipfsd-ctl:proc:stdout'),
+  err: logger('ipfsd-ctl:proc:stderr')
 }
 /**
  * @typedef {import("./types").ControllerOptions} ControllerOptions
@@ -34,6 +34,16 @@ class InProc {
     this.api = null
     /** @type {import('./types').Subprocess | null} */
     this.subprocess = null
+    /** @type {import('./types').PeerData | null} */
+    this._peerId = null
+  }
+
+  get peer () {
+    if (this._peerId == null) {
+      throw new Error('Not started')
+    }
+
+    return this._peerId
   }
 
   async setExec () {
@@ -124,7 +134,7 @@ class InProc {
     this.started = true
     // Add `peerId`
     const id = await this.api.id()
-    this.api.peerId = id
+    this._peerId = id
     daemonLog.info(id)
     return this
   }
@@ -177,4 +187,4 @@ class InProc {
 const toInitOptions = (init = {}) =>
   typeof init === 'boolean' ? {} : init
 
-module.exports = InProc
+export default InProc

@@ -57,8 +57,8 @@ This is a shorthand for simpler use cases where factory is not needed.
 // Use createController to spawn it instead.
 const Ctl = require('ipfsd-ctl')
 const ipfsd = await Ctl.createController({
-    ipfsHttpModule: require('ipfs-http-client'),
-    ipfsBin: require('go-ipfs').path()
+    ipfsHttpModule,
+    ipfsBin: goIpfsModule.path()
 })
 const id = await ipfsd.api.id()
 
@@ -83,15 +83,15 @@ const factory = Ctl.createFactory(
         type: 'js',
         test: true,
         disposable: true,
-        ipfsHttpModule: require('ipfs-http-client'),
-        ipfsModule: require('ipfs') // only if you gonna spawn 'proc' controllers
+        ipfsHttpModule,
+        ipfsModule: (await import('ipfs')) // only if you gonna spawn 'proc' controllers
     },
     { // overrides per type
         js: {
-            ipfsBin: require('ipfs').path()
+            ipfsBin: ipfsModule.path()
         },
         go: {
-            ipfsBin: require('go-ipfs').path()
+            ipfsBin: goIpfsModule.path()
         }
     }
 )
@@ -114,19 +114,19 @@ const Ctl = require('ipfsd-ctl')
 
 const port = 9090
 const server = Ctl.createServer(port, {
-    ipfsModule: require('ipfs'),
-    ipfsHttpModule: require('ipfs-http-client')
+    ipfsModule,
+    ipfsHttpModule
 },
 {
     js: {
-        ipfsBin: require('ipfs').path()
+        ipfsBin: ipfsModule.path()
     },
     go: {
-        ipfsBin: require('go-ipfs').path()
+        ipfsBin: goIpfsModule.path()
     },
 })
 const factory = Ctl.createFactory({
-    ipfsHttpModule: require('ipfs-http-client'),
+    ipfsHttpModule,
     remote: true,
     endpoint: `http://localhost:${port}` // or you can set process.env.IPFSD_CTL_SERVER to http://localhost:9090
 })
