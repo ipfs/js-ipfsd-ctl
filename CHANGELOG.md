@@ -1,3 +1,10 @@
+### [11.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v11.0.0...v11.0.1) (2022-05-25)
+
+
+### Trivial Changes
+
+* bump @libp2p/interfaces from 1.3.32 to 2.0.2 ([#734](https://github.com/ipfs/js-ipfsd-ctl/issues/734)) ([cc91981](https://github.com/ipfs/js-ipfsd-ctl/commit/cc91981e5607b6653fb4388698945431d80aadcb))
+
 ## [11.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.6...v11.0.0) (2022-05-09)
 
 
