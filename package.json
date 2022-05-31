@@ -167,7 +167,7 @@
     "ipfs": "^0.62.1",
     "ipfs-client": "^0.7.0",
     "ipfs-core-types": "^0.10.1",
-    "ipfs-http-client": "^56.0.1",
+    "ipfs-http-client": "^57.0.0",
     "util": "^0.12.4"
   },
   "browser": {
