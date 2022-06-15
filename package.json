@@ -148,7 +148,7 @@
   "dependencies": {
     "@hapi/boom": "^10.0.0",
     "@hapi/hapi": "^20.0.0",
-    "@libp2p/interfaces": "^2.0.2",
+    "@libp2p/interfaces": "^3.0.2",
     "@libp2p/logger": "^1.1.4",
     "@multiformats/multiaddr": "^10.1.8",
     "execa": "^6.1.0",
