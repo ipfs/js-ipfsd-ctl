@@ -2,7 +2,7 @@
 import type { EventEmitter } from 'events'
 import type { IPFS } from 'ipfs-core-types'
 import type { Multiaddr } from '@multiformats/multiaddr'
-import type { PeerId } from '@libp2p/interfaces/peer-id'
+import type { PeerId } from '@libp2p/interface-peer-id'
 
 export interface Subprocess {
   stderr: EventEmitter | null

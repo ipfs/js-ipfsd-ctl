@@ -1,35 +1,66 @@
-# ipfsd-ctl, the IPFS Factory
+# ipfsd-ctl <!-- omit in toc -->
 
-[![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://protocol.ai)
-[![](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io/)
-[![](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
-[![test & maybe release](https://github.com/ipfs/js-ipfsd-ctl/actions/workflows/js-test-and-release.yml/badge.svg)](https://github.com/ipfs/js-ipfsd-ctl/actions/workflows/js-test-and-release.yml)
-[![Codecov branch](https://img.shields.io/codecov/c/github/ipfs/js-ipfs-multipart/master.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-ipfs-multipart)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
-[![Bundle Size](https://flat.badgen.net/bundlephobia/minzip/ipfsd-ctl)](https://bundlephobia.com/result?p=ipfsd-ctl)
-> Spawn IPFS daemons using JavaScript!
+[![ipfs.io](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](http://ipfs.io)
+[![IRC](https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square)](http://webchat.freenode.net/?channels=%23ipfs)
+[![Discord](https://img.shields.io/discord/806902334369824788?style=flat-square)](https://discord.gg/ipfs)
+[![codecov](https://img.shields.io/codecov/c/github/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-ipfsd-ctl)
+[![CI](https://img.shields.io/github/workflow/status/libp2p/js-libp2p-interfaces/test%20&%20maybe%20release/master?style=flat-square)](https://github.com/ipfs/js-ipfsd-ctl/actions/workflows/js-test-and-release.yml)
 
-## Lead Maintainer
+> Spawn IPFS Daemons, JS or Go
 
-[Hugo Dias](https://github.com/hugomrdias)
-
-## Notice
-Version 1.0.0 changed a bit the api and the options methods take so please read the documentation below.
-
-## Table of Contents
+## Table of contents <!-- omit in toc -->
 
 - [Install](#install)
+- [Notice](#notice)
 - [Usage](#usage)
+  - [Spawning a single IPFS controller: `createController`](#spawning-a-single-ipfs-controller-createcontroller)
+  - [Manage multiple IPFS controllers: `createFactory`](#manage-multiple-ipfs-controllers-createfactory)
+- [Disposable vs non Disposable nodes](#disposable-vs-non-disposable-nodes)
 - [API](#api)
-- [Packaging](#packaging)
+  - [`createFactory([options], [overrides])`](#createfactoryoptions-overrides)
+  - [`createController([options])`](#createcontrolleroptions)
+  - [`createServer([options])`](#createserveroptions)
+  - [Factory](#factory)
+    - [`controllers`](#controllers)
+    - [`tmpDir()`](#tmpdir)
+    - [`spawn([options])`](#spawnoptions)
+    - [`clean()`](#clean)
+  - [Controller](#controller)
+    - [`new Controller(options)`](#new-controlleroptions)
+    - [`path`](#path)
+    - [`exec`](#exec)
+    - [`env`](#env)
+    - [`initialized`](#initialized)
+    - [`started`](#started)
+    - [`clean`](#clean-1)
+    - [`apiAddr`](#apiaddr)
+    - [`gatewayAddr`](#gatewayaddr)
+    - [`api`](#api-1)
+    - [`init([initOptions])`](#initinitoptions)
+    - [`start()`](#start)
+    - [`stop()`](#stop)
+    - [`cleanup()`](#cleanup)
+    - [`pid()`](#pid)
+    - [`version()`](#version)
+  - [ControllerOptionsOverrides](#controlleroptionsoverrides)
+    - [Properties](#properties)
+  - [ControllerOptions](#controlleroptions)
+    - [Properties](#properties-1)
+- [ipfsd-ctl environment variables](#ipfsd-ctl-environment-variables)
+  - - [IPFS\_JS\_EXEC and IPFS\_GO\_EXEC](#ipfs_js_exec-and-ipfs_go_exec)
 - [Contribute](#contribute)
 - [License](#license)
+- [Contribute](#contribute-1)
 
 ## Install
 
-```sh
-npm install --save ipfsd-ctl
+```console
+$ npm i ipfsd-ctl
 ```
+
+## Notice
+
+Version 1.0.0 changed a bit the api and the options methods take so please read the documentation below.
 
 Please ensure your project also has dependencies on `ipfs`, `ipfs-http-client` and `go-ipfs`.
 
@@ -150,6 +181,7 @@ await server.stop()
 ## API
 
 ### `createFactory([options], [overrides])`
+
 Creates a factory that can spawn multiple controllers and pre-define options for them.
 
 - `options` **[ControllerOptions](#controlleroptions)** Controllers options.
@@ -158,16 +190,18 @@ Creates a factory that can spawn multiple controllers and pre-define options for
 Returns a **[Factory](#factory)**
 
 ### `createController([options])`
+
 Creates a controller.
 
 - `options` **[ControllerOptions](#controlleroptions)** Factory options.
 
-Returns **Promise&lt;[Controller](#controller)>**
+Returns **Promise<[Controller](#controller)>**
 
 ### `createServer([options])`
+
 Create an Endpoint Server. This server is used by a client node to control a remote node. Example: Spawning a go-ipfs node from a browser.
 
-- `options` **[Object]** Factory options. Defaults to: `{ port: 43134 }`
+- `options` **\[Object]** Factory options. Defaults to: `{ port: 43134 }`
   - `port` **number** Port to start the server on.
 
 Returns a **Server**
@@ -175,25 +209,31 @@ Returns a **Server**
 ### Factory
 
 #### `controllers`
-**Controller[]** List of all the controllers spawned.
+
+**Controller\[]** List of all the controllers spawned.
 
 #### `tmpDir()`
+
 Create a temporary repo to create controllers manually.
 
-Returns **Promise&lt;String>** - Path to the repo.
+Returns **Promise\<String>** - Path to the repo.
 
 #### `spawn([options])`
+
 Creates a controller for a IPFS node.
+
 - `options` **[ControllerOptions](#controlleroptions)** Factory options.
 
-Returns **Promise&lt;[Controller](#controller)>**
+Returns **Promise<[Controller](#controller)>**
 
 #### `clean()`
+
 Cleans all controllers spawned.
 
-Returns **Promise&lt;[Factory](#factory)>**
+Returns **Promise<[Factory](#factory)>**
 
 ### Controller
+
 Class controller for a IPFS node.
 
 #### `new Controller(options)`
@@ -201,105 +241,117 @@ Class controller for a IPFS node.
 - `options` **[ControllerOptions](#controlleroptions)**
 
 #### `path`
+
 **String** Repo path.
 
 #### `exec`
+
 **String** Executable path.
 
 #### `env`
+
 **Object** ENV object.
 
 #### `initialized`
+
 **Boolean** Flag with the current init state.
 
 #### `started`
+
 **Boolean** Flag with the current start state.
 
 #### `clean`
+
 **Boolean** Flag with the current clean state.
 
 #### `apiAddr`
+
 **Multiaddr** API address
 
 #### `gatewayAddr`
+
 **Multiaddr** Gateway address
 
 #### `api`
+
 **Object** IPFS core interface
 
 #### `init([initOptions])`
+
 Initialises controlled node
 
-- `initOptions` **[Object]** IPFS init options https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
+- `initOptions` **\[Object]** IPFS init options <https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit>
 
-Returns **Promise&lt;[Controller](#controller)>**
+Returns **Promise<[Controller](#controller)>**
 
 #### `start()`
+
 Starts controlled node.
 
-Returns **Promise&lt;IPFS>**
+Returns **Promise\<IPFS>**
 
 #### `stop()`
+
 Stops controlled node.
 
-Returns **Promise&lt;[Controller](#controller)>**
+Returns **Promise<[Controller](#controller)>**
 
 #### `cleanup()`
+
 Cleans controlled node, a disposable controller calls this automatically.
 
-Returns **Promise&lt;[Controller](#controller)>**
-
+Returns **Promise<[Controller](#controller)>**
 
 #### `pid()`
+
 Get the pid of the controlled node process if aplicable.
 
-Returns **Promise&lt;number>**
-
+Returns **Promise\<number>**
 
 #### `version()`
+
 Get the version of the controlled node.
 
-Returns **Promise&lt;string>**
-
+Returns **Promise\<string>**
 
 ### ControllerOptionsOverrides
 
-Type: [Object]
+Type: \[Object]
 
 #### Properties
--   `js` **[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
--   `go` **[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
--   `proc` **[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.
 
+- `js` **\[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **JS** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+- `go` **\[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **Go** controllers these are deep merged with options passed to `Factory.spawn(options)`.
+- `proc` **\[[ControllerOptions](#controlleroptions)]** Pre-defined defaults options for **Proc** controllers these are deep merged with options passed to `Factory.spawn(options)`.
 
 ### ControllerOptions
 
-Type: [Object]
+Type: \[Object]
 
 #### Properties
--   `test` **[boolean]** Flag to activate custom config for tests.
--   `remote` **[boolean]** Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
--   `endpoint` **[string]** Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134').
--   `disposable` **[boolean]** A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
--   `type` **[string]** The daemon type, see below the options:
-    -   go - spawn go-ipfs daemon
-    -   js - spawn js-ipfs daemon
-    -   proc - spawn in-process js-ipfs node
--   `env` **[Object]** Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
--   `args` **[Array]** Custom cli args.
--   `ipfsHttpModule` **[Object]** Reference to a IPFS HTTP Client object.
--   `ipfsModule` **[Object]** Reference to a IPFS API object.
--   `ipfsBin` **[string]** Path to a IPFS exectutable.
--   `ipfsOptions` **[IpfsOptions]** Options for the IPFS instance same as https://github.com/ipfs/js-ipfs#ipfs-constructor. `proc` nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.
-- `forceKill` **[boolean]** - Whether to use SIGKILL to quit a daemon that does not stop after `.stop()` is called. (default `true`)
-- `forceKillTimeout` **[Number]** - How long to wait before force killing a daemon in ms. (default `5000`)
 
+- `test` **\[boolean]** Flag to activate custom config for tests.
+- `remote` **\[boolean]** Use remote endpoint to spawn the nodes. Defaults to `true` when not in node.
+- `endpoint` **\[string]** Endpoint URL to manage remote Controllers. (Defaults: '<http://localhost:43134>').
+- `disposable` **\[boolean]** A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.
+- `type` **\[string]** The daemon type, see below the options:
+  - go - spawn go-ipfs daemon
+  - js - spawn js-ipfs daemon
+  - proc - spawn in-process js-ipfs node
+- `env` **\[Object]** Additional environment variables, passed to executing shell. Only applies for Daemon controllers.
+- `args` **\[Array]** Custom cli args.
+- `ipfsHttpModule` **\[Object]** Reference to a IPFS HTTP Client object.
+- `ipfsModule` **\[Object]** Reference to a IPFS API object.
+- `ipfsBin` **\[string]** Path to a IPFS exectutable.
+- `ipfsOptions` **\[IpfsOptions]** Options for the IPFS instance same as <https://github.com/ipfs/js-ipfs#ipfs-constructor>. `proc` nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.
+- `forceKill` **\[boolean]** - Whether to use SIGKILL to quit a daemon that does not stop after `.stop()` is called. (default `true`)
+- `forceKillTimeout` **\[Number]** - How long to wait before force killing a daemon in ms. (default `5000`)
 
 ## ipfsd-ctl environment variables
 
 In additional to the API described in previous sections, `ipfsd-ctl` also supports several environment variables. This are often very useful when running in different environments, such as CI or when doing integration/interop testing.
 
-_Environment variables precedence order is as follows. Top to bottom, top entry has highest precedence:_
+*Environment variables precedence order is as follows. Top to bottom, top entry has highest precedence:*
 
 - command line options/method arguments
 - env variables
@@ -307,10 +359,9 @@ _Environment variables precedence order is as follows. Top to bottom, top entry 
 
 Meaning that, environment variables override defaults in the configuration file but are superseded by options to `df.spawn({...})`
 
-#### IPFS_JS_EXEC and IPFS_GO_EXEC
+#### IPFS\_JS\_EXEC and IPFS\_GO\_EXEC
 
 An alternative way of specifying the executable path for the `js-ipfs` or `go-ipfs` executable, respectively.
-
 
 ## Contribute
 
@@ -322,4 +373,15 @@ This repository falls under the IPFS [Code of Conduct](https://github.com/ipfs/c
 
 ## License
 
-[MIT](LICENSE)
+Licensed under either of
+
+- Apache 2.0, ([LICENSE-APACHE](LICENSE-APACHE) / <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT ([LICENSE-MIT](LICENSE-MIT) / <http://opensource.org/licenses/MIT>)
+
+## Contribute
+
+Feel free to join in. All welcome. Open an [issue](https://github.com/ipfs/js-ipfs-unixfs-importer/issues)!
+
+This repository falls under the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+
+[![](https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif)](https://github.com/ipfs/community/blob/master/CONTRIBUTING.md)

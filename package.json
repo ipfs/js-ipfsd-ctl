@@ -46,6 +46,7 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/src/index.d.ts",
       "import": "./src/index.js"
     }
   },
@@ -148,14 +149,14 @@
   "dependencies": {
     "@hapi/boom": "^10.0.0",
     "@hapi/hapi": "^20.0.0",
-    "@libp2p/interfaces": "^2.0.2",
-    "@libp2p/logger": "^1.1.4",
+    "@libp2p/interface-peer-id": "^1.0.4",
+    "@libp2p/logger": "^2.0.0",
     "@multiformats/multiaddr": "^10.1.8",
     "execa": "^6.1.0",
     "ipfs-utils": "^9.0.1",
     "joi": "^17.2.1",
     "merge-options": "^3.0.1",
-    "nanoid": "^3.1.3",
+    "nanoid": "^4.0.0",
     "p-wait-for": "^4.1.0",
     "temp-write": "^5.0.0",
     "wherearewe": "^1.0.2"
@@ -163,11 +164,11 @@
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.9",
     "aegir": "^37.0.15",
-    "go-ipfs": "^0.12.0",
-    "ipfs": "^0.62.1",
-    "ipfs-client": "^0.7.0",
-    "ipfs-core-types": "^0.10.1",
-    "ipfs-http-client": "^56.0.1",
+    "go-ipfs": "^0.13.0",
+    "ipfs": "^0.63.5",
+    "ipfs-client": "^0.8.3",
+    "ipfs-core-types": "^0.11.1",
+    "ipfs-http-client": "^57.0.3",
     "util": "^0.12.4"
   },
   "browser": {
