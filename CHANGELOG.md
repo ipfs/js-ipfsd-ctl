@@ -1,3 +1,14 @@
+## [12.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v11.0.1...v12.0.0) (2022-06-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* pulls in new peer-id interface
+
+### Features
+
+* update deps ([#756](https://github.com/ipfs/js-ipfsd-ctl/issues/756)) ([1355786](https://github.com/ipfs/js-ipfsd-ctl/commit/13557866c8c7b84c7887f6baf6fdd41324d74725))
+
 ### [11.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v11.0.0...v11.0.1) (2022-05-25)
 
 
