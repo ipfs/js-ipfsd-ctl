@@ -159,7 +159,7 @@
     "nanoid": "^4.0.0",
     "p-wait-for": "^4.1.0",
     "temp-write": "^5.0.0",
-    "wherearewe": "^1.0.2"
+    "wherearewe": "^2.0.1"
   },
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.9",
