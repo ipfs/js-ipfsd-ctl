@@ -169,6 +169,10 @@ export interface ControllerOptions {
    */
   ipfsHttpModule?: any
   /**
+   * Reference to a js-kubo-rpc-client module
+   */
+  kuboRpcModule?: any
+  /**
    * Reference to an ipfs or ipfs-core module
    */
   ipfsModule?: any

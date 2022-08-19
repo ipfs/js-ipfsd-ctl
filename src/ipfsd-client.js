@@ -95,7 +95,13 @@ class Client {
         http: this.apiAddr
       })
     } else if (this.apiAddr) {
-      this.api = this.opts.ipfsHttpModule.create(this.apiAddr)
+      if (this.opts.kuboRpcModule != null) {
+        this.api = this.opts.kuboRpcModule.create(this.apiAddr)
+      } else if (this.opts.ipfsHttpModule != null) {
+        this.api = this.opts.ipfsHttpModule.create(this.apiAddr)
+      } else {
+        throw new Error('You must pass either a kuboRpcModule or ipfsHttpModule')
+      }
     }
 
     if (this.api) {

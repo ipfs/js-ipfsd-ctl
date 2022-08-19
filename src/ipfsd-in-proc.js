@@ -67,7 +67,14 @@ class InProc {
    */
   _setApi (addr) {
     this.apiAddr = new Multiaddr(addr)
-    this.api = this.opts.ipfsHttpModule.create(addr)
+
+    if (this.opts.kuboRpcModule != null) {
+      this.api = this.opts.kuboRpcModule.create(addr)
+    } else if (this.opts.ipfsHttpModule != null) {
+      this.api = this.opts.ipfsHttpModule.create(addr)
+    } else {
+      throw new Error('You must pass either a kuboRpcModule or ipfsHttpModule')
+    }
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }

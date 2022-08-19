@@ -140,10 +140,10 @@
   "scripts": {
     "lint": "aegir lint",
     "build": "aegir build",
-    "test": "aegir test",
-    "test:node": "aegir test -t node",
-    "test:chrome": "aegir test -t browser",
-    "test:firefox": "aegir test -t browser -- --browser firefox",
+    "test": "aegir test && USE_KUBO_JS=1 aegir test",
+    "test:node": "aegir test -t node && USE_KUBO_JS=1 aegir test -t node",
+    "test:chrome": "aegir test -t browser && USE_KUBO_JS=1 aegir test -t browser",
+    "test:firefox": "aegir test -t browser -- --browser firefox && USE_KUBO_JS=1 aegir test -t browser -- --browser firefox",
     "release": "aegir release"
   },
   "dependencies": {
@@ -155,6 +155,7 @@
     "execa": "^6.1.0",
     "ipfs-utils": "^9.0.1",
     "joi": "^17.2.1",
+    "js-kubo-rpc-client": "^1.0.0",
     "merge-options": "^3.0.1",
     "nanoid": "^4.0.0",
     "p-wait-for": "^4.1.0",
