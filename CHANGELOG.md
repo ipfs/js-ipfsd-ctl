@@ -1,3 +1,16 @@
+## [12.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.0...v12.0.1) (2022-09-01)
+
+
+### Trivial Changes
+
+* Update .github/workflows/stale.yml [skip ci] ([8bf29d3](https://github.com/ipfs/js-ipfsd-ctl/commit/8bf29d341897a2c0660e6b0e47ce8c93e9abbb69))
+* update project config ([#768](https://github.com/ipfs/js-ipfsd-ctl/issues/768)) ([29c44cb](https://github.com/ipfs/js-ipfsd-ctl/commit/29c44cb0b83c97f40e77775e8ddb7772260dddaa))
+
+
+### Dependencies
+
+* bump wherearewe from 1.0.2 to 2.0.1 ([#762](https://github.com/ipfs/js-ipfsd-ctl/issues/762)) ([7423b90](https://github.com/ipfs/js-ipfsd-ctl/commit/7423b90f69c6a77c4d2eb9095cb2774ccfc80bc0))
+
 ## [12.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v11.0.1...v12.0.0) (2022-06-28)
 
 
