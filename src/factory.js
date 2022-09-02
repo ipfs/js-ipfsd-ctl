@@ -1,6 +1,6 @@
 import mergeOptions from 'merge-options'
 import { tmpDir } from './utils.js'
-import { isNode } from 'wherearewe'
+import { isNode, isElectronMain } from 'wherearewe'
 import http from 'ipfs-utils/src/http.js'
 import ControllerDaemon from './ipfsd-daemon.js'
 import ControllerRemote from './ipfsd-client.js'
@@ -17,7 +17,7 @@ const merge = mergeOptions.bind({ ignoreUndefined: true })
  */
 
 const defaults = {
-  remote: !isNode,
+  remote: !isNode && !isElectronMain,
   endpoint: process.env.IPFSD_CTL_SERVER || 'http://localhost:43134',
   disposable: true,
   test: false,
