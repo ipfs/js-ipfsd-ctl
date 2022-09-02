@@ -1,3 +1,10 @@
+## [12.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.1...v12.0.2) (2022-09-02)
+
+
+### Bug Fixes
+
+* make sure to behave as node.js in electron main process ([#761](https://github.com/ipfs/js-ipfsd-ctl/issues/761)) ([9492643](https://github.com/ipfs/js-ipfsd-ctl/commit/949264360020b6d45ae585a62d6ea8ca550ca0e4)), closes [#760](https://github.com/ipfs/js-ipfsd-ctl/issues/760)
+
 ## [12.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.0...v12.0.1) (2022-09-01)
 
 
