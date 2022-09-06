@@ -1,7 +1,7 @@
 import { createServer } from './src/index.js'
 import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
-import * as kuboRpcModule from 'js-kubo-rpc-client'
+import * as kuboRpcModule from 'kubo-rpc-client'
 import * as goIpfsModule from 'go-ipfs'
 
 /** @type {import('aegir').Options["build"]["config"]} */
