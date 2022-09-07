@@ -140,10 +140,10 @@
   "scripts": {
     "lint": "aegir lint",
     "build": "aegir build",
-    "test": "aegir test && USE_KUBO_JS=1 aegir test",
-    "test:node": "aegir test -t node && USE_KUBO_JS=1 aegir test -t node",
-    "test:chrome": "aegir test -t browser && USE_KUBO_JS=1 aegir test -t browser",
-    "test:firefox": "aegir test -t browser -- --browser firefox && USE_KUBO_JS=1 aegir test -t browser -- --browser firefox",
+    "test": "aegir test && cross-env USE_KUBO_JS=1 aegir test",
+    "test:node": "aegir test -t node && cross-env USE_KUBO_JS=1 aegir test -t node",
+    "test:chrome": "aegir test -t browser && cross-env USE_KUBO_JS=1 aegir test -t browser",
+    "test:firefox": "aegir test -t browser -- --browser firefox && cross-env USE_KUBO_JS=1 aegir test -t browser -- --browser firefox",
     "release": "aegir release"
   },
   "dependencies": {
@@ -165,6 +165,7 @@
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.9",
     "aegir": "^37.0.15",
+    "cross-env": "^7.0.3",
     "go-ipfs": "^0.13.0",
     "ipfs": "^0.63.5",
     "ipfs-client": "^0.8.3",

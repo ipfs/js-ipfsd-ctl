@@ -21,11 +21,19 @@ export default {
       }
     },
     before: async () => {
-      const server = createServer(undefined, {
-          ipfsModule,
-          ipfsHttpModule: process.env.USE_KUBO_JS ? undefined : ipfsHttpModule,
-          kuboRpcModule: process.env.USE_KUBO_JS ? kuboRpcModule : undefined
-        }, {
+      /**
+       * @type {import('./src/types.js').ControllerOptions}
+       */
+      let controllerOptions = {
+        ipfsModule,
+      }
+
+      if (process.env.USE_KUBO_JS) {
+        controllerOptions.kuboRpcModule = kuboRpcModule
+      } else {
+        controllerOptions.ipfsHttpModule = ipfsHttpModule
+      }
+      const server = createServer(undefined, controllerOptions, {
           go: {
             ipfsBin: goIpfsModule.path()
           },
