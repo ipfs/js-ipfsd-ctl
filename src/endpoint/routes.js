@@ -1,10 +1,14 @@
-'use strict'
+import { nanoid } from 'nanoid'
+import Joi from 'joi'
+import boom from '@hapi/boom'
+import { logger } from '@libp2p/logger'
+import { tmpDir } from '../utils.js'
 
-const { nanoid } = require('nanoid')
-const Joi = require('joi')
-const boom = require('@hapi/boom')
-const debug = require('debug')('ipfsd-ctl:routes')
-const { tmpDir } = require('../utils')
+/**
+ * @typedef {import('../types').Factory} Factory
+ */
+
+const debug = logger('ipfsd-ctl:routes')
 
 const routeOptions = {
   validate: {
@@ -37,10 +41,10 @@ const nodes = {}
  * @namespace EndpointServerRoutes
  * @ignore
  * @param {import('@hapi/hapi').Server} server
- * @param {Function} createFactory
+ * @param {() => Factory | Promise<Factory>} createFactory
  * @returns {void}
  */
-module.exports = (server, createFactory) => {
+export default (server, createFactory) => {
   server.route({
     method: 'GET',
     path: '/util/tmp-dir',
@@ -75,8 +79,9 @@ module.exports = (server, createFactory) => {
     handler: async (request) => {
       const opts = request.payload || {}
       try {
-        const ipfsd = createFactory()
+        const ipfsd = await createFactory()
         const id = nanoid()
+        // @ts-expect-error opts is a json object
         nodes[id] = await ipfsd.spawn(opts)
         return {
           id: id,

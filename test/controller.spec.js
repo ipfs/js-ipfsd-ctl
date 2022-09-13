@@ -1,12 +1,15 @@
 /* eslint-env mocha */
-'use strict'
 
-const { expect } = require('aegir/utils/chai')
-const merge = require('merge-options')
-const { createFactory, createController } = require('../src')
-const { repoExists } = require('../src/utils')
-const { isBrowser, isWebWorker, isNode } = require('ipfs-utils/src/env')
-const waitFor = require('p-wait-for')
+import { expect } from 'aegir/chai'
+import merge from 'merge-options'
+import { createFactory, createController } from '../src/index.js'
+import { repoExists } from '../src/utils.js'
+import { isBrowser, isWebWorker, isNode } from 'wherearewe'
+import waitFor from 'p-wait-for'
+import * as ipfsModule from 'ipfs'
+import * as ipfsHttpModule from 'ipfs-http-client'
+// @ts-ignore no types
+import * as goIpfsModule from 'go-ipfs'
 
 /**
  * @typedef {import("../src/types").ControllerOptions} ControllerOptions
@@ -49,20 +52,19 @@ const types = [{
   }
 }]
 
-describe('Controller API', function () {
+describe('Controller API', async function () {
   this.timeout(60000)
 
   const factory = createFactory({
     test: true,
-    ipfsHttpModule: require('ipfs-http-client'),
-    ipfsModule: require('ipfs')
+    ipfsHttpModule,
+    ipfsModule: (await import('ipfs'))
   }, {
     js: {
-      ipfsBin: isNode ? require('ipfs').path() : undefined
+      ipfsBin: isNode ? ipfsModule.path() : undefined
     },
     go: {
-      // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
-      ipfsBin: isNode ? require('go-ipfs').path() : undefined
+      ipfsBin: isNode ? goIpfsModule.path() : undefined
     }
   })
 
@@ -191,8 +193,8 @@ describe('Controller API', function () {
           // the node twice during test cleanup
           const ctl = await createController(merge(
             opts, {
-              ipfsHttpModule: require('ipfs-http-client'),
-              ipfsModule: require('ipfs'),
+              ipfsHttpModule,
+              ipfsModule,
               ipfsOptions: {
                 repo: factory.controllers[0].path
               }
@@ -218,9 +220,8 @@ describe('Controller API', function () {
           const ctl1 = await createController(merge(
             {
               type: 'go',
-              ipfsHttpModule: require('ipfs-http-client'),
-              // @ts-ignore no types - TODO: remove when https://github.com/ipfs/npm-go-ipfs/pull/41 is released
-              ipfsBin: require('go-ipfs').path(),
+              ipfsHttpModule,
+              ipfsBin: goIpfsModule.path(),
               test: true,
               disposable: true,
               remote: false,
@@ -233,8 +234,8 @@ describe('Controller API', function () {
 
           const ctl2 = await createController(merge(
             opts, {
-              ipfsHttpModule: require('ipfs-http-client'),
-              ipfsModule: require('ipfs'),
+              ipfsHttpModule,
+              ipfsModule,
               test: true,
               disposable: true,
               ipfsOptions: {

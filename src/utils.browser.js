@@ -1,5 +1,4 @@
-'use strict'
-const { nanoid } = require('nanoid')
+import { nanoid } from 'nanoid'
 
 /**
  * @param {string} path
@@ -18,7 +17,7 @@ const deleteDb = (path) => {
  *
  * @param {string} repoPath
  */
-const removeRepo = async (repoPath) => {
+export const removeRepo = async (repoPath) => {
   await deleteDb(repoPath)
   await deleteDb(repoPath + '/keys')
   await deleteDb(repoPath + '/blocks')
@@ -28,7 +27,7 @@ const removeRepo = async (repoPath) => {
 /**
  * @param {string} repoPath
  */
-const repoExists = (repoPath) => {
+export const repoExists = (repoPath) => {
   return new Promise((resolve, reject) => {
     const req = self.indexedDB.open(repoPath)
     let existed = true
@@ -44,22 +43,14 @@ const repoExists = (repoPath) => {
   })
 }
 
-const defaultRepo = () => {
+export const defaultRepo = () => {
   return 'ipfs'
 }
 
-const checkForRunningApi = () => {
+export const checkForRunningApi = () => {
   return null
 }
 
-const tmpDir = (type = '') => {
+export const tmpDir = (type = '') => {
   return `${type}_ipfs_${nanoid()}`
-}
-
-module.exports = {
-  removeRepo,
-  repoExists,
-  defaultRepo,
-  checkForRunningApi,
-  tmpDir
 }

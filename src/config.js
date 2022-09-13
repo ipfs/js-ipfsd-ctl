@@ -1,12 +1,10 @@
-'use strict'
-
-const { isBrowser, isWebWorker } = require('ipfs-utils/src/env')
+import { isBrowser, isWebWorker } from 'wherearewe'
 
 /**
  * @param {object} args
  * @param {import('./types').NodeType} args.type
  */
-module.exports = ({ type }) => {
+export default ({ type }) => {
   /** @type {string[]} */
   let swarm
 

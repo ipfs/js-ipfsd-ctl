@@ -1,12 +1,13 @@
 /* eslint-env mocha */
 /* eslint max-nested-callbacks: ["error", 8] */
-'use strict'
 
-const { expect } = require('aegir/utils/chai')
-const os = require('os')
-const path = require('path')
-const { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo, buildInitArgs, buildStartArgs } = require('../src/utils')
-const { createFactory, createController } = require('../src')
+import { expect } from 'aegir/chai'
+import os from 'os'
+import path from 'path'
+import { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo, buildInitArgs, buildStartArgs } from '../src/utils.js'
+import { createFactory, createController } from '../src/index.js'
+import * as ipfsModule from 'ipfs'
+import * as ipfsHttpModule from 'ipfs-http-client'
 
 describe('utils node version', function () {
   this.timeout(60000)
@@ -24,9 +25,9 @@ describe('utils node version', function () {
     it('should return path to api with running node', async () => {
       const node = await createController({
         test: true,
-        ipfsModule: require('ipfs'),
-        ipfsHttpModule: require('ipfs-http-client'),
-        ipfsBin: require('ipfs').path()
+        ipfsModule,
+        ipfsHttpModule,
+        ipfsBin: ipfsModule.path()
       })
       expect(checkForRunningApi(node.path)).to.be.contain('/ip4/127.0.0.1/tcp/')
       await node.stop()
@@ -43,9 +44,9 @@ describe('utils node version', function () {
   it('removeRepo should work', async () => {
     const f = createFactory({
       test: true,
-      ipfsModule: require('ipfs'),
-      ipfsHttpModule: require('ipfs-http-client'),
-      ipfsBin: require('ipfs').path()
+      ipfsModule,
+      ipfsHttpModule,
+      ipfsBin: ipfsModule.path()
     })
     const dir = await f.tmpDir()
     const node = await f.spawn({
@@ -65,9 +66,9 @@ describe('utils node version', function () {
       const node = await createController({
         type: 'proc',
         test: true,
-        ipfsModule: require('ipfs'),
-        ipfsHttpModule: require('ipfs-http-client'),
-        ipfsBin: require('ipfs').path()
+        ipfsModule,
+        ipfsHttpModule,
+        ipfsBin: ipfsModule.path()
       })
       expect(await repoExists(node.path)).to.be.true()
       await node.stop()

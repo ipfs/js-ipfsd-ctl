@@ -1,11 +1,17 @@
 
-import { EventEmitter } from 'events'
-import { IPFS } from 'ipfs-core-types'
-import type { Multiaddr } from 'multiaddr'
+import type { EventEmitter } from 'events'
+import type { IPFS } from 'ipfs-core-types'
+import type { Multiaddr } from '@multiformats/multiaddr'
+import type { PeerId } from '@libp2p/interface-peer-id'
 
 export interface Subprocess {
   stderr: EventEmitter | null
   stdout: EventEmitter | null
+}
+
+export interface PeerData {
+  id: PeerId
+  addresses: Multiaddr[]
 }
 
 export interface Controller {
@@ -23,6 +29,7 @@ export interface Controller {
   subprocess?: Subprocess | null
   opts: ControllerOptions
   apiAddr: Multiaddr
+  peer: PeerData
 }
 
 export interface RemoteState {

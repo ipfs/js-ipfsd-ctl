@@ -1,12 +1,13 @@
-'use strict'
-const merge = require('merge-options').bind({ ignoreUndefined: true })
-const { tmpDir } = require('./utils')
-const { isNode } = require('ipfs-utils/src/env')
-const http = require('ipfs-utils/src/http')
-const ControllerDaemon = require('./ipfsd-daemon')
-const ControllerRemote = require('./ipfsd-client')
-const ControllerProc = require('./ipfsd-in-proc')
-const testsConfig = require('./config')
+import mergeOptions from 'merge-options'
+import { tmpDir } from './utils.js'
+import { isNode, isElectronMain } from 'wherearewe'
+import http from 'ipfs-utils/src/http.js'
+import ControllerDaemon from './ipfsd-daemon.js'
+import ControllerRemote from './ipfsd-client.js'
+import ControllerProc from './ipfsd-in-proc.js'
+import testsConfig from './config.js'
+
+const merge = mergeOptions.bind({ ignoreUndefined: true })
 
 /**
  * @typedef {import("./types").ControllerOptions} ControllerOptions
@@ -16,7 +17,7 @@ const testsConfig = require('./config')
  */
 
 const defaults = {
-  remote: !isNode,
+  remote: !isNode && !isElectronMain,
   endpoint: process.env.IPFSD_CTL_SERVER || 'http://localhost:43134',
   disposable: true,
   test: false,
@@ -165,4 +166,4 @@ class Factory {
   }
 }
 
-module.exports = Factory
+export default Factory

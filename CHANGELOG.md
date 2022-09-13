@@ -1,3 +1,52 @@
+## [12.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.1...v12.0.2) (2022-09-02)
+
+
+### Bug Fixes
+
+* make sure to behave as node.js in electron main process ([#761](https://github.com/ipfs/js-ipfsd-ctl/issues/761)) ([9492643](https://github.com/ipfs/js-ipfsd-ctl/commit/949264360020b6d45ae585a62d6ea8ca550ca0e4)), closes [#760](https://github.com/ipfs/js-ipfsd-ctl/issues/760)
+
+## [12.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.0...v12.0.1) (2022-09-01)
+
+
+### Trivial Changes
+
+* Update .github/workflows/stale.yml [skip ci] ([8bf29d3](https://github.com/ipfs/js-ipfsd-ctl/commit/8bf29d341897a2c0660e6b0e47ce8c93e9abbb69))
+* update project config ([#768](https://github.com/ipfs/js-ipfsd-ctl/issues/768)) ([29c44cb](https://github.com/ipfs/js-ipfsd-ctl/commit/29c44cb0b83c97f40e77775e8ddb7772260dddaa))
+
+
+### Dependencies
+
+* bump wherearewe from 1.0.2 to 2.0.1 ([#762](https://github.com/ipfs/js-ipfsd-ctl/issues/762)) ([7423b90](https://github.com/ipfs/js-ipfsd-ctl/commit/7423b90f69c6a77c4d2eb9095cb2774ccfc80bc0))
+
+## [12.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v11.0.1...v12.0.0) (2022-06-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* pulls in new peer-id interface
+
+### Features
+
+* update deps ([#756](https://github.com/ipfs/js-ipfsd-ctl/issues/756)) ([1355786](https://github.com/ipfs/js-ipfsd-ctl/commit/13557866c8c7b84c7887f6baf6fdd41324d74725))
+
+### [11.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v11.0.0...v11.0.1) (2022-05-25)
+
+
+### Trivial Changes
+
+* bump @libp2p/interfaces from 1.3.32 to 2.0.2 ([#734](https://github.com/ipfs/js-ipfsd-ctl/issues/734)) ([cc91981](https://github.com/ipfs/js-ipfsd-ctl/commit/cc91981e5607b6653fb4388698945431d80aadcb))
+
+## [11.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.6...v11.0.0) (2022-05-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* the `controller.api.peerId` property is now at `controller.peer`
+
+### Features
+
+* convert to ESM ([#731](https://github.com/ipfs/js-ipfsd-ctl/issues/731)) ([c6ad54d](https://github.com/ipfs/js-ipfsd-ctl/commit/c6ad54d62a2f6425a232152db0bfac75a7aa7a8c))
+
 ## [10.0.6](https://github.com/ipfs/js-ipfsd-ctl/compare/v10.0.5...v10.0.6) (2022-02-22)
 
 
@@ -1355,6 +1404,3 @@ Same as js-ipfs constructor https://github.com/ipfs/js-ipfs#ipfs-constructor
 
 <a name="0.4.1"></a>
 ## 0.4.1 (2015-09-18)
-
-
-

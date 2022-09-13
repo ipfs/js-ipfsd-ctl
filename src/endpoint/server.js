@@ -1,7 +1,9 @@
-'use strict'
+import Hapi from '@hapi/hapi'
+import routes from './routes.js'
 
-const Hapi = require('@hapi/hapi')
-const routes = require('./routes')
+/**
+ * @typedef {import('../types').Factory} Factory
+ */
 
 /**
  * Creates an instance of Server.
@@ -11,10 +13,10 @@ const routes = require('./routes')
 class Server {
   /**
    * @class
-   * @param {Object} options
+   * @param {object} options
    * @param {number} [options.port=43134]
    * @param {string} [options.host='localhost']
-   * @param {Function} createFactory
+   * @param {() => Factory | Promise<Factory>} createFactory
    */
   constructor (options = { port: 43134, host: 'localhost' }, createFactory) {
     this.options = options
@@ -61,4 +63,4 @@ class Server {
   }
 }
 
-module.exports = Server
+export default Server
