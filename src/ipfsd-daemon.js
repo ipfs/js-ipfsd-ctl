@@ -1,3 +1,4 @@
+// @ts-check
 'use strict'
 
 const { Multiaddr } = require('multiaddr')
@@ -27,6 +28,29 @@ function translateError (err) {
 }
 
 /**
+ *
+ * @param {object} param0
+ * @param {unknown} param0.err
+ * @param {string} param0.stdout
+ * @param {string} param0.stderr
+ * @param {string} [param0.nameFallback]
+ * @param {string} [param0.messageFallback]
+ *
+ * @returns {Error & { stdout: string, stderr: string }}
+ */
+function translateUnknownError ({err, stdout, stderr, nameFallback = 'Unknown Error', messageFallback = 'Unknown Error Message'}) {
+  const error = /** @type {Error} */(err)
+  const name = error?.name || nameFallback
+  const message = error?.message || messageFallback
+  return translateError({
+    name,
+    message,
+    stdout,
+    stderr,
+  })
+}
+
+/**
  * @typedef {import("./types").ControllerOptions} ControllerOptions
  * @typedef {import("./types").Controller} Controller
  */
@@ -35,9 +59,11 @@ function translateError (err) {
  * Controller for daemon nodes
  *
  * @class
+ * @implements {Controller}
  *
  */
 class Daemon {
+
   /**
    * @class
    * @param {Required<ControllerOptions>} opts
@@ -53,6 +79,7 @@ class Daemon {
     this.started = false
     this.clean = true
     /** @type {Multiaddr} */
+    // @ts-ignore
     this.apiAddr // eslint-disable-line no-unused-expressions
     this.grpcAddr = null
     this.gatewayAddr = null
@@ -117,7 +144,7 @@ class Daemon {
    * Initialize a repo.
    *
    * @param {import('./types').InitOptions} [initOptions={}]
-   * @returns {Promise<Controller>}
+   * @returns {Promise<Daemon>}
    */
   async init (initOptions = {}) {
     this.initialized = await repoExists(this.path)
@@ -367,8 +394,13 @@ class Daemon {
       try {
         return JSON.parse(stdout)
       } catch (err) {
-        err.message = `${err.message}: ${stderr || stdout}`
-        throw err
+        throw translateUnknownError({
+          err,
+          stderr,
+          stdout,
+          nameFallback: 'JSON.parse error',
+          messageFallback: 'Failed to parse stdout as JSON',
+        })
       }
     }
 
