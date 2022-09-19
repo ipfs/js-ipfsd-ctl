@@ -144,10 +144,10 @@
   "scripts": {
     "lint": "aegir lint",
     "build": "aegir build",
-    "test": "aegir test && cross-env USE_KUBO_JS=1 aegir test",
-    "test:node": "aegir test -t node && cross-env USE_KUBO_JS=1 aegir test -t node",
-    "test:chrome": "aegir test -t browser && cross-env USE_KUBO_JS=1 aegir test -t browser",
-    "test:firefox": "aegir test -t browser -- --browser firefox && cross-env USE_KUBO_JS=1 aegir test -t browser -- --browser firefox",
+    "test": "aegir test",
+    "test:node": "aegir test -t node",
+    "test:chrome": "aegir test -t browser",
+    "test:firefox": "aegir test -t browser -- --browser firefox",
     "release": "aegir release"
   },
   "dependencies": {

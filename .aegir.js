@@ -28,17 +28,14 @@ export default {
         ipfsModule,
       }
 
-      if (process.env.USE_KUBO_JS) {
-        controllerOptions.kuboRpcModule = kuboRpcModule
-      } else {
-        controllerOptions.ipfsHttpModule = ipfsHttpModule
-      }
       const server = createServer(undefined, controllerOptions, {
           go: {
-            ipfsBin: goIpfsModule.path()
+            ipfsBin: goIpfsModule.path(),
+            kuboRpcModule
           },
           js: {
-            ipfsBin: ipfsModule.path()
+            ipfsBin: ipfsModule.path(),
+            ipfsHttpModule
           }
         }
       )
