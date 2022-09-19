@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "12.0.0",
+  "version": "12.0.2",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "Apache-2.0 OR MIT",
   "homepage": "https://github.com/ipfs/js-ipfsd-ctl#readme",
@@ -83,15 +83,15 @@
               "release": "patch"
             },
             {
-              "type": "chore",
-              "release": "patch"
-            },
-            {
               "type": "docs",
               "release": "patch"
             },
             {
               "type": "test",
+              "release": "patch"
+            },
+            {
+              "type": "deps",
               "release": "patch"
             },
             {
@@ -121,7 +121,11 @@
               },
               {
                 "type": "docs",
-                "section": "Trivial Changes"
+                "section": "Documentation"
+              },
+              {
+                "type": "deps",
+                "section": "Dependencies"
               },
               {
                 "type": "test",
@@ -160,7 +164,7 @@
     "nanoid": "^4.0.0",
     "p-wait-for": "^4.1.0",
     "temp-write": "^5.0.0",
-    "wherearewe": "^1.0.2"
+    "wherearewe": "^2.0.1"
   },
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.9",
