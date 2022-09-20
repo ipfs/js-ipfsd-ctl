@@ -169,7 +169,6 @@
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.9",
     "aegir": "^37.0.15",
-    "cross-env": "^7.0.3",
     "go-ipfs": "^0.13.0",
     "ipfs": "^0.63.5",
     "ipfs-client": "^0.8.3",
