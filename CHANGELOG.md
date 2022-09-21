@@ -1,3 +1,10 @@
+## [12.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.2...v12.0.3) (2022-09-21)
+
+
+### Dependencies
+
+* update @multiformats/multiaddr to 11.0.0 ([#775](https://github.com/ipfs/js-ipfsd-ctl/issues/775)) ([087e80c](https://github.com/ipfs/js-ipfsd-ctl/commit/087e80ce905d846f6047f7528ae9a2468afa583e))
+
 ## [12.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.1...v12.0.2) (2022-09-02)
 
 
