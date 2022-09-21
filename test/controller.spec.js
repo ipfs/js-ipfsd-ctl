@@ -69,6 +69,8 @@ function addCorrectRpcModule (opts, additionalOpts) {
   } else {
     additionalOpts.ipfsHttpModule = ipfsHttpModule
   }
+
+  return additionalOpts
 }
 describe('Controller API', async function () {
   this.timeout(60000)
