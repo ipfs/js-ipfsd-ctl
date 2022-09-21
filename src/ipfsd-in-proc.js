@@ -9,6 +9,8 @@ const daemonLog = {
   info: logger('ipfsd-ctl:proc:stdout'),
   err: logger('ipfsd-ctl:proc:stderr')
 }
+const rpcModuleLogger = logger('ipfsd-ctl:client:rpcModule:stdout')
+
 /**
  * @typedef {import("./types").ControllerOptions} ControllerOptions
  * @typedef {import("./types").InitOptions} InitOptions
@@ -69,8 +71,10 @@ class InProc {
     this.apiAddr = new Multiaddr(addr)
 
     if (this.opts.kuboRpcModule != null) {
+      rpcModuleLogger('Using kubo-rpc-client')
       this.api = this.opts.kuboRpcModule.create(addr)
     } else if (this.opts.ipfsHttpModule != null) {
+      rpcModuleLogger('Using ipfs-http-client')
       this.api = this.opts.ipfsHttpModule.create(addr)
     } else {
       throw new Error('You must pass either a kuboRpcModule or ipfsHttpModule')
