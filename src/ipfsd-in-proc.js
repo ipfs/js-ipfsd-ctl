@@ -1,4 +1,4 @@
-import { Multiaddr } from '@multiformats/multiaddr'
+import { multiaddr } from '@multiformats/multiaddr'
 import mergeOptions from 'merge-options'
 import { repoExists, removeRepo, checkForRunningApi, tmpDir, defaultRepo } from './utils.js'
 import { logger } from '@libp2p/logger'
@@ -10,8 +10,9 @@ const daemonLog = {
   err: logger('ipfsd-ctl:proc:stderr')
 }
 /**
- * @typedef {import("./types").ControllerOptions} ControllerOptions
- * @typedef {import("./types").InitOptions} InitOptions
+ * @typedef {import('./types').ControllerOptions} ControllerOptions
+ * @typedef {import('./types').InitOptions} InitOptions
+ * @typedef {import('@multiformats/multiaddr').Multiaddr} Multiaddr
  */
 
 /**
@@ -66,7 +67,7 @@ class InProc {
    * @param {string} addr
    */
   _setApi (addr) {
-    this.apiAddr = new Multiaddr(addr)
+    this.apiAddr = multiaddr(addr)
     this.api = this.opts.ipfsHttpModule.create(addr)
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port

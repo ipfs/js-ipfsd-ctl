@@ -12,7 +12,7 @@ import * as ipfsHttpModule from 'ipfs-http-client'
 import * as goIpfsModule from 'go-ipfs'
 
 /**
- * @typedef {import("../src/types").ControllerOptions} ControllerOptions
+ * @typedef {import('../src/types').ControllerOptions} ControllerOptions
  */
 
 /**
