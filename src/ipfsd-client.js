@@ -1,4 +1,4 @@
-import { Multiaddr } from '@multiformats/multiaddr'
+import { multiaddr } from '@multiformats/multiaddr'
 import http from 'ipfs-utils/src/http.js'
 import mergeOptions from 'merge-options'
 import { logger } from '@libp2p/logger'
@@ -10,7 +10,10 @@ const daemonLog = {
   err: logger('ipfsd-ctl:client:stderr')
 }
 
-/** @typedef {import("./index").ControllerOptions} ControllerOptions */
+/**
+ * @typedef {import('./index').ControllerOptions} ControllerOptions
+ * @typedef {import('@multiformats/multiaddr').Multiaddr} Multiaddr
+ */
 
 /**
  * Controller for remote nodes
@@ -61,7 +64,7 @@ class Client {
    */
   _setApi (addr) {
     if (addr) {
-      this.apiAddr = new Multiaddr(addr)
+      this.apiAddr = multiaddr(addr)
     }
   }
 
@@ -71,7 +74,7 @@ class Client {
    */
   _setGateway (addr) {
     if (addr) {
-      this.gatewayAddr = new Multiaddr(addr)
+      this.gatewayAddr = multiaddr(addr)
     }
   }
 
@@ -81,7 +84,7 @@ class Client {
    */
   _setGrpc (addr) {
     if (addr) {
-      this.grpcAddr = new Multiaddr(addr)
+      this.grpcAddr = multiaddr(addr)
     }
   }
 
