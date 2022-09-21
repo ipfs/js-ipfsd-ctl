@@ -10,9 +10,9 @@ import testsConfig from './config.js'
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
 /**
- * @typedef {import("./types").ControllerOptions} ControllerOptions
- * @typedef {import("./types").ControllerOptionsOverrides} ControllerOptionsOverrides
- * @typedef {import("./types").IPFSOptions} IPFSOptions
+ * @typedef {import('./types').ControllerOptions} ControllerOptions
+ * @typedef {import('./types').ControllerOptionsOverrides} ControllerOptionsOverrides
+ * @typedef {import('./types').IPFSOptions} IPFSOptions
  * @typedef {import('./types').Controller} Controller
  */
 

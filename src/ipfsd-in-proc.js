@@ -1,4 +1,4 @@
-import { Multiaddr } from '@multiformats/multiaddr'
+import { multiaddr } from '@multiformats/multiaddr'
 import mergeOptions from 'merge-options'
 import { repoExists, removeRepo, checkForRunningApi, tmpDir, defaultRepo } from './utils.js'
 import { logger } from '@libp2p/logger'
@@ -12,8 +12,9 @@ const daemonLog = {
 const rpcModuleLogger = logger('ipfsd-ctl:client:rpcModule:stdout')
 
 /**
- * @typedef {import("./types").ControllerOptions} ControllerOptions
- * @typedef {import("./types").InitOptions} InitOptions
+ * @typedef {import('./types').ControllerOptions} ControllerOptions
+ * @typedef {import('./types').InitOptions} InitOptions
+ * @typedef {import('@multiformats/multiaddr').Multiaddr} Multiaddr
  */
 
 /**
@@ -68,7 +69,7 @@ class InProc {
    * @param {string} addr
    */
   _setApi (addr) {
-    this.apiAddr = new Multiaddr(addr)
+    this.apiAddr = multiaddr(addr)
 
     if (this.opts.kuboRpcModule != null) {
       rpcModuleLogger('Using kubo-rpc-client')
@@ -79,6 +80,7 @@ class InProc {
     } else {
       throw new Error('You must pass either a kuboRpcModule or ipfsHttpModule')
     }
+    
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }

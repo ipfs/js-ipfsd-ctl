@@ -13,7 +13,7 @@ import * as kuboRpcModule from 'kubo-rpc-client'
 import * as goIpfsModule from 'go-ipfs'
 
 /**
- * @typedef {import("../src/types").ControllerOptions} ControllerOptions
+ * @typedef {import('../src/types').ControllerOptions} ControllerOptions
  */
 
 /**

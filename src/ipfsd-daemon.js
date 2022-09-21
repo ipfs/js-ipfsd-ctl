@@ -1,4 +1,4 @@
-import { Multiaddr } from '@multiformats/multiaddr'
+import { multiaddr } from '@multiformats/multiaddr'
 import fs from 'fs/promises'
 import mergeOptions from 'merge-options'
 import { logger } from '@libp2p/logger'
@@ -8,6 +8,10 @@ import path from 'path'
 import os from 'os'
 import { checkForRunningApi, repoExists, tmpDir, defaultRepo, buildInitArgs, buildStartArgs } from './utils.js'
 import waitFor from 'p-wait-for'
+
+/**
+ * @typedef {import('@multiformats/multiaddr').Multiaddr} Multiaddr
+ */
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
@@ -28,8 +32,8 @@ function translateError (err) {
 }
 
 /**
- * @typedef {import("./types").ControllerOptions} ControllerOptions
- * @typedef {import("./types").Controller} Controller
+ * @typedef {import('./types').ControllerOptions} ControllerOptions
+ * @typedef {import('./types').Controller} Controller
  */
 
 /**
@@ -75,7 +79,7 @@ class Daemon {
    * @param {string} addr
    */
   _setApi (addr) {
-    this.apiAddr = new Multiaddr(addr)
+    this.apiAddr = multiaddr(addr)
   }
 
   /**
@@ -83,7 +87,7 @@ class Daemon {
    * @param {string} addr
    */
   _setGrpc (addr) {
-    this.grpcAddr = new Multiaddr(addr)
+    this.grpcAddr = multiaddr(addr)
   }
 
   /**
@@ -91,7 +95,7 @@ class Daemon {
    * @param {string} addr
    */
   _setGateway (addr) {
-    this.gatewayAddr = new Multiaddr(addr)
+    this.gatewayAddr = multiaddr(addr)
   }
 
   _createApi () {
