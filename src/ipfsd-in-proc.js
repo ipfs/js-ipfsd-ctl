@@ -80,7 +80,7 @@ class InProc {
     } else {
       throw new Error('You must pass either a kuboRpcModule or ipfsHttpModule')
     }
-    
+
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
