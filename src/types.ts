@@ -14,20 +14,20 @@ export interface PeerData {
   addresses: Multiaddr[]
 }
 
-export interface Controller {
-  init: (options?: InitOptions) => Promise<Controller>
-  start: () => Promise<Controller>
-  stop: () => Promise<Controller>
-  cleanup: () => Promise<Controller>
+export interface Controller<Type extends NodeType = NodeType> {
+  init: (options?: InitOptions) => Promise<Controller<Type>>
+  start: () => Promise<Controller<Type>>
+  stop: () => Promise<Controller<Type>>
+  cleanup: () => Promise<Controller<Type>>
   pid: () => Promise<number>
   version: () => Promise<string>
   path: string
   started: boolean
   initialized: boolean
   clean: boolean
-  api: IPFS
+  api: Type extends 'go' ? import('kubo-rpc-client').IPFSHTTPClient : IPFS
   subprocess?: Subprocess | null
-  opts: ControllerOptions
+  opts: ControllerOptions<Type>
   apiAddr: Multiaddr
   peer: PeerData
 }
@@ -135,7 +135,7 @@ export interface IPFSOptions {
   repoAutoMigrate?: boolean
 }
 
-export interface ControllerOptions {
+export interface ControllerOptions<Type extends NodeType = NodeType> {
   /**
    * Flag to activate custom config for tests
    */
@@ -155,7 +155,7 @@ export interface ControllerOptions {
   /**
    * The daemon type
    */
-  type?: NodeType
+  type?: Type
   /**
    * Additional environment variables, passed to executing shell. Only applies for Daemon controllers
    */
@@ -199,15 +199,15 @@ export interface ControllerOptions {
 }
 
 export interface ControllerOptionsOverrides {
-  js?: ControllerOptions
-  go?: ControllerOptions
-  proc?: ControllerOptions
+  js?: ControllerOptions<'js'>
+  go?: ControllerOptions<'go'>
+  proc?: ControllerOptions<'proc'>
 }
 
-export interface Factory {
+export interface Factory<Type extends NodeType = NodeType> {
   tmpDir: (options?: ControllerOptions) => Promise<string>
-  spawn: (options?: ControllerOptions) => Promise<Controller>
+  spawn: (options?: ControllerOptions) => Promise<Controller<Type>>
   clean: () => Promise<void>
-  controllers: Controller[]
-  opts: ControllerOptions
+  controllers: Array<Controller<Type>>
+  opts: ControllerOptions<Type>
 }
