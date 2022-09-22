@@ -3,7 +3,6 @@ import type { EventEmitter } from 'events'
 import type { IPFS } from 'ipfs-core-types'
 import type { Multiaddr } from '@multiformats/multiaddr'
 import type { PeerId } from '@libp2p/interface-peer-id'
-import DefaultFactory from './factory.js'
 
 import type Daemon from './ipfsd-daemon.js'
 import type InProc from './ipfsd-in-proc'
@@ -142,7 +141,7 @@ export interface IPFSOptions {
   repoAutoMigrate?: boolean
 }
 
-export interface ControllerOptions_RemoteEnabled {remote: boolean & true, endpoint: string}
+export interface ControllerOptions_RemoteEnabled {remote: boolean & true, endpoint?: string}
 export interface ControllerOptions_RemoteDisabled {remote?: boolean & false, endpoint?: never}
 export type ControllerOptions_Remote = ControllerOptions_RemoteEnabled | ControllerOptions_RemoteDisabled
 
@@ -219,7 +218,7 @@ export interface Factory<Type extends NodeType = NodeType> {
   tmpDir: <T extends Type = Type>(options?: ControllerOptions<T>) => Promise<string>
   spawn: <T extends Type>(options?: ControllerOptions<T>) => Promise<Controller<T>>
   clean: () => Promise<void>
-  controllers: Array<ControllerTypes<Type>>
+  controllers: Array<Controller<Type>>
   opts: ControllerOptions<Type>
 }
 

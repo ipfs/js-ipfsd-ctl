@@ -1,20 +1,20 @@
 import DefaultFactory from './factory.js'
 import Server from './endpoint/server.js'
-import type { Controller, ControllerOptions, ControllerOptionsOverrides, Factory, NodeType } from './types'
+import type { Controller, ControllerOptions, ControllerOptionsOverrides, NodeType } from './types'
 
 /**
  * Creates a factory
  */
-export const createFactory = <T extends NodeType>(options: ControllerOptions<T>, overrides: ControllerOptionsOverrides) => {
-  return new DefaultFactory<T>(options, overrides) as Factory<T>
+export const createFactory = <T extends NodeType>(options: ControllerOptions<T>, overrides?: ControllerOptionsOverrides): DefaultFactory<T> => {
+  return new DefaultFactory<T>(options, overrides)
 }
 
 /**
  * Creates a node
  */
-export const createController = async <T extends NodeType>(options: ControllerOptions<T>): Promise<Controller<T>> => {
+export const createController = async <T extends NodeType = 'go'>(options: ControllerOptions<T>): Promise<Controller<T>> => {
   const f = new DefaultFactory<T>()
-  return await f.spawn(options)
+  return await f.spawn<T>(options)
 }
 
 /**
@@ -25,7 +25,7 @@ export const createServer = <T extends NodeType>(options?: number | { port: numb
     options = { port: options }
   }
 
-  return new Server(options, async () => {
+  return new Server(options, async (): Promise<DefaultFactory> => {
     return createFactory<T>(factoryOptions, factoryOverrides)
   })
 }

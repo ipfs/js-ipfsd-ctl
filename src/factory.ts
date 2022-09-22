@@ -7,7 +7,6 @@ import ControllerRemote from './ipfsd-client.js'
 import ControllerProc from './ipfsd-in-proc.js'
 import testsConfig from './config.js'
 import type { Controller, ControllerOptions, ControllerOptionsOverrides, ControllerOptions_RemoteEnabled, IPFSOptions, NodeType } from './types'
-// import type ControllerBase from './controller-base'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
@@ -33,7 +32,7 @@ if (defaults.remote === true) {
 class Factory<T extends NodeType = NodeType> {
   opts: ControllerOptions<T>
   overrides: ControllerOptionsOverrides
-  controllers: Array<Controller<T>>
+  controllers: Array<Controller<NodeType>>
 
   constructor (options: ControllerOptions<T> = {}, overrides: ControllerOptionsOverrides = {}) {
     this.opts = merge(defaults, options)
@@ -68,7 +67,8 @@ class Factory<T extends NodeType = NodeType> {
     return await Promise.resolve(tmpDir(opts.type))
   }
 
-  async _spawnRemote <T extends NodeType>(options: IPFSOptions & ControllerOptions & ControllerOptions_RemoteEnabled & { type: T }): Promise<Controller<T>> {
+  async _spawnRemote <SpawnRemoteType extends NodeType>(options: IPFSOptions & ControllerOptions<SpawnRemoteType> & ControllerOptions_RemoteEnabled & {type: SpawnRemoteType}): Promise<Controller<SpawnRemoteType>> {
+    const remoteEndpoint = options.endpoint ?? 'http://localhost:43134'
     const opts = {
       json: {
         ...options,
@@ -82,11 +82,11 @@ class Factory<T extends NodeType = NodeType> {
     }
 
     const res = await http.post(
-      `${options.endpoint}/spawn`,
+      `${remoteEndpoint}/spawn`,
       opts
     )
     return new ControllerRemote(
-      options.endpoint,
+      remoteEndpoint,
       await res.json(),
       options
     )
@@ -95,12 +95,13 @@ class Factory<T extends NodeType = NodeType> {
   /**
    * Spawn an IPFSd Controller
    */
-  async spawn <SpawnType extends T>(options: ControllerOptions<SpawnType> & { type: SpawnType }): Promise<Controller<SpawnType>> {
-    const type = options?.type ?? this.opts.type ?? 'go'
+  async spawn <SpawnType extends NodeType | T | 'go' = 'go'>(options: ControllerOptions<SpawnType> = {}): Promise<Controller<SpawnType>> {
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, @typescript-eslint/prefer-nullish-coalescing
+    const type: SpawnType = (options?.type || this.opts.type || 'go') as SpawnType
     options = { ...options, type }
-    const opts: ControllerOptions<SpawnType> & { type: SpawnType } = merge(
+    const opts: typeof options & {type: SpawnType} = merge(
       this.overrides[type],
-      options ?? { type }
+      options
     )
 
     // IPFS options defaults
@@ -118,14 +119,13 @@ class Factory<T extends NodeType = NodeType> {
       opts.ipfsOptions
     )
 
-    // let ctl: Controller<'proc'> | Controller<'go'> | Controller<'js'>
-    let ctl: Controller<typeof type>
+    let ctl: Controller<SpawnType>
     if (type === 'proc') {
       // spawn in-proc controller
       ctl = new ControllerProc({ ...opts, ipfsOptions })
     } else if (opts.remote === true) {
       // spawn remote controller
-      ctl = await this._spawnRemote<typeof type>({ ...opts, ipfsOptions })
+      ctl = await this._spawnRemote({ ...opts, ipfsOptions, type })
     } else {
       // spawn daemon controller
       ctl = new ControllerDaemon({ ...opts, ipfsOptions })
