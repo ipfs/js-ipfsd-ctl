@@ -3,6 +3,11 @@ import type { EventEmitter } from 'events'
 import type { IPFS } from 'ipfs-core-types'
 import type { Multiaddr } from '@multiformats/multiaddr'
 import type { PeerId } from '@libp2p/interface-peer-id'
+import DefaultFactory from './factory.js'
+
+import type Daemon from './ipfsd-daemon.js'
+import type InProc from './ipfsd-in-proc'
+import type Client from './ipfsd-client'
 
 export interface Subprocess {
   stderr: EventEmitter | null
@@ -28,9 +33,11 @@ export interface Controller<Type extends NodeType = NodeType> {
   api: Type extends 'go' ? import('kubo-rpc-client').IPFSHTTPClient : IPFS
   subprocess?: Subprocess | null
   opts: ControllerOptions<Type>
-  apiAddr: Multiaddr
+  apiAddr: null | Multiaddr
   peer: PeerData
 }
+
+export type ControllerTypes<T extends NodeType = NodeType> = Client<T> | Daemon<T> | InProc<T> | Controller<T>
 
 export interface RemoteState {
   id: string
@@ -135,7 +142,11 @@ export interface IPFSOptions {
   repoAutoMigrate?: boolean
 }
 
-export interface ControllerOptions<Type extends NodeType = NodeType> {
+export interface ControllerOptions_RemoteEnabled {remote: boolean & true, endpoint: string}
+export interface ControllerOptions_RemoteDisabled {remote?: boolean & false, endpoint?: never}
+export type ControllerOptions_Remote = ControllerOptions_RemoteEnabled | ControllerOptions_RemoteDisabled
+
+export type ControllerOptions<Type extends NodeType = NodeType> = ControllerOptions_Remote & {
   /**
    * Flag to activate custom config for tests
    */
@@ -205,9 +216,13 @@ export interface ControllerOptionsOverrides {
 }
 
 export interface Factory<Type extends NodeType = NodeType> {
-  tmpDir: (options?: ControllerOptions) => Promise<string>
-  spawn: (options?: ControllerOptions) => Promise<Controller<Type>>
+  tmpDir: <T extends Type = Type>(options?: ControllerOptions<T>) => Promise<string>
+  spawn: <T extends Type>(options?: ControllerOptions<T>) => Promise<Controller<T>>
   clean: () => Promise<void>
-  controllers: Array<Controller<Type>>
+  controllers: Array<ControllerTypes<Type>>
   opts: ControllerOptions<Type>
 }
+
+// export const createFactory = <T extends NodeType = NodeType>(options: ControllerOptions<T>, overrides: ControllerOptionsOverrides) => {
+//   return new DefaultFactory(options, overrides)
+// }
