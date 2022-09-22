@@ -9,7 +9,7 @@ const daemonLog = {
   info: logger('ipfsd-ctl:client:stdout'),
   err: logger('ipfsd-ctl:client:stderr')
 }
-const rpcModuleLogger = logger('ipfsd-ctl:client:rpcModule:stdout')
+const rpcModuleLogger = logger('ipfsd-ctl:client')
 
 /**
  * @typedef {import('./index').ControllerOptions} ControllerOptions

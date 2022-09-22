@@ -19,7 +19,7 @@ const daemonLog = {
   info: logger('ipfsd-ctl:daemon:stdout'),
   err: logger('ipfsd-ctl:daemon:stderr')
 }
-const rpcModuleLogger = logger('ipfsd-ctl:daemon:rpcModule:stdout')
+const rpcModuleLogger = logger('ipfsd-ctl:daemon')
 
 /**
  * @param {Error & { stdout: string, stderr: string }} err
