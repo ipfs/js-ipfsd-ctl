@@ -1,8 +1,8 @@
 import http from 'ipfs-utils/src/http.js'
 import mergeOptions from 'merge-options'
 import { logger } from '@libp2p/logger'
-import ControllerBase from './controller-base'
-import type { ControllerOptions, NodeType, RemoteState } from './types'
+import ControllerBase from './controller-base.js'
+import type { ControllerOptions, NodeType, RemoteState } from './types.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 

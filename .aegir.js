@@ -1,4 +1,4 @@
-import { createServer } from './src/index.js'
+import { createServer } from './dist/src/index.js'
 import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
 import * as kuboRpcModule from 'kubo-rpc-client'

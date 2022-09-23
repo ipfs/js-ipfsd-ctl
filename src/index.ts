@@ -5,7 +5,7 @@ import type { Controller, ControllerOptions, ControllerOptionsOverrides, NodeTyp
 /**
  * Creates a factory
  */
-export const createFactory = <T extends NodeType>(options: ControllerOptions<T>, overrides?: ControllerOptionsOverrides): DefaultFactory<T> => {
+export const createFactory = <T extends NodeType>(options?: ControllerOptions<T>, overrides?: ControllerOptionsOverrides): DefaultFactory<T> => {
   return new DefaultFactory<T>(options, overrides)
 }
 

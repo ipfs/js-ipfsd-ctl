@@ -2,8 +2,8 @@ import { multiaddr } from '@multiformats/multiaddr'
 import mergeOptions from 'merge-options'
 import { repoExists, removeRepo, checkForRunningApi } from './utils.js'
 import { logger } from '@libp2p/logger'
-import type { Controller, ControllerOptions, InitOptions, NodeType } from './types'
-import ControllerBase from './controller-base'
+import type { Controller, ControllerOptions, InitOptions, NodeType } from './types.js'
+import ControllerBase from './controller-base.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 

@@ -2,7 +2,8 @@
   "extends": "aegir/src/config/tsconfig.aegir.json",
   "compilerOptions": {
     "outDir": "dist",
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": false,
+    "esModuleInterop": true
   },
   "include": [
     "src",

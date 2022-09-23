@@ -8,8 +8,8 @@ import path from 'path'
 import os from 'os'
 import { checkForRunningApi, repoExists, buildInitArgs, buildStartArgs } from './utils.js'
 import waitFor from 'p-wait-for'
-import type { ControllerOptions, NodeType } from './types'
-import ControllerBase from './controller-base'
+import type { ControllerOptions, NodeType } from './types.js'
+import ControllerBase from './controller-base.js'
 
 /**
  * @typedef {import('@multiformats/multiaddr').Multiaddr} Multiaddr
