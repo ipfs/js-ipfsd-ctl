@@ -1,4 +1,3 @@
-import { createServer } from './src/index.js'
 import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
 import * as goIpfsModule from 'go-ipfs'
@@ -20,6 +19,8 @@ export default {
       }
     },
     before: async () => {
+      const { createServer } = await import('./dist/src/index.js')
+
       const server = createServer(undefined, {
           ipfsModule,
           ipfsHttpModule

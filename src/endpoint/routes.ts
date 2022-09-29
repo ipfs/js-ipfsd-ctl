@@ -3,6 +3,8 @@ import Joi from 'joi'
 import boom from '@hapi/boom'
 import { logger } from '@libp2p/logger'
 import { tmpDir } from '../utils.js'
+import type { Server } from '@hapi/hapi'
+import type { Factory } from '../types.js'
 
 /**
  * @typedef {import('../types').Factory} Factory
@@ -18,10 +20,7 @@ const routeOptions = {
   }
 }
 
-/**
- * @param {Error & { stdout?: string }} err
- */
-const badRequest = err => {
+const badRequest = (err: Error & { stdout?: string }) => {
   let msg
   if (err.stdout) {
     msg = err.stdout + ' - ' + err.message
@@ -32,19 +31,9 @@ const badRequest = err => {
   throw boom.badRequest(msg)
 }
 
-/**
- * @type {Record<string, any>}
- */
-const nodes = {}
+const nodes: Record<string, any> = {}
 
-/**
- * @namespace EndpointServerRoutes
- * @ignore
- * @param {import('@hapi/hapi').Server} server
- * @param {() => Factory | Promise<Factory>} createFactory
- * @returns {void}
- */
-export default (server, createFactory) => {
+export default (server: Server, createFactory: () => Factory | Promise<Factory>): void => {
   server.route({
     method: 'GET',
     path: '/util/tmp-dir',
@@ -52,7 +41,7 @@ export default (server, createFactory) => {
       const type = request.query.type || 'go'
       try {
         return { tmpDir: await tmpDir(type) }
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         badRequest(err)
       }
     }
@@ -66,7 +55,7 @@ export default (server, createFactory) => {
 
       try {
         return { version: await nodes[id].version() }
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         badRequest(err)
       }
     },
@@ -95,7 +84,7 @@ export default (server, createFactory) => {
           path: nodes[id].path,
           clean: nodes[id].clean
         }
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         badRequest(err)
       }
     }
@@ -117,7 +106,7 @@ export default (server, createFactory) => {
         return {
           initialized: nodes[id].initialized
         }
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         badRequest(err)
       }
     },
@@ -141,7 +130,7 @@ export default (server, createFactory) => {
           gatewayAddr: nodes[id].gatewayAddr ? nodes[id].gatewayAddr.toString() : '',
           grpcAddr: nodes[id].grpcAddr ? nodes[id].grpcAddr.toString() : ''
         }
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         badRequest(err)
       }
     },
@@ -163,7 +152,7 @@ export default (server, createFactory) => {
         await nodes[id].cleanup()
 
         return h.response().code(200)
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         badRequest(err)
       }
     },
@@ -183,7 +172,7 @@ export default (server, createFactory) => {
         await nodes[id].stop()
 
         return h.response().code(200)
-      } catch (/** @type {any} */ err) {
+      } catch (err: any) {
         badRequest(err)
       }
     },

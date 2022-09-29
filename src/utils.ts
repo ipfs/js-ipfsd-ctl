@@ -15,7 +15,7 @@ export const removeRepo = async (repoPath) => {
     await fs.promises.rm(repoPath, {
       recursive: true
     })
-  } catch (/** @type {any} */ err) {
+  } catch (err: any) {
     // ignore
   }
 }
@@ -47,7 +47,7 @@ export const checkForRunningApi = (repoPath = '') => {
   let api
   try {
     api = fs.readFileSync(path.join(repoPath, 'api'))
-  } catch (/** @type {any} */ err) {
+  } catch (err: any) {
     log('Unable to open api file')
   }
 
