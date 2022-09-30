@@ -1,10 +1,11 @@
 /* eslint-env mocha */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
 import { isNode } from 'wherearewe'
-import { createFactory } from '../src/index.js'
+import { ControllerOptions, createFactory } from '../src/index.js'
 import * as ipfsModule from 'ipfs'
-// @ts-ignore no types
+// @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
 
@@ -12,14 +13,7 @@ const defaultOps = {
   ipfsHttpModule
 }
 
-/**
- * @typedef {import('../src/types').ControllerOptions} ControllerOptions
- */
-
-/**
- * @type {ControllerOptions[]}
- */
-const types = [{
+const types: ControllerOptions[] = [{
   ...defaultOps,
   type: 'js',
   test: true,

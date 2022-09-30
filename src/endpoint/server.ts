@@ -1,38 +1,34 @@
 import Hapi from '@hapi/hapi'
+import type { CreateFactory } from '../index.js'
 import routes from './routes.js'
 
-/**
- * @typedef {import('../types').Factory} Factory
- */
+export interface ServerInit {
+  port?: number
+  host?: string
+}
 
 /**
- * Creates an instance of Server.
- *
- * @class
+ * Creates an instance of Server
  */
 class Server {
-  /**
-   * @class
-   * @param {object} options
-   * @param {number} [options.port=43134]
-   * @param {string} [options.host='localhost']
-   * @param {() => Factory | Promise<Factory>} createFactory
-   */
-  constructor (options = { port: 43134, host: 'localhost' }, createFactory) {
+  private readonly options: ServerInit
+  private server: Hapi.Server | null
+  public port: number
+  public host: string
+  private readonly createFactory: CreateFactory
+
+  constructor (options: ServerInit = { port: 43134, host: 'localhost' }, createFactory: CreateFactory) {
     this.options = options
     this.server = null
-    this.port = this.options.port == null ? 43134 : this.options.port
-    this.host = this.options.host == null ? 'localhost' : this.options.host
+    this.port = this.options.port ?? 43134
+    this.host = this.options.host ?? 'localhost'
     this.createFactory = createFactory
   }
 
   /**
    * Start the server
-   *
-   * @param {number} port
-   * @returns {Promise<Server>}
    */
-  async start (port = this.port) {
+  async start (port = this.port): Promise<Server> {
     this.port = port
     this.server = new Hapi.Server({
       port: port,
@@ -51,13 +47,9 @@ class Server {
 
   /**
    * Stop the server
-   *
-   * @param {object} [options]
-   * @param {number} options.timeout
-   * @returns {Promise<void>}
    */
-  async stop (options) {
-    if (this.server) {
+  async stop (options: { timeout: number }): Promise<void> {
+    if (this.server != null) {
       await this.server.stop(options)
     }
   }

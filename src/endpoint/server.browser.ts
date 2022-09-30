@@ -1,24 +1,10 @@
 /* eslint-disable no-console */
 
 /**
- * Creates an instance of Server.
- *
- * @class
+ * Creates an instance of Server
  */
 class Server {
-  /**
-   * @class
-   * @param {object} options
-   * @param {number} [options.port=43134] - Server port.
-   * @param {Function} createNode
-   */
-  constructor (options, createNode) {
-    options = options || { port: 43134 }
-
-    /** @type {*} */
-    this.server = null
-    this.port = options.port
-    this.createNode = createNode
+  constructor () {
     console.warn('Server not implemented in the browser')
   }
 

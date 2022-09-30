@@ -1,22 +1,19 @@
 /* eslint-env mocha */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
 import { isNode, isBrowser, isWebWorker } from 'wherearewe'
-import { createFactory, createController, createServer } from '../src/index.js'
+import { createFactory, createController, createServer, ControllerOptions } from '../src/index.js'
 import Client from '../src/ipfsd-client.js'
 import Daemon from '../src/ipfsd-daemon.js'
 import Proc from '../src/ipfsd-in-proc.js'
 import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
-// @ts-ignore no types
+// @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
 import * as ipfsClientModule from 'ipfs-client'
 
-/**
- * @typedef {import('../src/types').ControllerOptions} ControllerOptions
- */
-
-describe('`createController` should return the correct class', async () => {
+describe('`createController` should return the correct class', () => {
   it('for type `js` ', async () => {
     const f = await createController({
       type: 'js',
@@ -73,20 +70,14 @@ describe('`createController` should return the correct class', async () => {
       disposable: false,
       ipfsModule,
       ipfsClientModule: {
-        /**
-         * @param {any} opts
-         */
-        create: (opts) => {
+        create: (opts: any) => {
           clientCreated = true
 
           return ipfsClientModule.create(opts)
         }
       },
       ipfsHttpModule: {
-        /**
-         * @param {any} opts
-         */
-        create: async (opts) => {
+        create: async (opts: any) => {
           httpCreated = true
 
           return ipfsHttpModule.create(opts)
@@ -108,20 +99,14 @@ describe('`createController` should return the correct class', async () => {
       disposable: false,
       ipfsModule,
       ipfsClientModule: {
-        /**
-         * @param {any} opts
-         */
-        create: (opts) => {
+        create: (opts: any) => {
           clientCreated = true
 
           return ipfsClientModule.create(opts)
         }
       },
       ipfsHttpModule: {
-        /**
-         * @param {any} opts
-         */
-        create: async (opts) => {
+        create: async (opts: any) => {
           httpCreated = true
 
           return ipfsHttpModule.create(opts)
@@ -140,8 +125,7 @@ const defaultOps = {
   ipfsHttpModule
 }
 
-/** @type {ControllerOptions[]} */
-const types = [{
+const types: ControllerOptions[] = [{
   ...defaultOps,
   type: 'js',
   test: true,

@@ -1,11 +1,7 @@
 import { nanoid } from 'nanoid'
 
-/**
- * @param {string} path
- * @returns {Promise<void>}
- */
-const deleteDb = (path) => {
-  return new Promise((resolve, reject) => {
+const deleteDb = async (path: string): Promise<void> => {
+  return await new Promise((resolve, reject) => {
     const keys = self.indexedDB.deleteDatabase(path)
     keys.onerror = (err) => reject(err)
     keys.onsuccess = () => resolve()
@@ -14,10 +10,8 @@ const deleteDb = (path) => {
 
 /**
  * close repoPath , repoPath/keys, repoPath/blocks and repoPath/datastore
- *
- * @param {string} repoPath
  */
-export const removeRepo = async (repoPath) => {
+export const removeRepo = async (repoPath: string): Promise<void> => {
   await deleteDb(repoPath)
   await deleteDb(repoPath + '/keys')
   await deleteDb(repoPath + '/blocks')
@@ -27,8 +21,8 @@ export const removeRepo = async (repoPath) => {
 /**
  * @param {string} repoPath
  */
-export const repoExists = (repoPath) => {
-  return new Promise((resolve, reject) => {
+export const repoExists = async (repoPath: string): Promise<boolean> => {
+  return await new Promise((resolve, reject) => {
     const req = self.indexedDB.open(repoPath)
     let existed = true
     req.onerror = () => reject(req.error)
@@ -43,14 +37,14 @@ export const repoExists = (repoPath) => {
   })
 }
 
-export const defaultRepo = () => {
+export const defaultRepo = (): string => {
   return 'ipfs'
 }
 
-export const checkForRunningApi = () => {
+export const checkForRunningApi = (): string | null => {
   return null
 }
 
-export const tmpDir = (type = '') => {
+export const tmpDir = (type = ''): string => {
   return `${type}_ipfs_${nanoid()}`
 }

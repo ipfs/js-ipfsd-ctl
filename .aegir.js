@@ -3,21 +3,11 @@ import * as ipfsHttpModule from 'ipfs-http-client'
 import * as goIpfsModule from 'go-ipfs'
 
 /** @type {import('aegir').Options["build"]["config"]} */
-/*
-const esbuild = {
-  inject: [path.join(__dirname, 'scripts/node-globals.js')],
-}
-*/
-export default {
+const config = {
   bundlesize: {
     maxSize: '35kB'
   },
   test: {
-    browser: {
-      config: {
-        //buildConfig: esbuild
-      }
-    },
     before: async () => {
       const { createServer } = await import('./dist/src/index.js')
 
@@ -48,3 +38,5 @@ export default {
     }
   }
 }
+
+export default config

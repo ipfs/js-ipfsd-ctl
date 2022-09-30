@@ -128,10 +128,11 @@
   "scripts": {
     "clean": "aegir clean",
     "lint": "aegir lint",
+    "dep-check": "aegir dep-check",
     "build": "aegir build",
     "test": "aegir test",
-    "test:node": "aegir test -t node",
-    "test:chrome": "aegir test -t browser",
+    "test:node": "aegir test -t node --cov",
+    "test:chrome": "aegir test -t browser --cov",
     "test:firefox": "aegir test -t browser -- --browser firefox",
     "release": "aegir release"
   },
