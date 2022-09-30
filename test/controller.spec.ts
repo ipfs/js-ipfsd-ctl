@@ -12,6 +12,7 @@ import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
 // @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
+import * as kuboRpcModule from 'kubo-rpc-client'
 
 const types: ControllerOptions[] = [{
   type: 'js',
@@ -21,6 +22,7 @@ const types: ControllerOptions[] = [{
   }
 }, {
   type: 'go',
+  kuboRpcModule,
   ipfsOptions: {
     init: false,
     start: false
@@ -40,12 +42,26 @@ const types: ControllerOptions[] = [{
   }
 }, {
   type: 'go',
+  kuboRpcModule,
   remote: true,
   ipfsOptions: {
     init: false,
     start: false
   }
 }]
+
+/**
+ * Set the options object with the correct RPC module depending on the type
+ */
+function addCorrectRpcModule (opts: ControllerOptions, additionalOpts: ControllerOptions) {
+  if (opts.type === 'go') {
+    additionalOpts.kuboRpcModule = kuboRpcModule
+  } else {
+    additionalOpts.ipfsHttpModule = ipfsHttpModule
+  }
+
+  return additionalOpts
+}
 
 describe('Controller API', function () {
   this.timeout(60000)
@@ -55,14 +71,15 @@ describe('Controller API', function () {
   before(async () => {
     factory = createFactory({
       test: true,
-      ipfsHttpModule,
       ipfsModule: (await import('ipfs'))
     }, {
       js: {
-        ipfsBin: isNode ? ipfsModule.path() : undefined
+        ipfsBin: isNode ? ipfsModule.path() : undefined,
+        ipfsHttpModule
       },
       go: {
-        ipfsBin: isNode ? goIpfsModule.path() : undefined
+        ipfsBin: isNode ? goIpfsModule.path() : undefined,
+        kuboRpcModule
       }
     })
 
@@ -191,13 +208,12 @@ describe('Controller API', function () {
           // have to use createController so we don't try to shut down
           // the node twice during test cleanup
           const ctl = await createController(merge(
-            opts, {
-              ipfsHttpModule,
+            opts, addCorrectRpcModule(opts, {
               ipfsModule,
               ipfsOptions: {
                 repo: factory.controllers[0].path
               }
-            }
+            })
           ))
 
           await ctl.init()
@@ -219,7 +235,7 @@ describe('Controller API', function () {
           const ctl1 = await createController(merge(
             {
               type: 'go',
-              ipfsHttpModule,
+              kuboRpcModule,
               ipfsBin: goIpfsModule.path(),
               test: true,
               disposable: true,
@@ -232,7 +248,7 @@ describe('Controller API', function () {
           expect(ctl1.started).to.be.true()
 
           const ctl2 = await createController(merge(
-            opts, {
+            opts, addCorrectRpcModule(opts, {
               ipfsHttpModule,
               ipfsModule,
               test: true,
@@ -241,7 +257,7 @@ describe('Controller API', function () {
                 repo: ctl1.path,
                 start: true
               }
-            }
+            })
           ))
           expect(ctl2.started).to.be.true()
 

@@ -16,6 +16,7 @@ const daemonLog = {
   info: logger('ipfsd-ctl:daemon:stdout'),
   err: logger('ipfsd-ctl:daemon:stderr')
 }
+const rpcModuleLogger = logger('ipfsd-ctl:daemon')
 
 function translateError (err: Error & { stdout: string, stderr: string }) {
   // get the actual error message to be the err.message
@@ -85,7 +86,15 @@ class Daemon implements Controller {
         http: this.apiAddr
       })
     } else if (this.apiAddr != null) {
-      this.api = this.opts.ipfsHttpModule.create(this.apiAddr)
+      if (this.opts.kuboRpcModule != null) {
+        rpcModuleLogger('Using kubo-rpc-client')
+        this.api = this.opts.kuboRpcModule.create(this.apiAddr)
+      } else if (this.opts.ipfsHttpModule != null) {
+        rpcModuleLogger('Using ipfs-http-client')
+        this.api = this.opts.ipfsHttpModule.create(this.apiAddr)
+      } else {
+        throw new Error('You must pass either a kuboRpcModule or ipfsHttpModule')
+      }
     }
 
     if (this.api == null) {

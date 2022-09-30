@@ -49,6 +49,9 @@ export interface Controller {
   api: IPFSAPI
   subprocess?: ExecaChildProcess | null
   opts: ControllerOptions
+  // api: Type extends 'go' ? import('kubo-rpc-client').IPFSHTTPClient : IPFS
+  // subprocess?: Subprocess | null
+  // opts: ControllerOptions<Type>
   apiAddr: Multiaddr
   peer: PeerData
 }
@@ -156,7 +159,7 @@ export interface IPFSOptions {
   repoAutoMigrate?: boolean
 }
 
-export interface ControllerOptions {
+export interface ControllerOptions<Type extends NodeType = NodeType> {
   /**
    * Flag to activate custom config for tests
    */
@@ -176,7 +179,7 @@ export interface ControllerOptions {
   /**
    * The daemon type
    */
-  type?: NodeType
+  type?: Type
   /**
    * Additional environment variables, passed to executing shell. Only applies for Daemon controllers
    */
@@ -189,6 +192,10 @@ export interface ControllerOptions {
    * Reference to an ipfs-http-client module
    */
   ipfsHttpModule?: any
+  /**
+   * Reference to a kubo-rpc-client module
+   */
+  kuboRpcModule?: any
   /**
    * Reference to an ipfs or ipfs-core module
    */
@@ -216,17 +223,17 @@ export interface ControllerOptions {
 }
 
 export interface ControllerOptionsOverrides {
-  js?: ControllerOptions
-  go?: ControllerOptions
-  proc?: ControllerOptions
+  js?: ControllerOptions<'js'>
+  go?: ControllerOptions<'go'>
+  proc?: ControllerOptions<'proc'>
 }
 
-export interface Factory {
+export interface Factory<Type extends NodeType = NodeType> {
   tmpDir: (options?: ControllerOptions) => Promise<string>
-  spawn: (options?: ControllerOptions) => Promise<Controller>
+  spawn: (options?: ControllerOptions) => Promise<Controller<Type>>
   clean: () => Promise<void>
-  controllers: Controller[]
-  opts: ControllerOptions
+  controllers: Array<Controller<Type>>
+  opts: ControllerOptions<Type>
 }
 
 export interface CreateFactory { (): Factory | Promise<Factory> }

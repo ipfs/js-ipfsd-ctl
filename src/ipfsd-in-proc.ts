@@ -10,6 +10,7 @@ const daemonLog = {
   info: logger('ipfsd-ctl:proc:stdout'),
   err: logger('ipfsd-ctl:proc:stderr')
 }
+const rpcModuleLogger = logger('ipfsd-ctl:client')
 
 /**
  * Controller for in process nodes
@@ -67,7 +68,17 @@ class InProc implements Controller {
 
   private _setApi (addr: string): void {
     this.apiAddr = multiaddr(addr)
-    this.api = this.opts.ipfsHttpModule.create(addr)
+
+    if (this.opts.kuboRpcModule != null) {
+      rpcModuleLogger('Using kubo-rpc-client')
+      this.api = this.opts.kuboRpcModule.create(addr)
+    } else if (this.opts.ipfsHttpModule != null) {
+      rpcModuleLogger('Using ipfs-http-client')
+      this.api = this.opts.ipfsHttpModule.create(addr)
+    } else {
+      throw new Error('You must pass either a kuboRpcModule or ipfsHttpModule')
+    }
+
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
