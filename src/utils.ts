@@ -4,7 +4,7 @@ import fs from 'fs'
 import { logger } from '@libp2p/logger'
 import { nanoid } from 'nanoid'
 import tempWrite from 'temp-write'
-import type { ControllerOptions, IPFSOptions, NodeType } from '.'
+import type { ControllerOptions, IPFSOptions, NodeType } from './index.js'
 
 const log = logger('ipfsd-ctl:utils')
 
@@ -98,7 +98,7 @@ export function buildStartArgs (opts: ControllerOptions = {}): string[] {
       args.push('--enable-preload', Boolean(typeof ipfsOptions.preload === 'boolean' ? ipfsOptions.preload : ipfsOptions.preload.enabled).toString())
     }
 
-    if ((ipfsOptions.EXPERIMENTAL != null) && ipfsOptions.EXPERIMENTAL.sharding === true) {
+    if (ipfsOptions.EXPERIMENTAL?.sharding === true) {
       args.push('--enable-sharding-experiment')
     }
   }
