@@ -10,7 +10,7 @@ const daemonLog = {
   info: logger('ipfsd-ctl:proc:stdout'),
   err: logger('ipfsd-ctl:proc:stderr')
 }
-const rpcModuleLogger = logger('ipfsd-ctl:client')
+const rpcModuleLogger = logger('ipfsd-ctl:proc')
 
 /**
  * Controller for in process nodes

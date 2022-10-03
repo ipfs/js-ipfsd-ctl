@@ -10,28 +10,30 @@ export interface PeerData {
   addresses: Multiaddr[]
 }
 
-export interface Controller {
+export type ControllerType = 'js' | 'go' | 'proc'
+
+export interface Controller<Type extends ControllerType = 'go'> {
   /**
    * Initialize a repo
    */
-  init: (options?: InitOptions) => Promise<Controller>
+  init: (options?: InitOptions) => Promise<Controller<Type>>
 
   /**
    * Start the daemon
    */
-  start: () => Promise<Controller>
+  start: () => Promise<Controller<Type>>
 
   /**
    * Stop the daemon
    */
-  stop: () => Promise<Controller>
+  stop: () => Promise<Controller<Type>>
 
   /**
    * Delete the repo that was being used.
    * If the node was marked as `disposable` this will be called
    * automatically when the process is exited.
    */
-  cleanup: () => Promise<Controller>
+  cleanup: () => Promise<Controller<Type>>
 
   /**
    * Get the pid of the `ipfs daemon` process
@@ -67,8 +69,6 @@ export interface RemoteState {
   gatewayAddr: string
   grpcAddr: string
 }
-
-export type NodeType = 'js' | 'go' | 'proc'
 
 export interface InitOptions {
   pass?: string
@@ -159,7 +159,7 @@ export interface IPFSOptions {
   repoAutoMigrate?: boolean
 }
 
-export interface ControllerOptions<Type extends NodeType = NodeType> {
+export interface ControllerOptions<Type extends ControllerType = ControllerType> {
   /**
    * Flag to activate custom config for tests
    */
@@ -228,7 +228,7 @@ export interface ControllerOptionsOverrides {
   proc?: ControllerOptions<'proc'>
 }
 
-export interface Factory<Type extends NodeType = NodeType> {
+export interface Factory<Type extends ControllerType = ControllerType> {
   tmpDir: (options?: ControllerOptions) => Promise<string>
   spawn: (options?: ControllerOptions) => Promise<Controller<Type>>
   clean: () => Promise<void>

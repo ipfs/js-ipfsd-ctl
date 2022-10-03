@@ -12,6 +12,7 @@ import * as ipfsHttpModule from 'ipfs-http-client'
 // @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
 import * as ipfsClientModule from 'ipfs-client'
+import * as kuboRpcModule from 'kubo-rpc-client'
 
 describe('`createController` should return the correct class', () => {
   it('for type `js` ', async () => {
@@ -33,7 +34,7 @@ describe('`createController` should return the correct class', () => {
     const f = await createController({
       type: 'go',
       disposable: false,
-      ipfsHttpModule,
+      kuboRpcModule,
       ipfsBin: isNode ? goIpfsModule.path() : undefined
     })
 
@@ -121,37 +122,33 @@ describe('`createController` should return the correct class', () => {
   })
 })
 
-const defaultOps = {
-  ipfsHttpModule
-}
-
 const types: ControllerOptions[] = [{
-  ...defaultOps,
   type: 'js',
+  ipfsHttpModule,
   test: true,
   ipfsModule,
   ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
-  ...defaultOps,
   ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
+  kuboRpcModule,
   test: true
 }, {
-  ...defaultOps,
   type: 'proc',
+  ipfsHttpModule,
   test: true,
   ipfsModule
 }, {
-  ...defaultOps,
   type: 'js',
+  ipfsHttpModule,
   test: true,
   remote: true,
   ipfsModule,
   ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
-  ...defaultOps,
   ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
+  kuboRpcModule,
   test: true,
   remote: true
 }]

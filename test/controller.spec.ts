@@ -249,7 +249,6 @@ describe('Controller API', function () {
 
           const ctl2 = await createController(merge(
             opts, addCorrectRpcModule(opts, {
-              ipfsHttpModule,
               ipfsModule,
               test: true,
               disposable: true,
