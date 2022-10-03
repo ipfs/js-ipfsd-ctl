@@ -2,7 +2,7 @@ import { Multiaddr, multiaddr } from '@multiformats/multiaddr'
 import http from 'ipfs-utils/src/http.js'
 import mergeOptions from 'merge-options'
 import { logger } from '@libp2p/logger'
-import type { Controller, ControllerOptions, InitOptions, IPFSAPI, PeerData, RemoteState } from '.'
+import type { Controller, ControllerOptions, InitOptions, IPFSAPI, PeerData, RemoteState } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
