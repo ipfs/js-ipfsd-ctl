@@ -17,7 +17,7 @@ const types: ControllerOptions[] = [{
   ipfsModule,
   ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
-  ipfsHttpModule,
+  kuboRpcModule,
   ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
   test: true
@@ -34,7 +34,7 @@ const types: ControllerOptions[] = [{
   ipfsModule,
   ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
-  ipfsHttpModule,
+  kuboRpcModule,
   ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
   remote: true,
