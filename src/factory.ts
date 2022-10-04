@@ -6,19 +6,13 @@ import ControllerDaemon from './ipfsd-daemon.js'
 import ControllerRemote from './ipfsd-client.js'
 import ControllerProc from './ipfsd-in-proc.js'
 import testsConfig from './config.js'
+import type { Controller, ControllerOptions, ControllerOptionsOverrides, Factory } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
-/**
- * @typedef {import('./types').ControllerOptions} ControllerOptions
- * @typedef {import('./types').ControllerOptionsOverrides} ControllerOptionsOverrides
- * @typedef {import('./types').IPFSOptions} IPFSOptions
- * @typedef {import('./types').Controller} Controller
- */
-
 const defaults = {
   remote: !isNode && !isElectronMain,
-  endpoint: process.env.IPFSD_CTL_SERVER || 'http://localhost:43134',
+  endpoint: process.env.IPFSD_CTL_SERVER ?? 'http://localhost:43134',
   disposable: true,
   test: false,
   type: 'go',
@@ -29,27 +23,33 @@ const defaults = {
   forceKillTimeout: 5000
 }
 
+export interface ControllerOptionsOverridesWithEndpoint {
+  js?: ControllerOptionsWithEndpoint
+  go?: ControllerOptionsWithEndpoint
+  proc?: ControllerOptionsWithEndpoint
+}
+
+export interface ControllerOptionsWithEndpoint extends ControllerOptions {
+  endpoint: string
+}
+
 /**
  * Factory class to spawn ipfsd controllers
  */
-class Factory {
-  /**
-   *
-   * @param {ControllerOptions} options
-   * @param {ControllerOptionsOverrides} overrides - Pre-defined overrides per controller type
-   */
-  constructor (options = {}, overrides = {}) {
-    /** @type ControllerOptions */
-    this.opts = merge(defaults, options)
+class DefaultFactory implements Factory {
+  public opts: ControllerOptionsWithEndpoint
+  public controllers: Controller[]
 
-    /** @type ControllerOptionsOverrides */
+  private readonly overrides: ControllerOptionsOverridesWithEndpoint
+
+  constructor (options: ControllerOptions = {}, overrides: ControllerOptionsOverrides = {}) {
+    this.opts = merge(defaults, options)
     this.overrides = merge({
       js: merge(this.opts, { type: 'js' }),
       go: merge(this.opts, { type: 'go' }),
       proc: merge(this.opts, { type: 'proc' })
     }, overrides)
 
-    /** @type {Controller[]} */
     this.controllers = []
   }
 
@@ -57,30 +57,24 @@ class Factory {
    * Utility method to get a temporary directory
    * useful in browsers to be able to generate temp
    * repos manually
-   *
-   * @param {ControllerOptions} [options]
-   * @returns {Promise<string>}
    */
-  async tmpDir (options = {}) {
-    const opts = merge(this.opts, options)
+  async tmpDir (options: ControllerOptions = {}): Promise<string> {
+    const opts: ControllerOptions = merge(this.opts, options)
 
-    if (opts.remote) {
+    if (opts.remote === true) {
       const res = await http.get(
-        `${opts.endpoint}/util/tmp-dir`,
-        { searchParams: new URLSearchParams({ type: `${opts.type}` }) }
+        `${opts.endpoint ?? ''}/util/tmp-dir`,
+        { searchParams: new URLSearchParams({ type: opts.type ?? '' }) }
       )
       const out = await res.json()
 
       return out.tmpDir
     }
 
-    return Promise.resolve(tmpDir(opts.type))
+    return await Promise.resolve(tmpDir(opts.type))
   }
 
-  /**
-   * @param {IPFSOptions & { endpoint: string }} options
-   */
-  async _spawnRemote (options) {
+  async _spawnRemote (options: ControllerOptionsWithEndpoint) {
     const opts = {
       json: {
         ...options,
@@ -105,13 +99,10 @@ class Factory {
 
   /**
    * Spawn an IPFSd Controller
-   *
-   * @param {ControllerOptions} options
-   * @returns {Promise<Controller>}
    */
-  async spawn (options = { }) {
-    const type = options.type || this.opts.type || 'go'
-    const opts = merge(
+  async spawn (options: ControllerOptions = { }): Promise<Controller> {
+    const type = options.type ?? this.opts.type ?? 'go'
+    const opts: ControllerOptionsWithEndpoint = merge(
       this.overrides[type],
       options
     )
@@ -122,7 +113,7 @@ class Factory {
         start: false,
         init: false
       },
-      opts.test
+      opts.test === true
         ? {
             config: testsConfig(opts),
             preload: { enabled: false }
@@ -131,11 +122,11 @@ class Factory {
       opts.ipfsOptions
     )
 
-    let ctl
+    let ctl: Controller
     if (opts.type === 'proc') {
       // spawn in-proc controller
       ctl = new ControllerProc({ ...opts, ipfsOptions })
-    } else if (opts.remote) {
+    } else if (opts.remote === true) {
       // spawn remote controller
       ctl = await this._spawnRemote({ ...opts, ipfsOptions })
     } else {
@@ -147,10 +138,10 @@ class Factory {
     this.controllers.push(ctl)
 
     // Auto init and start controller
-    if (opts.disposable && (!options.ipfsOptions || (options.ipfsOptions && options.ipfsOptions.init !== false))) {
+    if (opts.disposable === true && (options.ipfsOptions == null || options.ipfsOptions?.init !== false)) {
       await ctl.init(ipfsOptions.init)
     }
-    if (opts.disposable && (!options.ipfsOptions || (options.ipfsOptions && options.ipfsOptions.start !== false))) {
+    if (opts.disposable === true && (options.ipfsOptions == null || options.ipfsOptions?.start !== false)) {
       await ctl.start()
     }
 
@@ -160,10 +151,10 @@ class Factory {
   /**
    * Stop all controllers
    */
-  async clean () {
-    await Promise.all(this.controllers.map(n => n.stop()))
+  async clean (): Promise<void> {
+    await Promise.all(this.controllers.map(async n => await n.stop()))
     this.controllers = []
   }
 }
 
-export default Factory
+export default DefaultFactory

@@ -1,7 +1,8 @@
-import { multiaddr } from '@multiformats/multiaddr'
+import { Multiaddr, multiaddr } from '@multiformats/multiaddr'
 import http from 'ipfs-utils/src/http.js'
 import mergeOptions from 'merge-options'
 import { logger } from '@libp2p/logger'
+import type { Controller, ControllerOptions, InitOptions, IPFSAPI, PeerData, RemoteState } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
@@ -11,23 +12,28 @@ const daemonLog = {
 }
 
 /**
- * @typedef {import('./index').ControllerOptions} ControllerOptions
- * @typedef {import('@multiformats/multiaddr').Multiaddr} Multiaddr
- */
-
-/**
  * Controller for remote nodes
- *
- * @class
  */
-class Client {
-  /**
-   * @class
-   * @param {string} baseUrl
-   * @param {import('./types').RemoteState} remoteState
-   * @param {ControllerOptions} options
-   */
-  constructor (baseUrl, remoteState, options) {
+class Client implements Controller {
+  public path: string
+  // @ts-expect-error set during startup
+  public api: IPFSAPI
+  public subprocess: null
+  public opts: ControllerOptions
+  public initialized: boolean
+  public started: boolean
+  public clean: boolean
+  // @ts-expect-error set during startup
+  public apiAddr: Multiaddr
+
+  private readonly baseUrl: string
+  private readonly id: string
+  private readonly disposable: boolean
+  private gatewayAddr?: Multiaddr
+  private grpcAddr?: Multiaddr
+  private _peerId: PeerData | null
+
+  constructor (baseUrl: string, remoteState: RemoteState, options: ControllerOptions) {
     this.opts = options
     this.baseUrl = baseUrl
     this.id = remoteState.id
@@ -36,17 +42,12 @@ class Client {
     this.started = remoteState.started
     this.disposable = remoteState.disposable
     this.clean = remoteState.clean
-    this.api = null
-    /** @type {import('./types').Subprocess | null} */
     this.subprocess = null
-    /** @type {Multiaddr} */
-    this.apiAddr // eslint-disable-line no-unused-expressions
 
     this._setApi(remoteState.apiAddr)
     this._setGateway(remoteState.gatewayAddr)
     this._setGrpc(remoteState.grpcAddr)
     this._createApi()
-    /** @type {import('./types').PeerData | null} */
     this._peerId = null
   }
 
@@ -58,88 +59,67 @@ class Client {
     return this._peerId
   }
 
-  /**
-   * @private
-   * @param {string} addr
-   */
-  _setApi (addr) {
-    if (addr) {
+  private _setApi (addr: string): void {
+    if (addr != null) {
       this.apiAddr = multiaddr(addr)
     }
   }
 
-  /**
-   * @private
-   * @param {string} addr
-   */
-  _setGateway (addr) {
-    if (addr) {
+  private _setGateway (addr: string): void {
+    if (addr != null) {
       this.gatewayAddr = multiaddr(addr)
     }
   }
 
-  /**
-   * @private
-   * @param {string} addr
-   */
-  _setGrpc (addr) {
-    if (addr) {
+  private _setGrpc (addr: string): void {
+    if (addr != null) {
       this.grpcAddr = multiaddr(addr)
     }
   }
 
-  /**
-   * @private
-   */
-  _createApi () {
-    if (this.opts.ipfsClientModule && this.grpcAddr && this.apiAddr) {
+  private _createApi (): void {
+    if (this.opts.ipfsClientModule != null && this.grpcAddr != null && this.apiAddr != null) {
       this.api = this.opts.ipfsClientModule.create({
         grpc: this.grpcAddr,
         http: this.apiAddr
       })
-    } else if (this.apiAddr) {
+    } else if (this.apiAddr != null) {
       this.api = this.opts.ipfsHttpModule.create(this.apiAddr)
     }
 
-    if (this.api) {
-      if (this.apiAddr) {
+    if (this.api != null) {
+      if (this.apiAddr != null) {
         this.api.apiHost = this.apiAddr.nodeAddress().address
         this.api.apiPort = this.apiAddr.nodeAddress().port
       }
 
-      if (this.gatewayAddr) {
+      if (this.gatewayAddr != null) {
         this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
         this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
       }
 
-      if (this.grpcAddr) {
+      if (this.grpcAddr != null) {
         this.api.grpcHost = this.grpcAddr.nodeAddress().address
         this.api.grpcPort = this.grpcAddr.nodeAddress().port
       }
     }
   }
 
-  /**
-   * Initialize a repo.
-   *
-   * @param {import('./types').InitOptions} [initOptions]
-   * @returns {Promise<Client>}
-   */
-  async init (initOptions = {}) {
+  async init (initOptions: InitOptions = {}): Promise<Controller> {
     if (this.initialized) {
       return this
     }
 
     let ipfsOptions = {}
 
-    if (this.opts.ipfsOptions != null && this.opts.ipfsOptions.init != null && !(typeof this.opts.ipfsOptions.init === 'boolean')) {
+    if (this.opts.ipfsOptions?.init != null && !(typeof this.opts.ipfsOptions.init === 'boolean')) {
       ipfsOptions = this.opts.ipfsOptions.init
     }
 
     const opts = merge(
       {
         emptyRepo: false,
-        profiles: this.opts.test ? ['test'] : []
+        profiles: this.opts.test === true ? ['test'] : []
       },
       ipfsOptions,
       typeof initOptions === 'boolean' ? {} : initOptions
@@ -158,14 +138,7 @@ class Client {
     return this
   }
 
-  /**
-   * Delete the repo that was being used.
-   * If the node was marked as `disposable` this will be called
-   * automatically when the process is exited.
-   *
-   * @returns {Promise<Client>}
-   */
-  async cleanup () {
+  async cleanup (): Promise<Controller> {
     if (this.clean) {
       return this
     }
@@ -178,12 +151,7 @@ class Client {
     return this
   }
 
-  /**
-   * Start the daemon.
-   *
-   * @returns {Promise<Client>}
-   */
-  async start () {
+  async start (): Promise<Controller> {
     if (!this.started) {
       const req = await http.post(
               `${this.baseUrl}/start`,
@@ -199,6 +167,10 @@ class Client {
       this.started = true
     }
 
+    if (this.api == null) {
+      throw new Error('api was not set')
+    }
+
     // Add `peerId`
     const id = await this.api.id()
     this._peerId = id
@@ -206,10 +178,7 @@ class Client {
     return this
   }
 
-  /**
-   * Stop the daemon
-   */
-  async stop () {
+  async stop (): Promise<Controller> {
     if (!this.started) {
       return this
     }
@@ -227,12 +196,7 @@ class Client {
     return this
   }
 
-  /**
-   * Get the pid of the `ipfs daemon` process.
-   *
-   * @returns {Promise<number>}
-   */
-  async pid () {
+  async pid (): Promise<number> {
     const req = await http.get(
         `${this.baseUrl}/pid`,
         { searchParams: new URLSearchParams({ id: this.id }) }
@@ -242,12 +206,7 @@ class Client {
     return res.pid
   }
 
-  /**
-   * Get the version of ipfs
-   *
-   * @returns {Promise<string>}
-   */
-  async version () {
+  async version (): Promise<string> {
     const req = await http.get(
         `${this.baseUrl}/version`,
         { searchParams: new URLSearchParams({ id: this.id }) }

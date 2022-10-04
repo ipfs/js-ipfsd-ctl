@@ -1,24 +1,19 @@
 /* eslint-env mocha */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable no-loop-func */
 
 import { expect } from 'aegir/chai'
 import merge from 'merge-options'
-import { createFactory, createController } from '../src/index.js'
+import { createFactory, createController, ControllerOptions, Factory } from '../src/index.js'
 import { repoExists } from '../src/utils.js'
 import { isBrowser, isWebWorker, isNode } from 'wherearewe'
 import waitFor from 'p-wait-for'
 import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
-// @ts-ignore no types
+// @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
 
-/**
- * @typedef {import('../src/types').ControllerOptions} ControllerOptions
- */
-
-/**
- * @type {ControllerOptions[]}
- */
-const types = [{
+const types: ControllerOptions[] = [{
   type: 'js',
   ipfsOptions: {
     init: false,
@@ -52,25 +47,29 @@ const types = [{
   }
 }]
 
-describe('Controller API', async function () {
+describe('Controller API', function () {
   this.timeout(60000)
 
-  const factory = createFactory({
-    test: true,
-    ipfsHttpModule,
-    ipfsModule: (await import('ipfs'))
-  }, {
-    js: {
-      ipfsBin: isNode ? ipfsModule.path() : undefined
-    },
-    go: {
-      ipfsBin: isNode ? goIpfsModule.path() : undefined
-    }
+  let factory: Factory
+
+  before(async () => {
+    factory = createFactory({
+      test: true,
+      ipfsHttpModule,
+      ipfsModule: (await import('ipfs'))
+    }, {
+      js: {
+        ipfsBin: isNode ? ipfsModule.path() : undefined
+      },
+      go: {
+        ipfsBin: isNode ? goIpfsModule.path() : undefined
+      }
+    })
+
+    await factory.spawn({ type: 'js' })
   })
 
-  before(() => factory.spawn({ type: 'js' }))
-
-  after(() => factory.clean())
+  after(async () => await factory.clean())
 
   describe('init', () => {
     describe('should work with defaults', () => {
@@ -335,10 +334,10 @@ describe('Controller API', async function () {
           await ctl.init()
           await ctl.start()
           await ctl.stop()
-          if (ctl.subprocess && ctl.subprocess.stderr) {
+          if (ctl.subprocess?.stderr != null) {
             expect(ctl.subprocess.stderr.listeners('data')).to.be.empty()
           }
-          if (ctl.subprocess && ctl.subprocess.stdout) {
+          if (ctl.subprocess?.stdout != null) {
             expect(ctl.subprocess.stdout.listeners('data')).to.be.empty()
           }
         })
