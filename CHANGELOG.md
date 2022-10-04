@@ -1,3 +1,10 @@
+## [12.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.3...v12.1.0) (2022-10-04)
+
+
+### Features
+
+* convert to typescript ([#777](https://github.com/ipfs/js-ipfsd-ctl/issues/777)) ([ee3a35a](https://github.com/ipfs/js-ipfsd-ctl/commit/ee3a35a28c7a435c49da02d4e03d29c4520e5b55))
+
 ## [12.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.2...v12.0.3) (2022-09-21)
 
 
