@@ -1,3 +1,10 @@
+## [12.1.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.1.0...v12.1.1) (2022-10-05)
+
+
+### Bug Fixes
+
+* update export path to point to correct file ([#778](https://github.com/ipfs/js-ipfsd-ctl/issues/778)) ([ecdda55](https://github.com/ipfs/js-ipfsd-ctl/commit/ecdda5547491e9826568bb8c3181121de38b5362))
+
 ## [12.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.3...v12.1.0) (2022-10-04)
 
 
