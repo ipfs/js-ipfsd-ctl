@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "12.0.2",
+  "version": "12.1.1",
   "description": "Spawn IPFS Daemons, JS or Go",
   "license": "Apache-2.0 OR MIT",
   "homepage": "https://github.com/ipfs/js-ipfsd-ctl#readme",
@@ -22,32 +22,16 @@
   },
   "type": "module",
   "types": "./dist/src/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "*",
-        "dist/*",
-        "dist/src/*",
-        "dist/src/*/index"
-      ],
-      "src/*": [
-        "*",
-        "dist/*",
-        "dist/src/*",
-        "dist/src/*/index"
-      ]
-    }
-  },
   "files": [
     "src",
-    "dist",
+    "dist/src",
     "!dist/test",
     "!**/*.tsbuildinfo"
   ],
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "import": "./src/index.js"
+      "import": "./dist/src/index.js"
     }
   },
   "eslintConfig": {
@@ -142,11 +126,13 @@
     ]
   },
   "scripts": {
+    "clean": "aegir clean",
     "lint": "aegir lint",
+    "dep-check": "aegir dep-check",
     "build": "aegir build",
     "test": "aegir test",
-    "test:node": "aegir test -t node",
-    "test:chrome": "aegir test -t browser",
+    "test:node": "aegir test -t node --cov",
+    "test:chrome": "aegir test -t browser --cov",
     "test:firefox": "aegir test -t browser -- --browser firefox",
     "release": "aegir release"
   },
@@ -155,30 +141,31 @@
     "@hapi/hapi": "^20.0.0",
     "@libp2p/interface-peer-id": "^1.0.4",
     "@libp2p/logger": "^2.0.0",
-    "@multiformats/multiaddr": "^10.1.8",
+    "@multiformats/multiaddr": "^11.0.0",
     "execa": "^6.1.0",
     "ipfs-utils": "^9.0.1",
     "joi": "^17.2.1",
     "merge-options": "^3.0.1",
     "nanoid": "^4.0.0",
-    "p-wait-for": "^4.1.0",
+    "p-wait-for": "^5.0.0",
     "temp-write": "^5.0.0",
     "wherearewe": "^2.0.1"
   },
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.9",
     "aegir": "^37.0.15",
-    "go-ipfs": "^0.13.0",
-    "ipfs": "^0.63.5",
-    "ipfs-client": "^0.8.3",
-    "ipfs-core-types": "^0.11.1",
-    "ipfs-http-client": "^57.0.3",
+    "go-ipfs": "^0.15.0",
+    "ipfs": "^0.64.0",
+    "ipfs-client": "^0.9.0",
+    "ipfs-core-types": "^0.12.0",
+    "ipfs-http-client": "^58.0.0",
+    "kubo-rpc-client": "^1.0.1",
     "util": "^0.12.4"
   },
   "browser": {
-    "./src/endpoint/server.js": "./src/endpoint/server.browser.js",
-    "./src/utils.js": "./src/utils.browser.js",
-    "./src/ipfsd-daemon.js": "./src/ipfsd-client.js",
+    "./dist/src/endpoint/server.js": "./dist/src/endpoint/server.browser.js",
+    "./dist/src/utils.js": "./dist/src/utils.browser.js",
+    "./dist/src/ipfsd-daemon.js": "./dist/src/ipfsd-client.js",
     "go-ipfs": false
   },
   "jsdelivr": "dist/index.min.js",

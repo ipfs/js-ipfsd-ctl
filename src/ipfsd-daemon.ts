@@ -1,16 +1,14 @@
-// @ts-check
-'use strict'
-
-import { Multiaddr } from '@multiformats/multiaddr'
+import { Multiaddr, multiaddr } from '@multiformats/multiaddr'
 import fs from 'fs/promises'
 import mergeOptions from 'merge-options'
 import { logger } from '@libp2p/logger'
-import { execa } from 'execa'
+import { execa, ExecaChildProcess } from 'execa'
 import { nanoid } from 'nanoid'
 import path from 'path'
 import os from 'os'
 import { checkForRunningApi, repoExists, tmpDir, defaultRepo, buildInitArgs, buildStartArgs } from './utils.js'
 import waitFor from 'p-wait-for'
+import type { Controller, ControllerOptions, InitOptions, IPFSAPI, PeerData } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
@@ -18,75 +16,66 @@ const daemonLog = {
   info: logger('ipfsd-ctl:daemon:stdout'),
   err: logger('ipfsd-ctl:daemon:stderr')
 }
+const rpcModuleLogger = logger('ipfsd-ctl:daemon')
 
-/**
- * @param {Error & { stdout: string, stderr: string }} err
- */
-function translateError (err) {
+function translateError (err: Error & { stdout: string, stderr: string }) {
   // get the actual error message to be the err.message
   err.message = `${err.stdout} \n\n ${err.stderr} \n\n ${err.message} \n\n`
 
   return err
 }
 
-/**
- *
- * @param {object} param0
- * @param {unknown} param0.err
- * @param {string} param0.stdout
- * @param {string} param0.stderr
- * @param {string} [param0.nameFallback]
- * @param {string} [param0.messageFallback]
- *
- * @returns {Error & { stdout: string, stderr: string }}
- */
-function translateUnknownError ({err, stdout, stderr, nameFallback = 'Unknown Error', messageFallback = 'Unknown Error Message'}) {
-  const error = /** @type {Error} */(err)
-  const name = error?.name || nameFallback
-  const message = error?.message || messageFallback
+interface TranslateUnknownErrorArgs {
+  err: Error | unknown
+  stdout: string
+  stderr: string
+  nameFallback?: string
+  messageFallback?: string
+}
+
+function translateUnknownError ({ err, stdout, stderr, nameFallback = 'Unknown Error', messageFallback = 'Unknown Error Message' }: TranslateUnknownErrorArgs) {
+  const error: Error = err as Error
+  const name = error?.name ?? nameFallback
+  const message = error?.message ?? messageFallback
   return translateError({
     name,
     message,
     stdout,
-    stderr,
+    stderr
   })
 }
 
 /**
- * @typedef {import("./types").ControllerOptions} ControllerOptions
- * @typedef {import("./types").Controller} Controller
- */
-
-/**
  * Controller for daemon nodes
- *
- * @class
- * @implements {Controller}
- *
  */
-class Daemon {
+class Daemon implements Controller {
+  public path: string
+  // @ts-expect-error set during startup
+  public api: IPFSAPI
+  public subprocess?: ExecaChildProcess
+  public opts: ControllerOptions
+  public initialized: boolean
+  public started: boolean
+  public clean: boolean
+  // @ts-expect-error set during startup
+  public apiAddr: Multiaddr
 
-  /**
-   * @class
-   * @param {Required<ControllerOptions>} opts
-   */
-  constructor (opts) {
+  private gatewayAddr?: Multiaddr
+  private grpcAddr?: Multiaddr
+  private readonly exec?: string
+  private readonly env: Record<string, string>
+  private readonly disposable: boolean
+  private _peerId: PeerData | null
+
+  constructor (opts: ControllerOptions) {
     this.opts = opts
-    this.path = this.opts.ipfsOptions.repo || (opts.disposable ? tmpDir(opts.type) : defaultRepo(opts.type))
+    this.path = this.opts.ipfsOptions?.repo ?? (opts.disposable === true ? tmpDir(opts.type) : defaultRepo(opts.type))
     this.exec = this.opts.ipfsBin
     this.env = merge({ IPFS_PATH: this.path }, this.opts.env)
-    this.disposable = this.opts.disposable
-    this.subprocess = null
+    this.disposable = Boolean(this.opts.disposable)
     this.initialized = false
     this.started = false
     this.clean = true
-    /** @type {Multiaddr} */
-    // @ts-ignore
-    this.apiAddr // eslint-disable-line no-unused-expressions
-    this.grpcAddr = null
-    this.gatewayAddr = null
-    this.api = null
-    /** @type {import('./types').PeerData | null} */
     this._peerId = null
   }
 
@@ -98,67 +87,57 @@ class Daemon {
     return this._peerId
   }
 
-  /**
-   * @private
-   * @param {string} addr
-   */
-  _setApi (addr) {
-    this.apiAddr = new Multiaddr(addr)
+  private _setApi (addr: string): void {
+    this.apiAddr = multiaddr(addr)
   }
 
-  /**
-   * @private
-   * @param {string} addr
-   */
-  _setGrpc (addr) {
-    this.grpcAddr = new Multiaddr(addr)
+  private _setGrpc (addr: string): void {
+    this.grpcAddr = multiaddr(addr)
   }
 
-  /**
-   * @private
-   * @param {string} addr
-   */
-  _setGateway (addr) {
-    this.gatewayAddr = new Multiaddr(addr)
+  private _setGateway (addr: string): void {
+    this.gatewayAddr = multiaddr(addr)
   }
 
   _createApi () {
-    if (this.opts.ipfsClientModule && this.grpcAddr) {
+    if (this.opts.ipfsClientModule != null && this.grpcAddr != null) {
       this.api = this.opts.ipfsClientModule.create({
         grpc: this.grpcAddr,
         http: this.apiAddr
       })
-    } else if (this.apiAddr) {
-      this.api = this.opts.ipfsHttpModule.create(this.apiAddr)
+    } else if (this.apiAddr != null) {
+      if (this.opts.kuboRpcModule != null) {
+        rpcModuleLogger('Using kubo-rpc-client')
+        this.api = this.opts.kuboRpcModule.create(this.apiAddr)
+      } else if (this.opts.ipfsHttpModule != null) {
+        rpcModuleLogger('Using ipfs-http-client')
+        this.api = this.opts.ipfsHttpModule.create(this.apiAddr)
+      } else {
+        throw new Error('You must pass either a kuboRpcModule or ipfsHttpModule')
+      }
     }
 
-    if (!this.api) {
-      throw new Error(`Could not create API from http '${this.apiAddr}' and/or gRPC '${this.grpcAddr}'`)
+    if (this.api == null) {
+      throw new Error(`Could not create API from http '${this.apiAddr.toString()}' and/or gRPC '${this.grpcAddr?.toString() ?? 'undefined'}'`)
     }
 
-    if (this.apiAddr) {
+    if (this.apiAddr != null) {
       this.api.apiHost = this.apiAddr.nodeAddress().address
       this.api.apiPort = this.apiAddr.nodeAddress().port
     }
 
-    if (this.gatewayAddr) {
+    if (this.gatewayAddr != null) {
       this.api.gatewayHost = this.gatewayAddr.nodeAddress().address
       this.api.gatewayPort = this.gatewayAddr.nodeAddress().port
     }
 
-    if (this.grpcAddr) {
+    if (this.grpcAddr != null) {
       this.api.grpcHost = this.grpcAddr.nodeAddress().address
       this.api.grpcPort = this.grpcAddr.nodeAddress().port
     }
   }
 
-  /**
-   * Initialize a repo.
-   *
-   * @param {import('./types').InitOptions} [initOptions={}]
-   * @returns {Promise<Daemon>}
-   */
-  async init (initOptions = {}) {
+  async init (initOptions: InitOptions = {}): Promise<Controller> {
     this.initialized = await repoExists(this.path)
     if (this.initialized) {
       this.clean = false
@@ -167,9 +146,9 @@ class Daemon {
 
     initOptions = merge({
       emptyRepo: false,
-      profiles: this.opts.test ? ['test'] : []
+      profiles: this.opts.test === true ? ['test'] : []
     },
-    typeof this.opts.ipfsOptions.init === 'boolean' ? {} : this.opts.ipfsOptions.init,
+    typeof this.opts.ipfsOptions?.init === 'boolean' ? {} : this.opts.ipfsOptions?.init,
     typeof initOptions === 'boolean' ? {} : initOptions
     )
 
@@ -183,6 +162,10 @@ class Daemon {
 
     const args = buildInitArgs(opts)
 
+    if (this.exec == null) {
+      throw new Error('No executable specified')
+    }
+
     const { stdout, stderr } = await execa(this.exec, args, {
       env: this.env
     })
@@ -195,7 +178,7 @@ class Daemon {
     if (this.opts.type === 'go') {
       await this._replaceConfig(merge(
         await this._getConfig(),
-        this.opts.ipfsOptions.config
+        this.opts.ipfsOptions?.config
       ))
     }
 
@@ -229,10 +212,10 @@ class Daemon {
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
 
-    if (api) {
+    if (api != null) {
       this._setApi(api)
       this._createApi()
-    } else if (!this.exec) {
+    } else if (this.exec == null) {
       throw new Error('No executable specified')
     } else {
       const args = buildStartArgs(this.opts)
@@ -240,45 +223,46 @@ class Daemon {
       let output = ''
 
       const ready = new Promise((resolve, reject) => {
+        if (this.exec == null) {
+          return reject(new Error('No executable specified'))
+        }
+
         this.subprocess = execa(this.exec, args, {
           env: this.env
         })
 
         const { stdout, stderr } = this.subprocess
 
-        if (!stderr) {
+        if (stderr == null) {
           throw new Error('stderr was not defined on subprocess')
         }
 
-        if (!stdout) {
+        if (stdout == null) {
           throw new Error('stderr was not defined on subprocess')
         }
 
         stderr.on('data', data => daemonLog.err(data.toString()))
         stdout.on('data', data => daemonLog.info(data.toString()))
 
-        /**
-         * @param {Buffer} data
-         */
-        const readyHandler = data => {
+        const readyHandler = (data: Buffer) => {
           output += data.toString()
           const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
           const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
           const grpcMatch = output.trim().match(/gRPC .*listening on:? (.*)/)
 
-          if (apiMatch && apiMatch.length > 0) {
+          if ((apiMatch != null) && apiMatch.length > 0) {
             this._setApi(apiMatch[1])
           }
 
-          if (gwMatch && gwMatch.length > 0) {
+          if ((gwMatch != null) && gwMatch.length > 0) {
             this._setGateway(gwMatch[1])
           }
 
-          if (grpcMatch && grpcMatch.length > 0) {
+          if ((grpcMatch != null) && grpcMatch.length > 0) {
             this._setGrpc(grpcMatch[1])
           }
 
-          if (output.match(/(?:daemon is running|Daemon is ready)/)) {
+          if (output.match(/(?:daemon is running|Daemon is ready)/) != null) {
             // we're good
             this._createApi()
             this.started = true
@@ -288,7 +272,7 @@ class Daemon {
         }
         stdout.on('data', readyHandler)
         this.subprocess.catch(err => reject(translateError(err)))
-        this.subprocess.on('exit', () => {
+        void this.subprocess.on('exit', () => {
           this.started = false
           stderr.removeAllListeners()
           stdout.removeAllListeners()
@@ -310,21 +294,14 @@ class Daemon {
     return this
   }
 
-  /**
-   * Stop the daemon.
-   *
-   * @param {object} [options]
-   * @param {number} [options.timeout=60000] - How long to wait for the daemon to stop
-   * @returns {Promise<Daemon>}
-   */
-  async stop (options = {}) {
-    const timeout = options.timeout || 60000
+  async stop (options: { timeout?: number } = {}): Promise<Controller> {
+    const timeout = options.timeout ?? 60000
 
     if (!this.started) {
       return this
     }
 
-    if (this.subprocess) {
+    if (this.subprocess != null) {
       /** @type {ReturnType<setTimeout> | undefined} */
       let killTimeout
       const subprocess = this.subprocess
@@ -337,8 +314,8 @@ class Daemon {
         if (this.opts.forceKill !== false) {
           killTimeout = setTimeout(() => {
             // eslint-disable-next-line no-console
-            console.error(new Error(`Timeout stopping ${this.opts.type} node after ${this.opts.forceKillTimeout}ms. Process ${subprocess.pid} will be force killed now.`))
-            this.subprocess && this.subprocess.kill('SIGKILL')
+            console.error(new Error(`Timeout stopping ${this.opts.type ?? 'unknown'} node after ${this.opts.forceKillTimeout ?? 'unknown'}ms. Process ${subprocess.pid ?? 'unknown'} will be force killed now.`))
+            this.subprocess?.kill('SIGKILL')
           }, this.opts.forceKillTimeout)
         }
 
@@ -350,7 +327,7 @@ class Daemon {
         timeout
       })
 
-      if (killTimeout) {
+      if (killTimeout != null) {
         clearTimeout(killTimeout)
       }
 
@@ -374,9 +351,9 @@ class Daemon {
    *
    * @returns {Promise<number>}
    */
-  pid () {
-    if (this.subprocess && this.subprocess.pid != null) {
-      return Promise.resolve(this.subprocess.pid)
+  async pid () {
+    if (this.subprocess?.pid != null) {
+      return await Promise.resolve(this.subprocess?.pid)
     }
     throw new Error('Daemon process is not running.')
   }
@@ -391,6 +368,10 @@ class Daemon {
    * @returns {Promise<object | string>}
    */
   async _getConfig (key = 'show') {
+    if (this.exec == null) {
+      throw new Error('No executable specified')
+    }
+
     const {
       stdout,
       stderr
@@ -411,7 +392,7 @@ class Daemon {
           stderr,
           stdout,
           nameFallback: 'JSON.parse error',
-          messageFallback: 'Failed to parse stdout as JSON',
+          messageFallback: 'Failed to parse stdout as JSON'
         })
       }
     }
@@ -421,12 +402,12 @@ class Daemon {
 
   /**
    * Replace the current config with the provided one
-   *
-   * @private
-   * @param {object} config
-   * @returns {Promise<Daemon>}
    */
-  async _replaceConfig (config) {
+  private async _replaceConfig (config: any): Promise<Controller> {
+    if (this.exec == null) {
+      throw new Error('No executable specified')
+    }
+
     const tmpFile = path.join(os.tmpdir(), nanoid())
 
     await fs.writeFile(tmpFile, JSON.stringify(config))
@@ -441,12 +422,11 @@ class Daemon {
     return this
   }
 
-  /**
-   * Get the version of ipfs
-   *
-   * @returns {Promise<string>}
-   */
-  async version () {
+  async version (): Promise<string> {
+    if (this.exec == null) {
+      throw new Error('No executable specified')
+    }
+
     const {
       stdout
     } = await execa(this.exec, ['version'], {

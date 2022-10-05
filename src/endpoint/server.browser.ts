@@ -1,24 +1,20 @@
 /* eslint-disable no-console */
 
+import type { ServerInit } from './server.js'
+
 /**
- * Creates an instance of Server.
- *
- * @class
+ * Creates an instance of Server
  */
 class Server {
-  /**
-   * @class
-   * @param {object} options
-   * @param {number} [options.port=43134] - Server port.
-   * @param {Function} createNode
-   */
-  constructor (options, createNode) {
-    options = options || { port: 43134 }
+  private readonly options: ServerInit
+  public port: number
+  public host: string
 
-    /** @type {*} */
-    this.server = null
-    this.port = options.port
-    this.createNode = createNode
+  constructor (options: ServerInit = { port: 43134, host: 'localhost' }) {
+    this.options = options
+    this.port = this.options.port ?? 43134
+    this.host = this.options.host ?? 'localhost'
+
     console.warn('Server not implemented in the browser')
   }
 

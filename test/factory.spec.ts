@@ -1,49 +1,40 @@
 /* eslint-env mocha */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
 import { isNode } from 'wherearewe'
-import { createFactory } from '../src/index.js'
+import { ControllerOptions, createFactory } from '../src/index.js'
 import * as ipfsModule from 'ipfs'
-// @ts-ignore no types
+// @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
+import * as kuboRpcModule from 'kubo-rpc-client'
 
-const defaultOps = {
-  ipfsHttpModule
-}
-
-/**
- * @typedef {import('../src/types').ControllerOptions} ControllerOptions
- */
-
-/**
- * @type {ControllerOptions[]}
- */
-const types = [{
-  ...defaultOps,
+const types: ControllerOptions[] = [{
+  ipfsHttpModule,
   type: 'js',
   test: true,
   ipfsModule,
   ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
-  ...defaultOps,
+  kuboRpcModule,
   ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
   test: true
 }, {
-  ...defaultOps,
+  ipfsHttpModule,
   type: 'proc',
   test: true,
   ipfsModule
 }, {
-  ...defaultOps,
+  ipfsHttpModule,
   type: 'js',
   remote: true,
   test: true,
   ipfsModule,
   ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
-  ...defaultOps,
+  kuboRpcModule,
   ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
   remote: true,

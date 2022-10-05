@@ -1,7 +1,8 @@
-import { Multiaddr } from '@multiformats/multiaddr'
+import { Multiaddr, multiaddr } from '@multiformats/multiaddr'
 import mergeOptions from 'merge-options'
 import { repoExists, removeRepo, checkForRunningApi, tmpDir, defaultRepo } from './utils.js'
 import { logger } from '@libp2p/logger'
+import type { Controller, ControllerOptions, InitOptions, IPFSAPI, PeerData } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
@@ -9,32 +10,36 @@ const daemonLog = {
   info: logger('ipfsd-ctl:proc:stdout'),
   err: logger('ipfsd-ctl:proc:stderr')
 }
-/**
- * @typedef {import("./types").ControllerOptions} ControllerOptions
- * @typedef {import("./types").InitOptions} InitOptions
- */
+const rpcModuleLogger = logger('ipfsd-ctl:proc')
 
 /**
  * Controller for in process nodes
  */
-class InProc {
-  /**
-   * @param {Required<ControllerOptions>} opts
-   */
-  constructor (opts) {
+class InProc implements Controller {
+  public path: string
+  // @ts-expect-error set during startup
+  public api: IPFSAPI
+  public subprocess: null
+  public opts: ControllerOptions
+  public initialized: boolean
+  public started: boolean
+  public clean: boolean
+  // @ts-expect-error set during startup
+  public apiAddr: Multiaddr
+
+  private initOptions: InitOptions
+  private readonly disposable: boolean
+  private _peerId: PeerData | null
+
+  constructor (opts: ControllerOptions) {
     this.opts = opts
-    this.path = this.opts.ipfsOptions.repo || (opts.disposable ? tmpDir(opts.type) : defaultRepo(opts.type))
-    this.initOptions = toInitOptions(opts.ipfsOptions.init)
-    this.disposable = opts.disposable
+    this.path = this.opts.ipfsOptions?.repo ?? (opts.disposable === true ? tmpDir(opts.type) : defaultRepo(opts.type))
+    this.initOptions = toInitOptions(opts.ipfsOptions?.init)
+    this.disposable = Boolean(opts.disposable)
     this.initialized = false
     this.started = false
     this.clean = true
-    /** @type {Multiaddr} */
-    this.apiAddr // eslint-disable-line no-unused-expressions
-    this.api = null
-    /** @type {import('./types').Subprocess | null} */
     this.subprocess = null
-    /** @type {import('./types').PeerData | null} */
     this._peerId = null
   }
 
@@ -47,7 +52,7 @@ class InProc {
   }
 
   async setExec () {
-    if (this.api !== null) {
+    if (this.api != null) {
       return
     }
 
@@ -61,24 +66,24 @@ class InProc {
     })
   }
 
-  /**
-   * @private
-   * @param {string} addr
-   */
-  _setApi (addr) {
-    this.apiAddr = new Multiaddr(addr)
-    this.api = this.opts.ipfsHttpModule.create(addr)
+  private _setApi (addr: string): void {
+    this.apiAddr = multiaddr(addr)
+
+    if (this.opts.kuboRpcModule != null) {
+      rpcModuleLogger('Using kubo-rpc-client')
+      this.api = this.opts.kuboRpcModule.create(addr)
+    } else if (this.opts.ipfsHttpModule != null) {
+      rpcModuleLogger('Using ipfs-http-client')
+      this.api = this.opts.ipfsHttpModule.create(addr)
+    } else {
+      throw new Error('You must pass either a kuboRpcModule or ipfsHttpModule')
+    }
+
     this.api.apiHost = this.apiAddr.nodeAddress().address
     this.api.apiPort = this.apiAddr.nodeAddress().port
   }
 
-  /**
-   * Initialize a repo.
-   *
-   * @param {import('./types').InitOptions} [initOptions={}]
-   * @returns {Promise<InProc>}
-   */
-  async init (initOptions = {}) {
+  async init (initOptions: InitOptions = {}): Promise<Controller> {
     this.initialized = await repoExists(this.path)
     if (this.initialized) {
       this.clean = false
@@ -89,7 +94,7 @@ class InProc {
     this.initOptions = merge(
       {
         emptyRepo: false,
-        profiles: this.opts.test ? ['test'] : []
+        profiles: this.opts.test === true ? ['test'] : []
       },
       this.initOptions,
       toInitOptions(initOptions)
@@ -101,14 +106,7 @@ class InProc {
     return this
   }
 
-  /**
-   * Delete the repo that was being used.
-   * If the node was marked as `disposable` this will be called
-   * automatically when the process is exited.
-   *
-   * @returns {Promise<InProc>}
-   */
-  async cleanup () {
+  async cleanup (): Promise<Controller> {
     if (!this.clean) {
       await removeRepo(this.path)
       this.clean = true
@@ -116,15 +114,10 @@ class InProc {
     return this
   }
 
-  /**
-   * Start the daemon.
-   *
-   * @returns {Promise<InProc>}
-   */
-  async start () {
+  async start (): Promise<Controller> {
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
-    if (api) {
+    if (api != null) {
       this._setApi(api)
     } else {
       await this.setExec()
@@ -139,12 +132,7 @@ class InProc {
     return this
   }
 
-  /**
-   * Stop the daemon.
-   *
-   * @returns {Promise<InProc>}
-   */
-  async stop () {
+  async stop (): Promise<Controller> {
     if (!this.started) {
       return this
     }
@@ -160,19 +148,12 @@ class InProc {
 
   /**
    * Get the pid of the `ipfs daemon` process
-   *
-   * @returns {Promise<number>}
    */
-  pid () {
-    return Promise.reject(new Error('not implemented'))
+  async pid (): Promise<number> {
+    return await Promise.reject(new Error('not implemented'))
   }
 
-  /**
-   * Get the version of ipfs
-   *
-   * @returns {Promise<string>}
-   */
-  async version () {
+  async version (): Promise<string> {
     await this.setExec()
 
     const { version } = await this.api.version()
@@ -181,10 +162,7 @@ class InProc {
   }
 }
 
-/**
- * @param {boolean | InitOptions} [init]
- */
-const toInitOptions = (init = {}) =>
+const toInitOptions = (init: boolean | InitOptions = {}): InitOptions =>
   typeof init === 'boolean' ? {} : init
 
 export default InProc

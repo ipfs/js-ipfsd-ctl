@@ -10,14 +10,8 @@ import * as ipfsHttpModule from 'ipfs-http-client'
 describe('routes', function () {
   this.timeout(60000)
 
-  /**
-   * @type {string}
-   */
-  let id
-  /**
-   * @type {Hapi.Server}
-   */
-  let server
+  let id: string
+  let server: Hapi.Server
 
   before(async () => {
     server = new Hapi.Server({ port: 43134 })
@@ -52,7 +46,7 @@ describe('routes', function () {
       expect(res).to.have.nested.property('result.apiAddr')
       expect(res).to.have.nested.property('result.gatewayAddr')
 
-      // @ts-ignore res.result is an object
+      // @ts-expect-error res.result is an object
       id = res.result.id
     })
   })

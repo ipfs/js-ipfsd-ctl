@@ -1,24 +1,20 @@
 /* eslint-env mocha */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable no-loop-func */
 
 import { expect } from 'aegir/chai'
 import merge from 'merge-options'
-import { createFactory, createController } from '../src/index.js'
+import { createFactory, createController, ControllerOptions, Factory } from '../src/index.js'
 import { repoExists } from '../src/utils.js'
 import { isBrowser, isWebWorker, isNode } from 'wherearewe'
 import waitFor from 'p-wait-for'
 import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
-// @ts-ignore no types
+// @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
+import * as kuboRpcModule from 'kubo-rpc-client'
 
-/**
- * @typedef {import("../src/types").ControllerOptions} ControllerOptions
- */
-
-/**
- * @type {ControllerOptions[]}
- */
-const types = [{
+const types: ControllerOptions[] = [{
   type: 'js',
   ipfsOptions: {
     init: false,
@@ -26,6 +22,7 @@ const types = [{
   }
 }, {
   type: 'go',
+  kuboRpcModule,
   ipfsOptions: {
     init: false,
     start: false
@@ -45,6 +42,7 @@ const types = [{
   }
 }, {
   type: 'go',
+  kuboRpcModule,
   remote: true,
   ipfsOptions: {
     init: false,
@@ -52,25 +50,43 @@ const types = [{
   }
 }]
 
-describe('Controller API', async function () {
+/**
+ * Set the options object with the correct RPC module depending on the type
+ */
+function addCorrectRpcModule (opts: ControllerOptions, additionalOpts: ControllerOptions) {
+  if (opts.type === 'go') {
+    additionalOpts.kuboRpcModule = kuboRpcModule
+  } else {
+    additionalOpts.ipfsHttpModule = ipfsHttpModule
+  }
+
+  return additionalOpts
+}
+
+describe('Controller API', function () {
   this.timeout(60000)
 
-  const factory = createFactory({
-    test: true,
-    ipfsHttpModule,
-    ipfsModule: (await import('ipfs'))
-  }, {
-    js: {
-      ipfsBin: isNode ? ipfsModule.path() : undefined
-    },
-    go: {
-      ipfsBin: isNode ? goIpfsModule.path() : undefined
-    }
+  let factory: Factory
+
+  before(async () => {
+    factory = createFactory({
+      test: true,
+      ipfsModule: (await import('ipfs'))
+    }, {
+      js: {
+        ipfsBin: isNode ? ipfsModule.path() : undefined,
+        ipfsHttpModule
+      },
+      go: {
+        ipfsBin: isNode ? goIpfsModule.path() : undefined,
+        kuboRpcModule
+      }
+    })
+
+    await factory.spawn({ type: 'js' })
   })
 
-  before(() => factory.spawn({ type: 'js' }))
-
-  after(() => factory.clean())
+  after(async () => await factory.clean())
 
   describe('init', () => {
     describe('should work with defaults', () => {
@@ -192,13 +208,12 @@ describe('Controller API', async function () {
           // have to use createController so we don't try to shut down
           // the node twice during test cleanup
           const ctl = await createController(merge(
-            opts, {
-              ipfsHttpModule,
+            opts, addCorrectRpcModule(opts, {
               ipfsModule,
               ipfsOptions: {
                 repo: factory.controllers[0].path
               }
-            }
+            })
           ))
 
           await ctl.init()
@@ -220,7 +235,7 @@ describe('Controller API', async function () {
           const ctl1 = await createController(merge(
             {
               type: 'go',
-              ipfsHttpModule,
+              kuboRpcModule,
               ipfsBin: goIpfsModule.path(),
               test: true,
               disposable: true,
@@ -233,8 +248,7 @@ describe('Controller API', async function () {
           expect(ctl1.started).to.be.true()
 
           const ctl2 = await createController(merge(
-            opts, {
-              ipfsHttpModule,
+            opts, addCorrectRpcModule(opts, {
               ipfsModule,
               test: true,
               disposable: true,
@@ -242,7 +256,7 @@ describe('Controller API', async function () {
                 repo: ctl1.path,
                 start: true
               }
-            }
+            })
           ))
           expect(ctl2.started).to.be.true()
 
@@ -335,10 +349,10 @@ describe('Controller API', async function () {
           await ctl.init()
           await ctl.start()
           await ctl.stop()
-          if (ctl.subprocess && ctl.subprocess.stderr) {
+          if (ctl.subprocess?.stderr != null) {
             expect(ctl.subprocess.stderr.listeners('data')).to.be.empty()
           }
-          if (ctl.subprocess && ctl.subprocess.stdout) {
+          if (ctl.subprocess?.stdout != null) {
             expect(ctl.subprocess.stdout.listeners('data')).to.be.empty()
           }
         })

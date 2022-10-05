@@ -1,3 +1,24 @@
+## [12.1.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.1.0...v12.1.1) (2022-10-05)
+
+
+### Bug Fixes
+
+* update export path to point to correct file ([#778](https://github.com/ipfs/js-ipfsd-ctl/issues/778)) ([ecdda55](https://github.com/ipfs/js-ipfsd-ctl/commit/ecdda5547491e9826568bb8c3181121de38b5362))
+
+## [12.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.3...v12.1.0) (2022-10-04)
+
+
+### Features
+
+* convert to typescript ([#777](https://github.com/ipfs/js-ipfsd-ctl/issues/777)) ([ee3a35a](https://github.com/ipfs/js-ipfsd-ctl/commit/ee3a35a28c7a435c49da02d4e03d29c4520e5b55))
+
+## [12.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.2...v12.0.3) (2022-09-21)
+
+
+### Dependencies
+
+* update @multiformats/multiaddr to 11.0.0 ([#775](https://github.com/ipfs/js-ipfsd-ctl/issues/775)) ([087e80c](https://github.com/ipfs/js-ipfsd-ctl/commit/087e80ce905d846f6047f7528ae9a2468afa583e))
+
 ## [12.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.0.1...v12.0.2) (2022-09-02)
 
 

@@ -1,16 +1,17 @@
 /* eslint-env mocha */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
 import { createFactory } from '../src/index.js'
 import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
-// @ts-ignore no types
+// @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
 
 import './node.routes.js'
 import './node.utils.js'
 
-describe('Node specific tests', async function () {
+describe('Node specific tests', function () {
   this.timeout(60000)
 
   const factory = createFactory({

@@ -1,12 +1,13 @@
 import { isBrowser, isWebWorker } from 'wherearewe'
+import type { ControllerType } from './index.js'
 
-/**
- * @param {object} args
- * @param {import('./types').NodeType} args.type
- */
-export default ({ type }) => {
-  /** @type {string[]} */
-  let swarm
+export interface ConfigInit {
+  type?: ControllerType
+}
+
+export default (init: ConfigInit) => {
+  const { type } = init
+  let swarm: string[]
 
   // from the browser tell remote nodes to listen over WS
   if (type !== 'proc' && (isBrowser || isWebWorker)) {
