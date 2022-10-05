@@ -61,17 +61,15 @@ $ npm i ipfsd-ctl
 
 Version 1.0.0 changed a bit the api and the options methods take so please read the documentation below.
 
-Please ensure your project also has dependencies on `ipfs`, `ipfs-http-client` and `go-ipfs`.
+Please ensure your project also has dependencies on `ipfs`, `ipfs-http-client`, `kubo-rpc-client`, and `go-ipfs`.
 
 ```sh
-npm install --save ipfs
-npm install --save ipfs-http-client
-npm install --save go-ipfs
+npm install --save ipfs ipfs-http-client go-ipfs kubo-rpc-client
 ```
 
-If you are only going to use the `go` implementation of IPFS, you can skip installing the `js` implementation and vice versa, though both will require the `ipfs-http-client` module.
+If you are only going to use the `go` implementation of IPFS, you can skip installing the `js` implementation and `ipfs-http-client` module. (e.g. `npm i --save go-ipfs kubo-rpc-client`)
 
-If you are only using the `proc` type in-process IPFS node, you can skip installing `go-ipfs` and `ipfs-http-client`.
+If you are only using the `proc` type in-process IPFS node, you can skip installing `go-ipfs` and `ipfs-http-client`. (e.g. `npm i --save ipfs`)
 
 > You also need to explicitly defined the options `ipfsBin`, `ipfsModule` and `ipfsHttpModule` according to your needs.  Check [ControllerOptions](#controlleroptions) and [ControllerOptionsOverrides](#controlleroptionsoverrides) for more information.
 

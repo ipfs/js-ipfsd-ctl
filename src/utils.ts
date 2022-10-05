@@ -4,7 +4,7 @@ import fs from 'fs'
 import { logger } from '@libp2p/logger'
 import { nanoid } from 'nanoid'
 import tempWrite from 'temp-write'
-import type { ControllerOptions, IPFSOptions, NodeType } from './index.js'
+import type { ControllerOptions, IPFSOptions, ControllerType } from './index.js'
 
 const log = logger('ipfsd-ctl:utils')
 
@@ -22,7 +22,7 @@ export const repoExists = async (repoPath: string): Promise<boolean> => {
   return await Promise.resolve(fs.existsSync(path.join(repoPath, 'config')))
 }
 
-export const defaultRepo = (type?: NodeType): string => {
+export const defaultRepo = (type?: ControllerType): string => {
   if (process.env.IPFS_PATH !== undefined) {
     return process.env.IPFS_PATH
   }

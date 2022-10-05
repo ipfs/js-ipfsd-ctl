@@ -82,7 +82,8 @@ class DefaultFactory implements Factory {
         remote: false,
         ipfsBin: undefined,
         ipfsModule: undefined,
-        ipfsHttpModule: undefined
+        ipfsHttpModule: undefined,
+        kuboRpcModule: undefined
       }
     }
 

@@ -8,36 +8,33 @@ import * as ipfsModule from 'ipfs'
 // @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
-
-const defaultOps = {
-  ipfsHttpModule
-}
+import * as kuboRpcModule from 'kubo-rpc-client'
 
 const types: ControllerOptions[] = [{
-  ...defaultOps,
+  ipfsHttpModule,
   type: 'js',
   test: true,
   ipfsModule,
   ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
-  ...defaultOps,
+  kuboRpcModule,
   ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
   test: true
 }, {
-  ...defaultOps,
+  ipfsHttpModule,
   type: 'proc',
   test: true,
   ipfsModule
 }, {
-  ...defaultOps,
+  ipfsHttpModule,
   type: 'js',
   remote: true,
   test: true,
   ipfsModule,
   ipfsBin: isNode ? ipfsModule.path() : undefined
 }, {
-  ...defaultOps,
+  kuboRpcModule,
   ipfsBin: isNode ? goIpfsModule.path() : undefined,
   type: 'go',
   remote: true,

@@ -1,8 +1,8 @@
 import { isBrowser, isWebWorker } from 'wherearewe'
-import type { NodeType } from './index.js'
+import type { ControllerType } from './index.js'
 
 export interface ConfigInit {
-  type?: NodeType
+  type?: ControllerType
 }
 
 export default (init: ConfigInit) => {
