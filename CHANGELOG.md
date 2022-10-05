@@ -1,3 +1,10 @@
+## [12.2.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.1.1...v12.2.0) (2022-10-05)
+
+
+### Features
+
+* add js-kubo-rpc-client ([#764](https://github.com/ipfs/js-ipfsd-ctl/issues/764)) ([9538c1d](https://github.com/ipfs/js-ipfsd-ctl/commit/9538c1d502b0dcb815d8238ed4498542bbf03867))
+
 ## [12.1.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.1.0...v12.1.1) (2022-10-05)
 
 
