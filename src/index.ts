@@ -51,9 +51,6 @@ export interface Controller<Type extends ControllerType = 'go'> {
   api: IPFSAPI
   subprocess?: ExecaChildProcess | null
   opts: ControllerOptions
-  // api: Type extends 'go' ? import('kubo-rpc-client').IPFSHTTPClient : IPFS
-  // subprocess?: Subprocess | null
-  // opts: ControllerOptions<Type>
   apiAddr: Multiaddr
   peer: PeerData
 }
