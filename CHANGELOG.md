@@ -1,3 +1,10 @@
+## [12.2.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.2.0...v12.2.1) (2022-10-07)
+
+
+### Dependencies
+
+* **dev:** bump go-ipfs from 0.15.0 to 0.16.0 ([#779](https://github.com/ipfs/js-ipfsd-ctl/issues/779)) ([c3301f1](https://github.com/ipfs/js-ipfsd-ctl/commit/c3301f149d10e3142065ab848c40d88affd0a267))
+
 ## [12.2.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.1.1...v12.2.0) (2022-10-05)
 
 
