@@ -1,3 +1,10 @@
+## [12.2.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.2.1...v12.2.2) (2022-10-19)
+
+
+### Bug Fixes
+
+* pass ipfs config show errors ([#722](https://github.com/ipfs/js-ipfsd-ctl/issues/722)) ([efb2779](https://github.com/ipfs/js-ipfsd-ctl/commit/efb27798f18d1a877f53eaa9d455f79e3ce69641)), closes [#721](https://github.com/ipfs/js-ipfsd-ctl/issues/721)
+
 ## [12.2.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.2.0...v12.2.1) (2022-10-07)
 
 
