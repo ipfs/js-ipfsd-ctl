@@ -25,6 +25,26 @@ function translateError (err: Error & { stdout: string, stderr: string }) {
   return err
 }
 
+interface TranslateUnknownErrorArgs {
+  err: Error | unknown
+  stdout: string
+  stderr: string
+  nameFallback?: string
+  messageFallback?: string
+}
+
+function translateUnknownError ({ err, stdout, stderr, nameFallback = 'Unknown Error', messageFallback = 'Unknown Error Message' }: TranslateUnknownErrorArgs) {
+  const error: Error = err as Error
+  const name = error?.name ?? nameFallback
+  const message = error?.message ?? messageFallback
+  return translateError({
+    name,
+    message,
+    stdout,
+    stderr
+  })
+}
+
 /**
  * Controller for daemon nodes
  */
@@ -353,7 +373,8 @@ class Daemon implements Controller {
     }
 
     const {
-      stdout
+      stdout,
+      stderr
     } = await execa(
       this.exec,
       ['config', key],
@@ -363,7 +384,17 @@ class Daemon implements Controller {
       .catch(translateError)
 
     if (key === 'show') {
-      return JSON.parse(stdout)
+      try {
+        return JSON.parse(stdout)
+      } catch (err) {
+        throw translateUnknownError({
+          err,
+          stderr,
+          stdout,
+          nameFallback: 'JSON.parse error',
+          messageFallback: 'Failed to parse stdout as JSON'
+        })
+      }
     }
 
     return stdout.trim()
