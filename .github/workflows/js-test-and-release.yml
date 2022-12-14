@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
-        node: [16]
+        node: [lts/*]
       fail-fast: true
     steps:
       - uses: actions/checkout@v3
@@ -144,3 +144,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm run --if-present docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
