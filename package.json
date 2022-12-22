@@ -152,7 +152,7 @@
     "wherearewe": "^2.0.1"
   },
   "devDependencies": {
-    "@types/hapi__hapi": "^20.0.9",
+    "@types/hapi__hapi": "^21.0.0",
     "aegir": "^37.0.15",
     "go-ipfs": "^0.16.0",
     "ipfs": "^0.64.0",
