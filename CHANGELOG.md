@@ -1,3 +1,14 @@
+## [13.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.2.2...v13.0.0) (2023-01-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* update all deps to multiformats 11 (#801)
+
+### Dependencies
+
+* update all deps to multiformats 11 ([#801](https://github.com/ipfs/js-ipfsd-ctl/issues/801)) ([7ee5282](https://github.com/ipfs/js-ipfsd-ctl/commit/7ee52824405b4cc7c85e7842ec93f917c5cbac52))
+
 ## [12.2.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.2.1...v12.2.2) (2022-10-19)
 
 
