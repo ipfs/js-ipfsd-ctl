@@ -1,452 +1,427 @@
-<!doctype html>
-<html class="default no-js">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ipfsd-ctl - v10.0.5</title>
-	<meta name="description" content="Documentation for ipfsd-ctl - v10.0.5">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-	<script async src="assets/js/search.js" id="search-script"></script>
-</head>
-<body>
-<header>
-	<div class="tsd-page-toolbar">
-		<div class="container">
-			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
-					<div class="field">
-						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
-						<input id="tsd-search-field" type="text" />
-					</div>
-					<ul class="results">
-						<li class="state loading">Preparing search index...</li>
-						<li class="state failure">The search index is not available</li>
-					</ul>
-					<a href="index.html" class="title">ipfsd-ctl - v10.0.5</a>
-				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<div class="tsd-select" id="tsd-filter-visibility">
-								<span class="tsd-select-label">All</span>
-								<ul class="tsd-select-list">
-									<li data-value="public">Public</li>
-									<li data-value="protected">Public/Protected</li>
-									<li data-value="private" class="selected">All</li>
-								</ul>
-							</div>
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-						</div>
-					</div>
-					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="tsd-page-title">
-		<div class="container">
-			<h1>ipfsd-ctl - v10.0.5</h1>
-		</div>
-	</div>
-</header>
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ipfsd-ctl - v13.0.0</title><meta name="description" content="Documentation for ipfsd-ctl - v13.0.0"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base=".">
+<div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<div class="field">
+<div id="tsd-toolbar-links"></div></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">ipfsd-ctl - v13.0.0</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
 <div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<a href="#ipfsd-ctl-the-ipfs-factory" id="ipfsd-ctl-the-ipfs-factory" style="color: inherit; text-decoration: none;">
-					<h1>ipfsd-ctl, the IPFS Factory</h1>
-				</a>
-				<p><a href="http://protocol.ai"><img src="https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square" alt=""></a>
-					<a href="http://ipfs.io/"><img src="https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square" alt=""></a>
-					<a href="http://webchat.freenode.net/?channels=%23ipfs"><img src="https://img.shields.io/badge/freenode-%23ipfs-blue.svg?style=flat-square" alt=""></a>
-					<a href="https://travis-ci.com/ipfs/js-ipfsd-ctl"><img src="https://flat.badgen.net/travis/ipfs/js-ipfsd-ctl?branch=master" alt="Travis CI"></a>
-					<a href="https://codecov.io/gh/ipfs/js-ipfs-multipart"><img src="https://img.shields.io/codecov/c/github/ipfs/js-ipfs-multipart/master.svg?style=flat-square" alt="Codecov branch"></a>
-					<a href="https://david-dm.org/ipfs/js-ipfsd-ctl"><img src="https://david-dm.org/ipfs/js-ipfsd-ctl.svg?style=flat-square" alt="Dependency Status"></a>
-					<a href="https://github.com/feross/standard"><img src="https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square" alt="js-standard-style"></a>
-				<a href="https://bundlephobia.com/result?p=ipfsd-ctl"><img src="https://flat.badgen.net/bundlephobia/minzip/ipfsd-ctl" alt="Bundle Size"></a></p>
-				<blockquote>
-					<p>Spawn IPFS daemons using JavaScript!</p>
-				</blockquote>
-				<a href="#lead-maintainer" id="lead-maintainer" style="color: inherit; text-decoration: none;">
-					<h2>Lead Maintainer</h2>
-				</a>
-				<p><a href="https://github.com/hugomrdias">Hugo Dias</a></p>
-				<a href="#notice" id="notice" style="color: inherit; text-decoration: none;">
-					<h2>Notice</h2>
-				</a>
-				<p>Version 1.0.0 changed a bit the api and the options methods take so please read the documentation below.</p>
-				<a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
-					<h2>Table of Contents</h2>
-				</a>
-				<ul>
-					<li><a href="#install">Install</a></li>
-					<li><a href="#usage">Usage</a></li>
-					<li><a href="#api">API</a></li>
-					<li><a href="#packaging">Packaging</a></li>
-					<li><a href="#contribute">Contribute</a></li>
-					<li><a href="#license">License</a></li>
-				</ul>
-				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
-					<h2>Install</h2>
-				</a>
-				<pre><code class="language-sh"><span style="color: #000000">npm install --save ipfsd-ctl</span>
+<div class="col-8 col-content">
+<div class="tsd-page-title">
+<h2>ipfsd-ctl - v13.0.0</h2></div>
+<div class="tsd-panel tsd-typography">
+<a href="#ipfsd-ctl-" id="ipfsd-ctl-" style="color: inherit; text-decoration: none;">
+  <h1>ipfsd-ctl <!-- omit in toc --></h1>
+</a>
+<p><a href="https://ipfs.tech"><img src="https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square" alt="ipfs.tech"></a>
+<a href="https://discuss.ipfs.tech"><img src="https://img.shields.io/discourse/https/discuss.ipfs.tech/posts.svg?style=flat-square" alt="Discuss"></a>
+<a href="https://codecov.io/gh/ipfs/js-ipfsd-ctl"><img src="https://img.shields.io/codecov/c/github/ipfs/js-ipfsd-ctl.svg?style=flat-square" alt="codecov"></a>
+<a href="https://github.com/ipfs/js-ipfsd-ctl/actions/workflows/js-test-and-release.yml?query=branch%3Amaster"><img src="https://img.shields.io/github/actions/workflow/status/ipfs/js-ipfsd-ctl/js-test-and-release.yml?branch=master&style=flat-square" alt="CI"></a></p>
+<blockquote>
+<p>Spawn IPFS Daemons, JS or Go</p>
+</blockquote>
+
+<a href="#table-of-contents-" id="table-of-contents-" style="color: inherit; text-decoration: none;">
+  <h2>Table of contents <!-- omit in toc --></h2>
+</a>
+<ul>
+<li><a href="#install">Install</a><ul>
+<li><a href="#browser-script-tag">Browser <code>&lt;script&gt;</code> tag</a></li>
+</ul>
+</li>
+<li><a href="#notice">Notice</a></li>
+<li><a href="#usage">Usage</a><ul>
+<li><a href="#spawning-a-single-ipfs-controller-createcontroller">Spawning a single IPFS controller: <code>createController</code></a></li>
+<li><a href="#manage-multiple-ipfs-controllers-createfactory">Manage multiple IPFS controllers: <code>createFactory</code></a></li>
+</ul>
+</li>
+<li><a href="#disposable-vs-non-disposable-nodes">Disposable vs non Disposable nodes</a></li>
+<li><a href="#api">API</a><ul>
+<li><a href="#createfactoryoptions-overrides"><code>createFactory([options], [overrides])</code></a></li>
+<li><a href="#createcontrolleroptions"><code>createController([options])</code></a></li>
+<li><a href="#createserveroptions"><code>createServer([options])</code></a></li>
+<li><a href="#factory">Factory</a><ul>
+<li><a href="#controllers"><code>controllers</code></a></li>
+<li><a href="#tmpdir"><code>tmpDir()</code></a></li>
+<li><a href="#spawnoptions"><code>spawn([options])</code></a></li>
+<li><a href="#clean"><code>clean()</code></a></li>
+</ul>
+</li>
+<li><a href="#controller">Controller</a><ul>
+<li><a href="#new-controlleroptions"><code>new Controller(options)</code></a></li>
+<li><a href="#path"><code>path</code></a></li>
+<li><a href="#exec"><code>exec</code></a></li>
+<li><a href="#env"><code>env</code></a></li>
+<li><a href="#initialized"><code>initialized</code></a></li>
+<li><a href="#started"><code>started</code></a></li>
+<li><a href="#clean-1"><code>clean</code></a></li>
+<li><a href="#apiaddr"><code>apiAddr</code></a></li>
+<li><a href="#gatewayaddr"><code>gatewayAddr</code></a></li>
+<li><a href="#api-1"><code>api</code></a></li>
+<li><a href="#initinitoptions"><code>init([initOptions])</code></a></li>
+<li><a href="#start"><code>start()</code></a></li>
+<li><a href="#stop"><code>stop()</code></a></li>
+<li><a href="#cleanup"><code>cleanup()</code></a></li>
+<li><a href="#pid"><code>pid()</code></a></li>
+<li><a href="#version"><code>version()</code></a></li>
+</ul>
+</li>
+<li><a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a><ul>
+<li><a href="#properties">Properties</a></li>
+</ul>
+</li>
+<li><a href="#controlleroptions">ControllerOptions</a><ul>
+<li><a href="#properties-1">Properties</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#ipfsd-ctl-environment-variables">ipfsd-ctl environment variables</a><ul>
+<li><ul>
+<li><a href="#ipfs_js_exec-and-ipfs_go_exec">IPFS_JS_EXEC and IPFS_GO_EXEC</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#contribute">Contribute</a></li>
+<li><a href="#api-docs">API Docs</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#contribute-1">Contribute</a></li>
+</ul>
+
+<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+  <h2>Install</h2>
+</a>
+<pre><code class="language-console">$ npm i ipfsd-ctl
 </code></pre>
-				<p>Please ensure your project also has dependencies on <code>ipfs</code>, <code>ipfs-http-client</code> and <code>go-ipfs</code>.</p>
-				<pre><code class="language-sh"><span style="color: #000000">npm install --save ipfs</span>
-<span style="color: #000000">npm install --save ipfs-http-client</span>
-<span style="color: #000000">npm install --save go-ipfs</span>
+
+<a href="#browser-ltscriptgt-tag" id="browser-ltscriptgt-tag" style="color: inherit; text-decoration: none;">
+  <h3>Browser <code>&lt;script&gt;</code> tag</h3>
+</a>
+<p>Loading this module through a script tag will make it&#39;s exports available as <code>IpfsdCtl</code> in the global namespace.</p>
+<pre><code class="language-html"><span class="hl-0">&lt;</span><span class="hl-1">script</span><span class="hl-2"> </span><span class="hl-3">src</span><span class="hl-2">=</span><span class="hl-4">&quot;https://unpkg.com/ipfsd-ctl/dist/index.min.js&quot;</span><span class="hl-0">&gt;&lt;/</span><span class="hl-1">script</span><span class="hl-0">&gt;</span>
 </code></pre>
-				<p>If you are only going to use the <code>go</code> implementation of IPFS, you can skip installing the <code>js</code> implementation and vice versa, though both will require the <code>ipfs-http-client</code> module.</p>
-				<p>If you are only using the <code>proc</code> type in-process IPFS node, you can skip installing <code>go-ipfs</code> and <code>ipfs-http-client</code>.</p>
-				<blockquote>
-					<p>You also need to explicitly defined the options <code>ipfsBin</code>, <code>ipfsModule</code> and <code>ipfsHttpModule</code> according to your needs.  Check <a href="#controlleroptions">ControllerOptions</a> and <a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a> for more information.</p>
-				</blockquote>
-				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
-					<h2>Usage</h2>
-				</a>
-				<a href="#spawning-a-single-ipfs-controller-createcontroller" id="spawning-a-single-ipfs-controller-createcontroller" style="color: inherit; text-decoration: none;">
-					<h3>Spawning a single IPFS controller: <code>createController</code></h3>
-				</a>
-				<p>This is a shorthand for simpler use cases where factory is not needed.</p>
-				<pre><code class="language-js"><span style="color: #008000">// No need to create a factory when only a single controller is needed.</span>
-<span style="color: #008000">// Use createController to spawn it instead.</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">Ctl</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfsd-ctl&#039;</span><span style="color: #000000">)</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ipfsd</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">Ctl</span><span style="color: #000000">.</span><span style="color: #795E26">createController</span><span style="color: #000000">({</span>
-<span style="color: #000000">    </span><span style="color: #001080">ipfsHttpModule:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs-http-client&#039;</span><span style="color: #000000">),</span>
-<span style="color: #000000">    </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;go-ipfs&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">path</span><span style="color: #000000">()</span>
-<span style="color: #000000">})</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">id</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">ipfsd</span><span style="color: #000000">.</span><span style="color: #001080">api</span><span style="color: #000000">.</span><span style="color: #795E26">id</span><span style="color: #000000">()</span>
 
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">id</span><span style="color: #000000">)</span>
-
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">ipfsd</span><span style="color: #000000">.</span><span style="color: #795E26">stop</span><span style="color: #000000">()</span>
+<a href="#notice" id="notice" style="color: inherit; text-decoration: none;">
+  <h2>Notice</h2>
+</a>
+<p>Version 1.0.0 changed a bit the api and the options methods take so please read the documentation below.</p>
+<p>Please ensure your project also has dependencies on <code>ipfs</code>, <code>ipfs-http-client</code>, <code>kubo-rpc-client</code>, and <code>go-ipfs</code>.</p>
+<pre><code class="language-sh"><span class="hl-5">npm </span><span class="hl-6">install</span><span class="hl-5"> </span><span class="hl-6">--save</span><span class="hl-5"> </span><span class="hl-6">ipfs</span><span class="hl-5"> </span><span class="hl-6">ipfs-http-client</span><span class="hl-5"> </span><span class="hl-6">go-ipfs</span><span class="hl-5"> </span><span class="hl-6">kubo-rpc-client</span>
 </code></pre>
-				<a href="#manage-multiple-ipfs-controllers-createfactory" id="manage-multiple-ipfs-controllers-createfactory" style="color: inherit; text-decoration: none;">
-					<h3>Manage multiple IPFS controllers: <code>createFactory</code></h3>
-				</a>
-				<p>Use a factory to spawn multiple controllers based on some common template.</p>
-				<p><strong>Spawn an IPFS daemon from Node.js</strong></p>
-				<pre><code class="language-js"><span style="color: #008000">// Create a factory to spawn two test disposable controllers, get access to an IPFS api</span>
-<span style="color: #008000">// print node ids and clean all the controllers from the factory.</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">Ctl</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfsd-ctl&#039;</span><span style="color: #000000">)</span>
+<p>If you are only going to use the <code>go</code> implementation of IPFS, you can skip installing the <code>js</code> implementation and <code>ipfs-http-client</code> module. (e.g. <code>npm i --save go-ipfs kubo-rpc-client</code>)</p>
+<p>If you are only using the <code>proc</code> type in-process IPFS node, you can skip installing <code>go-ipfs</code> and <code>ipfs-http-client</code>. (e.g. <code>npm i --save ipfs</code>)</p>
+<blockquote>
+<p>You also need to explicitly defined the options <code>ipfsBin</code>, <code>ipfsModule</code> and <code>ipfsHttpModule</code> according to your needs.  Check <a href="#controlleroptions">ControllerOptions</a> and <a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a> for more information.</p>
+</blockquote>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">factory</span><span style="color: #000000"> = </span><span style="color: #001080">Ctl</span><span style="color: #000000">.</span><span style="color: #795E26">createFactory</span><span style="color: #000000">(</span>
-<span style="color: #000000">    {</span>
-<span style="color: #000000">        </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;js&#039;</span><span style="color: #000000">,</span>
-<span style="color: #000000">        </span><span style="color: #001080">test:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
-<span style="color: #000000">        </span><span style="color: #001080">disposable:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
-<span style="color: #000000">        </span><span style="color: #001080">ipfsHttpModule:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs-http-client&#039;</span><span style="color: #000000">),</span>
-<span style="color: #000000">        </span><span style="color: #001080">ipfsModule:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs&#039;</span><span style="color: #000000">) </span><span style="color: #008000">// only if you gonna spawn &#039;proc&#039; controllers</span>
-<span style="color: #000000">    },</span>
-<span style="color: #000000">    { </span><span style="color: #008000">// overrides per type</span>
-<span style="color: #000000">        </span><span style="color: #001080">js:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">            </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">path</span><span style="color: #000000">()</span>
-<span style="color: #000000">        },</span>
-<span style="color: #000000">        </span><span style="color: #001080">go:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">            </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;go-ipfs&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">path</span><span style="color: #000000">()</span>
-<span style="color: #000000">        }</span>
-<span style="color: #000000">    }</span>
-<span style="color: #000000">)</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ipfsd1</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">factory</span><span style="color: #000000">.</span><span style="color: #795E26">spawn</span><span style="color: #000000">() </span><span style="color: #008000">// Spawns using options from `createFactory`</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ipfsd2</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">factory</span><span style="color: #000000">.</span><span style="color: #795E26">spawn</span><span style="color: #000000">({ </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;go&#039;</span><span style="color: #000000"> }) </span><span style="color: #008000">// Spawns using options from `createFactory` but overrides `type` to spawn a `go` controller</span>
+<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+  <h2>Usage</h2>
+</a>
 
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">ipfsd1</span><span style="color: #000000">.</span><span style="color: #001080">api</span><span style="color: #000000">.</span><span style="color: #795E26">id</span><span style="color: #000000">())</span>
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">ipfsd2</span><span style="color: #000000">.</span><span style="color: #001080">api</span><span style="color: #000000">.</span><span style="color: #795E26">id</span><span style="color: #000000">())</span>
-
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">factory</span><span style="color: #000000">.</span><span style="color: #795E26">clean</span><span style="color: #000000">() </span><span style="color: #008000">// Clean all the controllers created by the factory calling `stop` on all of them.</span>
+<a href="#spawning-a-single-ipfs-controller-createcontroller" id="spawning-a-single-ipfs-controller-createcontroller" style="color: inherit; text-decoration: none;">
+  <h3>Spawning a single IPFS controller: <code>createController</code></h3>
+</a>
+<p>This is a shorthand for simpler use cases where factory is not needed.</p>
+<pre><code class="language-js"><span class="hl-7">// No need to create a factory when only a single controller is needed.</span><br/><span class="hl-7">// Use createController to spawn it instead.</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">Ctl</span><span class="hl-5"> = </span><span class="hl-10">require</span><span class="hl-5">(</span><span class="hl-6">&#39;ipfsd-ctl&#39;</span><span class="hl-5">)</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">ipfsd</span><span class="hl-5"> = </span><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">Ctl</span><span class="hl-5">.</span><span class="hl-10">createController</span><span class="hl-5">({</span><br/><span class="hl-5">    </span><span class="hl-12">ipfsHttpModule</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-12">ipfsBin:</span><span class="hl-5"> </span><span class="hl-12">goIpfsModule</span><span class="hl-5">.</span><span class="hl-10">path</span><span class="hl-5">()</span><br/><span class="hl-5">})</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">id</span><span class="hl-5"> = </span><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">ipfsd</span><span class="hl-5">.</span><span class="hl-12">api</span><span class="hl-5">.</span><span class="hl-10">id</span><span class="hl-5">()</span><br/><br/><span class="hl-12">console</span><span class="hl-5">.</span><span class="hl-10">log</span><span class="hl-5">(</span><span class="hl-12">id</span><span class="hl-5">)</span><br/><br/><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">ipfsd</span><span class="hl-5">.</span><span class="hl-10">stop</span><span class="hl-5">()</span>
 </code></pre>
-				<p><strong>Spawn an IPFS daemon from the Browser using the provided remote endpoint</strong></p>
-				<pre><code class="language-js"><span style="color: #008000">// Start a remote disposable node, and get access to the api</span>
-<span style="color: #008000">// print the node id, and stop the temporary daemon</span>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">Ctl</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfsd-ctl&#039;</span><span style="color: #000000">)</span>
-
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">port</span><span style="color: #000000"> = </span><span style="color: #098658">9090</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">server</span><span style="color: #000000"> = </span><span style="color: #001080">Ctl</span><span style="color: #000000">.</span><span style="color: #795E26">createServer</span><span style="color: #000000">(</span><span style="color: #001080">port</span><span style="color: #000000">, {</span>
-<span style="color: #000000">    </span><span style="color: #001080">ipfsModule:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs&#039;</span><span style="color: #000000">),</span>
-<span style="color: #000000">    </span><span style="color: #001080">ipfsHttpModule:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs-http-client&#039;</span><span style="color: #000000">)</span>
-<span style="color: #000000">},</span>
-<span style="color: #000000">{</span>
-<span style="color: #000000">    </span><span style="color: #001080">js:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">        </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">path</span><span style="color: #000000">()</span>
-<span style="color: #000000">    },</span>
-<span style="color: #000000">    </span><span style="color: #001080">go:</span><span style="color: #000000"> {</span>
-<span style="color: #000000">        </span><span style="color: #001080">ipfsBin:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;go-ipfs&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">path</span><span style="color: #000000">()</span>
-<span style="color: #000000">    },</span>
-<span style="color: #000000">})</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">factory</span><span style="color: #000000"> = </span><span style="color: #001080">Ctl</span><span style="color: #000000">.</span><span style="color: #795E26">createFactory</span><span style="color: #000000">({</span>
-<span style="color: #000000">    </span><span style="color: #001080">ipfsHttpModule:</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;ipfs-http-client&#039;</span><span style="color: #000000">),</span>
-<span style="color: #000000">    </span><span style="color: #001080">remote:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #001080">endpoint:</span><span style="color: #000000"> </span><span style="color: #A31515">`http://localhost:</span><span style="color: #0000FF">${</span><span style="color: #001080">port</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000"> </span><span style="color: #008000">// or you can set process.env.IPFSD_CTL_SERVER to http://localhost:9090</span>
-<span style="color: #000000">})</span>
-
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">server</span><span style="color: #000000">.</span><span style="color: #795E26">start</span><span style="color: #000000">()</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ipfsd</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">factory</span><span style="color: #000000">.</span><span style="color: #795E26">spawn</span><span style="color: #000000">()</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">id</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">ipfsd</span><span style="color: #000000">.</span><span style="color: #001080">api</span><span style="color: #000000">.</span><span style="color: #795E26">id</span><span style="color: #000000">()</span>
-
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">id</span><span style="color: #000000">)</span>
-
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">ipfsd</span><span style="color: #000000">.</span><span style="color: #795E26">stop</span><span style="color: #000000">()</span>
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">server</span><span style="color: #000000">.</span><span style="color: #795E26">stop</span><span style="color: #000000">()</span>
+<a href="#manage-multiple-ipfs-controllers-createfactory" id="manage-multiple-ipfs-controllers-createfactory" style="color: inherit; text-decoration: none;">
+  <h3>Manage multiple IPFS controllers: <code>createFactory</code></h3>
+</a>
+<p>Use a factory to spawn multiple controllers based on some common template.</p>
+<p><strong>Spawn an IPFS daemon from Node.js</strong></p>
+<pre><code class="language-js"><span class="hl-7">// Create a factory to spawn two test disposable controllers, get access to an IPFS api</span><br/><span class="hl-7">// print node ids and clean all the controllers from the factory.</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">Ctl</span><span class="hl-5"> = </span><span class="hl-10">require</span><span class="hl-5">(</span><span class="hl-6">&#39;ipfsd-ctl&#39;</span><span class="hl-5">)</span><br/><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">factory</span><span class="hl-5"> = </span><span class="hl-12">Ctl</span><span class="hl-5">.</span><span class="hl-10">createFactory</span><span class="hl-5">(</span><br/><span class="hl-5">    {</span><br/><span class="hl-5">        </span><span class="hl-12">type:</span><span class="hl-5"> </span><span class="hl-6">&#39;js&#39;</span><span class="hl-5">,</span><br/><span class="hl-5">        </span><span class="hl-12">test:</span><span class="hl-5"> </span><span class="hl-8">true</span><span class="hl-5">,</span><br/><span class="hl-5">        </span><span class="hl-12">disposable:</span><span class="hl-5"> </span><span class="hl-8">true</span><span class="hl-5">,</span><br/><span class="hl-5">        </span><span class="hl-12">ipfsHttpModule</span><span class="hl-5">,</span><br/><span class="hl-5">        </span><span class="hl-12">ipfsModule:</span><span class="hl-5"> (</span><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-8">import</span><span class="hl-5">(</span><span class="hl-6">&#39;ipfs&#39;</span><span class="hl-5">)) </span><span class="hl-7">// only if you gonna spawn &#39;proc&#39; controllers</span><br/><span class="hl-5">    },</span><br/><span class="hl-5">    { </span><span class="hl-7">// overrides per type</span><br/><span class="hl-5">        </span><span class="hl-12">js:</span><span class="hl-5"> {</span><br/><span class="hl-5">            </span><span class="hl-12">ipfsBin:</span><span class="hl-5"> </span><span class="hl-12">ipfsModule</span><span class="hl-5">.</span><span class="hl-10">path</span><span class="hl-5">()</span><br/><span class="hl-5">        },</span><br/><span class="hl-5">        </span><span class="hl-12">go:</span><span class="hl-5"> {</span><br/><span class="hl-5">            </span><span class="hl-12">ipfsBin:</span><span class="hl-5"> </span><span class="hl-12">goIpfsModule</span><span class="hl-5">.</span><span class="hl-10">path</span><span class="hl-5">()</span><br/><span class="hl-5">        }</span><br/><span class="hl-5">    }</span><br/><span class="hl-5">)</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">ipfsd1</span><span class="hl-5"> = </span><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">factory</span><span class="hl-5">.</span><span class="hl-10">spawn</span><span class="hl-5">() </span><span class="hl-7">// Spawns using options from `createFactory`</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">ipfsd2</span><span class="hl-5"> = </span><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">factory</span><span class="hl-5">.</span><span class="hl-10">spawn</span><span class="hl-5">({ </span><span class="hl-12">type:</span><span class="hl-5"> </span><span class="hl-6">&#39;go&#39;</span><span class="hl-5"> }) </span><span class="hl-7">// Spawns using options from `createFactory` but overrides `type` to spawn a `go` controller</span><br/><br/><span class="hl-12">console</span><span class="hl-5">.</span><span class="hl-10">log</span><span class="hl-5">(</span><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">ipfsd1</span><span class="hl-5">.</span><span class="hl-12">api</span><span class="hl-5">.</span><span class="hl-10">id</span><span class="hl-5">())</span><br/><span class="hl-12">console</span><span class="hl-5">.</span><span class="hl-10">log</span><span class="hl-5">(</span><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">ipfsd2</span><span class="hl-5">.</span><span class="hl-12">api</span><span class="hl-5">.</span><span class="hl-10">id</span><span class="hl-5">())</span><br/><br/><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">factory</span><span class="hl-5">.</span><span class="hl-10">clean</span><span class="hl-5">() </span><span class="hl-7">// Clean all the controllers created by the factory calling `stop` on all of them.</span>
 </code></pre>
-				<a href="#disposable-vs-non-disposable-nodes" id="disposable-vs-non-disposable-nodes" style="color: inherit; text-decoration: none;">
-					<h2>Disposable vs non Disposable nodes</h2>
-				</a>
-				<p><code>ipfsd-ctl</code> can spawn <code>disposable</code> and <code>non-disposable</code> nodes.</p>
-				<ul>
-					<li><code>disposable</code>- Disposable nodes are useful for tests or other temporary use cases, by default they create a temporary repo and automatically initialise and start the node, plus they cleanup everything when stopped.</li>
-					<li><code>non-disposable</code> - Non disposable nodes will by default attach to any nodes running on the default or the supplied repo. Requires the user to initialize and start the node, as well as stop and cleanup afterwards.</li>
-				</ul>
-				<a href="#api" id="api" style="color: inherit; text-decoration: none;">
-					<h2>API</h2>
-				</a>
-				<a href="#createfactoryoptions-overrides" id="createfactoryoptions-overrides" style="color: inherit; text-decoration: none;">
-					<h3><code>createFactory([options], [overrides])</code></h3>
-				</a>
-				<p>Creates a factory that can spawn multiple controllers and pre-define options for them.</p>
-				<ul>
-					<li><code>options</code> <strong><a href="#controlleroptions">ControllerOptions</a></strong> Controllers options.</li>
-					<li><code>overrides</code> <strong><a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a></strong> Pre-defined options overrides per controller type.</li>
-				</ul>
-				<p>Returns a <strong><a href="#factory">Factory</a></strong></p>
-				<a href="#createcontrolleroptions" id="createcontrolleroptions" style="color: inherit; text-decoration: none;">
-					<h3><code>createController([options])</code></h3>
-				</a>
-				<p>Creates a controller.</p>
-				<ul>
-					<li><code>options</code> <strong><a href="#controlleroptions">ControllerOptions</a></strong> Factory options.</li>
-				</ul>
-				<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
-				<a href="#createserveroptions" id="createserveroptions" style="color: inherit; text-decoration: none;">
-					<h3><code>createServer([options])</code></h3>
-				</a>
-				<p>Create an Endpoint Server. This server is used by a client node to control a remote node. Example: Spawning a go-ipfs node from a browser.</p>
-				<ul>
-					<li><code>options</code> <strong>[Object]</strong> Factory options. Defaults to: <code>{ port: 43134 }</code><ul>
-							<li><code>port</code> <strong>number</strong> Port to start the server on.</li>
-						</ul>
-					</li>
-				</ul>
-				<p>Returns a <strong>Server</strong></p>
-				<a href="#factory" id="factory" style="color: inherit; text-decoration: none;">
-					<h3>Factory</h3>
-				</a>
-				<a href="#controllers" id="controllers" style="color: inherit; text-decoration: none;">
-					<h4><code>controllers</code></h4>
-				</a>
-				<p><strong>Controller[]</strong> List of all the controllers spawned.</p>
-				<a href="#tmpdir" id="tmpdir" style="color: inherit; text-decoration: none;">
-					<h4><code>tmpDir()</code></h4>
-				</a>
-				<p>Create a temporary repo to create controllers manually.</p>
-				<p>Returns <strong>Promise&lt;String&gt;</strong> - Path to the repo.</p>
-				<a href="#spawnoptions" id="spawnoptions" style="color: inherit; text-decoration: none;">
-					<h4><code>spawn([options])</code></h4>
-				</a>
-				<p>Creates a controller for a IPFS node.</p>
-				<ul>
-					<li><code>options</code> <strong><a href="#controlleroptions">ControllerOptions</a></strong> Factory options.</li>
-				</ul>
-				<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
-				<a href="#clean" id="clean" style="color: inherit; text-decoration: none;">
-					<h4><code>clean()</code></h4>
-				</a>
-				<p>Cleans all controllers spawned.</p>
-				<p>Returns <strong>Promise&lt;<a href="#factory">Factory</a>&gt;</strong></p>
-				<a href="#controller" id="controller" style="color: inherit; text-decoration: none;">
-					<h3>Controller</h3>
-				</a>
-				<p>Class controller for a IPFS node.</p>
-				<a href="#new-controlleroptions" id="new-controlleroptions" style="color: inherit; text-decoration: none;">
-					<h4><code>new Controller(options)</code></h4>
-				</a>
-				<ul>
-					<li><code>options</code> <strong><a href="#controlleroptions">ControllerOptions</a></strong></li>
-				</ul>
-				<a href="#path" id="path" style="color: inherit; text-decoration: none;">
-					<h4><code>path</code></h4>
-				</a>
-				<p><strong>String</strong> Repo path.</p>
-				<a href="#exec" id="exec" style="color: inherit; text-decoration: none;">
-					<h4><code>exec</code></h4>
-				</a>
-				<p><strong>String</strong> Executable path.</p>
-				<a href="#env" id="env" style="color: inherit; text-decoration: none;">
-					<h4><code>env</code></h4>
-				</a>
-				<p><strong>Object</strong> ENV object.</p>
-				<a href="#initialized" id="initialized" style="color: inherit; text-decoration: none;">
-					<h4><code>initialized</code></h4>
-				</a>
-				<p><strong>Boolean</strong> Flag with the current init state.</p>
-				<a href="#started" id="started" style="color: inherit; text-decoration: none;">
-					<h4><code>started</code></h4>
-				</a>
-				<p><strong>Boolean</strong> Flag with the current start state.</p>
-				<a href="#clean-1" id="clean-1" style="color: inherit; text-decoration: none;">
-					<h4><code>clean</code></h4>
-				</a>
-				<p><strong>Boolean</strong> Flag with the current clean state.</p>
-				<a href="#apiaddr" id="apiaddr" style="color: inherit; text-decoration: none;">
-					<h4><code>apiAddr</code></h4>
-				</a>
-				<p><strong>Multiaddr</strong> API address</p>
-				<a href="#gatewayaddr" id="gatewayaddr" style="color: inherit; text-decoration: none;">
-					<h4><code>gatewayAddr</code></h4>
-				</a>
-				<p><strong>Multiaddr</strong> Gateway address</p>
-				<a href="#api-1" id="api-1" style="color: inherit; text-decoration: none;">
-					<h4><code>api</code></h4>
-				</a>
-				<p><strong>Object</strong> IPFS core interface</p>
-				<a href="#initinitoptions" id="initinitoptions" style="color: inherit; text-decoration: none;">
-					<h4><code>init([initOptions])</code></h4>
-				</a>
-				<p>Initialises controlled node</p>
-				<ul>
-					<li><code>initOptions</code> <strong>[Object]</strong> IPFS init options <a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit</a></li>
-				</ul>
-				<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
-				<a href="#start" id="start" style="color: inherit; text-decoration: none;">
-					<h4><code>start()</code></h4>
-				</a>
-				<p>Starts controlled node.</p>
-				<p>Returns <strong>Promise&lt;IPFS&gt;</strong></p>
-				<a href="#stop" id="stop" style="color: inherit; text-decoration: none;">
-					<h4><code>stop()</code></h4>
-				</a>
-				<p>Stops controlled node.</p>
-				<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
-				<a href="#cleanup" id="cleanup" style="color: inherit; text-decoration: none;">
-					<h4><code>cleanup()</code></h4>
-				</a>
-				<p>Cleans controlled node, a disposable controller calls this automatically.</p>
-				<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
-				<a href="#pid" id="pid" style="color: inherit; text-decoration: none;">
-					<h4><code>pid()</code></h4>
-				</a>
-				<p>Get the pid of the controlled node process if aplicable.</p>
-				<p>Returns <strong>Promise&lt;number&gt;</strong></p>
-				<a href="#version" id="version" style="color: inherit; text-decoration: none;">
-					<h4><code>version()</code></h4>
-				</a>
-				<p>Get the version of the controlled node.</p>
-				<p>Returns <strong>Promise&lt;string&gt;</strong></p>
-				<a href="#controlleroptionsoverrides" id="controlleroptionsoverrides" style="color: inherit; text-decoration: none;">
-					<h3>ControllerOptionsOverrides</h3>
-				</a>
-				<p>Type: [Object]</p>
-				<a href="#properties" id="properties" style="color: inherit; text-decoration: none;">
-					<h4>Properties</h4>
-				</a>
-				<ul>
-					<li><code>js</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>JS</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
-					<li><code>go</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>Go</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
-					<li><code>proc</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>Proc</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
-				</ul>
-				<a href="#controlleroptions" id="controlleroptions" style="color: inherit; text-decoration: none;">
-					<h3>ControllerOptions</h3>
-				</a>
-				<p>Type: [Object]</p>
-				<a href="#properties-1" id="properties-1" style="color: inherit; text-decoration: none;">
-					<h4>Properties</h4>
-				</a>
-				<ul>
-					<li><code>test</code> <strong>[boolean]</strong> Flag to activate custom config for tests.</li>
-					<li><code>remote</code> <strong>[boolean]</strong> Use remote endpoint to spawn the nodes. Defaults to <code>true</code> when not in node.</li>
-					<li><code>endpoint</code> <strong>[string]</strong> Endpoint URL to manage remote Controllers. (Defaults: &#39;<a href="http://localhost:43134&#39;">http://localhost:43134&#39;</a>).</li>
-					<li><code>disposable</code> <strong>[boolean]</strong> A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.</li>
-					<li><code>type</code> <strong>[string]</strong> The daemon type, see below the options:<ul>
-							<li>go - spawn go-ipfs daemon</li>
-							<li>js - spawn js-ipfs daemon</li>
-							<li>proc - spawn in-process js-ipfs node</li>
-						</ul>
-					</li>
-					<li><code>env</code> <strong>[Object]</strong> Additional environment variables, passed to executing shell. Only applies for Daemon controllers.</li>
-					<li><code>args</code> <strong>[Array]</strong> Custom cli args.</li>
-					<li><code>ipfsHttpModule</code> <strong>[Object]</strong> Reference to a IPFS HTTP Client object.</li>
-					<li><code>ipfsModule</code> <strong>[Object]</strong> Reference to a IPFS API object.</li>
-					<li><code>ipfsBin</code> <strong>[string]</strong> Path to a IPFS exectutable.</li>
-					<li><code>ipfsOptions</code> <strong>[IpfsOptions]</strong> Options for the IPFS instance same as <a href="https://github.com/ipfs/js-ipfs#ipfs-constructor">https://github.com/ipfs/js-ipfs#ipfs-constructor</a>. <code>proc</code> nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.</li>
-					<li><code>forceKill</code> <strong>[boolean]</strong> - Whether to use SIGKILL to quit a daemon that does not stop after <code>.stop()</code> is called. (default <code>true</code>)</li>
-					<li><code>forceKillTimeout</code> <strong>[Number]</strong> - How long to wait before force killing a daemon in ms. (default <code>5000</code>)</li>
-				</ul>
-				<a href="#ipfsd-ctl-environment-variables" id="ipfsd-ctl-environment-variables" style="color: inherit; text-decoration: none;">
-					<h2>ipfsd-ctl environment variables</h2>
-				</a>
-				<p>In additional to the API described in previous sections, <code>ipfsd-ctl</code> also supports several environment variables. This are often very useful when running in different environments, such as CI or when doing integration/interop testing.</p>
-				<p><em>Environment variables precedence order is as follows. Top to bottom, top entry has highest precedence:</em></p>
-				<ul>
-					<li>command line options/method arguments</li>
-					<li>env variables</li>
-					<li>default values</li>
-				</ul>
-				<p>Meaning that, environment variables override defaults in the configuration file but are superseded by options to <code>df.spawn({...})</code></p>
-				<a href="#ipfs_js_exec-and-ipfs_go_exec" id="ipfs_js_exec-and-ipfs_go_exec" style="color: inherit; text-decoration: none;">
-					<h4>IPFS_JS_EXEC and IPFS_GO_EXEC</h4>
-				</a>
-				<p>An alternative way of specifying the executable path for the <code>js-ipfs</code> or <code>go-ipfs</code> executable, respectively.</p>
-				<a href="#contribute" id="contribute" style="color: inherit; text-decoration: none;">
-					<h2>Contribute</h2>
-				</a>
-				<p>Feel free to join in. All welcome. Open an <a href="https://github.com/ipfs/js-ipfsd-ctl/issues">issue</a>!</p>
-				<p>This repository falls under the IPFS <a href="https://github.com/ipfs/community/blob/master/code-of-conduct.md">Code of Conduct</a>.</p>
-				<p><a href="https://github.com/ipfs/community/blob/master/CONTRIBUTING.md"><img src="https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif" alt=""></a></p>
-				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
-					<h2>License</h2>
-				</a>
-				<p><a href="LICENSE">MIT</a></p>
-			</div>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class=" ">
-						<a href="modules.html">Exports</a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="modules.html#Controller" class="tsd-kind-icon">Controller</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="modules.html#ControllerOptions" class="tsd-kind-icon">Controller<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="modules.html#ControllerOptionsOverrides" class="tsd-kind-icon">Controller<wbr>Options<wbr>Overrides</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="modules.html#Factory" class="tsd-kind-icon">Factory</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="modules.html#createController" class="tsd-kind-icon">create<wbr>Controller</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="modules.html#createFactory" class="tsd-kind-icon">create<wbr>Factory</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="modules.html#createServer" class="tsd-kind-icon">create<wbr>Server</a>
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</div>
-</div>
-<footer>
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-		</div>
-	</div>
-</footer>
-<div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-</body>
-</html>
+<p><strong>Spawn an IPFS daemon from the Browser using the provided remote endpoint</strong></p>
+<pre><code class="language-js"><span class="hl-7">// Start a remote disposable node, and get access to the api</span><br/><span class="hl-7">// print the node id, and stop the temporary daemon</span><br/><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">Ctl</span><span class="hl-5"> = </span><span class="hl-10">require</span><span class="hl-5">(</span><span class="hl-6">&#39;ipfsd-ctl&#39;</span><span class="hl-5">)</span><br/><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">port</span><span class="hl-5"> = </span><span class="hl-13">9090</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">server</span><span class="hl-5"> = </span><span class="hl-12">Ctl</span><span class="hl-5">.</span><span class="hl-10">createServer</span><span class="hl-5">(</span><span class="hl-12">port</span><span class="hl-5">, {</span><br/><span class="hl-5">    </span><span class="hl-12">ipfsModule</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-12">ipfsHttpModule</span><br/><span class="hl-5">},</span><br/><span class="hl-5">{</span><br/><span class="hl-5">    </span><span class="hl-12">js:</span><span class="hl-5"> {</span><br/><span class="hl-5">        </span><span class="hl-12">ipfsBin:</span><span class="hl-5"> </span><span class="hl-12">ipfsModule</span><span class="hl-5">.</span><span class="hl-10">path</span><span class="hl-5">()</span><br/><span class="hl-5">    },</span><br/><span class="hl-5">    </span><span class="hl-12">go:</span><span class="hl-5"> {</span><br/><span class="hl-5">        </span><span class="hl-12">ipfsBin:</span><span class="hl-5"> </span><span class="hl-12">goIpfsModule</span><span class="hl-5">.</span><span class="hl-10">path</span><span class="hl-5">()</span><br/><span class="hl-5">    },</span><br/><span class="hl-5">})</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">factory</span><span class="hl-5"> = </span><span class="hl-12">Ctl</span><span class="hl-5">.</span><span class="hl-10">createFactory</span><span class="hl-5">({</span><br/><span class="hl-5">    </span><span class="hl-12">ipfsHttpModule</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-12">remote:</span><span class="hl-5"> </span><span class="hl-8">true</span><span class="hl-5">,</span><br/><span class="hl-5">    </span><span class="hl-12">endpoint:</span><span class="hl-5"> </span><span class="hl-6">`http://localhost:</span><span class="hl-8">${</span><span class="hl-12">port</span><span class="hl-8">}</span><span class="hl-6">`</span><span class="hl-5"> </span><span class="hl-7">// or you can set process.env.IPFSD_CTL_SERVER to http://localhost:9090</span><br/><span class="hl-5">})</span><br/><br/><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">server</span><span class="hl-5">.</span><span class="hl-10">start</span><span class="hl-5">()</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">ipfsd</span><span class="hl-5"> = </span><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">factory</span><span class="hl-5">.</span><span class="hl-10">spawn</span><span class="hl-5">()</span><br/><span class="hl-8">const</span><span class="hl-5"> </span><span class="hl-9">id</span><span class="hl-5"> = </span><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">ipfsd</span><span class="hl-5">.</span><span class="hl-12">api</span><span class="hl-5">.</span><span class="hl-10">id</span><span class="hl-5">()</span><br/><br/><span class="hl-12">console</span><span class="hl-5">.</span><span class="hl-10">log</span><span class="hl-5">(</span><span class="hl-12">id</span><span class="hl-5">)</span><br/><br/><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">ipfsd</span><span class="hl-5">.</span><span class="hl-10">stop</span><span class="hl-5">()</span><br/><span class="hl-11">await</span><span class="hl-5"> </span><span class="hl-12">server</span><span class="hl-5">.</span><span class="hl-10">stop</span><span class="hl-5">()</span>
+</code></pre>
+
+<a href="#disposable-vs-non-disposable-nodes" id="disposable-vs-non-disposable-nodes" style="color: inherit; text-decoration: none;">
+  <h2>Disposable vs non Disposable nodes</h2>
+</a>
+<p><code>ipfsd-ctl</code> can spawn <code>disposable</code> and <code>non-disposable</code> nodes.</p>
+<ul>
+<li><code>disposable</code>- Disposable nodes are useful for tests or other temporary use cases, by default they create a temporary repo and automatically initialise and start the node, plus they cleanup everything when stopped.</li>
+<li><code>non-disposable</code> - Non disposable nodes will by default attach to any nodes running on the default or the supplied repo. Requires the user to initialize and start the node, as well as stop and cleanup afterwards.</li>
+</ul>
+
+<a href="#api" id="api" style="color: inherit; text-decoration: none;">
+  <h2>API</h2>
+</a>
+
+<a href="#createfactoryoptions-overrides" id="createfactoryoptions-overrides" style="color: inherit; text-decoration: none;">
+  <h3><code>createFactory([options], [overrides])</code></h3>
+</a>
+<p>Creates a factory that can spawn multiple controllers and pre-define options for them.</p>
+<ul>
+<li><code>options</code> <strong><a href="#controlleroptions">ControllerOptions</a></strong> Controllers options.</li>
+<li><code>overrides</code> <strong><a href="#controlleroptionsoverrides">ControllerOptionsOverrides</a></strong> Pre-defined options overrides per controller type.</li>
+</ul>
+<p>Returns a <strong><a href="#factory">Factory</a></strong></p>
+
+<a href="#createcontrolleroptions" id="createcontrolleroptions" style="color: inherit; text-decoration: none;">
+  <h3><code>createController([options])</code></h3>
+</a>
+<p>Creates a controller.</p>
+<ul>
+<li><code>options</code> <strong><a href="#controlleroptions">ControllerOptions</a></strong> Factory options.</li>
+</ul>
+<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
+
+<a href="#createserveroptions" id="createserveroptions" style="color: inherit; text-decoration: none;">
+  <h3><code>createServer([options])</code></h3>
+</a>
+<p>Create an Endpoint Server. This server is used by a client node to control a remote node. Example: Spawning a go-ipfs node from a browser.</p>
+<ul>
+<li><code>options</code> <strong>[Object]</strong> Factory options. Defaults to: <code>{ port: 43134 }</code><ul>
+<li><code>port</code> <strong>number</strong> Port to start the server on.</li>
+</ul>
+</li>
+</ul>
+<p>Returns a <strong>Server</strong></p>
+
+<a href="#factory" id="factory" style="color: inherit; text-decoration: none;">
+  <h3>Factory</h3>
+</a>
+
+<a href="#controllers" id="controllers" style="color: inherit; text-decoration: none;">
+  <h4><code>controllers</code></h4>
+</a>
+<p><strong>Controller[]</strong> List of all the controllers spawned.</p>
+
+<a href="#tmpdir" id="tmpdir" style="color: inherit; text-decoration: none;">
+  <h4><code>tmpDir()</code></h4>
+</a>
+<p>Create a temporary repo to create controllers manually.</p>
+<p>Returns <strong>Promise&lt;String&gt;</strong> - Path to the repo.</p>
+
+<a href="#spawnoptions" id="spawnoptions" style="color: inherit; text-decoration: none;">
+  <h4><code>spawn([options])</code></h4>
+</a>
+<p>Creates a controller for a IPFS node.</p>
+<ul>
+<li><code>options</code> <strong><a href="#controlleroptions">ControllerOptions</a></strong> Factory options.</li>
+</ul>
+<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
+
+<a href="#clean" id="clean" style="color: inherit; text-decoration: none;">
+  <h4><code>clean()</code></h4>
+</a>
+<p>Cleans all controllers spawned.</p>
+<p>Returns <strong>Promise&lt;<a href="#factory">Factory</a>&gt;</strong></p>
+
+<a href="#controller" id="controller" style="color: inherit; text-decoration: none;">
+  <h3>Controller</h3>
+</a>
+<p>Class controller for a IPFS node.</p>
+
+<a href="#new-controlleroptions" id="new-controlleroptions" style="color: inherit; text-decoration: none;">
+  <h4><code>new Controller(options)</code></h4>
+</a>
+<ul>
+<li><code>options</code> <strong><a href="#controlleroptions">ControllerOptions</a></strong></li>
+</ul>
+
+<a href="#path" id="path" style="color: inherit; text-decoration: none;">
+  <h4><code>path</code></h4>
+</a>
+<p><strong>String</strong> Repo path.</p>
+
+<a href="#exec" id="exec" style="color: inherit; text-decoration: none;">
+  <h4><code>exec</code></h4>
+</a>
+<p><strong>String</strong> Executable path.</p>
+
+<a href="#env" id="env" style="color: inherit; text-decoration: none;">
+  <h4><code>env</code></h4>
+</a>
+<p><strong>Object</strong> ENV object.</p>
+
+<a href="#initialized" id="initialized" style="color: inherit; text-decoration: none;">
+  <h4><code>initialized</code></h4>
+</a>
+<p><strong>Boolean</strong> Flag with the current init state.</p>
+
+<a href="#started" id="started" style="color: inherit; text-decoration: none;">
+  <h4><code>started</code></h4>
+</a>
+<p><strong>Boolean</strong> Flag with the current start state.</p>
+
+<a href="#clean-1" id="clean-1" style="color: inherit; text-decoration: none;">
+  <h4><code>clean</code></h4>
+</a>
+<p><strong>Boolean</strong> Flag with the current clean state.</p>
+
+<a href="#apiaddr" id="apiaddr" style="color: inherit; text-decoration: none;">
+  <h4><code>apiAddr</code></h4>
+</a>
+<p><strong>Multiaddr</strong> API address</p>
+
+<a href="#gatewayaddr" id="gatewayaddr" style="color: inherit; text-decoration: none;">
+  <h4><code>gatewayAddr</code></h4>
+</a>
+<p><strong>Multiaddr</strong> Gateway address</p>
+
+<a href="#api-1" id="api-1" style="color: inherit; text-decoration: none;">
+  <h4><code>api</code></h4>
+</a>
+<p><strong>Object</strong> IPFS core interface</p>
+
+<a href="#initinitoptions" id="initinitoptions" style="color: inherit; text-decoration: none;">
+  <h4><code>init([initOptions])</code></h4>
+</a>
+<p>Initialises controlled node</p>
+<ul>
+<li><code>initOptions</code> <strong>[Object]</strong> IPFS init options <a href="https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit">https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit</a></li>
+</ul>
+<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
+
+<a href="#start" id="start" style="color: inherit; text-decoration: none;">
+  <h4><code>start()</code></h4>
+</a>
+<p>Starts controlled node.</p>
+<p>Returns <strong>Promise&lt;IPFS&gt;</strong></p>
+
+<a href="#stop" id="stop" style="color: inherit; text-decoration: none;">
+  <h4><code>stop()</code></h4>
+</a>
+<p>Stops controlled node.</p>
+<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
+
+<a href="#cleanup" id="cleanup" style="color: inherit; text-decoration: none;">
+  <h4><code>cleanup()</code></h4>
+</a>
+<p>Cleans controlled node, a disposable controller calls this automatically.</p>
+<p>Returns <strong>Promise&lt;<a href="#controller">Controller</a>&gt;</strong></p>
+
+<a href="#pid" id="pid" style="color: inherit; text-decoration: none;">
+  <h4><code>pid()</code></h4>
+</a>
+<p>Get the pid of the controlled node process if aplicable.</p>
+<p>Returns <strong>Promise&lt;number&gt;</strong></p>
+
+<a href="#version" id="version" style="color: inherit; text-decoration: none;">
+  <h4><code>version()</code></h4>
+</a>
+<p>Get the version of the controlled node.</p>
+<p>Returns <strong>Promise&lt;string&gt;</strong></p>
+
+<a href="#controlleroptionsoverrides" id="controlleroptionsoverrides" style="color: inherit; text-decoration: none;">
+  <h3>ControllerOptionsOverrides</h3>
+</a>
+<p>Type: [Object]</p>
+
+<a href="#properties" id="properties" style="color: inherit; text-decoration: none;">
+  <h4>Properties</h4>
+</a>
+<ul>
+<li><code>js</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>JS</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
+<li><code>go</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>Go</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
+<li><code>proc</code> <strong>[<a href="#controlleroptions">ControllerOptions</a>]</strong> Pre-defined defaults options for <strong>Proc</strong> controllers these are deep merged with options passed to <code>Factory.spawn(options)</code>.</li>
+</ul>
+
+<a href="#controlleroptions" id="controlleroptions" style="color: inherit; text-decoration: none;">
+  <h3>ControllerOptions</h3>
+</a>
+<p>Type: [Object]</p>
+
+<a href="#properties-1" id="properties-1" style="color: inherit; text-decoration: none;">
+  <h4>Properties</h4>
+</a>
+<ul>
+<li><code>test</code> <strong>[boolean]</strong> Flag to activate custom config for tests.</li>
+<li><code>remote</code> <strong>[boolean]</strong> Use remote endpoint to spawn the nodes. Defaults to <code>true</code> when not in node.</li>
+<li><code>endpoint</code> <strong>[string]</strong> Endpoint URL to manage remote Controllers. (Defaults: &#39;<a href="http://localhost:43134">http://localhost:43134</a>&#39;).</li>
+<li><code>disposable</code> <strong>[boolean]</strong> A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits.</li>
+<li><code>type</code> <strong>[string]</strong> The daemon type, see below the options:<ul>
+<li>go - spawn go-ipfs daemon</li>
+<li>js - spawn js-ipfs daemon</li>
+<li>proc - spawn in-process js-ipfs node</li>
+</ul>
+</li>
+<li><code>env</code> <strong>[Object]</strong> Additional environment variables, passed to executing shell. Only applies for Daemon controllers.</li>
+<li><code>args</code> <strong>[Array]</strong> Custom cli args.</li>
+<li><code>ipfsHttpModule</code> <strong>[Object]</strong> Reference to a IPFS HTTP Client object.</li>
+<li><code>ipfsModule</code> <strong>[Object]</strong> Reference to a IPFS API object.</li>
+<li><code>ipfsBin</code> <strong>[string]</strong> Path to a IPFS exectutable.</li>
+<li><code>ipfsOptions</code> <strong>[IpfsOptions]</strong> Options for the IPFS instance same as <a href="https://github.com/ipfs/js-ipfs#ipfs-constructor">https://github.com/ipfs/js-ipfs#ipfs-constructor</a>. <code>proc</code> nodes receive these options as is, daemon nodes translate the options as far as possible to cli arguments.</li>
+<li><code>forceKill</code> <strong>[boolean]</strong> - Whether to use SIGKILL to quit a daemon that does not stop after <code>.stop()</code> is called. (default <code>true</code>)</li>
+<li><code>forceKillTimeout</code> <strong>[Number]</strong> - How long to wait before force killing a daemon in ms. (default <code>5000</code>)</li>
+</ul>
+
+<a href="#ipfsd-ctl-environment-variables" id="ipfsd-ctl-environment-variables" style="color: inherit; text-decoration: none;">
+  <h2>ipfsd-ctl environment variables</h2>
+</a>
+<p>In additional to the API described in previous sections, <code>ipfsd-ctl</code> also supports several environment variables. This are often very useful when running in different environments, such as CI or when doing integration/interop testing.</p>
+<p><em>Environment variables precedence order is as follows. Top to bottom, top entry has highest precedence:</em></p>
+<ul>
+<li>command line options/method arguments</li>
+<li>env variables</li>
+<li>default values</li>
+</ul>
+<p>Meaning that, environment variables override defaults in the configuration file but are superseded by options to <code>df.spawn({...})</code></p>
+
+<a href="#ipfs_js_exec-and-ipfs_go_exec" id="ipfs_js_exec-and-ipfs_go_exec" style="color: inherit; text-decoration: none;">
+  <h4>IPFS_JS_EXEC and IPFS_GO_EXEC</h4>
+</a>
+<p>An alternative way of specifying the executable path for the <code>js-ipfs</code> or <code>go-ipfs</code> executable, respectively.</p>
+
+<a href="#contribute" id="contribute" style="color: inherit; text-decoration: none;">
+  <h2>Contribute</h2>
+</a>
+<p>Feel free to join in. All welcome. Open an <a href="https://github.com/ipfs/js-ipfsd-ctl/issues">issue</a>!</p>
+<p>This repository falls under the IPFS <a href="https://github.com/ipfs/community/blob/master/code-of-conduct.md">Code of Conduct</a>.</p>
+<p><a href="https://github.com/ipfs/community/blob/master/CONTRIBUTING.md"><img src="https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif" alt=""></a></p>
+
+<a href="#api-docs" id="api-docs" style="color: inherit; text-decoration: none;">
+  <h2>API Docs</h2>
+</a>
+<ul>
+<li><a href="https://ipfs.github.io/js-ipfsd-ctl">https://ipfs.github.io/js-ipfsd-ctl</a></li>
+</ul>
+
+<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+  <h2>License</h2>
+</a>
+<p>Licensed under either of</p>
+<ul>
+<li>Apache 2.0, (<a href="LICENSE-APACHE">LICENSE-APACHE</a> / <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>)</li>
+<li>MIT (<a href="LICENSE-MIT">LICENSE-MIT</a> / <a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a>)</li>
+</ul>
+
+<a href="#contribute-1" id="contribute-1" style="color: inherit; text-decoration: none;">
+  <h2>Contribute</h2>
+</a>
+<p>Contributions welcome! Please check out <a href="https://github.com/ipfs/js-ipfsd-ctl/issues">the issues</a>.</p>
+<p>Also see our <a href="https://github.com/ipfs/community/blob/master/CONTRIBUTING_JS.md">contributing document</a> for more information on how we work, and about contributing in general.</p>
+<p>Please be aware that all interactions related to this repo are subject to the IPFS <a href="https://github.com/ipfs/community/blob/master/code-of-conduct.md">Code of Conduct</a>.</p>
+<p>Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.</p>
+<p><a href="https://github.com/ipfs/community/blob/master/CONTRIBUTING.md"><img src="https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif" alt=""></a></p>
+</div></div>
+<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<nav class="tsd-navigation primary">
+<details class="tsd-index-accordion" open><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Modules</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li class="current selected"><a href="modules.html">ipfsd-<wbr/>ctl -<wbr/> v13.0.0</a>
+<ul>
+<li class="tsd-kind-module"><a href="modules/_internal_.html">&lt;internal&gt;</a></li></ul></li></ul></div></details></nav></div></div>
+<div class="overlay"></div><script src="assets/main.js"></script></body></html>
