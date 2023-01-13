@@ -3,13 +3,14 @@
 [![ipfs.tech](https://img.shields.io/badge/project-IPFS-blue.svg?style=flat-square)](https://ipfs.tech)
 [![Discuss](https://img.shields.io/discourse/https/discuss.ipfs.tech/posts.svg?style=flat-square)](https://discuss.ipfs.tech)
 [![codecov](https://img.shields.io/codecov/c/github/ipfs/js-ipfsd-ctl.svg?style=flat-square)](https://codecov.io/gh/ipfs/js-ipfsd-ctl)
-[![CI](https://img.shields.io/github/workflow/status/ipfs/js-ipfsd-ctl/test%20&%20maybe%20release/master?style=flat-square)](https://github.com/ipfs/js-ipfsd-ctl/actions/workflows/js-test-and-release.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/ipfs/js-ipfsd-ctl/js-test-and-release.yml?branch=master\&style=flat-square)](https://github.com/ipfs/js-ipfsd-ctl/actions/workflows/js-test-and-release.yml?query=branch%3Amaster)
 
 > Spawn IPFS Daemons, JS or Go
 
 ## Table of contents <!-- omit in toc -->
 
 - [Install](#install)
+  - [Browser `<script>` tag](#browser-script-tag)
 - [Notice](#notice)
 - [Usage](#usage)
   - [Spawning a single IPFS controller: `createController`](#spawning-a-single-ipfs-controller-createcontroller)
@@ -48,6 +49,7 @@
 - [ipfsd-ctl environment variables](#ipfsd-ctl-environment-variables)
   - - [IPFS\_JS\_EXEC and IPFS\_GO\_EXEC](#ipfs_js_exec-and-ipfs_go_exec)
 - [Contribute](#contribute)
+- [API Docs](#api-docs)
 - [License](#license)
 - [Contribute](#contribute-1)
 
@@ -55,6 +57,14 @@
 
 ```console
 $ npm i ipfsd-ctl
+```
+
+### Browser `<script>` tag
+
+Loading this module through a script tag will make it's exports available as `IpfsdCtl` in the global namespace.
+
+```html
+<script src="https://unpkg.com/ipfsd-ctl/dist/index.min.js"></script>
 ```
 
 ## Notice
@@ -367,6 +377,10 @@ Feel free to join in. All welcome. Open an [issue](https://github.com/ipfs/js-ip
 This repository falls under the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
 
 [![](https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif)](https://github.com/ipfs/community/blob/master/CONTRIBUTING.md)
+
+## API Docs
+
+- <https://ipfs.github.io/js-ipfsd-ctl>
 
 ## License
 
