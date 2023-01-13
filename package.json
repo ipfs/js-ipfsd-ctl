@@ -158,7 +158,7 @@
     "ipfs": "^0.64.0",
     "ipfs-client": "^0.9.0",
     "ipfs-core-types": "^0.12.0",
-    "ipfs-http-client": "^58.0.0",
+    "ipfs-http-client": "^60.0.0",
     "kubo-rpc-client": "^1.0.1",
     "util": "^0.12.4"
   },
