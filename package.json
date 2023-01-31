@@ -154,7 +154,7 @@
   },
   "devDependencies": {
     "aegir": "^37.0.15",
-    "go-ipfs": "^0.17.0",
+    "go-ipfs": "^0.18.1",
     "ipfs": "^0.66.0",
     "ipfs-client": "^0.10.0",
     "ipfs-core-types": "^0.14.0",
