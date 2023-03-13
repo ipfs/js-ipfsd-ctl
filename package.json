@@ -143,7 +143,7 @@
     "@libp2p/interface-peer-id": "^2.0.0",
     "@libp2p/logger": "^2.0.0",
     "@multiformats/multiaddr": "^11.0.0",
-    "execa": "^6.1.0",
+    "execa": "^7.1.0",
     "ipfs-utils": "^9.0.1",
     "joi": "^17.2.1",
     "merge-options": "^3.0.1",
