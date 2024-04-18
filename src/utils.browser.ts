@@ -1,10 +1,10 @@
 import { nanoid } from 'nanoid'
 
 const deleteDb = async (path: string): Promise<void> => {
-  return await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const keys = self.indexedDB.deleteDatabase(path)
-    keys.onerror = (err) => reject(err)
-    keys.onsuccess = () => resolve()
+    keys.onerror = (err) => { reject(err) }
+    keys.onsuccess = () => { resolve() }
   })
 }
 
@@ -22,10 +22,10 @@ export const removeRepo = async (repoPath: string): Promise<void> => {
  * @param {string} repoPath
  */
 export const repoExists = async (repoPath: string): Promise<boolean> => {
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const req = self.indexedDB.open(repoPath)
     let existed = true
-    req.onerror = () => reject(req.error)
+    req.onerror = () => { reject(req.error) }
     req.onsuccess = function () {
       req.result.close()
       if (!existed) { self.indexedDB.deleteDatabase(repoPath) }

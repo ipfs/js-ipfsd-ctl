@@ -5,7 +5,7 @@ export interface ConfigInit {
   type?: ControllerType
 }
 
-export default (init: ConfigInit) => {
+export default (init: ConfigInit): any => {
   const { type } = init
   let swarm: string[]
 

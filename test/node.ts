@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
-import { createFactory } from '../src/index.js'
-import * as ipfsModule from 'ipfs'
-import * as ipfsHttpModule from 'ipfs-http-client'
 // @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
+import * as ipfsModule from 'ipfs'
+import * as ipfsHttpModule from 'ipfs-http-client'
+import { createFactory } from '../src/index.js'
 
 import './node.routes.js'
 import './node.utils.js'

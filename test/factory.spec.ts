@@ -2,13 +2,13 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
-import { isNode } from 'wherearewe'
-import { ControllerOptions, createFactory } from '../src/index.js'
-import * as ipfsModule from 'ipfs'
 // @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
+import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
 import * as kuboRpcModule from 'kubo-rpc-client'
+import { isNode } from 'wherearewe'
+import { type ControllerOptions, createFactory } from '../src/index.js'
 
 const types: ControllerOptions[] = [{
   ipfsHttpModule,
@@ -70,7 +70,7 @@ describe('`Factory spawn()` ', function () {
   describe('should return a node with api', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await createFactory()
+        const factory = createFactory()
         const node = await factory.spawn(opts)
         expect(node).to.exist()
         expect(node.api).to.exist()
@@ -83,7 +83,7 @@ describe('`Factory spawn()` ', function () {
   describe('should return ctl for tests when factory initialized with test === true', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await createFactory({ test: true })
+        const factory = createFactory({ test: true })
         const ctl = await factory.spawn({
           type: opts.type,
           remote: opts.remote,
@@ -101,7 +101,7 @@ describe('`Factory spawn()` ', function () {
   describe('should return a disposable node by default', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await createFactory()
+        const factory = createFactory()
         const node = await factory.spawn(opts)
 
         expect(node.started).to.be.true()
@@ -116,7 +116,7 @@ describe('`Factory spawn()` ', function () {
   describe('should return a non disposable node', () => {
     for (const opts of types) {
       it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const factory = await createFactory()
+        const factory = createFactory()
         const tmpDir = await factory.tmpDir(opts)
         const node = await factory.spawn({ ...opts, disposable: false, ipfsOptions: { repo: tmpDir } })
         expect(node.started).to.be.false()

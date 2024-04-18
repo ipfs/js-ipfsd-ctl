@@ -1,11 +1,11 @@
-import mergeOptions from 'merge-options'
-import { tmpDir } from './utils.js'
-import { isNode, isElectronMain } from 'wherearewe'
 import http from 'ipfs-utils/src/http.js'
-import ControllerDaemon from './ipfsd-daemon.js'
-import ControllerRemote from './ipfsd-client.js'
-import ControllerProc from './ipfsd-in-proc.js'
+import mergeOptions from 'merge-options'
+import { isNode, isElectronMain } from 'wherearewe'
 import testsConfig from './config.js'
+import ControllerRemote from './ipfsd-client.js'
+import ControllerDaemon from './ipfsd-daemon.js'
+import ControllerProc from './ipfsd-in-proc.js'
+import { tmpDir } from './utils.js'
 import type { Controller, ControllerOptions, ControllerOptionsOverrides, Factory } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
@@ -71,10 +71,10 @@ class DefaultFactory implements Factory {
       return out.tmpDir
     }
 
-    return await Promise.resolve(tmpDir(opts.type))
+    return Promise.resolve(tmpDir(opts.type))
   }
 
-  async _spawnRemote (options: ControllerOptionsWithEndpoint) {
+  async _spawnRemote (options: ControllerOptionsWithEndpoint): Promise<ControllerRemote> {
     const opts = {
       json: {
         ...options,
@@ -153,7 +153,7 @@ class DefaultFactory implements Factory {
    * Stop all controllers
    */
   async clean (): Promise<void> {
-    await Promise.all(this.controllers.map(async n => await n.stop()))
+    await Promise.all(this.controllers.map(async n => n.stop()))
     this.controllers = []
   }
 }

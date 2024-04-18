@@ -1,6 +1,6 @@
 import Hapi from '@hapi/hapi'
-import type { CreateFactory } from '../index.js'
 import routes from './routes.js'
+import type { CreateFactory } from '../index.js'
 
 export interface ServerInit {
   port?: number
@@ -31,7 +31,7 @@ class Server {
   async start (port = this.port): Promise<Server> {
     this.port = port
     this.server = new Hapi.Server({
-      port: port,
+      port,
       host: this.host,
       routes: {
         cors: true

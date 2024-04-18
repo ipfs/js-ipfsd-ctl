@@ -1,7 +1,7 @@
-import { Multiaddr, multiaddr } from '@multiformats/multiaddr'
+import { logger } from '@libp2p/logger'
+import { type Multiaddr, multiaddr } from '@multiformats/multiaddr'
 import mergeOptions from 'merge-options'
 import { repoExists, removeRepo, checkForRunningApi, tmpDir, defaultRepo } from './utils.js'
-import { logger } from '@libp2p/logger'
 import type { Controller, ControllerOptions, InitOptions, IPFSAPI, PeerData } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
@@ -43,7 +43,7 @@ class InProc implements Controller {
     this._peerId = null
   }
 
-  get peer () {
+  get peer (): PeerData {
     if (this._peerId == null) {
       throw new Error('Not started')
     }
@@ -51,7 +51,7 @@ class InProc implements Controller {
     return this._peerId
   }
 
-  async setExec () {
+  async setExec (): Promise<void> {
     if (this.api != null) {
       return
     }
@@ -150,7 +150,7 @@ class InProc implements Controller {
    * Get the pid of the `ipfs daemon` process
    */
   async pid (): Promise<number> {
-    return await Promise.reject(new Error('not implemented'))
+    return Promise.reject(new Error('not implemented'))
   }
 
   async version (): Promise<string> {

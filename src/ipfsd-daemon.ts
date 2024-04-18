@@ -1,13 +1,13 @@
-import { Multiaddr, multiaddr } from '@multiformats/multiaddr'
 import fs from 'fs/promises'
-import mergeOptions from 'merge-options'
-import { logger } from '@libp2p/logger'
-import { execa, ExecaChildProcess } from 'execa'
-import { nanoid } from 'nanoid'
-import path from 'path'
 import os from 'os'
-import { checkForRunningApi, repoExists, tmpDir, defaultRepo, buildInitArgs, buildStartArgs } from './utils.js'
+import path from 'path'
+import { logger } from '@libp2p/logger'
+import { type Multiaddr, multiaddr } from '@multiformats/multiaddr'
+import { execa, type ExecaChildProcess } from 'execa'
+import mergeOptions from 'merge-options'
+import { nanoid } from 'nanoid'
 import waitFor from 'p-wait-for'
+import { checkForRunningApi, repoExists, tmpDir, defaultRepo, buildInitArgs, buildStartArgs } from './utils.js'
 import type { Controller, ControllerOptions, InitOptions, IPFSAPI, PeerData } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
@@ -18,7 +18,7 @@ const daemonLog = {
 }
 const rpcModuleLogger = logger('ipfsd-ctl:daemon')
 
-function translateError (err: Error & { stdout: string, stderr: string }) {
+function translateError (err: Error & { stdout: string, stderr: string }): Error {
   // get the actual error message to be the err.message
   err.message = `${err.stdout} \n\n ${err.stderr} \n\n ${err.message} \n\n`
 
@@ -33,7 +33,7 @@ interface TranslateUnknownErrorArgs {
   messageFallback?: string
 }
 
-function translateUnknownError ({ err, stdout, stderr, nameFallback = 'Unknown Error', messageFallback = 'Unknown Error Message' }: TranslateUnknownErrorArgs) {
+function translateUnknownError ({ err, stdout, stderr, nameFallback = 'Unknown Error', messageFallback = 'Unknown Error Message' }: TranslateUnknownErrorArgs): Error {
   const error: Error = err as Error
   const name = error?.name ?? nameFallback
   const message = error?.message ?? messageFallback
@@ -79,7 +79,7 @@ class Daemon implements Controller {
     this._peerId = null
   }
 
-  get peer () {
+  get peer (): PeerData {
     if (this._peerId == null) {
       throw new Error('Not started')
     }
@@ -99,7 +99,7 @@ class Daemon implements Controller {
     this.gatewayAddr = multiaddr(addr)
   }
 
-  _createApi () {
+  _createApi (): void {
     if (this.opts.ipfsClientModule != null && this.grpcAddr != null) {
       this.api = this.opts.ipfsClientModule.create({
         grpc: this.grpcAddr,
@@ -166,10 +166,16 @@ class Daemon implements Controller {
       throw new Error('No executable specified')
     }
 
-    const { stdout, stderr } = await execa(this.exec, args, {
+    const out = await execa(this.exec, args, {
       env: this.env
     })
       .catch(translateError)
+
+    if (out instanceof Error) {
+      throw out
+    }
+
+    const { stdout, stderr } = out
 
     daemonLog.info(stdout)
     daemonLog.err(stderr)
@@ -190,10 +196,8 @@ class Daemon implements Controller {
 
   /**
    * Delete the repo that was being used. If the node was marked as disposable this will be called automatically when the process is exited.
-   *
-   * @returns {Promise<Daemon>}
    */
-  async cleanup () {
+  async cleanup (): Promise<Daemon> {
     if (!this.clean) {
       await fs.rm(this.path, {
         recursive: true
@@ -205,10 +209,8 @@ class Daemon implements Controller {
 
   /**
    * Start the daemon.
-   *
-   * @returns {Promise<Daemon>}
    */
-  async start () {
+  async start (): Promise<Daemon> {
     // Check if a daemon is already running
     const api = checkForRunningApi(this.path)
 
@@ -224,7 +226,7 @@ class Daemon implements Controller {
 
       const ready = new Promise((resolve, reject) => {
         if (this.exec == null) {
-          return reject(new Error('No executable specified'))
+          reject(new Error('No executable specified')); return
         }
 
         this.subprocess = execa(this.exec, args, {
@@ -241,10 +243,10 @@ class Daemon implements Controller {
           throw new Error('stderr was not defined on subprocess')
         }
 
-        stderr.on('data', data => daemonLog.err(data.toString()))
-        stdout.on('data', data => daemonLog.info(data.toString()))
+        stderr.on('data', data => { daemonLog.err(data.toString()) })
+        stdout.on('data', data => { daemonLog.info(data.toString()) })
 
-        const readyHandler = (data: Buffer) => {
+        const readyHandler = (data: Buffer): void => {
           output += data.toString()
           const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
           const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
@@ -271,7 +273,7 @@ class Daemon implements Controller {
           }
         }
         stdout.on('data', readyHandler)
-        this.subprocess.catch(err => reject(translateError(err)))
+        this.subprocess.catch(err => { reject(translateError(err)) })
         void this.subprocess.on('exit', () => {
           this.started = false
           stderr.removeAllListeners()
@@ -348,12 +350,10 @@ class Daemon implements Controller {
 
   /**
    * Get the pid of the `ipfs daemon` process.
-   *
-   * @returns {Promise<number>}
    */
-  async pid () {
+  async pid (): Promise<number> {
     if (this.subprocess?.pid != null) {
-      return await Promise.resolve(this.subprocess?.pid)
+      return Promise.resolve(this.subprocess?.pid)
     }
     throw new Error('Daemon process is not running.')
   }
@@ -362,26 +362,22 @@ class Daemon implements Controller {
    * Call `ipfs config`
    *
    * If no `key` is passed, the whole config is returned as an object.
-   *
-   * @private
-   * @param {string} [key] - A specific config to retrieve.
-   * @returns {Promise<object | string>}
    */
-  async _getConfig (key = 'show') {
+  async _getConfig (key = 'show'): Promise<any | string> {
     if (this.exec == null) {
       throw new Error('No executable specified')
     }
 
-    const {
-      stdout,
-      stderr
-    } = await execa(
-      this.exec,
-      ['config', key],
-      {
-        env: this.env
-      })
+    const out = await execa(this.exec, ['config', key], {
+      env: this.env
+    })
       .catch(translateError)
+
+    if (out instanceof Error) {
+      throw out
+    }
+
+    const { stdout, stderr } = out
 
     if (key === 'show') {
       try {
@@ -427,12 +423,16 @@ class Daemon implements Controller {
       throw new Error('No executable specified')
     }
 
-    const {
-      stdout
-    } = await execa(this.exec, ['version'], {
+    const out = await execa(this.exec, ['version'], {
       env: this.env
     })
       .catch(translateError)
+
+    if (out instanceof Error) {
+      throw out
+    }
+
+    const { stdout } = out
 
     return stdout.trim()
   }

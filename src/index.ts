@@ -1,9 +1,9 @@
-import DefaultFactory from './factory.js'
 import Server from './endpoint/server.js'
-import type { IPFS } from 'ipfs-core-types'
-import type { Multiaddr } from '@multiformats/multiaddr'
+import DefaultFactory from './factory.js'
 import type { PeerId } from '@libp2p/interface-peer-id'
+import type { Multiaddr } from '@multiformats/multiaddr'
 import type { ExecaChildProcess } from 'execa'
+import type { IPFS } from 'ipfs-core-types'
 
 export interface PeerData {
   id: PeerId
@@ -16,34 +16,34 @@ export interface Controller<Type extends ControllerType = 'go'> {
   /**
    * Initialize a repo
    */
-  init: (options?: InitOptions) => Promise<Controller<Type>>
+  init(options?: InitOptions): Promise<Controller<Type>>
 
   /**
    * Start the daemon
    */
-  start: () => Promise<Controller<Type>>
+  start(): Promise<Controller<Type>>
 
   /**
    * Stop the daemon
    */
-  stop: () => Promise<Controller<Type>>
+  stop(): Promise<Controller<Type>>
 
   /**
    * Delete the repo that was being used.
    * If the node was marked as `disposable` this will be called
    * automatically when the process is exited.
    */
-  cleanup: () => Promise<Controller<Type>>
+  cleanup(): Promise<Controller<Type>>
 
   /**
    * Get the pid of the `ipfs daemon` process
    */
-  pid: () => Promise<number>
+  pid(): Promise<number>
 
   /**
    * Get the version of ipfs
    */
-  version: () => Promise<string>
+  version(): Promise<string>
   path: string
   started: boolean
   initialized: boolean
@@ -226,9 +226,9 @@ export interface ControllerOptionsOverrides {
 }
 
 export interface Factory<Type extends ControllerType = ControllerType> {
-  tmpDir: (options?: ControllerOptions) => Promise<string>
-  spawn: (options?: ControllerOptions) => Promise<Controller<Type>>
-  clean: () => Promise<void>
+  tmpDir(options?: ControllerOptions): Promise<string>
+  spawn(options?: ControllerOptions): Promise<Controller<Type>>
+  clean(): Promise<void>
   controllers: Array<Controller<Type>>
   opts: ControllerOptions<Type>
 }
@@ -251,7 +251,7 @@ export const createFactory = (options?: ControllerOptions, overrides?: Controlle
  */
 export const createController = async (options?: ControllerOptions): Promise<Controller> => {
   const f = new DefaultFactory()
-  return await f.spawn(options)
+  return f.spawn(options)
 }
 
 export interface IPFSAPI extends IPFS {
@@ -270,7 +270,7 @@ export interface IPFSAPI extends IPFS {
  * @param {ControllerOptions} [factoryOptions]
  * @param {ControllerOptionsOverrides} [factoryOverrides]
  */
-export const createServer = (options?: number | { port: number }, factoryOptions: ControllerOptions = {}, factoryOverrides: ControllerOptionsOverrides = {}) => {
+export const createServer = (options?: number | { port: number }, factoryOptions: ControllerOptions = {}, factoryOverrides: ControllerOptionsOverrides = {}): Server => {
   let port: number | undefined
 
   if (typeof options === 'number') {

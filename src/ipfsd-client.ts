@@ -1,7 +1,7 @@
-import { Multiaddr, multiaddr } from '@multiformats/multiaddr'
+import { logger } from '@libp2p/logger'
+import { type Multiaddr, multiaddr } from '@multiformats/multiaddr'
 import http from 'ipfs-utils/src/http.js'
 import mergeOptions from 'merge-options'
-import { logger } from '@libp2p/logger'
 import type { Controller, ControllerOptions, InitOptions, IPFSAPI, PeerData, RemoteState } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
@@ -52,7 +52,7 @@ class Client implements Controller {
     this._peerId = null
   }
 
-  get peer () {
+  get peer (): PeerData {
     if (this._peerId == null) {
       throw new Error('Not started')
     }

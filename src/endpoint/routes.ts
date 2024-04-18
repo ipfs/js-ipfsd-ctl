@@ -1,10 +1,10 @@
-import { nanoid } from 'nanoid'
-import Joi from 'joi'
 import boom from '@hapi/boom'
 import { logger } from '@libp2p/logger'
+import Joi from 'joi'
+import { nanoid } from 'nanoid'
 import { tmpDir } from '../utils.js'
-import type { Server } from '@hapi/hapi'
 import type { Factory } from '../index.js'
+import type { Server } from '@hapi/hapi'
 
 const debug = logger('ipfsd-ctl:routes')
 
@@ -16,7 +16,7 @@ const routeOptions = {
   }
 }
 
-const badRequest = (err: Error & { stdout?: string }) => {
+const badRequest = (err: Error & { stdout?: string }): void => {
   let msg
   if (err.stdout != null) {
     msg = err.stdout + ' - ' + err.message
@@ -36,7 +36,7 @@ export default (server: Server, createFactory: () => Factory | Promise<Factory>)
     handler: async (request) => {
       const type = request.query.type ?? 'go'
       try {
-        return { tmpDir: await tmpDir(type) }
+        return { tmpDir: tmpDir(type) }
       } catch (err: any) {
         badRequest(err)
       }
@@ -69,7 +69,7 @@ export default (server: Server, createFactory: () => Factory | Promise<Factory>)
         // @ts-expect-error opts is a json object
         nodes[id] = await ipfsd.spawn(opts)
         return {
-          id: id,
+          id,
           apiAddr: nodes[id].apiAddr?.toString(),
           gatewayAddr: nodes[id].gatewayAddr?.toString(),
           grpcAddr: nodes[id].grpcAddr?.toString(),

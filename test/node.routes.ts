@@ -1,11 +1,11 @@
 /* eslint-env mocha */
 
-import { expect } from 'aegir/chai'
 import Hapi from '@hapi/hapi'
-import routes from '../src/endpoint/routes.js'
-import { createFactory } from '../src/index.js'
+import { expect } from 'aegir/chai'
 import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
+import routes from '../src/endpoint/routes.js'
+import { createFactory } from '../src/index.js'
 
 describe('routes', function () {
   this.timeout(60000)

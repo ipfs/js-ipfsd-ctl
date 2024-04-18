@@ -20,10 +20,8 @@ class Server {
 
   /**
    * Start the server
-   *
-   * @returns {Promise<Server>}
    */
-  async start () {
+  async start (): Promise<Server> {
     console.warn('Server not implemented in the browser')
 
     return this
@@ -31,10 +29,8 @@ class Server {
 
   /**
    * Stop the server
-   *
-   * @returns {Promise<void>}
    */
-  async stop () {
+  async stop (): Promise<void> {
     console.warn('Server not implemented in the browser')
   }
 }

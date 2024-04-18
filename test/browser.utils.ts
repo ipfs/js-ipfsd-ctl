@@ -2,8 +2,8 @@
 
 import { expect } from 'aegir/chai'
 import { isEnvWithDom } from 'wherearewe'
-import { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } from '../src/utils.js'
 import { createFactory, createController } from '../src/index.js'
+import { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo } from '../src/utils.js'
 
 describe('utils browser version', function () {
   if (isEnvWithDom) {

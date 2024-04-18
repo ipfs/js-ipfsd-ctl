@@ -2,17 +2,17 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
+// @ts-expect-error no types
+import * as goIpfsModule from 'go-ipfs'
+import * as ipfsModule from 'ipfs'
+import * as ipfsClientModule from 'ipfs-client'
+import * as ipfsHttpModule from 'ipfs-http-client'
+import * as kuboRpcModule from 'kubo-rpc-client'
 import { isNode, isBrowser, isWebWorker } from 'wherearewe'
-import { createFactory, createController, createServer, ControllerOptions } from '../src/index.js'
+import { createFactory, createController, createServer, type ControllerOptions } from '../src/index.js'
 import Client from '../src/ipfsd-client.js'
 import Daemon from '../src/ipfsd-daemon.js'
 import Proc from '../src/ipfsd-in-proc.js'
-import * as ipfsModule from 'ipfs'
-import * as ipfsHttpModule from 'ipfs-http-client'
-// @ts-expect-error no types
-import * as goIpfsModule from 'go-ipfs'
-import * as ipfsClientModule from 'ipfs-client'
-import * as kuboRpcModule from 'kubo-rpc-client'
 
 describe('`createController` should return the correct class', () => {
   it('for type `js` ', async () => {

@@ -11,15 +11,15 @@
   "bugs": {
     "url": "https://github.com/ipfs/js-ipfsd-ctl/issues"
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "keywords": [
     "daemon",
     "ipfs",
     "node"
   ],
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.0.0"
-  },
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "files": [
@@ -37,6 +37,7 @@
   "eslintConfig": {
     "extends": "ipfs",
     "parserOptions": {
+      "project": true,
       "sourceType": "module"
     }
   },
@@ -144,6 +145,7 @@
     "@libp2p/logger": "^2.0.0",
     "@multiformats/multiaddr": "^11.0.0",
     "execa": "^6.1.0",
+    "ipfs-core-types": "^0.14.0",
     "ipfs-utils": "^9.0.1",
     "joi": "^17.2.1",
     "merge-options": "^3.0.1",
@@ -153,20 +155,22 @@
     "wherearewe": "^2.0.1"
   },
   "devDependencies": {
-    "aegir": "^37.0.15",
+    "aegir": "^42.2.5",
     "go-ipfs": "^0.17.0",
     "ipfs": "^0.66.0",
     "ipfs-client": "^0.10.0",
-    "ipfs-core-types": "^0.14.0",
     "ipfs-http-client": "^60.0.0",
-    "kubo-rpc-client": "^3.0.0",
-    "util": "^0.12.4"
+    "kubo-rpc-client": "^3.0.0"
   },
   "browser": {
     "./dist/src/endpoint/server.js": "./dist/src/endpoint/server.browser.js",
     "./dist/src/utils.js": "./dist/src/utils.browser.js",
     "./dist/src/ipfsd-daemon.js": "./dist/src/ipfsd-client.js",
     "go-ipfs": false
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
   },
   "jsdelivr": "dist/index.min.js",
   "unpkg": "dist/index.min.js"

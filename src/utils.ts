@@ -1,6 +1,6 @@
+import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import fs from 'fs'
 import { logger } from '@libp2p/logger'
 import { nanoid } from 'nanoid'
 import tempWrite from 'temp-write'
@@ -19,7 +19,7 @@ export const removeRepo = async (repoPath: string): Promise<void> => {
 }
 
 export const repoExists = async (repoPath: string): Promise<boolean> => {
-  return await Promise.resolve(fs.existsSync(path.join(repoPath, 'config')))
+  return Promise.resolve(fs.existsSync(path.join(repoPath, 'config')))
 }
 
 export const defaultRepo = (type?: ControllerType): string => {

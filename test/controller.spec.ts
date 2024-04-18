@@ -3,16 +3,16 @@
 /* eslint-disable no-loop-func */
 
 import { expect } from 'aegir/chai'
-import merge from 'merge-options'
-import { createFactory, createController, ControllerOptions, Factory } from '../src/index.js'
-import { repoExists } from '../src/utils.js'
-import { isBrowser, isWebWorker, isNode } from 'wherearewe'
-import waitFor from 'p-wait-for'
-import * as ipfsModule from 'ipfs'
-import * as ipfsHttpModule from 'ipfs-http-client'
 // @ts-expect-error no types
 import * as goIpfsModule from 'go-ipfs'
+import * as ipfsModule from 'ipfs'
+import * as ipfsHttpModule from 'ipfs-http-client'
 import * as kuboRpcModule from 'kubo-rpc-client'
+import merge from 'merge-options'
+import waitFor from 'p-wait-for'
+import { isBrowser, isWebWorker, isNode } from 'wherearewe'
+import { createFactory, createController, type ControllerOptions, type Factory } from '../src/index.js'
+import { repoExists } from '../src/utils.js'
 
 const types: ControllerOptions[] = [{
   type: 'js',
@@ -53,7 +53,7 @@ const types: ControllerOptions[] = [{
 /**
  * Set the options object with the correct RPC module depending on the type
  */
-function addCorrectRpcModule (opts: ControllerOptions, additionalOpts: ControllerOptions) {
+function addCorrectRpcModule (opts: ControllerOptions, additionalOpts: ControllerOptions): ControllerOptions {
   if (opts.type === 'go') {
     additionalOpts.kuboRpcModule = kuboRpcModule
   } else {
@@ -86,7 +86,7 @@ describe('Controller API', function () {
     await factory.spawn({ type: 'js' })
   })
 
-  after(async () => await factory.clean())
+  after(async () => factory.clean())
 
   describe('init', () => {
     describe('should work with defaults', () => {

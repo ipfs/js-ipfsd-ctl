@@ -1,13 +1,13 @@
 /* eslint-env mocha */
 /* eslint max-nested-callbacks: ["error", 8] */
 
-import { expect } from 'aegir/chai'
 import os from 'os'
 import path from 'path'
-import { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo, buildInitArgs, buildStartArgs } from '../src/utils.js'
-import { createFactory, createController } from '../src/index.js'
+import { expect } from 'aegir/chai'
 import * as ipfsModule from 'ipfs'
 import * as ipfsHttpModule from 'ipfs-http-client'
+import { createFactory, createController } from '../src/index.js'
+import { tmpDir, checkForRunningApi, defaultRepo, repoExists, removeRepo, buildInitArgs, buildStartArgs } from '../src/utils.js'
 
 describe('utils node version', function () {
   this.timeout(60000)
