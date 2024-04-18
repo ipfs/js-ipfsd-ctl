@@ -25,4 +25,3 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       UCI_GITHUB_TOKEN: ${{ secrets.UCI_GITHUB_TOKEN }}
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
