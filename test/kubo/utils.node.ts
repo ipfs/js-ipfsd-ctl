@@ -103,7 +103,7 @@ describe('utils', function () {
 
     it('ipns pubsub', () => {
       expect(buildStartArgs({
-        ipnsPubsub: true
+        pubsub: true
       }).join(' ')).to.include('--enable-pubsub-experiment')
     })
 
