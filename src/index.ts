@@ -87,7 +87,7 @@
  * import { createServer } from 'ipfsd-ctl'
  *
  * const port = 9090
- * const server = Ctl.createServer(port, {
+ * const server = createServer(port, {
  *   type: 'kubo',
  *   test: true
  * }, {
