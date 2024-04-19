@@ -4,7 +4,7 @@ import * as kubo from 'kubo'
 /** @type {import('aegir').PartialOptions} */
 const config = {
   build: {
-    bundlesizeMax: '22kB',
+    bundlesizeMax: '2.5kB',
   },
   test: {
     before: async () => {
