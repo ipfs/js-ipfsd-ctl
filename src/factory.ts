@@ -1,149 +1,97 @@
 import mergeOptions from 'merge-options'
-import { tmpDir } from './utils.js'
 import { isNode, isElectronMain } from 'wherearewe'
-import http from 'ipfs-utils/src/http.js'
-import ControllerDaemon from './ipfsd-daemon.js'
-import ControllerRemote from './ipfsd-client.js'
-import ControllerProc from './ipfsd-in-proc.js'
-import testsConfig from './config.js'
-import type { Controller, ControllerOptions, ControllerOptionsOverrides, Factory } from './index.js'
+import KuboClient from './kubo/client.js'
+import KuboDaemon from './kubo/daemon.js'
+import type { Node, NodeOptions, NodeOptionsOverrides, NodeType, Factory, KuboNode, KuboOptions, SpawnOptions } from './index.js'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
 const defaults = {
   remote: !isNode && !isElectronMain,
-  endpoint: process.env.IPFSD_CTL_SERVER ?? 'http://localhost:43134',
   disposable: true,
   test: false,
-  type: 'go',
+  type: 'kubo',
   env: {},
   args: [],
-  ipfsOptions: {},
   forceKill: true,
   forceKillTimeout: 5000
 }
 
-export interface ControllerOptionsOverridesWithEndpoint {
-  js?: ControllerOptionsWithEndpoint
-  go?: ControllerOptionsWithEndpoint
-  proc?: ControllerOptionsWithEndpoint
-}
-
-export interface ControllerOptionsWithEndpoint extends ControllerOptions {
-  endpoint: string
+export interface FactoryInit extends NodeOptions {
+  /**
+   * Endpoint URL to manage remote Nodes. (Defaults: 'http://127.0.0.1:43134')
+   */
+  endpoint?: string
 }
 
 /**
  * Factory class to spawn ipfsd controllers
  */
-class DefaultFactory implements Factory {
-  public opts: ControllerOptionsWithEndpoint
-  public controllers: Controller[]
+class DefaultFactory implements Factory<any> {
+  public options: NodeOptions
+  public controllers: Node[]
+  public readonly overrides: NodeOptionsOverrides
 
-  private readonly overrides: ControllerOptionsOverridesWithEndpoint
+  private readonly endpoint: string
 
-  constructor (options: ControllerOptions = {}, overrides: ControllerOptionsOverrides = {}) {
-    this.opts = merge(defaults, options)
+  constructor (options: FactoryInit = {}, overrides: NodeOptionsOverrides = {}) {
+    this.endpoint = options.endpoint ?? process.env.IPFSD_CTL_SERVER ?? 'http://localhost:43134'
+    this.options = merge(defaults, options)
     this.overrides = merge({
-      js: merge(this.opts, { type: 'js' }),
-      go: merge(this.opts, { type: 'go' }),
-      proc: merge(this.opts, { type: 'proc' })
+      kubo: this.options
     }, overrides)
 
     this.controllers = []
   }
 
   /**
-   * Utility method to get a temporary directory
-   * useful in browsers to be able to generate temp
-   * repos manually
+   * Spawn an IPFSd Node
    */
-  async tmpDir (options: ControllerOptions = {}): Promise<string> {
-    const opts: ControllerOptions = merge(this.opts, options)
+  async spawn (options?: KuboOptions & SpawnOptions): Promise<KuboNode>
+  async spawn (options?: NodeOptions & SpawnOptions): Promise<Node> {
+    const type: NodeType = options?.type ?? this.options.type ?? 'kubo'
+    const opts = merge({}, this.options, this.overrides[type], options)
+    let ctl: any
 
-    if (opts.remote === true) {
-      const res = await http.get(
-        `${opts.endpoint ?? ''}/util/tmp-dir`,
-        { searchParams: new URLSearchParams({ type: opts.type ?? '' }) }
-      )
-      const out = await res.json()
+    if (type === 'kubo') {
+      if (opts.remote === true) {
+        const req = await fetch(`${this.endpoint}/spawn`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            ...opts,
+            remote: false
+          })
+        })
+        const result = await req.json()
 
-      return out.tmpDir
-    }
-
-    return await Promise.resolve(tmpDir(opts.type))
-  }
-
-  async _spawnRemote (options: ControllerOptionsWithEndpoint) {
-    const opts = {
-      json: {
-        ...options,
-        // avoid recursive spawning
-        remote: false,
-        ipfsBin: undefined,
-        ipfsModule: undefined,
-        ipfsHttpModule: undefined,
-        kuboRpcModule: undefined
+        ctl = new KuboClient({
+          endpoint: this.endpoint,
+          ...opts,
+          ...result
+        })
+      } else {
+        ctl = new KuboDaemon(opts)
       }
     }
 
-    const res = await http.post(
-      `${options.endpoint}/spawn`,
-      opts
-    )
-    return new ControllerRemote(
-      options.endpoint,
-      await res.json(),
-      options
-    )
-  }
-
-  /**
-   * Spawn an IPFSd Controller
-   */
-  async spawn (options: ControllerOptions = { }): Promise<Controller> {
-    const type = options.type ?? this.opts.type ?? 'go'
-    const opts: ControllerOptionsWithEndpoint = merge(
-      this.overrides[type],
-      options
-    )
-
-    // IPFS options defaults
-    const ipfsOptions = merge(
-      {
-        start: false,
-        init: false
-      },
-      opts.test === true
-        ? {
-            config: testsConfig(opts),
-            preload: { enabled: false }
-          }
-        : {},
-      opts.ipfsOptions
-    )
-
-    let ctl: Controller
-    if (opts.type === 'proc') {
-      // spawn in-proc controller
-      ctl = new ControllerProc({ ...opts, ipfsOptions })
-    } else if (opts.remote === true) {
-      // spawn remote controller
-      ctl = await this._spawnRemote({ ...opts, ipfsOptions })
-    } else {
-      // spawn daemon controller
-      ctl = new ControllerDaemon({ ...opts, ipfsOptions })
+    if (ctl == null) {
+      throw new Error('Unsupported type')
     }
 
     // Save the controller
     this.controllers.push(ctl)
 
-    // Auto init and start controller
-    if (opts.disposable === true && (options.ipfsOptions == null || options.ipfsOptions?.init !== false)) {
-      await ctl.init(ipfsOptions.init)
+    // Auto start controller
+    if (opts.init !== false) {
+      await ctl.init(opts.init)
     }
-    if (opts.disposable === true && (options.ipfsOptions == null || options.ipfsOptions?.start !== false)) {
-      await ctl.start()
+
+    // Auto start controller
+    if (opts.start !== false) {
+      await ctl.start(opts.start)
     }
 
     return ctl
@@ -153,7 +101,10 @@ class DefaultFactory implements Factory {
    * Stop all controllers
    */
   async clean (): Promise<void> {
-    await Promise.all(this.controllers.map(async n => await n.stop()))
+    await Promise.all(
+      this.controllers.map(async n => n.stop())
+    )
+
     this.controllers = []
   }
 }

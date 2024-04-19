@@ -1,6 +1,10 @@
 import Hapi from '@hapi/hapi'
-import type { CreateFactory } from '../index.js'
 import routes from './routes.js'
+import type { Factory } from '../index.js'
+
+interface CreateFactory {
+  (): Factory
+}
 
 export interface ServerInit {
   port?: number
@@ -31,7 +35,7 @@ class Server {
   async start (port = this.port): Promise<Server> {
     this.port = port
     this.server = new Hapi.Server({
-      port: port,
+      port,
       host: this.host,
       routes: {
         cors: true
@@ -48,7 +52,7 @@ class Server {
   /**
    * Stop the server
    */
-  async stop (options: { timeout: number }): Promise<void> {
+  async stop (options?: { timeout: number }): Promise<void> {
     if (this.server != null) {
       await this.server.stop(options)
     }

@@ -1,181 +1,95 @@
+/* eslint-disable no-loop-func */
 /* eslint-env mocha */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
-import { isNode, isBrowser, isWebWorker } from 'wherearewe'
-import { createFactory, createController, createServer, ControllerOptions } from '../src/index.js'
-import Client from '../src/ipfsd-client.js'
-import Daemon from '../src/ipfsd-daemon.js'
-import Proc from '../src/ipfsd-in-proc.js'
-import * as ipfsModule from 'ipfs'
-import * as ipfsHttpModule from 'ipfs-http-client'
-// @ts-expect-error no types
-import * as goIpfsModule from 'go-ipfs'
-import * as ipfsClientModule from 'ipfs-client'
-import * as kuboRpcModule from 'kubo-rpc-client'
+import * as kubo from 'kubo'
+import { create as createKuboRPCClient } from 'kubo-rpc-client'
+import { isNode, isElectronMain } from 'wherearewe'
+import { createFactory, createNode, createServer, type KuboOptions, type SpawnOptions, type KuboNode, type Factory } from '../src/index.js'
+import KuboClient from '../src/kubo/client.js'
+import KuboDaemon from '../src/kubo/daemon.js'
+import type Server from '../src/endpoint/server.js'
 
-describe('`createController` should return the correct class', () => {
-  it('for type `js` ', async () => {
-    const f = await createController({
-      type: 'js',
+describe('`createNode` should return the correct class', () => {
+  let node: KuboNode
+
+  afterEach(async () => {
+    await node?.stop()
+  })
+
+  it('for type `kubo` ', async () => {
+    node = await createNode({
+      type: 'kubo',
+      test: true,
       disposable: false,
-      ipfsModule,
-      ipfsHttpModule,
-      ipfsBin: isNode ? ipfsModule.path() : undefined
+      rpc: createKuboRPCClient,
+      bin: isNode ? kubo.path() : undefined
     })
 
-    if (!isNode) {
-      expect(f).to.be.instanceOf(Client)
+    if (!isNode && !isElectronMain) {
+      expect(node).to.be.instanceOf(KuboClient)
     } else {
-      expect(f).to.be.instanceOf(Daemon)
+      expect(node).to.be.instanceOf(KuboDaemon)
     }
-  })
-  it('for type `go` ', async () => {
-    const f = await createController({
-      type: 'go',
-      disposable: false,
-      kuboRpcModule,
-      ipfsBin: isNode ? goIpfsModule.path() : undefined
-    })
-
-    if (!isNode) {
-      expect(f).to.be.instanceOf(Client)
-    } else {
-      expect(f).to.be.instanceOf(Daemon)
-    }
-  })
-  it('for type `proc` ', async () => {
-    const f = await createController({ type: 'proc', disposable: false })
-
-    expect(f).to.be.instanceOf(Proc)
   })
 
   it('for remote', async () => {
-    const f = await createController({
+    node = await createNode({
+      type: 'kubo',
+      test: true,
       remote: true,
       disposable: false,
-      ipfsModule,
-      ipfsHttpModule,
-      ipfsBin: isNode ? ipfsModule.path() : undefined
+      rpc: createKuboRPCClient
     })
 
-    expect(f).to.be.instanceOf(Client)
-  })
-
-  it.skip('should use ipfs-client if passed', async () => {
-    let clientCreated = false
-    let httpCreated = false
-
-    await createController({
-      type: 'js',
-      disposable: false,
-      ipfsModule,
-      ipfsClientModule: {
-        create: (opts: any) => {
-          clientCreated = true
-
-          return ipfsClientModule.create(opts)
-        }
-      },
-      ipfsHttpModule: {
-        create: async (opts: any) => {
-          httpCreated = true
-
-          return ipfsHttpModule.create(opts)
-        }
-      },
-      ipfsBin: isNode ? ipfsModule.path() : undefined
-    })
-
-    expect(clientCreated).to.be.true()
-    expect(httpCreated).to.be.false()
-  })
-
-  it.skip('should use ipfs-client for remote if passed', async () => {
-    let clientCreated = false
-    let httpCreated = false
-
-    const f = await createController({
-      remote: true,
-      disposable: false,
-      ipfsModule,
-      ipfsClientModule: {
-        create: (opts: any) => {
-          clientCreated = true
-
-          return ipfsClientModule.create(opts)
-        }
-      },
-      ipfsHttpModule: {
-        create: async (opts: any) => {
-          httpCreated = true
-
-          return ipfsHttpModule.create(opts)
-        }
-      },
-      ipfsBin: isNode ? ipfsModule.path() : undefined
-    })
-
-    expect(f).to.be.instanceOf(Client)
-    expect(clientCreated).to.be.true()
-    expect(httpCreated).to.be.false()
+    expect(node).to.be.instanceOf(KuboClient)
   })
 })
 
-const types: ControllerOptions[] = [{
-  type: 'js',
-  ipfsHttpModule,
+const types: Array<KuboOptions & SpawnOptions> = [{
+  type: 'kubo',
   test: true,
-  ipfsModule,
-  ipfsBin: isNode ? ipfsModule.path() : undefined
+  rpc: createKuboRPCClient,
+  bin: isNode ? kubo.path() : undefined
 }, {
-  ipfsBin: isNode ? goIpfsModule.path() : undefined,
-  type: 'go',
-  kuboRpcModule,
-  test: true
-}, {
-  type: 'proc',
-  ipfsHttpModule,
-  test: true,
-  ipfsModule
-}, {
-  type: 'js',
-  ipfsHttpModule,
+  type: 'kubo',
   test: true,
   remote: true,
-  ipfsModule,
-  ipfsBin: isNode ? ipfsModule.path() : undefined
-}, {
-  ipfsBin: isNode ? goIpfsModule.path() : undefined,
-  type: 'go',
-  kuboRpcModule,
-  test: true,
-  remote: true
+  rpc: createKuboRPCClient,
+  bin: isNode ? kubo.path() : undefined
 }]
 
-describe('`createController({test: true})` should return daemon with test profile', () => {
+describe('`createNode({test: true})` should return daemon with test profile', () => {
+  let node: KuboNode
+
+  afterEach(async () => {
+    await node?.stop()
+  })
+
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const node = await createController(opts)
+      node = await createNode(opts)
       expect(await node.api.config.get('Bootstrap')).to.be.empty()
       await node.stop()
     })
   }
 })
 
-describe('`createController({test: true})` should return daemon with correct config', () => {
+describe('`createNode({test: true})` should return daemon with correct config', () => {
+  let node: KuboNode
+
+  afterEach(async () => {
+    await node?.stop()
+  })
+
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const node = await createController(opts)
+      node = await createNode(opts)
       const swarm = await node.api.config.get('Addresses.Swarm')
 
-      if ((isBrowser || isWebWorker) && opts.type !== 'proc') {
-        expect(swarm).to.be.deep.eq(['/ip4/127.0.0.1/tcp/0/ws'])
-      } else if ((isBrowser || isWebWorker) && opts.type === 'proc') {
-        expect(swarm).to.be.deep.eq([])
-      } else {
-        expect(swarm).to.be.deep.eq(['/ip4/127.0.0.1/tcp/0'])
-      }
+      expect(swarm).to.include('/ip4/127.0.0.1/tcp/0')
+      expect(swarm).to.include('/ip4/127.0.0.1/tcp/0/ws')
 
       const expectedAPI = {
         HTTPHeaders: {
@@ -194,29 +108,40 @@ describe('`createController({test: true})` should return daemon with correct con
 })
 
 describe('`createFactory({test: true})` should return daemon with test profile', () => {
+  let factory: Factory
+
+  afterEach(async () => {
+    await factory.clean()
+  })
+
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      const factory = createFactory({
+      factory = createFactory({
         test: true
       })
       const node = await factory.spawn(opts)
       expect(await node.api.config.get('Bootstrap')).to.be.empty()
-      await factory.clean()
     })
   }
 })
 
 describe('`createServer`', () => {
+  let server: Server
+
+  afterEach(async () => {
+    await server?.stop()
+  })
+
   it('should return a Server with port 43134 by default', () => {
-    const s = createServer()
-    expect(s.port).to.be.eq(43134)
+    server = createServer()
+    expect(server.port).to.be.eq(43134)
   })
   it('should return a Server with port 11111 when passed number directly', () => {
-    const s = createServer(11111)
-    expect(s.port).to.be.eq(11111)
+    server = createServer(11111)
+    expect(server.port).to.be.eq(11111)
   })
   it('should return a Server with port 22222 when passed {port: 22222}', () => {
-    const s = createServer({ port: 22222 })
-    expect(s.port).to.be.eq(22222)
+    server = createServer({ port: 22222 })
+    expect(server.port).to.be.eq(22222)
   })
 })

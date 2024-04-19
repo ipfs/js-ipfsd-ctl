@@ -1,7 +1,7 @@
 {
   "name": "ipfsd-ctl",
   "version": "13.0.0",
-  "description": "Spawn IPFS Daemons, JS or Go",
+  "description": "Spawn IPFS Daemons, Kubo or...",
   "license": "Apache-2.0 OR MIT",
   "homepage": "https://github.com/ipfs/js-ipfsd-ctl#readme",
   "repository": {
@@ -11,15 +11,15 @@
   "bugs": {
     "url": "https://github.com/ipfs/js-ipfsd-ctl/issues"
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "keywords": [
     "daemon",
     "ipfs",
     "node"
   ],
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.0.0"
-  },
   "type": "module",
   "types": "./dist/src/index.d.ts",
   "files": [
@@ -37,6 +37,7 @@
   "eslintConfig": {
     "extends": "ipfs",
     "parserOptions": {
+      "project": true,
       "sourceType": "module"
     }
   },
@@ -140,34 +141,26 @@
   "dependencies": {
     "@hapi/boom": "^10.0.0",
     "@hapi/hapi": "^21.1.0",
-    "@libp2p/interface-peer-id": "^2.0.0",
-    "@libp2p/logger": "^2.0.0",
-    "@multiformats/multiaddr": "^11.0.0",
-    "execa": "^6.1.0",
-    "ipfs-utils": "^9.0.1",
+    "@libp2p/interface": "^1.2.0",
+    "@libp2p/logger": "^4.0.10",
+    "execa": "^8.0.1",
     "joi": "^17.2.1",
+    "kubo-rpc-client": "^4.0.0",
     "merge-options": "^3.0.1",
-    "nanoid": "^4.0.0",
+    "nanoid": "^5.0.7",
+    "p-defer": "^4.0.1",
     "p-wait-for": "^5.0.0",
-    "temp-write": "^5.0.0",
     "wherearewe": "^2.0.1"
   },
   "devDependencies": {
-    "aegir": "^37.0.15",
-    "go-ipfs": "^0.17.0",
-    "ipfs": "^0.66.0",
-    "ipfs-client": "^0.10.0",
-    "ipfs-core-types": "^0.14.0",
-    "ipfs-http-client": "^60.0.0",
-    "kubo-rpc-client": "^3.0.0",
-    "util": "^0.12.4"
+    "aegir": "^42.2.5",
+    "kubo": "^0.28.0"
   },
   "browser": {
     "./dist/src/endpoint/server.js": "./dist/src/endpoint/server.browser.js",
-    "./dist/src/utils.js": "./dist/src/utils.browser.js",
-    "./dist/src/ipfsd-daemon.js": "./dist/src/ipfsd-client.js",
-    "go-ipfs": false
+    "./dist/src/kubo/utils.js": false,
+    "./dist/src/kubo/daemon.js": "./dist/src/kubo/client.js",
+    "kubo": false
   },
-  "jsdelivr": "dist/index.min.js",
-  "unpkg": "dist/index.min.js"
+  "sidEffects": false
 }

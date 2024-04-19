@@ -1,70 +1,161 @@
-import DefaultFactory from './factory.js'
+/**
+ * @packageDocumentation
+ *
+ * This module allows you to spawn long-lived IPFS implementations from any JS environment and interact with the as is they were in the local process.
+ *
+ * It is designed mostly for testing interoperability and is not suitable for production use.
+ *
+ * ## Spawning a single noder: `createNode`
+ *
+ * @example Spawning a Kubo node
+ *
+ * ```TypeScript
+ * import { createNode } from 'ipfsd-ctl'
+ * import { path } from 'kubo'
+ * import { create } from 'kubo-rpc-client'
+ *
+ * const node = await createNode({
+ *   type: 'kubo',
+ *   rpc: create,
+ *   bin: path()
+ * })
+ *
+ * console.info(await node.api.id())
+ * ```
+ *
+ * ## Manage multiple nodes: `createFactory`
+ *
+ * Use a factory to spawn multiple nodes based on some common template.
+ *
+ * @example Spawning multiple Kubo nodes
+ *
+ * ```TypeScript
+ * import { createFactory } from 'ipfsd-ctl'
+ * import { path } from 'kubo'
+ * import { create } from 'kubo-rpc-client'
+ *
+ * const factory = createFactory({
+ *   type: 'kubo',
+ *   rpc: create,
+ *   bin: path()
+ * })
+ *
+ * const node1 = await factory.spawn()
+ * const node2 = await factory.spawn()
+ * //...etc
+ *
+ * // later stop all nodes
+ * await factory.clean()
+ * ```
+ *
+ * ## Override config based on implementation type
+ *
+ * `createFactory` takes a second argument that can be used to pass default options to an implementation based on the `type` field.
+ *
+ * ```TypeScript
+ * import { createFactory } from 'ipfsd-ctl'
+ * import { path } from 'kubo'
+ * import { create } from 'kubo-rpc-client'
+ *
+ * const factory = createFactory({
+ *   type: 'kubo',
+ *   test: true
+ * }, {
+ *   otherImpl: {
+ *     //...other impl args
+ *   }
+ * })
+ *
+ * const kuboNode = await factory.spawn()
+ * const otherImplNode = await factory.spawn({
+ *   type: 'otherImpl'
+ * })
+ * ```
+ *
+ * ## Spawning nodes from browsers
+ *
+ * To spawn nodes from browsers, first start an ipfsd-ctl server from node.js and make the address known to the browser (the default way is to set `process.env.IPFSD_CTL_SERVER` in your bundle):
+ *
+ * @example Create server
+ *
+ * In node.js:
+ *
+ * ```TypeScript
+ * // Start a remote disposable node, and get access to the api
+ * // print the node id, and stop the temporary daemon
+ *
+ * import { createServer } from 'ipfsd-ctl'
+ *
+ * const port = 9090
+ * const server = Ctl.createServer(port, {
+ *   type: 'kubo',
+ *   test: true
+ * }, {
+ *    // overrides
+ * })
+ * await server.start()
+ * ```
+ *
+ * In a browser:
+ *
+ * ```TypeScript
+ * import { createFactory } from 'ipfsd-ctl'
+ *
+ * const factory = createFactory({
+ *   // or you can set process.env.IPFSD_CTL_SERVER to http://localhost:9090
+ *   endpoint: `http://localhost:${port}`
+ * })
+ *
+ * const node = await factory.createNode({
+ *   type: 'kubo'
+ * })
+ * console.info(await node.api.id())
+ * ```
+ *
+ * ## Disposable vs non Disposable nodes
+ *
+ * `ipfsd-ctl` can spawn `disposable` and `non-disposable` nodes.
+ *
+ * - `disposable`- Disposable nodes are useful for tests or other temporary use cases, they create a temporary repo which is deleted automatically when the node is stopped
+ * - `non-disposable` - Disposable nodes will not delete their repo when stopped
+ */
+
 import Server from './endpoint/server.js'
-import type { IPFS } from 'ipfs-core-types'
-import type { Multiaddr } from '@multiformats/multiaddr'
-import type { PeerId } from '@libp2p/interface-peer-id'
-import type { ExecaChildProcess } from 'execa'
+import DefaultFactory from './factory.js'
+import type { KuboNode, KuboOptions } from './kubo/index.js'
 
-export interface PeerData {
-  id: PeerId
-  addresses: Multiaddr[]
-}
+export * from './kubo/index.js'
+export type NodeType = 'kubo'
 
-export type ControllerType = 'js' | 'go' | 'proc'
-
-export interface Controller<Type extends ControllerType = 'go'> {
-  /**
-   * Initialize a repo
-   */
-  init: (options?: InitOptions) => Promise<Controller<Type>>
+export interface Node<API = unknown, Options = NodeOptions, Info extends Record<string, any> = Record<string, any>, InitArgs = unknown, StartArgs = unknown, StopArgs = unknown, CleanupArgs = unknown> {
+  api: API
+  options: Options
 
   /**
-   * Start the daemon
+   * Return information about a node
    */
-  start: () => Promise<Controller<Type>>
+  info(): Promise<Info>
 
   /**
-   * Stop the daemon
+   * Perform any pre-start tasks such as creating a repo, generating a peer id,
+   * etc
    */
-  stop: () => Promise<Controller<Type>>
+  init(args?: InitArgs): Promise<void>
 
   /**
-   * Delete the repo that was being used.
-   * If the node was marked as `disposable` this will be called
-   * automatically when the process is exited.
+   * Start the node
    */
-  cleanup: () => Promise<Controller<Type>>
+  start(args?: StartArgs): Promise<void>
 
   /**
-   * Get the pid of the `ipfs daemon` process
+   * Stop a node that has previously been started
    */
-  pid: () => Promise<number>
+  stop(args?: StopArgs): Promise<void>
 
   /**
-   * Get the version of ipfs
+   * Perform any resource cleanup after stopping a disposable node
    */
-  version: () => Promise<string>
-  path: string
-  started: boolean
-  initialized: boolean
-  clean: boolean
-  api: IPFSAPI
-  subprocess?: ExecaChildProcess | null
-  opts: ControllerOptions
-  apiAddr: Multiaddr
-  peer: PeerData
-}
-
-export interface RemoteState {
-  id: string
-  path: string
-  initialized: boolean
-  started: boolean
-  disposable: boolean
-  clean: boolean
-  apiAddr: string
-  gatewayAddr: string
-  grpcAddr: string
+  cleanup(args?: CleanupArgs): Promise<void>
 }
 
 export interface InitOptions {
@@ -97,180 +188,113 @@ export interface CircuitRelayOptions {
   hop: CircuitRelayHopOptions
 }
 
-export interface IPFSOptions {
+export interface NodeOptions<InitOptions = unknown, StartOptions = unknown> {
   /**
-   * The file path at which to store the IPFS node’s data. Alternatively, you can set up a customized storage system by providing an ipfs.Repo instance.
+   * The type of controller
    */
-  repo?: string | any
-  /**
-   * Initialize the repo when creating the IPFS node. Instead of a boolean, you may provide an object with custom initialization options. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsinit
-   */
-  init?: boolean | InitOptions
-  /**
-   * If false, do not automatically start the IPFS node. Instead, you’ll need to manually call node.start() yourself.
-   */
-  start?: boolean
-  /**
-   * A passphrase to encrypt/decrypt your keys.
-   */
-  pass?: string
-  /**
-   * Prevents all logging output from the IPFS node.
-   */
-  silent?: boolean
-  /**
-   * Configure circuit relay. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsrelay
-   */
-  relay?: any
-  /**
-   * Configure remote preload nodes. The remote will preload content added on this node, and also attempt to preload objects requested by this node. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionspreload
-   */
-  preload?: boolean | PreloadOptions
-  /**
-   * Enable and configure experimental features. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsexperimental
-   */
-  EXPERIMENTAL?: ExperimentalOptions
-  /**
-   * Modify the default IPFS node config. This object will be merged with the default config; it will not replace it. The default config is documented in the js-ipfs config file docs. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconfig
-   */
-  config?: any
-  /**
-   * Modify the default IPLD config. This object will be merged with the default config; it will not replace it. Check IPLD docs for more information on the available options. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsipld
-   */
-  ipld?: any
-  /**
-   * The libp2p option allows you to build your libp2p node by configuration, or via a bundle function. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionslibp2p
-   */
-  libp2p?: any
-  /**
-   * Configure the libp2p connection manager. https://github.com/ipfs/js-ipfs/blob/master/README.md#optionsconnectionmanager
-   */
-  connectionManager?: any
-  /**
-   * Run the node offline
-   */
-  offline?: boolean
-  /**
-   * Perform any required repo migrations
-   */
-  repoAutoMigrate?: boolean
-}
+  type?: NodeType
 
-export interface ControllerOptions<Type extends ControllerType = ControllerType> {
   /**
    * Flag to activate custom config for tests
    */
   test?: boolean
+
   /**
-   * Use remote endpoint to spawn the controllers. Defaults to `true` when not in node
-   */
-  remote?: boolean
-  /**
-   * Endpoint URL to manage remote Controllers. (Defaults: 'http://localhost:43134')
-   */
-  endpoint?: string
-  /**
-   * A new repo is created and initialized for each invocation, as well as cleaned up automatically once the process exits
+   * A new repo is created and initialized for each invocation, as well as
+   * cleaned up automatically once the process exits
    */
   disposable?: boolean
+
   /**
-   * The daemon type
-   */
-  type?: Type
-  /**
-   * Additional environment variables, passed to executing shell. Only applies for Daemon controllers
+   * Additional environment variables, passed to executing shell. Only applies
+   * for Daemon controllers
    */
   env?: Record<string, string>
+
   /**
    * Custom cli args
    */
   args?: string[]
+
   /**
-   * Reference to an ipfs-http-client module
-   */
-  ipfsHttpModule?: any
-  /**
-   * Reference to a kubo-rpc-client module
-   */
-  kuboRpcModule?: any
-  /**
-   * Reference to an ipfs or ipfs-core module
-   */
-  ipfsModule?: any
-  /**
-   * Reference to an ipfs-core module
-   */
-  ipfsClientModule?: any
-  /**
-   * Path to a IPFS executable
-   */
-  ipfsBin?: string
-  /**
-   * Options for the IPFS node
-   */
-  ipfsOptions?: IPFSOptions
-  /**
-   * Whether to use SIGKILL to quit a daemon that does not stop after `.stop()` is called. (default true)
-   */
-  forceKill?: boolean
-  /**
-   * How long to wait before force killing a daemon in ms. (default 5000)
+   * How long to wait before force killing a daemon in ms
+   *
+   * @default 5000
    */
   forceKillTimeout?: number
+
+  /**
+   * Init options
+   */
+  init?: InitOptions
+
+  /**
+   * Start options
+   */
+  start?: StartOptions
 }
 
-export interface ControllerOptionsOverrides {
-  js?: ControllerOptions<'js'>
-  go?: ControllerOptions<'go'>
-  proc?: ControllerOptions<'proc'>
+export interface NodeOptionsOverrides {
+  kubo?: KuboOptions
 }
 
-export interface Factory<Type extends ControllerType = ControllerType> {
-  tmpDir: (options?: ControllerOptions) => Promise<string>
-  spawn: (options?: ControllerOptions) => Promise<Controller<Type>>
-  clean: () => Promise<void>
-  controllers: Array<Controller<Type>>
-  opts: ControllerOptions<Type>
+export interface SpawnOptions {
+  /**
+   * Use remote endpoint to spawn the controllers. Defaults to `true` when not in node
+   */
+  remote?: true
 }
 
-export interface CreateFactory { (): Factory | Promise<Factory> }
+export interface Factory<DefaultNode extends Node = Node> {
+  /**
+   * Create a node
+   */
+  spawn(options?: KuboOptions & SpawnOptions): Promise<KuboNode>
+  spawn(options?: NodeOptions & SpawnOptions): Promise<DefaultNode>
+
+  /**
+   * Shut down all previously created nodes that are still running
+   */
+  clean(): Promise<void>
+
+  /**
+   * The previously created nodes that are still running
+   */
+  controllers: Node[]
+
+  /**
+   * The default options that will be applied to all nodes
+   */
+  options: NodeOptions
+
+  /**
+   * Config overrides that will be applied to specific node types
+   */
+  overrides: NodeOptionsOverrides
+}
 
 /**
  * Creates a factory
- *
- * @param {ControllerOptions} [options]
- * @param {ControllerOptionsOverrides} [overrides]
- * @returns {Factory}
  */
-export const createFactory = (options?: ControllerOptions, overrides?: ControllerOptionsOverrides): Factory => {
+export function createFactory (options: KuboOptions, overrides?: NodeOptionsOverrides): Factory<KuboNode>
+export function createFactory (options?: NodeOptions, overrides?: NodeOptionsOverrides): Factory<Node>
+export function createFactory (options?: NodeOptions, overrides?: NodeOptionsOverrides): Factory<Node> {
   return new DefaultFactory(options, overrides)
 }
 
 /**
  * Creates a node
  */
-export const createController = async (options?: ControllerOptions): Promise<Controller> => {
+export async function createNode (options: KuboOptions & SpawnOptions): Promise<KuboNode>
+export async function createNode (options?: any): Promise<any> {
   const f = new DefaultFactory()
-  return await f.spawn(options)
-}
-
-export interface IPFSAPI extends IPFS {
-  apiHost?: string
-  apiPort?: number
-  gatewayHost?: string
-  gatewayPort?: number
-  grpcHost?: string
-  grpcPort?: number
+  return f.spawn(options)
 }
 
 /**
  * Create a Endpoint Server
- *
- * @param {number | { port: number }} [options] - Configuration options or just the port.
- * @param {ControllerOptions} [factoryOptions]
- * @param {ControllerOptionsOverrides} [factoryOverrides]
  */
-export const createServer = (options?: number | { port: number }, factoryOptions: ControllerOptions = {}, factoryOverrides: ControllerOptionsOverrides = {}) => {
+export const createServer = (options?: number | { port: number }, factoryOptions: NodeOptions = {}, factoryOverrides: NodeOptionsOverrides = {}): Server => {
   let port: number | undefined
 
   if (typeof options === 'number') {

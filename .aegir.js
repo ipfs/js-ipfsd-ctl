@@ -1,28 +1,19 @@
-import * as ipfsModule from 'ipfs'
-import * as ipfsHttpModule from 'ipfs-http-client'
-import * as kuboRpcModule from 'kubo-rpc-client'
-import * as goIpfsModule from 'go-ipfs'
+import { create } from 'kubo-rpc-client'
+import { path } from 'kubo'
 
-/** @type {import('aegir').Options["build"]["config"]} */
+/** @type {import('aegir').PartialOptions} */
 const config = {
-  bundlesize: {
-    maxSize: '35kB'
+  build: {
+    bundlesizeMax: '2.5kB',
   },
   test: {
     before: async () => {
       const { createServer } = await import('./dist/src/index.js')
 
       const server = createServer(undefined, {
-          ipfsModule,
-        }, {
-          go: {
-            ipfsBin: goIpfsModule.path(),
-            kuboRpcModule
-          },
-          js: {
-            ipfsBin: ipfsModule.path(),
-            ipfsHttpModule
-          }
+          type: 'kubo',
+          bin: path(),
+          rpc: create
         }
       )
 
