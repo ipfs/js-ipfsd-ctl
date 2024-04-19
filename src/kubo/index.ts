@@ -38,7 +38,7 @@ export interface KuboStartOptions {
   args?: string[]
 }
 
-export interface KuboOptions extends NodeOptions<boolean | KuboInitOptions, boolean | KuboStartOptions> {
+export interface KuboOptions extends NodeOptions<boolean | KuboInitOptions, boolean | KuboStartOptions, KuboStopOptions> {
   type: 'kubo'
 
   /**
@@ -58,6 +58,15 @@ export interface KuboOptions extends NodeOptions<boolean | KuboInitOptions, bool
   repo?: string
 }
 
+export interface KuboStopOptions {
+  /**
+   * How long to wait in ms before sending `SIGKILL` to the process
+   *
+   * @default 1000
+   */
+  forceKillTimeout?: number
+}
+
 export interface KuboInfo {
   pid?: number
   version?: string
@@ -67,6 +76,6 @@ export interface KuboInfo {
   repo: string
 }
 
-export interface KuboNode extends Node<KuboRPCClient, KuboOptions, KuboInfo, KuboInitOptions, KuboStartOptions> {
+export interface KuboNode extends Node<KuboRPCClient, KuboOptions, KuboInfo, KuboInitOptions, KuboStartOptions, KuboStopOptions> {
 
 }

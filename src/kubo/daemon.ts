@@ -5,7 +5,7 @@ import mergeOptions from 'merge-options'
 import pDefer from 'p-defer'
 import waitFor from 'p-wait-for'
 import { checkForRunningApi, tmpDir, buildStartArgs, repoExists, buildInitArgs } from './utils.js'
-import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions } from './index.js'
+import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions, KuboStopOptions } from './index.js'
 import type { Logger } from '@libp2p/interface'
 import type { KuboRPCClient } from 'kubo-rpc-client'
 
@@ -34,6 +34,7 @@ export default class KuboDaemon implements KuboNode {
   private readonly env: Record<string, string>
   private readonly initArgs?: KuboInitOptions
   private readonly startArgs?: KuboStartOptions
+  private readonly stopArgs?: KuboStopOptions
 
   constructor (options: KuboOptions) {
     if (options.rpc == null) {
@@ -58,6 +59,10 @@ export default class KuboDaemon implements KuboNode {
 
     if (options.start != null && typeof options.start !== 'boolean') {
       this.startArgs = options.start
+    }
+
+    if (options.stop != null) {
+      this.stopArgs = options.stop
     }
   }
 
@@ -223,20 +228,32 @@ export default class KuboDaemon implements KuboNode {
     await deferred.promise
   }
 
-  async stop (options: { timeout?: number } = {}): Promise<void> {
-    const timeout = options.timeout ?? 60000
+  async stop (options?: KuboStopOptions): Promise<void> {
+    const stopOptions = {
+      ...(this.stopArgs ?? {}),
+      ...(options ?? {})
+    }
+    const timeout = stopOptions.forceKillTimeout ?? 1000
     const subprocess = this.subprocess
 
     if (subprocess == null || subprocess.exitCode != null || this._api == null) {
       return
     }
 
+    if (!(await this.api.isOnline())) {
+      return
+    }
+
     await this.api.stop()
 
-    // wait for the subprocess to exit and declare ourselves stopped
-    await waitFor(() => subprocess.exitCode != null, {
-      timeout
-    })
+    try {
+      // wait for the subprocess to exit and declare ourselves stopped
+      await waitFor(() => subprocess.exitCode != null, {
+        timeout
+      })
+    } catch {
+      subprocess.kill('SIGKILL')
+    }
 
     if (this.disposable) {
       // wait for the cleanup routine to run after the subprocess has exited

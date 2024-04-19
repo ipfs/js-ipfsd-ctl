@@ -158,7 +158,7 @@ export interface Node<API = unknown, Options = NodeOptions, Info extends Record<
   cleanup(args?: CleanupArgs): Promise<void>
 }
 
-export interface NodeOptions<InitOptions = unknown, StartOptions = unknown> {
+export interface NodeOptions<InitOptions = unknown, StartOptions = unknown, StopOptions = unknown, CleanOptions = unknown> {
   /**
    * The type of controller
    */
@@ -194,13 +194,6 @@ export interface NodeOptions<InitOptions = unknown, StartOptions = unknown> {
   args?: string[]
 
   /**
-   * How long to wait before force killing a daemon in ms
-   *
-   * @default 5000
-   */
-  forceKillTimeout?: number
-
-  /**
    * Init options
    */
   init?: InitOptions
@@ -209,6 +202,16 @@ export interface NodeOptions<InitOptions = unknown, StartOptions = unknown> {
    * Start options
    */
   start?: StartOptions
+
+  /**
+   * Stop options
+   */
+  stop?: StopOptions
+
+  /**
+   * Clean options
+   */
+  clean?: CleanOptions
 }
 
 export interface NodeOptionsOverrides {
