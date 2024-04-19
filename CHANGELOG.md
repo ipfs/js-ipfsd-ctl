@@ -1,3 +1,10 @@
+## [14.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.0...v14.0.1) (2024-04-19)
+
+
+### Bug Fixes
+
+* use configured endpoint instead of default ([#824](https://github.com/ipfs/js-ipfsd-ctl/issues/824)) ([e0d2f88](https://github.com/ipfs/js-ipfsd-ctl/commit/e0d2f88cad60473547e236e6d15d8a345ec99f02))
+
 ## [14.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v13.0.0...v14.0.0) (2024-04-19)
 
 
