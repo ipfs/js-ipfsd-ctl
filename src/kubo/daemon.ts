@@ -95,10 +95,16 @@ export default class KuboDaemon implements KuboNode {
    * this will be called automatically when the process is exited.
    */
   async cleanup (): Promise<void> {
-    await fs.rm(this.repo, {
-      recursive: true,
-      force: true
-    })
+    try {
+      await fs.rm(this.repo, {
+        recursive: true,
+        force: true
+      })
+    } catch (err: any) {
+      if (err.code !== 'EPERM') {
+        throw err
+      }
+    }
   }
 
   async init (args?: KuboInitOptions): Promise<void> {
