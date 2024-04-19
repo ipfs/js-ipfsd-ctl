@@ -1,3 +1,15 @@
+## [14.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.2...v14.0.3) (2024-04-19)
+
+
+### Bug Fixes
+
+* kill subprocess after timeout ([#827](https://github.com/ipfs/js-ipfsd-ctl/issues/827)) ([09c9fcd](https://github.com/ipfs/js-ipfsd-ctl/commit/09c9fcd16678bcce7c379d7bba844e5b04eb2069))
+
+
+### Trivial Changes
+
+* re-enable tests that use isOnline ([#825](https://github.com/ipfs/js-ipfsd-ctl/issues/825)) ([4569bd2](https://github.com/ipfs/js-ipfsd-ctl/commit/4569bd2ee4e32b38a59b1b0e9d5c18d407e2cf28))
+
 ## [14.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.1...v14.0.2) (2024-04-19)
 
 
