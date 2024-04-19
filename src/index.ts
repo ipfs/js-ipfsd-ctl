@@ -158,36 +158,6 @@ export interface Node<API = unknown, Options = NodeOptions, Info extends Record<
   cleanup(args?: CleanupArgs): Promise<void>
 }
 
-export interface InitOptions {
-  pass?: string
-  bits?: number
-  algorithm?: string
-  emptyRepo?: boolean
-  profiles?: string[]
-  allowNew?: boolean
-  privateKey?: string
-}
-
-export interface PreloadOptions {
-  enabled?: boolean
-  addresses?: string[]
-}
-
-export interface ExperimentalOptions {
-  sharding?: boolean
-  ipnsPubsub?: boolean
-}
-
-export interface CircuitRelayHopOptions {
-  enabled: boolean
-  active: boolean
-}
-
-export interface CircuitRelayOptions {
-  enabled: boolean
-  hop: CircuitRelayHopOptions
-}
-
 export interface NodeOptions<InitOptions = unknown, StartOptions = unknown> {
   /**
    * The type of controller
