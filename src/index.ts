@@ -1,3 +1,130 @@
+/**
+ * @packageDocumentation
+ *
+ * This module allows you to spawn long-lived IPFS implementations from any JS
+ * environment and interact with the as is they were in the local process.
+ *
+ * It is designed mostly for testing interoperability and is not suitable for
+ * production use.
+ *
+ * ## Spawning a single noder: `createNode`
+ *
+ * @example Spawning a Kubo node
+ *
+ * ```TypeScript
+ * import { createNode } from 'ipfsd-ctl'
+ * import { path } from 'kubo'
+ * import { create } from 'kubo-rpc-client'
+ *
+ * const node = await createNode({
+ *   type: 'kubo',
+ *   rpc: create,
+ *   bin: path()
+ * })
+ *
+ * console.info(await node.api.id())
+ * ```
+ *
+ * ## Manage multiple nodes: `createFactory`
+ *
+ * Use a factory to spawn multiple nodes based on some common template.
+ *
+ * @example Spawning multiple Kubo nodes
+ *
+ * ```TypeScript
+ * import { createFactory } from 'ipfsd-ctl'
+ * import { path } from 'kubo'
+ * import { create } from 'kubo-rpc-client'
+ *
+ * const factory = createFactory({
+ *   type: 'kubo',
+ *   rpc: create,
+ *   bin: path()
+ * })
+ *
+ * const node1 = await factory.spawn()
+ * const node2 = await factory.spawn()
+ * //...etc
+ *
+ * // later stop all nodes
+ * await factory.clean()
+ * ```
+ *
+ * ## Override config based on implementation type
+ *
+ * `createFactory` takes a second argument that can be used to pass default
+ * options to an implementation based on the `type` field.
+ *
+ * ```TypeScript
+ * import { createFactory } from 'ipfsd-ctl'
+ * import { path } from 'kubo'
+ * import { create } from 'kubo-rpc-client'
+ *
+ * const factory = createFactory({
+ *   type: 'kubo',
+ *   test: true
+ * }, {
+ *   otherImpl: {
+ *     //...other impl args
+ *   }
+ * })
+ *
+ * const kuboNode = await factory.spawn()
+ * const otherImplNode = await factory.spawn({
+ *   type: 'otherImpl'
+ * })
+ * ```
+ *
+ * ## Spawning nodes from browsers
+ *
+ * To spawn nodes from browsers, first start an ipfsd-ctl server from node.js
+ * and make the address known to the browser (the default way is to set
+ * `process.env.IPFSD_CTL_SERVER` in your bundle):
+ *
+ * @example Create server
+ *
+ * In node.js:
+ *
+ * ```TypeScript
+ * // Start a remote disposable node, and get access to the api
+ * // print the node id, and stop the temporary daemon
+ *
+ * import { createServer } from 'ipfsd-ctl'
+ *
+ * const port = 9090
+ * const server = Ctl.createServer(port, {
+ *   type: 'kubo',
+ *   test: true
+ * }, {
+ *    // overrides
+ * })
+ * await server.start()
+ * ```
+ *
+ * In a browser:
+ *
+ * ```TypeScript
+ * import { createFactory } from 'ipfsd-ctl'
+ *
+ * const factory = createFactory({
+ *   // or you can set process.env.IPFSD_CTL_SERVER to http://localhost:9090
+ *   endpoint: `http://localhost:${port}`
+ * })
+ *
+ * const node = await factory.createNode({
+ *   type: 'kubo'
+ * })
+ * console.info(await node.api.id())
+ * ```
+ *
+ * ## Disposable vs non Disposable nodes
+ *
+ * `ipfsd-ctl` can spawn `disposable` and `non-disposable` nodes.
+ *
+ * - `disposable`- Disposable nodes are useful for tests or other temporary use cases, they create a temporary repo which is deleted automatically when the node is stopped
+ * - `non-disposable` - Disposable nodes will not delete their repo when stopped
+ */
+
 import Server from './endpoint/server.js'
 import DefaultFactory from './factory.js'
 import type { KuboNode, KuboOptions } from './kubo/index.js'

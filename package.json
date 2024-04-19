@@ -1,7 +1,7 @@
 {
   "name": "ipfsd-ctl",
   "version": "13.0.0",
-  "description": "Spawn IPFS Daemons, JS or Go",
+  "description": "Spawn IPFS Daemons, Kubo or...",
   "license": "Apache-2.0 OR MIT",
   "homepage": "https://github.com/ipfs/js-ipfsd-ctl#readme",
   "repository": {
@@ -143,20 +143,18 @@
     "@hapi/hapi": "^21.1.0",
     "@libp2p/interface": "^1.2.0",
     "@libp2p/logger": "^4.0.10",
-    "@multiformats/multiaddr": "^12.2.1",
     "execa": "^8.0.1",
     "joi": "^17.2.1",
+    "kubo-rpc-client": "^4.0.0",
     "merge-options": "^3.0.1",
     "nanoid": "^5.0.7",
     "p-defer": "^4.0.1",
     "p-wait-for": "^5.0.0",
-    "temp-write": "^5.0.0",
     "wherearewe": "^2.0.1"
   },
   "devDependencies": {
     "aegir": "^42.2.5",
-    "kubo": "^0.28.0",
-    "kubo-rpc-client": "^4.0.0"
+    "kubo": "^0.28.0"
   },
   "browser": {
     "./dist/src/endpoint/server.js": "./dist/src/endpoint/server.browser.js",
