@@ -5,7 +5,7 @@ import mergeOptions from 'merge-options'
 import pDefer from 'p-defer'
 import waitFor from 'p-wait-for'
 import { checkForRunningApi, tmpDir, buildStartArgs, repoExists, buildInitArgs } from './utils.js'
-import type { KuboController, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions } from './index.js'
+import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions } from './index.js'
 import type { Logger } from '@libp2p/interface'
 import type { KuboRPCClient } from 'kubo-rpc-client'
 
@@ -19,9 +19,9 @@ function translateError (err: Error & { stdout: string, stderr: string }): Error
 }
 
 /**
- * Controller for daemon nodes
+ * Node for daemon nodes
  */
-export default class KuboDaemon implements KuboController {
+export default class KuboDaemon implements KuboNode {
   public options: KuboOptions & Required<Pick<KuboOptions, 'rpc'>>
 
   private readonly disposable: boolean

@@ -1,11 +1,11 @@
 import Server from './endpoint/server.js'
 import DefaultFactory from './factory.js'
-import type { KuboController, KuboOptions } from './kubo/index.js'
+import type { KuboNode, KuboOptions } from './kubo/index.js'
 
 export * from './kubo/index.js'
-export type ControllerType = 'kubo'
+export type NodeType = 'kubo'
 
-export interface Controller<API = unknown, Options = ControllerOptions, Info extends Record<string, any> = Record<string, any>, InitArgs = unknown, StartArgs = unknown, StopArgs = unknown, CleanupArgs = unknown> {
+export interface Node<API = unknown, Options = NodeOptions, Info extends Record<string, any> = Record<string, any>, InitArgs = unknown, StartArgs = unknown, StopArgs = unknown, CleanupArgs = unknown> {
   api: API
   options: Options
 
@@ -66,11 +66,11 @@ export interface CircuitRelayOptions {
   hop: CircuitRelayHopOptions
 }
 
-export interface ControllerOptions<InitOptions = unknown, StartOptions = unknown> {
+export interface NodeOptions<InitOptions = unknown, StartOptions = unknown> {
   /**
    * The type of controller
    */
-  type?: ControllerType
+  type?: NodeType
 
   /**
    * Flag to activate custom config for tests
@@ -112,7 +112,7 @@ export interface ControllerOptions<InitOptions = unknown, StartOptions = unknown
   start?: StartOptions
 }
 
-export interface ControllerOptionsOverrides {
+export interface NodeOptionsOverrides {
   kubo?: KuboOptions
 }
 
@@ -123,12 +123,12 @@ export interface SpawnOptions {
   remote?: true
 }
 
-export interface Factory<DefaultController extends Controller = Controller> {
+export interface Factory<DefaultNode extends Node = Node> {
   /**
    * Create a node
    */
-  spawn(options?: KuboOptions & SpawnOptions): Promise<KuboController>
-  spawn(options?: ControllerOptions & SpawnOptions): Promise<DefaultController>
+  spawn(options?: KuboOptions & SpawnOptions): Promise<KuboNode>
+  spawn(options?: NodeOptions & SpawnOptions): Promise<DefaultNode>
 
   /**
    * Shut down all previously created nodes that are still running
@@ -138,33 +138,33 @@ export interface Factory<DefaultController extends Controller = Controller> {
   /**
    * The previously created nodes that are still running
    */
-  controllers: Controller[]
+  controllers: Node[]
 
   /**
    * The default options that will be applied to all nodes
    */
-  options: ControllerOptions
+  options: NodeOptions
 
   /**
    * Config overrides that will be applied to specific node types
    */
-  overrides: ControllerOptionsOverrides
+  overrides: NodeOptionsOverrides
 }
 
 /**
  * Creates a factory
  */
-export function createFactory (options: KuboOptions, overrides?: ControllerOptionsOverrides): Factory<KuboController>
-export function createFactory (options?: ControllerOptions, overrides?: ControllerOptionsOverrides): Factory<Controller>
-export function createFactory (options?: ControllerOptions, overrides?: ControllerOptionsOverrides): Factory<Controller> {
+export function createFactory (options: KuboOptions, overrides?: NodeOptionsOverrides): Factory<KuboNode>
+export function createFactory (options?: NodeOptions, overrides?: NodeOptionsOverrides): Factory<Node>
+export function createFactory (options?: NodeOptions, overrides?: NodeOptionsOverrides): Factory<Node> {
   return new DefaultFactory(options, overrides)
 }
 
 /**
  * Creates a node
  */
-export async function createController (options: KuboOptions & SpawnOptions): Promise<KuboController>
-export async function createController (options?: any): Promise<any> {
+export async function createNode (options: KuboOptions & SpawnOptions): Promise<KuboNode>
+export async function createNode (options?: any): Promise<any> {
   const f = new DefaultFactory()
   return f.spawn(options)
 }
@@ -172,7 +172,7 @@ export async function createController (options?: any): Promise<any> {
 /**
  * Create a Endpoint Server
  */
-export const createServer = (options?: number | { port: number }, factoryOptions: ControllerOptions = {}, factoryOverrides: ControllerOptionsOverrides = {}): Server => {
+export const createServer = (options?: number | { port: number }, factoryOptions: NodeOptions = {}, factoryOverrides: NodeOptionsOverrides = {}): Server => {
   let port: number | undefined
 
   if (typeof options === 'number') {

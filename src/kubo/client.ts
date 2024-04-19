@@ -1,4 +1,4 @@
-import type { KuboController, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions } from './index.js'
+import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions } from './index.js'
 import type { PeerInfo } from '@libp2p/interface'
 import type { KuboRPCClient } from 'kubo-rpc-client'
 
@@ -10,9 +10,9 @@ export interface KuboClientInit extends KuboOptions {
 }
 
 /**
- * Controller for remote nodes
+ * Node for remote nodes
  */
-export default class KuboClient implements KuboController {
+export default class KuboClient implements KuboNode {
   public options: KuboOptions & Required<Pick<KuboOptions, 'rpc'>>
   public peerInfo?: PeerInfo
   public id: string

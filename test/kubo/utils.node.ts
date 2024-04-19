@@ -6,7 +6,7 @@ import path from 'path'
 import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'
 import { create as createKuboRPCClient } from 'kubo-rpc-client'
-import { createFactory, createController } from '../../src/index.js'
+import { createFactory, createNode } from '../../src/index.js'
 import { tmpDir, checkForRunningApi, repoExists, removeRepo, buildStartArgs, buildInitArgs } from '../../src/kubo/utils.js'
 
 describe('utils', function () {
@@ -24,7 +24,7 @@ describe('utils', function () {
     })
 
     it('should return path to api with running node', async () => {
-      const node = await createController({
+      const node = await createNode({
         test: true,
         type: 'kubo',
         rpc: createKuboRPCClient,
@@ -68,7 +68,7 @@ describe('utils', function () {
 
   describe('repoExists', () => {
     it('should resolve true when repo exists', async () => {
-      const node = await createController({
+      const node = await createNode({
         type: 'kubo',
         test: true,
         rpc: createKuboRPCClient,

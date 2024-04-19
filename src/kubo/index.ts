@@ -1,4 +1,4 @@
-import type { Controller, ControllerOptions } from '../index.js'
+import type { Node, NodeOptions } from '../index.js'
 import type { KuboRPCClient } from 'kubo-rpc-client'
 
 export interface KuboInit {
@@ -38,7 +38,7 @@ export interface KuboStartOptions {
   args?: string[]
 }
 
-export interface KuboOptions extends ControllerOptions<boolean | KuboInitOptions, boolean | KuboStartOptions> {
+export interface KuboOptions extends NodeOptions<boolean | KuboInitOptions, boolean | KuboStartOptions> {
   type: 'kubo'
 
   /**
@@ -67,6 +67,6 @@ export interface KuboInfo {
   repo: string
 }
 
-export interface KuboController extends Controller<KuboRPCClient, KuboOptions, KuboInfo, KuboInitOptions, KuboStartOptions> {
+export interface KuboNode extends Node<KuboRPCClient, KuboOptions, KuboInfo, KuboInitOptions, KuboStartOptions> {
 
 }

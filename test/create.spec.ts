@@ -6,20 +6,20 @@ import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'
 import { create as createKuboRPCClient } from 'kubo-rpc-client'
 import { isNode, isElectronMain } from 'wherearewe'
-import { createFactory, createController, createServer, type KuboOptions, type SpawnOptions, type KuboController, type Factory } from '../src/index.js'
+import { createFactory, createNode, createServer, type KuboOptions, type SpawnOptions, type KuboNode, type Factory } from '../src/index.js'
 import KuboClient from '../src/kubo/client.js'
 import KuboDaemon from '../src/kubo/daemon.js'
 import type Server from '../src/endpoint/server.js'
 
-describe('`createController` should return the correct class', () => {
-  let node: KuboController
+describe('`createNode` should return the correct class', () => {
+  let node: KuboNode
 
   afterEach(async () => {
     await node?.stop()
   })
 
   it('for type `kubo` ', async () => {
-    node = await createController({
+    node = await createNode({
       type: 'kubo',
       test: true,
       disposable: false,
@@ -35,7 +35,7 @@ describe('`createController` should return the correct class', () => {
   })
 
   it('for remote', async () => {
-    node = await createController({
+    node = await createNode({
       type: 'kubo',
       test: true,
       remote: true,
@@ -60,8 +60,8 @@ const types: Array<KuboOptions & SpawnOptions> = [{
   bin: isNode ? kubo.path() : undefined
 }]
 
-describe('`createController({test: true})` should return daemon with test profile', () => {
-  let node: KuboController
+describe('`createNode({test: true})` should return daemon with test profile', () => {
+  let node: KuboNode
 
   afterEach(async () => {
     await node?.stop()
@@ -69,15 +69,15 @@ describe('`createController({test: true})` should return daemon with test profil
 
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      node = await createController(opts)
+      node = await createNode(opts)
       expect(await node.api.config.get('Bootstrap')).to.be.empty()
       await node.stop()
     })
   }
 })
 
-describe('`createController({test: true})` should return daemon with correct config', () => {
-  let node: KuboController
+describe('`createNode({test: true})` should return daemon with correct config', () => {
+  let node: KuboNode
 
   afterEach(async () => {
     await node?.stop()
@@ -85,7 +85,7 @@ describe('`createController({test: true})` should return daemon with correct con
 
   for (const opts of types) {
     it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-      node = await createController(opts)
+      node = await createNode(opts)
       const swarm = await node.api.config.get('Addresses.Swarm')
 
       expect(swarm).to.include('/ip4/127.0.0.1/tcp/0')

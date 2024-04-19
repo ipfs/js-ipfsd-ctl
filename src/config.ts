@@ -1,7 +1,7 @@
-import type { ControllerType } from './index.js'
+import type { NodeType } from './index.js'
 
 export interface ConfigInit {
-  type?: ControllerType
+  type?: NodeType
 }
 
 export default (init: ConfigInit): any => {

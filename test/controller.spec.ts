@@ -9,7 +9,7 @@ import merge from 'merge-options'
 import { isBrowser, isWebWorker, isNode, isElectronMain } from 'wherearewe'
 import { createFactory } from '../src/index.js'
 import { repoExists } from '../src/kubo/utils.js'
-import type { Factory, KuboOptions, SpawnOptions, KuboController } from '../src/index.js'
+import type { Factory, KuboOptions, SpawnOptions, KuboNode } from '../src/index.js'
 
 const types: Array<KuboOptions & SpawnOptions> = [{
   type: 'kubo'
@@ -18,10 +18,10 @@ const types: Array<KuboOptions & SpawnOptions> = [{
   remote: true
 }]
 
-describe('Controller API', function () {
+describe('Node API', function () {
   this.timeout(60000)
 
-  let factory: Factory<KuboController>
+  let factory: Factory<KuboNode>
 
   before(async () => {
     factory = createFactory({

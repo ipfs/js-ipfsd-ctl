@@ -2,7 +2,7 @@ import boom from '@hapi/boom'
 import { logger } from '@libp2p/logger'
 import Joi from 'joi'
 import { nanoid } from 'nanoid'
-import type { Controller, Factory } from '../index.js'
+import type { Node, Factory } from '../index.js'
 import type { Server } from '@hapi/hapi'
 
 const debug = logger('ipfsd-ctl:routes')
@@ -26,7 +26,7 @@ const badRequest = (err: Error & { stdout?: string }): void => {
   throw boom.badRequest(msg)
 }
 
-const nodes: Record<string, Controller> = {}
+const nodes: Record<string, Node> = {}
 
 export default (server: Server, createFactory: () => Factory | Promise<Factory>): void => {
   /**
