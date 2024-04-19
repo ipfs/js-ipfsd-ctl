@@ -1,3 +1,10 @@
+## [14.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.1...v14.0.2) (2024-04-19)
+
+
+### Bug Fixes
+
+* more helpful error messages ([#826](https://github.com/ipfs/js-ipfsd-ctl/issues/826)) ([d5af0ca](https://github.com/ipfs/js-ipfsd-ctl/commit/d5af0ca704c07998c0a551b885d8ab0a149c775a))
+
 ## [14.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.0...v14.0.1) (2024-04-19)
 
 
