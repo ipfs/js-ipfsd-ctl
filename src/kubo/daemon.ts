@@ -219,16 +219,13 @@ export default class KuboDaemon implements KuboNode {
 
   async stop (options: { timeout?: number } = {}): Promise<void> {
     const timeout = options.timeout ?? 60000
+    const subprocess = this.subprocess
 
-    if (this.subprocess == null) {
+    if (subprocess == null || subprocess.exitCode != null || this._api == null) {
       return
     }
 
-    const subprocess = this.subprocess
-
-    subprocess.kill('SIGTERM', {
-      forceKillAfterTimeout: options.timeout ?? 60000
-    })
+    await this.api.stop()
 
     // wait for the subprocess to exit and declare ourselves stopped
     await waitFor(() => subprocess.exitCode != null, {
