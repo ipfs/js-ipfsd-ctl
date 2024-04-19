@@ -163,8 +163,7 @@ describe('Node API', function () {
   })
 
   describe('stop', () => {
-    // https://github.com/ipfs/js-kubo-rpc-client/pull/222
-    describe.skip('should stop the node', () => {
+    describe('should stop the node', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const node = await factory.spawn(opts)

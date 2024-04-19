@@ -107,8 +107,7 @@ describe('`Factory spawn()` ', function () {
     }
   })
 
-  // https://github.com/ipfs/js-kubo-rpc-client/pull/222
-  describe.skip('`Factory.clean()` should stop all nodes', () => {
+  describe('`Factory.clean()` should stop all nodes', () => {
     let factory: Factory
 
     afterEach(async () => {
@@ -127,8 +126,7 @@ describe('`Factory spawn()` ', function () {
     }
   })
 
-  // https://github.com/ipfs/js-kubo-rpc-client/pull/222
-  describe.skip('`Factory.clean()` should not error when controller already stopped', () => {
+  describe('`Factory.clean()` should not error when controller already stopped', () => {
     let factory: Factory
 
     afterEach(async () => {
