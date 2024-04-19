@@ -2,10 +2,12 @@
 
 import Hapi from '@hapi/hapi'
 import { expect } from 'aegir/chai'
-import * as ipfsModule from 'ipfs'
-import * as ipfsHttpModule from 'ipfs-http-client'
-import routes from '../src/endpoint/routes.js'
-import { createFactory } from '../src/index.js'
+import * as kubo from 'kubo'
+import { create as createKuboRPCClient } from 'kubo-rpc-client'
+import { isNode } from 'wherearewe'
+import routes from '../../src/endpoint/routes.js'
+import { createFactory } from '../../src/index.js'
+import type { KuboInfo } from '../../src/index.js'
 
 describe('routes', function () {
   this.timeout(60000)
@@ -17,9 +19,9 @@ describe('routes', function () {
     server = new Hapi.Server({ port: 43134 })
     routes(server, async () => {
       return createFactory({
-        ipfsModule,
-        ipfsHttpModule,
-        ipfsBin: ipfsModule.path()
+        type: 'kubo',
+        rpc: createKuboRPCClient,
+        bin: isNode ? kubo.path() : undefined
       })
     })
   })
@@ -30,23 +32,27 @@ describe('routes', function () {
 
   describe('POST /spawn', () => {
     it('should return 200', async () => {
-      const res = await server.inject({
-        method: 'POST',
-        url: '/spawn',
-        payload: {
-          test: true,
-          ipfsOptions: {
-            init: false,
-            start: false
+      const options = {
+        test: true,
+        init: {
+          config: {
+            foo: 'bar'
           }
         }
+      }
+
+      const res = await server.inject<any>({
+        method: 'POST',
+        url: '/spawn',
+        payload: options
       })
       expect(res).to.have.property('statusCode', 200)
       expect(res).to.have.nested.property('result.id')
-      expect(res).to.have.nested.property('result.apiAddr')
-      expect(res).to.have.nested.property('result.gatewayAddr')
 
-      // @ts-expect-error res.result is an object
+      // should return passed options with the id added
+      expect(res).to.have.deep.nested.property('result.options', options)
+      expect(res).to.have.nested.property('result.info')
+
       id = res.result.id
     })
   })
@@ -91,20 +97,26 @@ describe('routes', function () {
     })
   })
 
-  describe('GET /pid', () => {
+  describe('GET /info', () => {
     it('should return 200', async () => {
-      const res = await server.inject({
+      const res = await server.inject<KuboInfo>({
         method: 'GET',
-        url: `/pid?id=${id}`
+        url: `/info?id=${id}`
       })
 
       expect(res.statusCode).to.equal(200)
+
+      expect(res.result).to.have.property('version').that.is.a('string')
+      expect(res.result).to.have.property('pid').that.is.a('number')
+      expect(res.result).to.have.property('api').that.is.a('string')
+      expect(res.result).to.have.property('repo').that.is.a('string')
+      expect(res.result).to.have.property('multiaddrs').that.is.an('array')
     })
 
     it('should return 400', async () => {
       const res = await server.inject({
         method: 'GET',
-        url: '/pid'
+        url: '/info'
       })
 
       expect(res.statusCode).to.equal(400)

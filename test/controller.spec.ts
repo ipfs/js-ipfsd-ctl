@@ -3,103 +3,51 @@
 /* eslint-disable no-loop-func */
 
 import { expect } from 'aegir/chai'
-// @ts-expect-error no types
-import * as goIpfsModule from 'go-ipfs'
-import * as ipfsModule from 'ipfs'
-import * as ipfsHttpModule from 'ipfs-http-client'
-import * as kuboRpcModule from 'kubo-rpc-client'
+import * as kubo from 'kubo'
+import { create as createKuboRPCClient } from 'kubo-rpc-client'
 import merge from 'merge-options'
-import waitFor from 'p-wait-for'
-import { isBrowser, isWebWorker, isNode } from 'wherearewe'
-import { createFactory, createController, type ControllerOptions, type Factory } from '../src/index.js'
-import { repoExists } from '../src/utils.js'
+import { isBrowser, isWebWorker, isNode, isElectronMain } from 'wherearewe'
+import { createFactory } from '../src/index.js'
+import { repoExists } from '../src/kubo/utils.js'
+import type { Factory, KuboOptions, SpawnOptions, KuboController } from '../src/index.js'
 
-const types: ControllerOptions[] = [{
-  type: 'js',
-  ipfsOptions: {
-    init: false,
-    start: false
-  }
+const types: Array<KuboOptions & SpawnOptions> = [{
+  type: 'kubo'
 }, {
-  type: 'go',
-  kuboRpcModule,
-  ipfsOptions: {
-    init: false,
-    start: false
-  }
-}, {
-  type: 'proc',
-  ipfsOptions: {
-    init: false,
-    start: false
-  }
-}, {
-  type: 'js',
-  remote: true,
-  ipfsOptions: {
-    init: false,
-    start: false
-  }
-}, {
-  type: 'go',
-  kuboRpcModule,
-  remote: true,
-  ipfsOptions: {
-    init: false,
-    start: false
-  }
+  type: 'kubo',
+  remote: true
 }]
-
-/**
- * Set the options object with the correct RPC module depending on the type
- */
-function addCorrectRpcModule (opts: ControllerOptions, additionalOpts: ControllerOptions): ControllerOptions {
-  if (opts.type === 'go') {
-    additionalOpts.kuboRpcModule = kuboRpcModule
-  } else {
-    additionalOpts.ipfsHttpModule = ipfsHttpModule
-  }
-
-  return additionalOpts
-}
 
 describe('Controller API', function () {
   this.timeout(60000)
 
-  let factory: Factory
+  let factory: Factory<KuboController>
 
   before(async () => {
     factory = createFactory({
+      type: 'kubo',
       test: true,
-      ipfsModule: (await import('ipfs'))
-    }, {
-      js: {
-        ipfsBin: isNode ? ipfsModule.path() : undefined,
-        ipfsHttpModule
-      },
-      go: {
-        ipfsBin: isNode ? goIpfsModule.path() : undefined,
-        kuboRpcModule
-      }
+      bin: isNode || isElectronMain ? kubo.path() : undefined,
+      rpc: createKuboRPCClient,
+      disposable: true
     })
 
-    await factory.spawn({ type: 'js' })
+    await factory.spawn({ type: 'kubo' })
   })
 
-  after(async () => factory.clean())
+  afterEach(async () => {
+    await factory.clean()
+  })
 
   describe('init', () => {
     describe('should work with defaults', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(opts)
+          const node = await factory.spawn(opts)
 
-          await ctl.init()
-          expect(ctl.initialized).to.be.true()
-          expect(ctl.clean).to.be.false()
-          expect(ctl.started).to.be.false()
-          if (!(isBrowser || isWebWorker) || opts.type === 'proc') {
-            expect(await repoExists(ctl.path)).to.be.true()
+          if (!(isBrowser || isWebWorker)) {
+            const info = await node.info()
+            await expect(repoExists(info.repo)).to.eventually.be.true()
           }
         })
       }
@@ -107,41 +55,31 @@ describe('Controller API', function () {
 
     describe('should work with a initialized repo', () => {
       for (const opts of types) {
+        let repo: string
+
+        beforeEach(async () => {
+          const existingNode = await factory.spawn({
+            disposable: false
+          })
+          const existingNodeInfo = await existingNode.info()
+          await existingNode.stop()
+
+          if (!(isBrowser || isWebWorker)) {
+            await expect(repoExists(existingNodeInfo.repo)).to.eventually.be.true()
+          }
+
+          repo = existingNodeInfo.repo
+        })
+
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(merge(opts, {
-            ipfsOptions: {
-              repo: factory.controllers[0].path,
-              init: false
-            }
+          const node = await factory.spawn(merge(opts, {
+            repo,
+            init: false
           }))
 
-          await ctl.init()
-          expect(ctl.initialized).to.be.true()
-          expect(ctl.clean).to.be.false()
-          expect(ctl.started).to.be.false()
-          if (!(isBrowser || isWebWorker) || opts.type === 'proc') {
-            expect(await repoExists(factory.controllers[0].path)).to.be.true()
-          }
-        })
-      }
-    })
-
-    describe('should work with all the options', () => {
-      for (const opts of types) {
-        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(opts)
-
-          if (opts.type === 'js') {
-            await expect(ctl.init({
-              emptyRepo: true,
-              profiles: ['test'],
-              pass: 'QmfPjo1bKmpcdWxpQnGAKjeae9F9aCxTDiS61t9a3hmvRi'
-            })).to.be.fulfilled()
-          } else {
-            await expect(ctl.init({
-              emptyRepo: true,
-              profiles: ['test']
-            })).to.be.fulfilled()
+          if (!(isBrowser || isWebWorker)) {
+            const info = await node.info()
+            await expect(repoExists(info.repo)).to.eventually.be.true()
           }
         })
       }
@@ -150,35 +88,44 @@ describe('Controller API', function () {
     describe('should apply config', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(merge(
-            opts,
-            {
-              ipfsOptions: {
-                config: {
-                  Addresses: {
-                    API: '/ip4/127.0.0.1/tcp/1111'
-                  }
+          const node = await factory.spawn(merge(opts, {
+            init: {
+              config: {
+                Addresses: {
+                  API: '/ip4/127.0.0.1/tcp/1111'
                 }
               }
-            }
-          ))
-          await ctl.init()
-          await ctl.start()
-          const config = await ctl.api.config.get('Addresses.API')
+            },
+            start: true
+          }))
+
+          const config = await node.api.config.get('Addresses.API')
           expect(config).to.be.eq('/ip4/127.0.0.1/tcp/1111')
-          await ctl.stop()
+          await node.stop()
         })
       }
     })
 
-    describe('should return a version', () => {
+    describe('should return version in info', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(opts)
+          const node = await factory.spawn(opts)
+          const info = await node.info()
 
-          const version = await ctl.version()
+          expect(info.version).to.be.a('string')
+          await node.stop()
+        })
+      }
+    })
 
-          expect(version).to.be.a('string')
+    describe('should return pid in info', () => {
+      for (const opts of types) {
+        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
+          const node = await factory.spawn(opts)
+          const info = await node.info()
+
+          expect(info.pid).to.be.a('number')
+          await node.stop()
         })
       }
     })
@@ -190,86 +137,8 @@ describe('Controller API', function () {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
           const ctl = await factory.spawn(opts)
 
-          await ctl.init()
-          await ctl.start()
-          expect(ctl.started).to.be.true()
+          await expect(ctl.api.isOnline()).to.eventually.be.true()
           await ctl.stop()
-        })
-      }
-    })
-
-    describe('should attach to a running node', () => {
-      for (const opts of types) {
-        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async function () {
-          if ((isBrowser || isWebWorker) && opts.type === 'proc') {
-            return this.skip() // browser in proc can't attach to running node
-          }
-
-          // have to use createController so we don't try to shut down
-          // the node twice during test cleanup
-          const ctl = await createController(merge(
-            opts, addCorrectRpcModule(opts, {
-              ipfsModule,
-              ipfsOptions: {
-                repo: factory.controllers[0].path
-              }
-            })
-          ))
-
-          await ctl.init()
-          await ctl.start()
-          expect(ctl.started).to.be.true()
-        })
-      }
-    })
-
-    describe('should stop a running node that we have joined', () => {
-      for (const opts of types) {
-        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async function () {
-          if (isBrowser || isWebWorker) {
-            return this.skip() // browser can't attach to running node
-          }
-
-          // have to use createController so we don't try to shut down
-          // the node twice during test cleanup
-          const ctl1 = await createController(merge(
-            {
-              type: 'go',
-              kuboRpcModule,
-              ipfsBin: goIpfsModule.path(),
-              test: true,
-              disposable: true,
-              remote: false,
-              ipfsOptions: {
-                init: true,
-                start: true
-              }
-            }))
-          expect(ctl1.started).to.be.true()
-
-          const ctl2 = await createController(merge(
-            opts, addCorrectRpcModule(opts, {
-              ipfsModule,
-              test: true,
-              disposable: true,
-              ipfsOptions: {
-                repo: ctl1.path,
-                start: true
-              }
-            })
-          ))
-          expect(ctl2.started).to.be.true()
-
-          await ctl2.stop()
-          expect(ctl2.started).to.be.false()
-
-          // wait for the other subprocess to exit
-          await waitFor(() => !ctl1.started, { // eslint-disable-line max-nested-callbacks
-            timeout: 10000,
-            interval: 100
-          })
-
-          expect(ctl1.started).to.be.false()
         })
       }
     })
@@ -279,32 +148,29 @@ describe('Controller API', function () {
     describe('should delete the repo', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(opts)
+          const node = await factory.spawn(opts)
+          const info = await node.info()
 
-          await ctl.init()
-          await ctl.start()
-          expect(ctl.started).to.be.true()
-          await ctl.stop()
-          await ctl.cleanup()
-          if (!(isBrowser || isWebWorker) || opts.type === 'proc') {
-            expect(await repoExists(ctl.path)).to.be.false()
+          await node.stop()
+          await node.cleanup()
+
+          if (!(isBrowser || isWebWorker)) {
+            expect(await repoExists(info.repo)).to.be.false()
           }
-          expect(ctl.clean).to.be.true()
         })
       }
     })
   })
 
   describe('stop', () => {
-    describe('should stop the node', () => {
+    // https://github.com/ipfs/js-kubo-rpc-client/pull/222
+    describe.skip('should stop the node', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(opts)
+          const node = await factory.spawn(opts)
 
-          await ctl.init()
-          await ctl.start()
-          await ctl.stop()
-          expect(ctl.started).to.be.false()
+          await node.stop()
+          await expect(node.api.isOnline()).to.eventually.be.false()
         })
       }
     })
@@ -312,19 +178,16 @@ describe('Controller API', function () {
     describe('should not clean with disposable false', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(merge(opts, {
-            disposable: false,
-            test: true,
-            ipfsOptions: {
-              repo: await factory.tmpDir()
-            }
+          const node = await factory.spawn(merge(opts, {
+            disposable: false
           }))
+          const info = await node.info()
 
-          await ctl.init()
-          await ctl.start()
-          await ctl.stop()
-          expect(ctl.started).to.be.false()
-          expect(ctl.clean).to.be.false()
+          await node.stop()
+
+          if (!(isBrowser || isWebWorker)) {
+            expect(await repoExists(info.repo)).to.be.true()
+          }
         })
       }
     })
@@ -332,45 +195,18 @@ describe('Controller API', function () {
     describe('should clean with disposable true', () => {
       for (const opts of types) {
         it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(opts)
-          await ctl.init()
-          await ctl.start()
-          await ctl.stop()
-          expect(ctl.started).to.be.false()
-          expect(ctl.clean).to.be.true()
-        })
-      }
-    })
+          const node = await factory.spawn(merge(opts, {
+            disposable: true
+          }))
+          const info = await node.info()
 
-    describe('should clean listeners', () => {
-      for (const opts of types) {
-        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-          const ctl = await factory.spawn(opts)
-          await ctl.init()
-          await ctl.start()
-          await ctl.stop()
-          if (ctl.subprocess?.stderr != null) {
-            expect(ctl.subprocess.stderr.listeners('data')).to.be.empty()
-          }
-          if (ctl.subprocess?.stdout != null) {
-            expect(ctl.subprocess.stdout.listeners('data')).to.be.empty()
+          await node.stop()
+
+          if (!(isBrowser || isWebWorker)) {
+            expect(await repoExists(info.repo)).to.be.false()
           }
         })
       }
     })
-  })
-  describe('pid should return pid', () => {
-    for (const opts of types) {
-      it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
-        const ctl = await factory.spawn(opts)
-        await ctl.init()
-        await ctl.start()
-        if (opts.type !== 'proc') {
-          const pid = await ctl.pid()
-          expect(typeof pid === 'number').to.be.true()
-        }
-        await ctl.stop()
-      })
-    }
   })
 })
