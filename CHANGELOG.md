@@ -1,3 +1,10 @@
+## [14.0.6](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.5...v14.0.6) (2024-04-19)
+
+
+### Bug Fixes
+
+* add retries to repo deletion because windows ([8ac86d9](https://github.com/ipfs/js-ipfsd-ctl/commit/8ac86d9a5a7cd1bdc949cb17bdae9268be70c4f9))
+
 ## [14.0.5](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.4...v14.0.5) (2024-04-19)
 
 
