@@ -24,11 +24,9 @@ repo and examine the changes made.
 
 -->
 
-This module allows you to spawn long-lived IPFS implementations from any JS
-environment and interact with the as is they were in the local process.
+This module allows you to spawn long-lived IPFS implementations from any JS environment and interact with the as is they were in the local process.
 
-It is designed mostly for testing interoperability and is not suitable for
-production use.
+It is designed mostly for testing interoperability and is not suitable for production use.
 
 ## Spawning a single noder: `createNode`
 
@@ -75,8 +73,7 @@ await factory.clean()
 
 ## Override config based on implementation type
 
-`createFactory` takes a second argument that can be used to pass default
-options to an implementation based on the `type` field.
+`createFactory` takes a second argument that can be used to pass default options to an implementation based on the `type` field.
 
 ```TypeScript
 import { createFactory } from 'ipfsd-ctl'
@@ -100,9 +97,7 @@ const otherImplNode = await factory.spawn({
 
 ## Spawning nodes from browsers
 
-To spawn nodes from browsers, first start an ipfsd-ctl server from node.js
-and make the address known to the browser (the default way is to set
-`process.env.IPFSD_CTL_SERVER` in your bundle):
+To spawn nodes from browsers, first start an ipfsd-ctl server from node.js and make the address known to the browser (the default way is to set `process.env.IPFSD_CTL_SERVER` in your bundle):
 
 ## Example - Create server
 

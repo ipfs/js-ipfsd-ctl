@@ -1,5 +1,5 @@
-import { create as createKuboRPCClient } from 'kubo-rpc-client'
-import * as kubo from 'kubo'
+import { create } from 'kubo-rpc-client'
+import { path } from 'kubo'
 
 /** @type {import('aegir').PartialOptions} */
 const config = {
@@ -12,8 +12,8 @@ const config = {
 
       const server = createServer(undefined, {
           type: 'kubo',
-          bin: kubo.path(),
-          rpc: createKuboRPCClient
+          bin: path(),
+          rpc: create
         }
       )
 
