@@ -30,6 +30,7 @@ export type KuboInitOptions = KuboEd25519Init | KuboRSAInit
 export interface KuboStartOptions {
   offline?: boolean
   ipnsPubsub?: boolean
+  pubsub?: boolean
   repoAutoMigrate?: boolean
 
   /**

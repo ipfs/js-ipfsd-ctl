@@ -66,6 +66,10 @@ export function buildStartArgs (options: KuboStartOptions): string[] {
     args.push('--offline')
   }
 
+  if (options.pubsub === true) {
+    args.push('---enable-pubsub-experiment')
+  }
+
   if (options.ipnsPubsub === true) {
     args.push('--enable-namesys-pubsub')
   }
