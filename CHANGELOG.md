@@ -1,3 +1,10 @@
+## [14.0.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.3...v14.0.4) (2024-04-19)
+
+
+### Bug Fixes
+
+* enable pubsub ([#828](https://github.com/ipfs/js-ipfsd-ctl/issues/828)) ([d6543a6](https://github.com/ipfs/js-ipfsd-ctl/commit/d6543a60f6bd7258b0cde3971590fd517e33e39b))
+
 ## [14.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.2...v14.0.3) (2024-04-19)
 
 
