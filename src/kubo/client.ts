@@ -1,4 +1,4 @@
-import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions } from './index.js'
+import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions, KuboStopOptions } from './index.js'
 import type { PeerInfo } from '@libp2p/interface'
 import type { KuboRPCClient } from 'kubo-rpc-client'
 
@@ -23,6 +23,7 @@ export default class KuboClient implements KuboNode {
   private _api?: KuboRPCClient
   private readonly initArgs?: KuboInitOptions
   private readonly startArgs?: KuboStartOptions
+  private readonly stopArgs?: KuboStopOptions
 
   constructor (options: KuboClientInit) {
     if (options.rpc == null) {
@@ -42,6 +43,10 @@ export default class KuboClient implements KuboNode {
 
     if (options.start != null && typeof options.start !== 'boolean') {
       this.startArgs = options.start
+    }
+
+    if (options.stop != null) {
+      this.stopArgs = options.stop
     }
   }
 
@@ -102,9 +107,16 @@ export default class KuboClient implements KuboNode {
     this._api = this.options.rpc(info.api)
   }
 
-  async stop (): Promise<void> {
+  async stop (args?: KuboStopOptions): Promise<void> {
     const response = await fetch(`${this.endpoint}/stop?${new URLSearchParams({ id: this.id })}`, {
-      method: 'POST'
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        ...(this.stopArgs ?? {}),
+        ...(args ?? {})
+      })
     })
 
     if (!response.ok) {
