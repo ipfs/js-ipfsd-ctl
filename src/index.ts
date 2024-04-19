@@ -206,6 +206,13 @@ export interface NodeOptions<InitOptions = unknown, StartOptions = unknown> {
   disposable?: boolean
 
   /**
+   * Where applicable, this endpoint will be used to spawn nodes remotely
+   *
+   * @default http://127.0.0.1:43134
+   */
+  endpoint?: string
+
+  /**
    * Additional environment variables, passed to executing shell. Only applies
    * for Daemon controllers
    */
@@ -294,7 +301,7 @@ export async function createNode (options?: any): Promise<any> {
 /**
  * Create a Endpoint Server
  */
-export const createServer = (options?: number | { port: number }, factoryOptions: NodeOptions = {}, factoryOverrides: NodeOptionsOverrides = {}): Server => {
+export const createServer = (options?: number | { port: number }, factoryOptions: KuboOptions | NodeOptions = {}, factoryOverrides: NodeOptionsOverrides = {}): Server => {
   let port: number | undefined
 
   if (typeof options === 'number') {
