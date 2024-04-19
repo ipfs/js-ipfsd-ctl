@@ -68,7 +68,7 @@ class DefaultFactory implements Factory<any> {
     }
 
     if (ctl == null) {
-      throw new Error('Unsupported type')
+      throw new Error(`Unsupported type "${type}" - configured types [${[...new Set([this.options.type, ...Object.keys(this.overrides)].filter(Boolean))].join(', ')}]`)
     }
 
     // Save the controller
