@@ -1,3 +1,10 @@
+## [14.0.5](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.4...v14.0.5) (2024-04-19)
+
+
+### Bug Fixes
+
+* pass correct option ([bb5f1a1](https://github.com/ipfs/js-ipfsd-ctl/commit/bb5f1a1c8f23415a40de34de80224370cf717157))
+
 ## [14.0.4](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.3...v14.0.4) (2024-04-19)
 
 
