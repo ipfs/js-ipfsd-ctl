@@ -67,7 +67,7 @@ export function buildStartArgs (options: KuboStartOptions): string[] {
   }
 
   if (options.pubsub === true) {
-    args.push('---enable-pubsub-experiment')
+    args.push('--enable-pubsub-experiment')
   }
 
   if (options.ipnsPubsub === true) {
