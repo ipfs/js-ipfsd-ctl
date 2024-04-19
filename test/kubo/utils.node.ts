@@ -103,6 +103,12 @@ describe('utils', function () {
 
     it('ipns pubsub', () => {
       expect(buildStartArgs({
+        pubsub: true
+      }).join(' ')).to.include('--enable-pubsub-experiment')
+    })
+
+    it('ipns pubsub', () => {
+      expect(buildStartArgs({
         ipnsPubsub: true
       }).join(' ')).to.include('--enable-namesys-pubsub')
     })
