@@ -7,6 +7,7 @@ import type { Node, NodeOptions, NodeOptionsOverrides, NodeType, Factory, KuboNo
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
 const defaults = {
+  endpoint: process.env.IPFSD_CTL_SERVER ?? 'http://localhost:43134',
   remote: !isNode && !isElectronMain,
   disposable: true,
   test: false,
@@ -17,13 +18,6 @@ const defaults = {
   forceKillTimeout: 5000
 }
 
-export interface FactoryInit extends NodeOptions {
-  /**
-   * Endpoint URL to manage remote Nodes. (Defaults: 'http://127.0.0.1:43134')
-   */
-  endpoint?: string
-}
-
 /**
  * Factory class to spawn ipfsd controllers
  */
@@ -32,11 +26,8 @@ class DefaultFactory implements Factory<any> {
   public controllers: Node[]
   public readonly overrides: NodeOptionsOverrides
 
-  private readonly endpoint: string
-
-  constructor (options: FactoryInit = {}, overrides: NodeOptionsOverrides = {}) {
-    this.endpoint = options.endpoint ?? process.env.IPFSD_CTL_SERVER ?? 'http://localhost:43134'
-    this.options = merge(defaults, options)
+  constructor (options: NodeOptions = {}, overrides: NodeOptionsOverrides = {}) {
+    this.options = merge({}, defaults, options)
     this.overrides = merge({
       kubo: this.options
     }, overrides)
@@ -55,7 +46,7 @@ class DefaultFactory implements Factory<any> {
 
     if (type === 'kubo') {
       if (opts.remote === true) {
-        const req = await fetch(`${this.endpoint}/spawn`, {
+        const req = await fetch(`${opts.endpoint}/spawn`, {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
@@ -68,7 +59,6 @@ class DefaultFactory implements Factory<any> {
         const result = await req.json()
 
         ctl = new KuboClient({
-          endpoint: this.endpoint,
           ...opts,
           ...result
         })

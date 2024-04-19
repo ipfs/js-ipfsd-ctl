@@ -136,12 +136,40 @@ describe('`createServer`', () => {
     server = createServer()
     expect(server.port).to.be.eq(43134)
   })
+
   it('should return a Server with port 11111 when passed number directly', () => {
     server = createServer(11111)
     expect(server.port).to.be.eq(11111)
   })
+
   it('should return a Server with port 22222 when passed {port: 22222}', () => {
     server = createServer({ port: 22222 })
     expect(server.port).to.be.eq(22222)
+  })
+
+  it('should use server from factory', async () => {
+    if (!isNode && !isElectronMain) {
+      return
+    }
+
+    server = createServer({ port: 22222 }, {
+      type: 'kubo',
+      test: true,
+      disposable: false,
+      rpc: createKuboRPCClient,
+      bin: isNode ? kubo.path() : undefined
+    })
+    await server.start()
+
+    const factory = createFactory({
+      endpoint: `http://127.0.0.1:${server.port}`
+    })
+
+    const node = await factory.spawn({
+      type: 'kubo',
+      remote: true,
+      rpc: createKuboRPCClient
+    })
+    await node.stop()
   })
 })

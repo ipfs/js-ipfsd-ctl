@@ -37,7 +37,7 @@ export default class KuboDaemon implements KuboNode {
 
   constructor (options: KuboOptions) {
     if (options.rpc == null) {
-      throw new Error('Please pass an rcp option')
+      throw new Error('Please pass an rpc option')
     }
 
     // @ts-expect-error cannot detect rpc is present
