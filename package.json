@@ -1,6 +1,6 @@
 {
   "name": "ipfsd-ctl",
-  "version": "13.0.0",
+  "version": "14.0.0",
   "description": "Spawn IPFS Daemons, Kubo or...",
   "license": "Apache-2.0 OR MIT",
   "homepage": "https://github.com/ipfs/js-ipfsd-ctl#readme",

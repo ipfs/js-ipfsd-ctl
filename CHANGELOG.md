@@ -1,3 +1,29 @@
+## [14.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v13.0.0...v14.0.0) (2024-04-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* only supports spawning `kubo` daemons
+
+### Features
+
+* remove js-ipfs support ([#823](https://github.com/ipfs/js-ipfsd-ctl/issues/823)) ([3ed0c00](https://github.com/ipfs/js-ipfsd-ctl/commit/3ed0c003bd82f287d39448dde8608235a4a056ea))
+
+
+### Trivial Changes
+
+* add or force update .github/workflows/js-test-and-release.yml ([#819](https://github.com/ipfs/js-ipfsd-ctl/issues/819)) ([f60600d](https://github.com/ipfs/js-ipfsd-ctl/commit/f60600da540b5d3de7d3c7fbd79e617badde57dc))
+* delete templates [skip ci] ([#818](https://github.com/ipfs/js-ipfsd-ctl/issues/818)) ([a98af4b](https://github.com/ipfs/js-ipfsd-ctl/commit/a98af4bb1963a89abde26d152806f31c93478d90))
+* remove extra dirs ([eb293bf](https://github.com/ipfs/js-ipfsd-ctl/commit/eb293bf6bfde9fd8eb754dec102bea8a57211079))
+* Update .github/workflows/stale.yml [skip ci] ([9f261e3](https://github.com/ipfs/js-ipfsd-ctl/commit/9f261e33b99314da69c7714098b9b02644f77f19))
+* Update .github/workflows/stale.yml [skip ci] ([4fa7fdc](https://github.com/ipfs/js-ipfsd-ctl/commit/4fa7fdc9c21a2961034d221877758464e4c900fc))
+* Update .github/workflows/stale.yml [skip ci] ([bbd17c6](https://github.com/ipfs/js-ipfsd-ctl/commit/bbd17c69f97b4ab9bcd235848eaa2b91048ba7b6))
+
+
+### Documentation
+
+* update readme ([e212d8f](https://github.com/ipfs/js-ipfsd-ctl/commit/e212d8f1a4f288c43a27233aeaccce2b04bd5bde))
+
 ## [13.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v12.2.2...v13.0.0) (2023-01-13)
 
 
