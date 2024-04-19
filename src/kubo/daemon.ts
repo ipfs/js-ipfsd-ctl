@@ -103,7 +103,8 @@ export default class KuboDaemon implements KuboNode {
     try {
       await fs.rm(this.repo, {
         recursive: true,
-        force: true
+        force: true,
+        maxRetries: 10
       })
     } catch (err: any) {
       if (err.code !== 'EPERM') {
