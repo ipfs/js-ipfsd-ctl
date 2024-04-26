@@ -17,13 +17,11 @@ describe('routes', function () {
 
   before(async () => {
     server = new Hapi.Server({ port: 43134 })
-    routes(server, async () => {
-      return createFactory({
-        type: 'kubo',
-        rpc: createKuboRPCClient,
-        bin: isNode ? kubo.path() : undefined
-      })
-    })
+    routes(server, createFactory({
+      type: 'kubo',
+      rpc: createKuboRPCClient,
+      bin: isNode ? kubo.path() : undefined
+    }), {})
   })
 
   after(async () => {

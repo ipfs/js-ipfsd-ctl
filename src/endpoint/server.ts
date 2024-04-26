@@ -1,10 +1,6 @@
 import Hapi from '@hapi/hapi'
 import routes from './routes.js'
-import type { Factory } from '../index.js'
-
-interface CreateFactory {
-  (): Factory
-}
+import type { Node, Factory } from '../index.js'
 
 export interface ServerInit {
   port?: number
@@ -19,14 +15,16 @@ class Server {
   private server: Hapi.Server | null
   public port: number
   public host: string
-  private readonly createFactory: CreateFactory
+  private readonly ipfsd: Factory
+  public readonly nodes: Record<string, Node>
 
-  constructor (options: ServerInit = { port: 43134, host: 'localhost' }, createFactory: CreateFactory) {
+  constructor (options: ServerInit = { port: 43134, host: 'localhost' }, factory: Factory) {
     this.options = options
     this.server = null
     this.port = this.options.port ?? 43134
     this.host = this.options.host ?? 'localhost'
-    this.createFactory = createFactory
+    this.ipfsd = factory
+    this.nodes = {}
   }
 
   /**
@@ -42,7 +40,7 @@ class Server {
       }
     })
 
-    routes(this.server, this.createFactory)
+    routes(this.server, this.ipfsd, this.nodes)
 
     await this.server.start()
 
@@ -55,6 +53,21 @@ class Server {
   async stop (options?: { timeout: number }): Promise<void> {
     if (this.server != null) {
       await this.server.stop(options)
+    }
+
+    await this.clean()
+  }
+
+  /**
+   * Stop any nodes created by this server
+   */
+  async clean (): Promise<void> {
+    await this.ipfsd.clean()
+
+    // remove references to nodes
+    for (const key of Object.getOwnPropertyNames(this.nodes)) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete this.nodes[key]
     }
   }
 }
