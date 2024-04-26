@@ -54,6 +54,8 @@ class Server {
     if (this.server != null) {
       await this.server.stop(options)
     }
+
+    await this.clean()
   }
 
   /**

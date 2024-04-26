@@ -205,4 +205,37 @@ describe('`createServer`', () => {
     await expect(node.api.isOnline()).to.eventually.be.false()
     expect(Object.keys(server.nodes)).to.have.lengthOf(0)
   })
+
+  it('should clean server on stop', async () => {
+    if (!isNode && !isElectronMain) {
+      return
+    }
+
+    server = createServer(44444, {
+      type: 'kubo',
+      test: true,
+      disposable: false,
+      rpc: createKuboRPCClient,
+      bin: isNode ? kubo.path() : undefined
+    })
+    await server.start()
+
+    const factory = createFactory({
+      endpoint: `http://127.0.0.1:${server.port}`
+    })
+
+    const node = await factory.spawn({
+      type: 'kubo',
+      remote: true,
+      rpc: createKuboRPCClient
+    })
+
+    await expect(node.api.isOnline()).to.eventually.be.true()
+    expect(Object.keys(server.nodes)).to.have.lengthOf(1)
+
+    await server.stop()
+
+    await expect(node.api.isOnline()).to.eventually.be.false()
+    expect(Object.keys(server.nodes)).to.have.lengthOf(0)
+  })
 })
