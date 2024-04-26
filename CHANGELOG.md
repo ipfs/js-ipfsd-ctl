@@ -1,3 +1,10 @@
+## [14.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.6...v14.1.0) (2024-04-26)
+
+
+### Features
+
+* add server.clean method ([#830](https://github.com/ipfs/js-ipfsd-ctl/issues/830)) ([855bec9](https://github.com/ipfs/js-ipfsd-ctl/commit/855bec95d58dfc452219f55c5b193ac50c90fa5e))
+
 ## [14.0.6](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.5...v14.0.6) (2024-04-19)
 
 
