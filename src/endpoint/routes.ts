@@ -26,9 +26,7 @@ const badRequest = (err: Error & { stdout?: string }): void => {
   throw boom.badRequest(msg)
 }
 
-const nodes: Record<string, Node> = {}
-
-export default (server: Server, createFactory: () => Factory | Promise<Factory>): void => {
+export default (server: Server, ipfsd: Factory, nodes: Record<string, Node>): void => {
   /**
    * Spawn a controller
    */
@@ -38,7 +36,6 @@ export default (server: Server, createFactory: () => Factory | Promise<Factory>)
     handler: async (request) => {
       const options: any = request.payload ?? {}
       try {
-        const ipfsd = await createFactory()
         const id = nanoid()
         nodes[id] = await ipfsd.spawn({
           ...options,

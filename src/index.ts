@@ -286,7 +286,5 @@ export const createServer = (options?: number | { port: number }, factoryOptions
   return new Server({
     port,
     host: '127.0.0.1'
-  }, () => {
-    return createFactory(factoryOptions, factoryOverrides)
-  })
+  }, createFactory(factoryOptions, factoryOverrides))
 }
