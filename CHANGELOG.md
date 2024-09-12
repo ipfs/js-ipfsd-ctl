@@ -1,3 +1,9 @@
+## [14.1.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.1.1...v14.1.2) (2024-09-12)
+
+### Dependencies
+
+* **dev:** bump kubo from 0.28.0 to 0.30.0 ([#843](https://github.com/ipfs/js-ipfsd-ctl/issues/843)) ([c1ca2a4](https://github.com/ipfs/js-ipfsd-ctl/commit/c1ca2a4648f79e1d7697b5ca75abf2022a06ba27))
+
 ## [14.1.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.1.0...v14.1.1) (2024-09-12)
 
 ### Dependencies
