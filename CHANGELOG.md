@@ -1,3 +1,13 @@
+## [15.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.1.3...v15.0.0) (2024-09-12)
+
+### ⚠ BREAKING CHANGES
+
+* uses libp2p@2.x.x deps
+
+### Bug Fixes
+
+* update libp2p deps to 2.x.x ([#846](https://github.com/ipfs/js-ipfsd-ctl/issues/846)) ([04479ec](https://github.com/ipfs/js-ipfsd-ctl/commit/04479ec941e1931d7d8ba7a3bcf9f6686d0e8ab9))
+
 ## [14.1.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.1.2...v14.1.3) (2024-09-12)
 
 ### Bug Fixes
