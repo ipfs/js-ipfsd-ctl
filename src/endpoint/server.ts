@@ -52,6 +52,7 @@ class Server {
    */
   async stop (options?: { timeout: number }): Promise<void> {
     if (this.server != null) {
+      this.server.listener.closeAllConnections()
       await this.server.stop(options)
     }
 
