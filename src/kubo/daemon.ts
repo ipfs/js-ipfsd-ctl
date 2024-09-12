@@ -241,13 +241,9 @@ export default class KuboDaemon implements KuboNode {
       return
     }
 
-    if (!(await this.api.isOnline())) {
-      return
-    }
-
-    await this.api.stop()
-
     try {
+      await this.api.stop()
+
       // wait for the subprocess to exit and declare ourselves stopped
       await waitFor(() => subprocess.exitCode != null, {
         timeout
