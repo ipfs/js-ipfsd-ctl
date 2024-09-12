@@ -1,3 +1,9 @@
+## [14.1.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.1.0...v14.1.1) (2024-09-12)
+
+### Dependencies
+
+* **dev:** bump aegir from 42.2.11 to 44.1.0 ([#842](https://github.com/ipfs/js-ipfsd-ctl/issues/842)) ([26aea4a](https://github.com/ipfs/js-ipfsd-ctl/commit/26aea4a275d341cd61d19e4065d768dc2b92678b))
+
 ## [14.1.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.0.6...v14.1.0) (2024-04-26)
 
 
