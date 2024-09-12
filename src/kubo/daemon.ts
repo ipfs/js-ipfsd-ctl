@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises'
 import { logger } from '@libp2p/logger'
-import { execa, type ExecaChildProcess } from 'execa'
+import { execa, type ResultPromise } from 'execa'
 import mergeOptions from 'merge-options'
 import pDefer from 'p-defer'
 import waitFor from 'p-wait-for'
@@ -25,7 +25,7 @@ export default class KuboDaemon implements KuboNode {
   public options: KuboOptions & Required<Pick<KuboOptions, 'rpc'>>
 
   private readonly disposable: boolean
-  private subprocess?: ExecaChildProcess
+  private subprocess?: ResultPromise
   private _api?: KuboRPCClient
   private readonly repo: string
   private readonly stdout: Logger
