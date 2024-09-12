@@ -1,3 +1,9 @@
+## [14.1.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.1.2...v14.1.3) (2024-09-12)
+
+### Bug Fixes
+
+* stop daemon even if offline ([#845](https://github.com/ipfs/js-ipfsd-ctl/issues/845)) ([8a07395](https://github.com/ipfs/js-ipfsd-ctl/commit/8a0739518510de8604dd611fbdc844b79abe61bd))
+
 ## [14.1.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.1.1...v14.1.2) (2024-09-12)
 
 ### Dependencies
