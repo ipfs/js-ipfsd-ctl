@@ -4,7 +4,7 @@ import { execa, type ResultPromise } from 'execa'
 import mergeOptions from 'merge-options'
 import pDefer from 'p-defer'
 import waitFor from 'p-wait-for'
-import { checkForRunningApi, tmpDir, buildStartArgs, repoExists, buildInitArgs } from './utils.js'
+import { checkForRunningApi, tmpDir, buildStartArgs, repoExists, buildInitArgs, getGatewayAddress } from './utils.js'
 import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions, KuboStopOptions } from './index.js'
 import type { Logger } from '@libp2p/interface'
 import type { KuboRPCClient } from 'kubo-rpc-client'
@@ -27,7 +27,6 @@ export default class KuboDaemon implements KuboNode {
   private readonly disposable: boolean
   private subprocess?: ResultPromise
   private _api?: KuboRPCClient
-  private _gateway?: string
   private readonly repo: string
   private readonly stdout: Logger
   private readonly stderr: Logger
@@ -93,7 +92,7 @@ export default class KuboDaemon implements KuboNode {
       multiaddrs: (id?.addresses ?? []).map(ma => ma.toString()),
       api: checkForRunningApi(this.repo),
       repo: this.repo,
-      gateway: this._gateway ?? ''
+      gateway: getGatewayAddress(this.repo)
     }
   }
 
@@ -204,14 +203,9 @@ export default class KuboDaemon implements KuboNode {
     const readyHandler = (data: Buffer): void => {
       output += data.toString()
       const apiMatch = output.trim().match(/API .*listening on:? (.*)/)
-      const gwMatch = output.trim().match(/Gateway .*listening on:? (.*)/)
 
       if ((apiMatch != null) && apiMatch.length > 0) {
         this._api = this.options.rpc(apiMatch[1])
-      }
-
-      if ((gwMatch != null) && gwMatch.length > 0) {
-        this._gateway = gwMatch[1]
       }
 
       if (output.match(/(?:daemon is running|Daemon is ready)/) != null) {

@@ -222,7 +222,7 @@ describe('Node API', function () {
           expect(info).to.have.property('repo').that.is.a('string')
           expect(info).to.have.property('pid').that.is.a('number')
           expect(info).to.have.property('multiaddrs').that.is.an('array')
-          expect(info).to.have.property('gateway').that.is.a('string').that.matches(/\/ip4\/127\.0\.0\.1\/tcp\/\d+/)
+          expect(info).to.have.property('gateway').that.is.a('string').that.matches(/http:\/\/127.0.0.1:\d+/)
 
           await node.stop()
         })
