@@ -75,6 +75,7 @@ export interface KuboInfo {
   multiaddrs: string[]
   api?: string
   repo: string
+  gateway: string
 }
 
 export interface KuboNode extends Node<KuboRPCClient, KuboOptions, KuboInfo, KuboInitOptions, KuboStartOptions, KuboStopOptions> {

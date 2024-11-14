@@ -208,4 +208,25 @@ describe('Node API', function () {
       }
     })
   })
+
+  describe('info', () => {
+    describe('should return the node info', () => {
+      for (const opts of types) {
+        it(`type: ${opts.type} remote: ${Boolean(opts.remote)}`, async () => {
+          const node = await factory.spawn(opts)
+          const info = await node.info()
+
+          expect(info).to.have.property('version').that.is.a('string')
+          expect(info).to.have.property('api').that.is.a('string')
+          expect(info).to.have.property('peerId').that.is.a('string')
+          expect(info).to.have.property('repo').that.is.a('string')
+          expect(info).to.have.property('pid').that.is.a('number')
+          expect(info).to.have.property('multiaddrs').that.is.an('array')
+          expect(info).to.have.property('gateway').that.is.a('string').that.matches(/\/ip4\/127\.0\.0\.1\/tcp\/\d+/)
+
+          await node.stop()
+        })
+      }
+    })
+  })
 })
