@@ -1,35 +1,20 @@
 /* eslint no-console: 0 */
-'use strict'
-
-const { createController } = require('../../src')
+const { path } = require('kubo')
+const { create } = require('kubo-rpc-client')
+/**
+ * @type {import('../../src')}
+ */
+const { createNode } = require('../../src')
 
 async function run () {
-  const node = await createController({
-    type: 'go',
-    ipfsBin: require('go-ipfs').path(),
-    ipfsHttpModule: require('ipfs-http-client')
+  const node = await createNode({
+    type: 'kubo',
+    rpc: create,
+    bin: path()
   })
   console.log('alice')
   console.log(await node.api.id())
   await node.stop()
-
-  const nodeJs = await createController({
-    type: 'js',
-    ipfsBin: ipfsModule.path(),
-    ipfsHttpModule
-  })
-  console.log('alice')
-  console.log(await nodeJs.api.id())
-  await nodeJs.stop()
-
-  const nodeProc = await createController({
-    type: 'proc',
-    ipfsModule: require('ipfs'),
-    ipfsHttpModule: require('ipfs-http-client')
-  })
-  console.log('bob')
-  console.log(await nodeProc.api.id())
-  await nodeProc.stop()
   process.exit()
 }
 

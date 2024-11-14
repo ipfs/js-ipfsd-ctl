@@ -1,12 +1,15 @@
 /* eslint no-console: 0 */
-'use strict'
-
+// @ts-check
 const electron = require('electron')
+const { path } = require('kubo')
+const { create } = require('kubo-rpc-client')
+/**
+ * @type {import('../../src')}
+ */
+const { createNode, createServer } = require('../../src')
 const app = electron.app
 const ipcMain = electron.ipcMain
 const BrowserWindow = electron.BrowserWindow
-
-const { createController, createServer } = require('ipfsd-ctl')
 
 app.on('ready', () => {
   const win = new BrowserWindow({
@@ -23,17 +26,17 @@ ipcMain.on('start', async ({ sender }) => {
   sender.send('message', 'starting disposable IPFS')
   try {
     const s = createServer({
-      host: '127.0.0.1',
       port: 43134
     }, {
-      type: 'go',
-      ipfsBin: require('go-ipfs').path(),
-      ipfsHttpModule: require('ipfs-http-client')
+      type: 'kubo',
+      rpc: create,
+      bin: path()
     })
     await s.start()
-    const node = await createController({
-      type: 'go',
-      ipfsHttpModule: require('ipfs-http-client')
+    const node = await createNode({
+      type: 'kubo',
+      rpc: create,
+      bin: path()
     })
     console.log('get id')
     sender.send('message', 'get id')

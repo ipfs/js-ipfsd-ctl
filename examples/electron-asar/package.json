@@ -3,8 +3,8 @@
   "private": true,
   "main": "./app.js",
   "dependencies": {
-    "go-ipfs": "^0.7.0",
-    "ipfs-http-client": "^47.0.1",
+    "kubo": "^0.32.0",
+    "kubo-rpc-client": "^5.0.0",
     "ipfsd-ctl": "file:../.."
   },
   "devDependencies": {
