@@ -109,6 +109,8 @@ describe('routes', function () {
       expect(res.result).to.have.property('api').that.is.a('string')
       expect(res.result).to.have.property('repo').that.is.a('string')
       expect(res.result).to.have.property('multiaddrs').that.is.an('array')
+      expect(res.result).to.have.property('peerId').that.is.a('string')
+      expect(res.result).to.have.property('gateway').that.is.a('string').that.matches(/http:\/\/127.0.0.1:\d+/)
     })
 
     it('should return 400', async () => {
