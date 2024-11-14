@@ -1,3 +1,10 @@
+## [15.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v15.0.0...v15.0.1) (2024-11-14)
+
+### Dependencies
+
+* **dev:** bump aegir from 44.1.4 to 45.0.1 ([#848](https://github.com/ipfs/js-ipfsd-ctl/issues/848)) ([93dd0e5](https://github.com/ipfs/js-ipfsd-ctl/commit/93dd0e5ce07030f45d48d2afb2bae251293a7a4d))
+* **dev:** bump kubo from 0.30.0 to 0.32.0 ([#849](https://github.com/ipfs/js-ipfsd-ctl/issues/849)) ([f1f9f5c](https://github.com/ipfs/js-ipfsd-ctl/commit/f1f9f5c84d342ed82fb2a0252bda0a6db1c6c7b4))
+
 ## [15.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v14.1.3...v15.0.0) (2024-09-12)
 
 ### ⚠ BREAKING CHANGES
