@@ -4,7 +4,7 @@ import { execa, type ResultPromise } from 'execa'
 import mergeOptions from 'merge-options'
 import pDefer from 'p-defer'
 import waitFor from 'p-wait-for'
-import { checkForRunningApi, tmpDir, buildStartArgs, repoExists, buildInitArgs } from './utils.js'
+import { checkForRunningApi, tmpDir, buildStartArgs, repoExists, buildInitArgs, getGatewayAddress } from './utils.js'
 import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions, KuboStopOptions } from './index.js'
 import type { Logger } from '@libp2p/interface'
 import type { KuboRPCClient } from 'kubo-rpc-client'
@@ -91,7 +91,8 @@ export default class KuboDaemon implements KuboNode {
       peerId: id?.id.toString(),
       multiaddrs: (id?.addresses ?? []).map(ma => ma.toString()),
       api: checkForRunningApi(this.repo),
-      repo: this.repo
+      repo: this.repo,
+      gateway: getGatewayAddress(this.repo)
     }
   }
 
