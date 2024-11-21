@@ -1,3 +1,9 @@
+## [15.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v15.0.1...v15.0.2) (2024-11-21)
+
+### Bug Fixes
+
+* return gateway href in .info response ([#850](https://github.com/ipfs/js-ipfsd-ctl/issues/850)) ([c9dafd0](https://github.com/ipfs/js-ipfsd-ctl/commit/c9dafd0192c60f54a8308c46a601a627919d6c71))
+
 ## [15.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v15.0.0...v15.0.1) (2024-11-14)
 
 ### Dependencies
