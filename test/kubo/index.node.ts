@@ -22,7 +22,6 @@ describe('index', () => {
     const expectedPort2 = await getPort(8089)
     const repo = join(tmpdir(), 'ipfs-test-repo')
     node = await createNode({
-      // test: true,
       repo,
       disposable: false,
       type: 'kubo',
