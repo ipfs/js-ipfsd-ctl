@@ -1,3 +1,13 @@
+## [16.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v15.0.3...v16.0.0) (2025-10-14)
+
+### ⚠ BREAKING CHANGES
+
+* uses libp2p@3.x.x deps and updates to latest kubo
+
+### Dependencies
+
+* update libp2p and kubo ([#867](https://github.com/ipfs/js-ipfsd-ctl/issues/867)) ([312119e](https://github.com/ipfs/js-ipfsd-ctl/commit/312119ebdfa5cfdc5e338fff89cf74106167634f))
+
 ## [15.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v15.0.2...v15.0.3) (2025-10-14)
 
 ### Trivial Changes
