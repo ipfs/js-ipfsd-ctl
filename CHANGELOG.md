@@ -1,3 +1,13 @@
+## [15.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v15.0.2...v15.0.3) (2025-10-14)
+
+### Trivial Changes
+
+* rename default branch ([ba516d9](https://github.com/ipfs/js-ipfsd-ctl/commit/ba516d9d7c1ccb89196823c80b87b27d3a451f89))
+
+### Dependencies
+
+* update aegir to 47.x.x ([#864](https://github.com/ipfs/js-ipfsd-ctl/issues/864)) ([deebd76](https://github.com/ipfs/js-ipfsd-ctl/commit/deebd762c58f71131901ee2578c24e214add6f4c))
+
 ## [15.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v15.0.1...v15.0.2) (2024-11-21)
 
 ### Bug Fixes
