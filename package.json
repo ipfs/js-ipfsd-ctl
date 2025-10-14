@@ -34,13 +34,6 @@
       "import": "./dist/src/index.js"
     }
   },
-  "eslintConfig": {
-    "extends": "ipfs",
-    "parserOptions": {
-      "project": true,
-      "sourceType": "module"
-    }
-  },
   "release": {
     "branches": [
       "main"
@@ -123,7 +116,15 @@
       "@semantic-release/changelog",
       "@semantic-release/npm",
       "@semantic-release/github",
-      "@semantic-release/git"
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md",
+            "package.json"
+          ]
+        }
+      ]
     ]
   },
   "scripts": {
@@ -153,7 +154,7 @@
     "wherearewe": "^2.0.1"
   },
   "devDependencies": {
-    "aegir": "^45.0.1",
+    "aegir": "^47.0.22",
     "kubo": "^0.32.0"
   },
   "browser": {

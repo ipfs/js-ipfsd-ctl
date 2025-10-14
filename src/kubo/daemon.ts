@@ -1,12 +1,13 @@
 import fs from 'node:fs/promises'
 import { logger } from '@libp2p/logger'
-import { execa, type ResultPromise } from 'execa'
+import { execa } from 'execa'
 import mergeOptions from 'merge-options'
 import pDefer from 'p-defer'
 import waitFor from 'p-wait-for'
 import { checkForRunningApi, tmpDir, buildStartArgs, repoExists, buildInitArgs, getGatewayAddress } from './utils.js'
 import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions, KuboStopOptions } from './index.js'
 import type { Logger } from '@libp2p/interface'
+import type { ResultPromise } from 'execa'
 import type { KuboRPCClient } from 'kubo-rpc-client'
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })

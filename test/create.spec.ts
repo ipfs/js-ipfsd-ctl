@@ -1,15 +1,15 @@
 /* eslint-disable no-loop-func */
 /* eslint-env mocha */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'
 import { create as createKuboRPCClient } from 'kubo-rpc-client'
 import { isNode, isElectronMain } from 'wherearewe'
-import { createFactory, createNode, createServer, type KuboOptions, type SpawnOptions, type KuboNode, type Factory } from '../src/index.js'
+import { createFactory, createNode, createServer } from '../src/index.js'
 import KuboClient from '../src/kubo/client.js'
 import KuboDaemon from '../src/kubo/daemon.js'
 import type Server from '../src/endpoint/server.js'
+import type { KuboOptions, SpawnOptions, KuboNode, Factory } from '../src/index.js'
 
 describe('`createNode` should return the correct class', () => {
   let node: KuboNode
