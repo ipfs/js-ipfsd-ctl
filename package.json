@@ -149,7 +149,7 @@
     "merge-options": "^3.0.1",
     "nanoid": "^5.0.7",
     "p-defer": "^4.0.1",
-    "p-wait-for": "^5.0.0",
+    "p-wait-for": "^6.0.0",
     "wherearewe": "^2.0.1"
   },
   "devDependencies": {
