@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 import { logger } from '@libp2p/logger'
 import { execa } from 'execa'
+// @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import mergeOptions from 'merge-options'
 import pDefer from 'p-defer'
 import waitFor from 'p-wait-for'

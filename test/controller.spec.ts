@@ -5,6 +5,7 @@
 import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'
 import { create as createKuboRPCClient } from 'kubo-rpc-client'
+// @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import merge from 'merge-options'
 import { isBrowser, isWebWorker, isNode, isElectronMain } from 'wherearewe'
 import { createFactory } from '../src/index.js'
