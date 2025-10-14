@@ -142,8 +142,8 @@
   "dependencies": {
     "@hapi/boom": "^10.0.0",
     "@hapi/hapi": "^21.1.0",
-    "@libp2p/interface": "^2.0.1",
-    "@libp2p/logger": "^5.0.1",
+    "@libp2p/interface": "^3.0.2",
+    "@libp2p/logger": "^6.0.5",
     "execa": "^9.3.1",
     "joi": "^17.2.1",
     "kubo-rpc-client": "^5.0.0",
