@@ -1,6 +1,5 @@
 /* eslint-disable no-loop-func */
 /* eslint-env mocha */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'

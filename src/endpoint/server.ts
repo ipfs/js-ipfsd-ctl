@@ -66,7 +66,6 @@ class Server {
 
     // remove references to nodes
     for (const key of Object.getOwnPropertyNames(this.nodes)) {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete this.nodes[key]
     }
   }

@@ -1,3 +1,4 @@
+// @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import mergeOptions from 'merge-options'
 import { isNode, isElectronMain } from 'wherearewe'
 import KuboClient from './kubo/client.js'
