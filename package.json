@@ -154,7 +154,7 @@
     "wherearewe": "^2.0.1"
   },
   "devDependencies": {
-    "aegir": "^47.0.22",
+    "aegir": "^47.0.26",
     "kubo": "^0.38.1"
   },
   "browser": {
