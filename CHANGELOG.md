@@ -1,3 +1,14 @@
+## [16.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v16.0.0...v16.0.1) (2026-03-26)
+
+### Bug Fixes
+
+* add logging ([7d63ccb](https://github.com/ipfs/js-ipfsd-ctl/commit/7d63ccbda451d94da5e362791f4500e28833c469))
+
+### Trivial Changes
+
+* bump kubo from 0.38.2 to 0.39.0 in the kubo-deps group ([#869](https://github.com/ipfs/js-ipfsd-ctl/issues/869)) ([d2d6cbe](https://github.com/ipfs/js-ipfsd-ctl/commit/d2d6cbee1269f7632e722683fc014fcab1ef9c45))
+* linting ([20a8154](https://github.com/ipfs/js-ipfsd-ctl/commit/20a81546eb480a7449e88b57215126cff9639898))
+
 ## [16.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v15.0.3...v16.0.0) (2025-10-14)
 
 ### ⚠ BREAKING CHANGES
