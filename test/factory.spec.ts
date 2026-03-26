@@ -1,5 +1,4 @@
 /* eslint-disable no-loop-func */
-/* eslint-env mocha */
 
 import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'

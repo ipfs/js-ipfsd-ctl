@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 import Hapi from '@hapi/hapi'
 import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'

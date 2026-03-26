@@ -11,6 +11,8 @@ import type { Logger } from '@libp2p/interface'
 import type { ResultPromise } from 'execa'
 import type { KuboRPCClient } from 'kubo-rpc-client'
 
+const log = logger('ipfsd-ctl:kubo:daemon')
+
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
 function translateError (err: Error & { stdout: string, stderr: string }): Error {
@@ -119,6 +121,7 @@ export default class KuboDaemon implements KuboNode {
   async init (args?: KuboInitOptions): Promise<void> {
     // check if already initialized
     if (await repoExists(this.repo)) {
+      log('repo already exists')
       return
     }
 
@@ -139,12 +142,14 @@ export default class KuboDaemon implements KuboNode {
 
     const cliArgs = buildInitArgs(initOptions)
 
+    log('init exec %s %s', this.exec, cliArgs.join(' '))
     const out = await execa(this.exec, cliArgs, {
       env: this.env
     })
       .catch(translateError)
 
     if (out instanceof Error) {
+      log('error initting %s - %e', this.exec, out)
       throw out
     }
 
@@ -153,6 +158,7 @@ export default class KuboDaemon implements KuboNode {
     this.stdout(stdout)
     this.stderr(stderr)
 
+    log('replace config')
     await this._replaceConfig(merge(
       await this._getConfig(),
       initOptions.config
@@ -181,11 +187,13 @@ export default class KuboDaemon implements KuboNode {
     let output = ''
     const deferred = pDefer()
 
+    log('start exec %s %s', this.exec, cliArgs.join(' '))
     const out = this.subprocess = execa(this.exec, cliArgs, {
       env: this.env
     })
 
     if (out instanceof Error) {
+      log('error starting %s - %e', this.exec, out)
       throw out
     }
 
@@ -245,13 +253,16 @@ export default class KuboDaemon implements KuboNode {
     }
 
     try {
+      log('stop node')
       await this.api.stop()
 
       // wait for the subprocess to exit and declare ourselves stopped
       await waitFor(() => subprocess.exitCode != null, {
         timeout
       })
-    } catch {
+    } catch (err) {
+      log('error stopping %s - %e', this.exec, err)
+
       subprocess.kill('SIGKILL')
     }
 
@@ -308,12 +319,14 @@ export default class KuboDaemon implements KuboNode {
       throw new Error('No executable specified')
     }
 
+    log('getVersion exec %s version', this.exec)
     const out = await execa(this.exec, ['version'], {
       env: this.env
     })
       .catch(translateError)
 
     if (out instanceof Error) {
+      log('error getting version %s - %e', this.exec, out)
       throw out
     }
 

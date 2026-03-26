@@ -1,9 +1,12 @@
 // @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
+import { logger } from '@libp2p/logger'
 import mergeOptions from 'merge-options'
 import { isNode, isElectronMain } from 'wherearewe'
 import KuboClient from './kubo/client.js'
 import KuboDaemon from './kubo/daemon.js'
 import type { Node, NodeOptions, NodeOptionsOverrides, NodeType, Factory, KuboNode, KuboOptions, SpawnOptions } from './index.js'
+
+const log = logger('ipfsd-ctl:factory')
 
 const merge = mergeOptions.bind({ ignoreUndefined: true })
 
@@ -47,6 +50,8 @@ class DefaultFactory implements Factory<any> {
 
     if (type === 'kubo') {
       if (opts.remote === true) {
+        log('spawn remote %s node', type)
+
         const req = await fetch(`${opts.endpoint}/spawn`, {
           method: 'POST',
           headers: {
@@ -64,6 +69,7 @@ class DefaultFactory implements Factory<any> {
           ...result
         })
       } else {
+        log('spawn local %s node', type)
         ctl = new KuboDaemon(opts)
       }
     }
@@ -77,11 +83,13 @@ class DefaultFactory implements Factory<any> {
 
     // Auto start controller
     if (opts.init !== false) {
+      log('spawn init %s%s node', opts.remote ? 'remote ' : '', type)
       await ctl.init(opts.init)
     }
 
     // Auto start controller
     if (opts.start !== false) {
+      log('spawn start %s%s node', opts.remote ? 'remote ' : '', type)
       await ctl.start(opts.start)
     }
 

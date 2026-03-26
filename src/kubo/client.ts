@@ -1,6 +1,9 @@
+import { logger } from '@libp2p/logger'
 import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions, KuboStopOptions } from './index.js'
 import type { PeerInfo } from '@libp2p/interface'
 import type { KuboRPCClient } from 'kubo-rpc-client'
+
+const log = logger('ipfsd-ctl:kubo:client')
 
 export interface KuboClientInit extends KuboOptions {
   endpoint: string
@@ -71,6 +74,8 @@ export default class KuboClient implements KuboNode {
   }
 
   async init (args?: KuboInitOptions): Promise<void> {
+    log('init %s/init?%s', this.endpoint, new URLSearchParams({ id: this.id }).toString())
+
     const response = await fetch(`${this.endpoint}/init?${new URLSearchParams({ id: this.id })}`, {
       method: 'POST',
       headers: {
@@ -88,6 +93,8 @@ export default class KuboClient implements KuboNode {
   }
 
   async start (args?: KuboStartOptions): Promise<void> {
+    log('start %s/start?%s', this.endpoint, new URLSearchParams({ id: this.id }).toString())
+
     const response = await fetch(`${this.endpoint}/start?${new URLSearchParams({ id: this.id })}`, {
       method: 'POST',
       headers: {
@@ -108,6 +115,8 @@ export default class KuboClient implements KuboNode {
   }
 
   async stop (args?: KuboStopOptions): Promise<void> {
+    log('stop %s/stop?%s', this.endpoint, new URLSearchParams({ id: this.id }).toString())
+
     const response = await fetch(`${this.endpoint}/stop?${new URLSearchParams({ id: this.id })}`, {
       method: 'POST',
       headers: {
@@ -129,6 +138,8 @@ export default class KuboClient implements KuboNode {
   }
 
   async cleanup (): Promise<void> {
+    log('cleanup %s/cleanup?%s', this.endpoint, new URLSearchParams({ id: this.id }).toString())
+
     const response = await fetch(`${this.endpoint}/cleanup?${new URLSearchParams({ id: this.id })}`, {
       method: 'POST'
     })

@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 /* eslint-disable no-loop-func */
 
 import { expect } from 'aegir/chai'
