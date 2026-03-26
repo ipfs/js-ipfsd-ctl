@@ -64,6 +64,10 @@ export default (server: Server, ipfsd: Factory, nodes: Record<string, Node>): vo
     handler: async (request) => {
       const id = request.query.id
 
+      if (id == null || Array.isArray(id)) {
+        return badRequest(new Error('A single id value must be present in the query'))
+      }
+
       try {
         return await nodes[id].info()
       } catch (err: any) {
@@ -82,6 +86,10 @@ export default (server: Server, ipfsd: Factory, nodes: Record<string, Node>): vo
     handler: async (request) => {
       const id = request.query.id
       const payload = request.payload ?? {}
+
+      if (id == null || Array.isArray(id)) {
+        return badRequest(new Error('A single id value must be present in the query'))
+      }
 
       try {
         await nodes[id].init(payload)
@@ -104,6 +112,10 @@ export default (server: Server, ipfsd: Factory, nodes: Record<string, Node>): vo
       const id = request.query.id
       const payload = request.payload ?? {}
 
+      if (id == null || Array.isArray(id)) {
+        return badRequest(new Error('A single id value must be present in the query'))
+      }
+
       try {
         await nodes[id].start(payload)
 
@@ -124,6 +136,10 @@ export default (server: Server, ipfsd: Factory, nodes: Record<string, Node>): vo
     handler: async (request, h) => {
       const id = request.query.id
       const payload = request.payload ?? {}
+
+      if (id == null || Array.isArray(id)) {
+        return badRequest(new Error('A single id value must be present in the query'))
+      }
 
       try {
         await nodes[id].stop(payload)
@@ -147,6 +163,10 @@ export default (server: Server, ipfsd: Factory, nodes: Record<string, Node>): vo
     handler: async (request, h) => {
       const id = request.query.id
       const payload = request.payload ?? {}
+
+      if (id == null || Array.isArray(id)) {
+        return badRequest(new Error('A single id value must be present in the query'))
+      }
 
       try {
         await nodes[id].cleanup(payload)
