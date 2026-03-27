@@ -62,9 +62,13 @@ export default class KuboClient implements KuboNode {
   }
 
   async info (): Promise<KuboInfo> {
+    log('info %s/info?%s', this.endpoint, new URLSearchParams({ id: this.id }).toString())
+
     const response = await fetch(`${this.endpoint}/info?${new URLSearchParams({ id: this.id })}`, {
       method: 'GET'
     })
+
+    log('info %s/info?%s %d', this.endpoint, new URLSearchParams({ id: this.id }).toString(), response.status)
 
     if (!response.ok) {
       throw new Error(`Error getting remote kubo info - ${await response.text()}`)
@@ -86,6 +90,8 @@ export default class KuboClient implements KuboNode {
         ...(args ?? {})
       })
     })
+
+    log('init %s/init?%s %d', this.endpoint, new URLSearchParams({ id: this.id }).toString(), response.status)
 
     if (!response.ok) {
       throw new Error(`Error initializing remote kubo - ${await response.text()}`)
@@ -128,6 +134,8 @@ export default class KuboClient implements KuboNode {
       })
     })
 
+    log('stop %s/stop?%s %d', this.endpoint, new URLSearchParams({ id: this.id }).toString(), response.status)
+
     if (!response.ok) {
       throw new Error(`Error stopping remote kubo - ${await response.text()}`)
     }
@@ -143,6 +151,8 @@ export default class KuboClient implements KuboNode {
     const response = await fetch(`${this.endpoint}/cleanup?${new URLSearchParams({ id: this.id })}`, {
       method: 'POST'
     })
+
+    log('cleanup %s/cleanup?%s %d', this.endpoint, new URLSearchParams({ id: this.id }).toString(), response.status)
 
     if (!response.ok) {
       throw new Error(`Error cleaning up remote kubo - ${await response.text()}`)
