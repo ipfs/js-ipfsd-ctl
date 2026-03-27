@@ -1,3 +1,9 @@
+## [16.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v16.0.2...v16.0.3) (2026-03-27)
+
+### Bug Fixes
+
+* log node spawn result ([0493a4e](https://github.com/ipfs/js-ipfsd-ctl/commit/0493a4e2a870ff4c8107a7af2ad1abd5468b1d3b))
+
 ## [16.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v16.0.1...v16.0.2) (2026-03-27)
 
 ### Bug Fixes
