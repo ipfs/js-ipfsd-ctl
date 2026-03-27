@@ -62,7 +62,12 @@ class DefaultFactory implements Factory<any> {
             remote: false
           })
         })
+
+        log('spawned remote %s node', type)
+
         const result = await req.json()
+
+        log('remote %s node %o', type, result)
 
         ctl = new KuboClient({
           ...opts,
@@ -83,17 +88,17 @@ class DefaultFactory implements Factory<any> {
 
     // Auto start controller
     if (opts.init !== false) {
-      log('spawn init %s%s node', opts.remote ? 'remote ' : '', type)
+      log('spawn init %s %s node', opts.remote ? 'remote' : 'local', type)
       await ctl.init(opts.init)
     }
 
     // Auto start controller
     if (opts.start !== false) {
-      log('spawn start %s%s node', opts.remote ? 'remote ' : '', type)
+      log('spawn start %s %s node', opts.remote ? 'remote' : 'local', type)
       await ctl.start(opts.start)
     }
 
-    log('spawned %s%s node', opts.remote ? 'remote ' : '', type)
+    log('spawned %s %s node', opts.remote ? 'remote' : 'local', type)
     return ctl
   }
 
