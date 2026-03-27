@@ -93,6 +93,7 @@ class DefaultFactory implements Factory<any> {
       await ctl.start(opts.start)
     }
 
+    log('spawned %s%s node', opts.remote ? 'remote ' : '', type)
     return ctl
   }
 

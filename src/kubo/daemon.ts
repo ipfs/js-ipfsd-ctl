@@ -89,7 +89,7 @@ export default class KuboDaemon implements KuboNode {
   async info (): Promise<KuboInfo> {
     const id = await this._api?.id()
 
-    return {
+    const info = {
       version: await this.getVersion(),
       pid: this.subprocess?.pid,
       peerId: id?.id.toString(),
@@ -98,6 +98,10 @@ export default class KuboDaemon implements KuboNode {
       repo: this.repo,
       gateway: getGatewayAddress(this.repo)
     }
+
+    log('info %s %s %p %s', info.version, info.pid, info.peerId, info.repo)
+
+    return info
   }
 
   /**
@@ -331,7 +335,10 @@ export default class KuboDaemon implements KuboNode {
     }
 
     const { stdout } = out
+    const version = stdout.trim()
 
-    return stdout.trim()
+    log('getVersion version %s', version)
+
+    return version
   }
 }

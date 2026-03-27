@@ -35,6 +35,7 @@ export default (server: Server, ipfsd: Factory, nodes: Record<string, Node>): vo
     path: '/spawn',
     handler: async (request) => {
       const options: any = request.payload ?? {}
+
       try {
         const id = nanoid()
         nodes[id] = await ipfsd.spawn({

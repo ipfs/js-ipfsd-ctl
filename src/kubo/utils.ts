@@ -26,7 +26,7 @@ export const checkForRunningApi = (repoPath = ''): string | undefined => {
   try {
     api = fs.readFileSync(path.join(repoPath, 'api'))
   } catch (err: any) {
-    log('Unable to open api file')
+    log('unable to open api file')
   }
 
   return (api != null) ? api.toString() : undefined
@@ -42,7 +42,7 @@ export const getGatewayAddress = (repoPath = ''): string => {
      */
     gatewayAddress = fs.readFileSync(path.join(repoPath, 'gateway'))?.toString()
   } catch (err: any) {
-    log('Unable to open gateway file')
+    log('unable to open gateway file')
   }
   return gatewayAddress
 }
