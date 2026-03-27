@@ -1,3 +1,10 @@
+## [16.0.2](https://github.com/ipfs/js-ipfsd-ctl/compare/v16.0.1...v16.0.2) (2026-03-27)
+
+### Bug Fixes
+
+* logging ([c1c8590](https://github.com/ipfs/js-ipfsd-ctl/commit/c1c859090c6814f5a7440fcd0527a4342661cd55))
+* more logging ([68707ca](https://github.com/ipfs/js-ipfsd-ctl/commit/68707cae49cda33fda995b9b38382723122de806))
+
 ## [16.0.1](https://github.com/ipfs/js-ipfsd-ctl/compare/v16.0.0...v16.0.1) (2026-03-26)
 
 ### Bug Fixes
