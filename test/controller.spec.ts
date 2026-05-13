@@ -6,9 +6,9 @@ import { create as createKuboRPCClient } from 'kubo-rpc-client'
 // @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import merge from 'merge-options'
 import { isBrowser, isWebWorker, isNode, isElectronMain } from 'wherearewe'
-import { createFactory } from '../src/index.js'
-import { repoExists } from '../src/kubo/utils.js'
-import type { Factory, KuboOptions, SpawnOptions, KuboNode } from '../src/index.js'
+import { createFactory } from '../src/index.ts'
+import { repoExists } from '../src/kubo/utils.ts'
+import type { Factory, KuboOptions, SpawnOptions, KuboNode } from '../src/index.ts'
 
 const types: Array<KuboOptions & SpawnOptions> = [{
   type: 'kubo'

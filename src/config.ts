@@ -1,4 +1,4 @@
-import type { NodeType } from './index.js'
+import type { NodeType } from './index.ts'
 
 export interface ConfigInit {
   type?: NodeType

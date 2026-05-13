@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { logger } from '@libp2p/logger'
 import { nanoid } from 'nanoid'
-import type { KuboInitOptions, KuboStartOptions } from '../index.js'
+import type { KuboInitOptions, KuboStartOptions } from '../index.ts'
 
 const log = logger('ipfsd-ctl:utils')
 

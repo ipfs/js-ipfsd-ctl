@@ -1,4 +1,4 @@
-import type { Node, NodeOptions } from '../index.js'
+import type { Node, NodeOptions } from '../index.ts'
 import type { KuboRPCClient } from 'kubo-rpc-client'
 
 export interface KuboInit {
