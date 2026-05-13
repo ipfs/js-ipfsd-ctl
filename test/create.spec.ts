@@ -4,11 +4,11 @@ import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'
 import { create as createKuboRPCClient } from 'kubo-rpc-client'
 import { isNode, isElectronMain } from 'wherearewe'
-import { createFactory, createNode, createServer } from '../src/index.js'
-import KuboClient from '../src/kubo/client.js'
-import KuboDaemon from '../src/kubo/daemon.js'
-import type Server from '../src/endpoint/server.js'
-import type { KuboOptions, SpawnOptions, KuboNode, Factory } from '../src/index.js'
+import { createFactory, createNode, createServer } from '../src/index.ts'
+import KuboClient from '../src/kubo/client.ts'
+import KuboDaemon from '../src/kubo/daemon.ts'
+import type Server from '../src/endpoint/server.ts'
+import type { KuboOptions, SpawnOptions, KuboNode, Factory } from '../src/index.ts'
 
 describe('`createNode` should return the correct class', () => {
   let node: KuboNode

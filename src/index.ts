@@ -120,11 +120,11 @@
  * - `non-disposable` - Disposable nodes will not delete their repo when stopped
  */
 
-import Server from './endpoint/server.js'
-import DefaultFactory from './factory.js'
-import type { KuboNode, KuboOptions } from './kubo/index.js'
+import Server from './endpoint/server.ts'
+import DefaultFactory from './factory.ts'
+import type { KuboNode, KuboOptions } from './kubo/index.ts'
 
-export * from './kubo/index.js'
+export * from './kubo/index.ts'
 export type NodeType = 'kubo'
 
 export interface Node<API = unknown, Options = NodeOptions, Info extends Record<string, any> = Record<string, any>, InitArgs = unknown, StartArgs = unknown, StopArgs = unknown, CleanupArgs = unknown> {

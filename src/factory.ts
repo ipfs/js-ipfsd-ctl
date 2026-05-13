@@ -2,9 +2,9 @@ import { logger } from '@libp2p/logger'
 // @ts-expect-error needs https://github.com/schnittstabil/merge-options/pull/28
 import mergeOptions from 'merge-options'
 import { isNode, isElectronMain } from 'wherearewe'
-import KuboClient from './kubo/client.js'
-import KuboDaemon from './kubo/daemon.js'
-import type { Node, NodeOptions, NodeOptionsOverrides, NodeType, Factory, KuboNode, KuboOptions, SpawnOptions } from './index.js'
+import KuboClient from './kubo/client.ts'
+import KuboDaemon from './kubo/daemon.ts'
+import type { Node, NodeOptions, NodeOptionsOverrides, NodeType, Factory, KuboNode, KuboOptions, SpawnOptions } from './index.ts'
 
 const log = logger('ipfsd-ctl:factory')
 

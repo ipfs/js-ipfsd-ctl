@@ -4,8 +4,8 @@ import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'
 import { create as createKuboRPCClient } from 'kubo-rpc-client'
 import { isNode } from 'wherearewe'
-import { createFactory } from '../src/index.js'
-import type { Factory, KuboOptions, SpawnOptions } from '../src/index.js'
+import { createFactory } from '../src/index.ts'
+import type { Factory, KuboOptions, SpawnOptions } from '../src/index.ts'
 
 const types: Array<KuboOptions & SpawnOptions> = [{
   type: 'kubo',

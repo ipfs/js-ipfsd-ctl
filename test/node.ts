@@ -1,2 +1,2 @@
-import './endpoint/routes.node.js'
-import './kubo/utils.node.js'
+import './endpoint/routes.node.ts'
+import './kubo/utils.node.ts'
