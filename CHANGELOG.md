@@ -1,3 +1,18 @@
+## [17.0.0](https://github.com/ipfs/js-ipfsd-ctl/compare/v16.0.3...v17.0.0) (2026-05-13)
+
+### ⚠ BREAKING CHANGES
+
+* CID instances are returned from the `multiformats@14.x.x` module
+
+### Bug Fixes
+
+* update kubo-rpc-api client to multiformats-14 ([#875](https://github.com/ipfs/js-ipfsd-ctl/issues/875)) ([151e6bd](https://github.com/ipfs/js-ipfsd-ctl/commit/151e6bd9f24d06a18c6332d6c453a80a938abf88))
+
+### Trivial Changes
+
+* bump aegir from 47.2.0 to 48.0.4 ([#874](https://github.com/ipfs/js-ipfsd-ctl/issues/874)) ([4b1c760](https://github.com/ipfs/js-ipfsd-ctl/commit/4b1c760bc91e689bd7bc1367b22dc181cfc528fc))
+* bump kubo from 0.40.1 to 0.41.0 in the kubo-deps group ([#871](https://github.com/ipfs/js-ipfsd-ctl/issues/871)) ([e06efda](https://github.com/ipfs/js-ipfsd-ctl/commit/e06efdadbcb88b559e4eac476577aca630451001))
+
 ## [16.0.3](https://github.com/ipfs/js-ipfsd-ctl/compare/v16.0.2...v16.0.3) (2026-03-27)
 
 ### Bug Fixes
