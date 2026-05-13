@@ -147,7 +147,7 @@
     "@libp2p/logger": "^6.0.5",
     "execa": "^9.3.1",
     "joi": "^18.0.1",
-    "kubo-rpc-client": "^6.0.0",
+    "kubo-rpc-client": "^7.0.0",
     "merge-options": "^3.0.1",
     "nanoid": "^5.0.7",
     "p-defer": "^4.0.1",
