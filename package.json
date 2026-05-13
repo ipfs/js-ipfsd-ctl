@@ -31,7 +31,8 @@
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js"
+      "import": "./dist/src/index.js",
+      "module-sync": "./dist/src/index.js"
     }
   },
   "release": {
@@ -154,7 +155,7 @@
     "wherearewe": "^2.0.1"
   },
   "devDependencies": {
-    "aegir": "^47.0.22",
+    "aegir": "^48.0.4",
     "kubo": "^0.40.1"
   },
   "browser": {

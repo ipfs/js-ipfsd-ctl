@@ -3,9 +3,9 @@ import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'
 import { create as createKuboRPCClient } from 'kubo-rpc-client'
 import { isNode } from 'wherearewe'
-import routes from '../../src/endpoint/routes.js'
-import { createFactory } from '../../src/index.js'
-import type { KuboInfo } from '../../src/index.js'
+import routes from '../../src/endpoint/routes.ts'
+import { createFactory } from '../../src/index.ts'
+import type { KuboInfo } from '../../src/index.ts'
 
 describe('routes', function () {
   this.timeout(60000)

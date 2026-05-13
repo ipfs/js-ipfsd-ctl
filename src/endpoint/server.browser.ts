@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import type { ServerInit } from './server.js'
+import type { ServerInit } from './server.ts'
 
 /**
  * Creates an instance of Server

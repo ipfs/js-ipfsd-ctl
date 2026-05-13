@@ -1,5 +1,5 @@
 import { logger } from '@libp2p/logger'
-import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions, KuboStopOptions } from './index.js'
+import type { KuboNode, KuboInfo, KuboInitOptions, KuboOptions, KuboStartOptions, KuboStopOptions } from './index.ts'
 import type { PeerInfo } from '@libp2p/interface'
 import type { KuboRPCClient } from 'kubo-rpc-client'
 

@@ -5,8 +5,8 @@ import path from 'path'
 import { expect } from 'aegir/chai'
 import * as kubo from 'kubo'
 import { create as createKuboRPCClient } from 'kubo-rpc-client'
-import { createFactory, createNode } from '../../src/index.js'
-import { tmpDir, checkForRunningApi, repoExists, removeRepo, buildStartArgs, buildInitArgs } from '../../src/kubo/utils.js'
+import { createFactory, createNode } from '../../src/index.ts'
+import { tmpDir, checkForRunningApi, repoExists, removeRepo, buildStartArgs, buildInitArgs } from '../../src/kubo/utils.ts'
 
 describe('utils', function () {
   this.timeout(60000)

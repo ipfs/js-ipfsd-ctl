@@ -1,6 +1,6 @@
 import Hapi from '@hapi/hapi'
-import routes from './routes.js'
-import type { Node, Factory } from '../index.js'
+import routes from './routes.ts'
+import type { Node, Factory } from '../index.ts'
 
 export interface ServerInit {
   port?: number

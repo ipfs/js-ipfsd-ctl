@@ -2,7 +2,7 @@ import boom from '@hapi/boom'
 import { logger } from '@libp2p/logger'
 import Joi from 'joi'
 import { nanoid } from 'nanoid'
-import type { Node, Factory } from '../index.js'
+import type { Node, Factory } from '../index.ts'
 import type { Server } from '@hapi/hapi'
 
 const debug = logger('ipfsd-ctl:routes')
