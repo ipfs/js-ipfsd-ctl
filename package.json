@@ -156,7 +156,7 @@
   },
   "devDependencies": {
     "aegir": "^48.0.4",
-    "kubo": "^0.41.0"
+    "kubo": "^0.42.0"
   },
   "browser": {
     "./dist/src/endpoint/server.js": "./dist/src/endpoint/server.browser.js",
